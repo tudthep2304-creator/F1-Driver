@@ -14,10 +14,10 @@
     @import url('https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;700&display=swap');
     body { font-family: 'Kanit', sans-serif; background-color: #f3f4f6; }
     
-    /* บังคับแผนที่พื้นหลังเต็มจอ 100% เสมอ */
-    #map-bg { position: fixed; inset: 0; width: 100vw; height: 100dvh; z-index: 0; }
+    /* แผนที่พื้นหลังเต็มจอ */
+    #map-bg { position: fixed; inset: 0; width: 100vw; height: 100vh; z-index: 0; }
     
-    /* 🌟 ล็อกขนาดกล่องด้านล่างให้สูง 380px คงที่ และอยู่ติดขอบล่างเสมอ */
+    /* ล็อกขนาดกล่องด้านล่างให้สูง 380px เท่ากันทุกหน้าและติดขอบล่าง */
     .fixed-bottom-card { 
       position: absolute; bottom: 0; left: 0; right: 0;
       height: 380px; 
@@ -29,13 +29,12 @@
       padding: 1.5rem;
     }
     
-    /* 🌟 แก้ปัญหาหน้าจอทะลุขอบในมือถือด้วย 100dvh */
-    .full-page { position: fixed; top: 0; left: 0; width: 100vw; height: 100dvh; z-index: 30; background: white; display: flex; flex-direction: column; }
+    .full-page { position: fixed; inset: 0; z-index: 30; background: white; display: flex; flex-direction: column; }
     .pac-container { z-index: 10000 !important; font-family: 'Kanit'; border-radius: 0.5rem; }
     .route-line { width: 2px; height: 20px; background-image: linear-gradient(to bottom, #cbd5e1 50%, transparent 50%); background-size: 2px 8px; margin: 2px 0; }
   </style>
 </head>
-<body class="h-[100dvh] w-screen m-0 flex flex-col overflow-hidden">
+<body class="h-screen w-screen m-0 flex flex-col overflow-hidden">
 
   <div id="map-bg" class="hidden"></div>
 
@@ -275,10 +274,13 @@
     }
 
     function getAutocompleteOptions() { return { bounds: chiangRaiBounds, componentRestrictions: { country: "th" }, strictBounds: true }; }
+    
     function updateAddressFromLatLng(latLng, inputId) {
       if (!geocoder) geocoder = new google.maps.Geocoder();
       geocoder.geocode({ location: latLng }, (results, status) => {
-        if (status === "OK" && results[0]) { document.getElementById(inputId).value = results[0].formatted_address.replace(', ประเทศไทย', '').replace(' ประเทศไทย', ''); }
+        if (status === "OK" && results[0]) { 
+          document.getElementById(inputId).value = results[0].formatted_address.replace(', ประเทศไทย', '').replace(' ประเทศไทย', ''); 
+        }
       });
     }
 
@@ -309,8 +311,12 @@
       mapPickup.addListener('dragend', () => { updateAddressFromLatLng(mapPickup.getCenter(), 'pickupSearch'); });
       mapPickup.addListener('center_changed', () => { markerPickup.setPosition(mapPickup.getCenter()); });
       setupMapPoiClick(mapPickup, markerPickup, 'pickupSearch');
+      
       const ac = new google.maps.places.Autocomplete(document.getElementById('pickupSearch'), getAutocompleteOptions());
-      ac.addListener('place_changed', () => { const p = ac.getPlace(); if (p.geometry) { mapPickup.setCenter(p.geometry.location); markerPickup.setPosition(p.geometry.location); mapPickup.setZoom(16); } });
+      ac.addListener('place_changed', () => { 
+        const p = ac.getPlace(); 
+        if (p.geometry) { mapPickup.setCenter(p.geometry.location); markerPickup.setPosition(p.geometry.location); mapPickup.setZoom(16); } 
+      });
     }
 
     function useCurrentLocation() {
@@ -332,8 +338,12 @@
       mapDropoff.addListener('dragend', () => { updateAddressFromLatLng(mapDropoff.getCenter(), 'dropoffSearch'); });
       mapDropoff.addListener('center_changed', () => { markerDropoff.setPosition(mapDropoff.getCenter()); });
       setupMapPoiClick(mapDropoff, markerDropoff, 'dropoffSearch');
+      
       const ac = new google.maps.places.Autocomplete(document.getElementById('dropoffSearch'), getAutocompleteOptions());
-      ac.addListener('place_changed', () => { const p = ac.getPlace(); if (p.geometry) { mapDropoff.setCenter(p.geometry.location); markerDropoff.setPosition(p.geometry.location); mapDropoff.setZoom(16); } });
+      ac.addListener('place_changed', () => { 
+        const p = ac.getPlace(); 
+        if (p.geometry) { mapDropoff.setCenter(p.geometry.location); markerDropoff.setPosition(p.geometry.location); mapDropoff.setZoom(16); } 
+      });
     }
 
     function initTrackingMap() {
@@ -391,6 +401,26 @@
         }
     }
 
+    function confirmPickup() {
+        if (markerPickup) {
+          const pos = markerPickup.getPosition();
+          bookingData.pickupLat = pos.lat();
+          bookingData.pickupLng = pos.lng();
+          bookingData.pickupName = document.getElementById('pickupSearch').value || "จุดรับที่เลือก";
+          showPage(3);
+        }
+    }
+
+    function confirmDropoff() {
+        if (markerDropoff) {
+          const pos = markerDropoff.getPosition();
+          bookingData.dropoffLat = pos.lat();
+          bookingData.dropoffLng = pos.lng();
+          bookingData.dropoffName = document.getElementById('dropoffSearch').value || "จุดส่งที่เลือก";
+          showPage(4);
+        }
+    }
+
     function setupCustomMarkers(pickupLoc, dropoffLoc) {
         if(!mapMarkerA) mapMarkerA = new google.maps.Marker({map: mapTracking, icon: "https://maps.google.com/mapfiles/ms/icons/green-dot.png"});
         if(!mapMarkerB) mapMarkerB = new google.maps.Marker({map: mapTracking, icon: "https://maps.google.com/mapfiles/ms/icons/red-dot.png"});
@@ -412,7 +442,7 @@
 
                 setTimeout(() => {
                     mapTracking.fitBounds(res.routes[0].bounds);
-                    mapTracking.panBy(0, -120); // ขยับกล้องหลบกล่อง
+                    mapTracking.panBy(0, -120); 
                 }, 100);
 
                 const distKm = (res.routes[0].legs[0].distance.value / 1000).toFixed(1);
@@ -468,7 +498,6 @@
                 if(mapMarkerA) mapMarkerA.setMap(null); 
                 if(!mapMarkerB) mapMarkerB = new google.maps.Marker({map: mapTracking, icon: "https://maps.google.com/mapfiles/ms/icons/green-dot.png"});
                 mapMarkerB.setPosition(pickupPos); mapMarkerB.setMap(mapTracking);
-                
                 mapTracking.panBy(0, -120); 
             }, 100);
 
@@ -566,7 +595,7 @@
                 document.getElementById('realtimeDist').innerText = leg.distance.text;
 
                 if (isGoingToPickup) {
-                    document.getElementById('driverAwayText').innerText = `ห่าง ${leg.distance.text}`;
+                  document.getElementById('driverAwayText').innerText = `ห่าง ${leg.distance.text}`; 
                 }
             }
         });
@@ -574,15 +603,12 @@
 
     function openGoogleMaps() {
         let url = "";
-        const destLat = bookingData.dropLat || bookingData.dropoffLat;
-        const destLng = bookingData.dropLng || bookingData.dropoffLng;
-
-        if (bookingData.status === "ใกล้ถึงแล้ว" || bookingData.status === "รับงาน" || bookingData.status === "ถึงจุดรับแล้ว") {
+        if (bookingData.status === "รับงาน" || bookingData.status === "ใกล้ถึงแล้ว") {
             url = `https://www.google.com/maps/dir/?api=1&origin=${driverData.lat},${driverData.lng}&destination=${bookingData.pickupLat},${bookingData.pickupLng}`;
         } else if (bookingData.status === "รับผู้โดยสารแล้ว") {
-            url = `https://www.google.com/maps/dir/?api=1&origin=${driverData.lat},${driverData.lng}&destination=${destLat},${destLng}`;
+            url = `https://www.google.com/maps/dir/?api=1&origin=${driverData.lat},${driverData.lng}&destination=${bookingData.dropLat},${bookingData.dropoffLat}`;
         } else {
-            url = `https://www.google.com/maps/dir/?api=1&origin=${bookingData.pickupLat},${bookingData.pickupLng}&destination=${destLat},${destLng}`;
+            url = `https://www.google.com/maps/dir/?api=1&origin=${bookingData.pickupLat},${bookingData.pickupLng}&destination=${bookingData.dropoffLat},${bookingData.dropoffLng}`;
         }
         window.open(url, '_blank');
     }
@@ -598,10 +624,11 @@
         }
     }
 
-    // ⚠️ อย่าลืมใส่ YOUR_GOOGLE_MAPS_API_KEY ของคุณตรงนี้นะครับ
     const script = document.createElement('script');
-    script.src = "https://maps.googleapis.com/maps/api/js?key=YOUR_GOOGLE_MAPS_API_KEY&libraries=places&callback=mapsReady";
+    script.src = "https://maps.googleapis.com/maps/api/js?key=AIzaSyDsZ_tbFhH6fUXRz3I6C-tMshNwwrSevd4&libraries=places&callback=mapsReady";
+    script.async = true; script.defer = true;
     document.head.appendChild(script);
+
   </script>
 </body>
 </html>
