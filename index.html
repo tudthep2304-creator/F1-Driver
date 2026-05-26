@@ -14,18 +14,23 @@
     @import url('https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;700&display=swap');
     body { font-family: 'Kanit', sans-serif; background-color: #f3f4f6; }
     
-    /* แผนที่พื้นหลังเต็มจอ 100% แก้อาการขอบเทา */
+    /* แผนที่พื้นหลังเต็มจอ 100% */
     #map-bg { position: fixed; inset: 0; width: 100vw; height: 100vh; z-index: 0; }
     
-    /* 🌟 ล็อกขนาดกล่องด้านล่างให้สูง 380px คงที่เท่ากันทุกหน้า */
+    /* 🌟 เปลี่ยนเป็น position: fixed เพื่อล็อกให้กล่องขาวลอยติดขอบล่างของจอมือถือตลอดเวลา ไม่โดนดันหาย */
     .fixed-bottom-card { 
-      position: absolute; bottom: 0; left: 0; right: 0;
+      position: fixed; 
+      bottom: 0; 
+      left: 0; 
+      right: 0;
       height: 380px; 
       background: white; 
-      border-top-left-radius: 2rem; border-top-right-radius: 2rem; 
-      box-shadow: 0 -15px 30px rgba(0,0,0,0.15); 
-      z-index: 10;
-      display: flex; flex-direction: column;
+      border-top-left-radius: 2rem; 
+      border-top-right-radius: 2rem; 
+      box-shadow: 0 -15px 30px rgba(0,0,0,0.2); 
+      z-index: 100; /* ดันให้อยู่หน้าสุดเสมอ */
+      display: flex; 
+      flex-direction: column;
       padding: 1.5rem;
     }
     
@@ -87,7 +92,7 @@
       </div>
       <div id="map-pickup" class="w-full flex-1 relative z-0 bg-gray-200"></div>
       
-      <div class="fixed-bottom-card bg-white z-10">
+      <div class="fixed-bottom-card bg-white pointer-events-auto">
         <div class="w-12 h-1.5 bg-gray-300 rounded-full mx-auto mb-4 shrink-0"></div>
         <div class="flex justify-between items-center mb-3">
           <span class="text-xs text-gray-500"><i class="fas fa-arrows-alt text-indigo-400"></i> เลื่อนหมุดเพื่อเลือกจุดรับ</span>
@@ -106,7 +111,7 @@
       </div>
       <div id="map-dropoff" class="w-full flex-1 relative z-0 bg-gray-200"></div>
       
-      <div class="fixed-bottom-card bg-white z-10">
+      <div class="fixed-bottom-card bg-white pointer-events-auto">
         <div class="w-12 h-1.5 bg-gray-300 rounded-full mx-auto mb-4 shrink-0"></div>
         <div class="flex justify-between items-center mb-3">
           <span class="text-xs text-gray-500"><i class="fas fa-arrows-alt text-indigo-400"></i> เลื่อนหมุดเพื่อเลือกจุดส่ง</span>
@@ -364,11 +369,11 @@
           document.getElementById('page3').classList.remove('hidden'); document.getElementById('page3').classList.add('flex');
           nav.classList.add('hidden'); mapBg.classList.add('hidden'); setTimeout(initDropoffMap, 100);
       } else if (pageNo === 4) {
-          document.getElementById('page4').classList.remove('hidden'); document.getElementById('page4').classList.add('flex');
+          document.getElementById('page4').classList.remove('hidden');
           nav.classList.remove('hidden'); mapBg.classList.remove('hidden'); document.getElementById('navTitle').innerText = "ยืนยันเรียกรถ";
           initTrackingMap(); calculateFinalSummary();
       } else if (pageNo === 5 || pageNo === 6) {
-          document.getElementById('pageTracking').classList.remove('hidden'); document.getElementById('pageTracking').classList.add('flex');
+          document.getElementById('pageTracking').classList.remove('hidden');
           nav.classList.remove('hidden'); mapBg.classList.remove('hidden'); document.getElementById('navTitle').innerText = "สถานะการเดินทาง";
           initTrackingMap();
       }
