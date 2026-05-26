@@ -15,7 +15,7 @@
     body { font-family: 'Kanit', sans-serif; background-color: #f3f4f6; }
     
     /* บังคับแผนที่พื้นหลังเต็มจอ 100% เสมอ */
-    #map-bg { position: fixed; inset: 0; width: 100vw; height: 100vh; z-index: 0; }
+    #map-bg { position: fixed; inset: 0; width: 100vw; height: 100dvh; z-index: 0; }
     
     /* 🌟 ล็อกขนาดกล่องด้านล่างให้สูง 380px คงที่ และอยู่ติดขอบล่างเสมอ */
     .fixed-bottom-card { 
@@ -29,12 +29,13 @@
       padding: 1.5rem;
     }
     
-    .full-page { position: fixed; inset: 0; z-index: 30; background: white; display: flex; flex-direction: column; }
+    /* 🌟 แก้ปัญหาหน้าจอทะลุขอบในมือถือด้วย 100dvh */
+    .full-page { position: fixed; top: 0; left: 0; width: 100vw; height: 100dvh; z-index: 30; background: white; display: flex; flex-direction: column; }
     .pac-container { z-index: 10000 !important; font-family: 'Kanit'; border-radius: 0.5rem; }
     .route-line { width: 2px; height: 20px; background-image: linear-gradient(to bottom, #cbd5e1 50%, transparent 50%); background-size: 2px 8px; margin: 2px 0; }
   </style>
 </head>
-<body class="h-screen w-screen m-0 flex flex-col overflow-hidden">
+<body class="h-[100dvh] w-screen m-0 flex flex-col overflow-hidden">
 
   <div id="map-bg" class="hidden"></div>
 
@@ -597,7 +598,7 @@
         }
     }
 
-    // โหลด Google Maps JavaScript API ⚠️อย่าลืมใส่ API Key ด้านล่างนี้
+    // ⚠️ อย่าลืมใส่ YOUR_GOOGLE_MAPS_API_KEY ของคุณตรงนี้นะครับ
     const script = document.createElement('script');
     script.src = "https://maps.googleapis.com/maps/api/js?key=YOUR_GOOGLE_MAPS_API_KEY&libraries=places&callback=mapsReady";
     document.head.appendChild(script);
