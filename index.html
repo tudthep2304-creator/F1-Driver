@@ -14,10 +14,10 @@
     @import url('https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;700&display=swap');
     body { font-family: 'Kanit', sans-serif; background-color: #f3f4f6; }
     
-    /* แผนที่พื้นหลังเต็มจอ */
+    /* แผนที่พื้นหลังเต็มจอ 100% แก้อาการขอบเทา */
     #map-bg { position: fixed; inset: 0; width: 100vw; height: 100vh; z-index: 0; }
     
-    /* ล็อกขนาดกล่องด้านล่างให้สูง 380px เท่ากันทุกหน้าและติดขอบล่าง */
+    /* 🌟 ล็อกขนาดกล่องด้านล่างให้สูง 380px คงที่เท่ากันทุกหน้า */
     .fixed-bottom-card { 
       position: absolute; bottom: 0; left: 0; right: 0;
       height: 380px; 
@@ -87,7 +87,7 @@
       </div>
       <div id="map-pickup" class="w-full flex-1 relative z-0 bg-gray-200"></div>
       
-      <div class="fixed-bottom-card bg-white z-10 -mt-6">
+      <div class="fixed-bottom-card bg-white z-10">
         <div class="w-12 h-1.5 bg-gray-300 rounded-full mx-auto mb-4 shrink-0"></div>
         <div class="flex justify-between items-center mb-3">
           <span class="text-xs text-gray-500"><i class="fas fa-arrows-alt text-indigo-400"></i> เลื่อนหมุดเพื่อเลือกจุดรับ</span>
@@ -106,7 +106,7 @@
       </div>
       <div id="map-dropoff" class="w-full flex-1 relative z-0 bg-gray-200"></div>
       
-      <div class="fixed-bottom-card bg-white z-10 -mt-6">
+      <div class="fixed-bottom-card bg-white z-10">
         <div class="w-12 h-1.5 bg-gray-300 rounded-full mx-auto mb-4 shrink-0"></div>
         <div class="flex justify-between items-center mb-3">
           <span class="text-xs text-gray-500"><i class="fas fa-arrows-alt text-indigo-400"></i> เลื่อนหมุดเพื่อเลือกจุดส่ง</span>
@@ -274,13 +274,10 @@
     }
 
     function getAutocompleteOptions() { return { bounds: chiangRaiBounds, componentRestrictions: { country: "th" }, strictBounds: true }; }
-    
     function updateAddressFromLatLng(latLng, inputId) {
       if (!geocoder) geocoder = new google.maps.Geocoder();
       geocoder.geocode({ location: latLng }, (results, status) => {
-        if (status === "OK" && results[0]) { 
-          document.getElementById(inputId).value = results[0].formatted_address.replace(', ประเทศไทย', '').replace(' ประเทศไทย', ''); 
-        }
+        if (status === "OK" && results[0]) { document.getElementById(inputId).value = results[0].formatted_address.replace(', ประเทศไทย', '').replace(' ประเทศไทย', ''); }
       });
     }
 
@@ -311,12 +308,8 @@
       mapPickup.addListener('dragend', () => { updateAddressFromLatLng(mapPickup.getCenter(), 'pickupSearch'); });
       mapPickup.addListener('center_changed', () => { markerPickup.setPosition(mapPickup.getCenter()); });
       setupMapPoiClick(mapPickup, markerPickup, 'pickupSearch');
-      
       const ac = new google.maps.places.Autocomplete(document.getElementById('pickupSearch'), getAutocompleteOptions());
-      ac.addListener('place_changed', () => { 
-        const p = ac.getPlace(); 
-        if (p.geometry) { mapPickup.setCenter(p.geometry.location); markerPickup.setPosition(p.geometry.location); mapPickup.setZoom(16); } 
-      });
+      ac.addListener('place_changed', () => { const p = ac.getPlace(); if (p.geometry) { mapPickup.setCenter(p.geometry.location); markerPickup.setPosition(p.geometry.location); mapPickup.setZoom(16); } });
     }
 
     function useCurrentLocation() {
@@ -338,12 +331,8 @@
       mapDropoff.addListener('dragend', () => { updateAddressFromLatLng(mapDropoff.getCenter(), 'dropoffSearch'); });
       mapDropoff.addListener('center_changed', () => { markerDropoff.setPosition(mapDropoff.getCenter()); });
       setupMapPoiClick(mapDropoff, markerDropoff, 'dropoffSearch');
-      
       const ac = new google.maps.places.Autocomplete(document.getElementById('dropoffSearch'), getAutocompleteOptions());
-      ac.addListener('place_changed', () => { 
-        const p = ac.getPlace(); 
-        if (p.geometry) { mapDropoff.setCenter(p.geometry.location); markerDropoff.setPosition(p.geometry.location); mapDropoff.setZoom(16); } 
-      });
+      ac.addListener('place_changed', () => { const p = ac.getPlace(); if (p.geometry) { mapDropoff.setCenter(p.geometry.location); markerDropoff.setPosition(p.geometry.location); mapDropoff.setZoom(16); } });
     }
 
     function initTrackingMap() {
@@ -401,11 +390,17 @@
         }
     }
 
+    function setupCustomMarkers(pickupLoc, dropoffLoc) {
+        if(!mapMarkerA) mapMarkerA = new google.maps.Marker({map: mapTracking, icon: "https://img.icons8.com/color/48/marker.png"});
+        if(!mapMarkerB) mapMarkerB = new google.maps.Marker({map: mapTracking, icon: "https://img.icons8.com/color/48/checked-user-male.png"});
+        mapMarkerA.setMap(mapTracking); mapMarkerB.setMap(mapTracking);
+        mapMarkerA.setPosition(pickupLoc); mapMarkerB.setPosition(dropoffLoc);
+    }
+
     function confirmPickup() {
         if (markerPickup) {
           const pos = markerPickup.getPosition();
-          bookingData.pickupLat = pos.lat();
-          bookingData.pickupLng = pos.lng();
+          bookingData.pickupLat = pos.lat(); bookingData.pickupLng = pos.lng();
           bookingData.pickupName = document.getElementById('pickupSearch').value || "จุดรับที่เลือก";
           showPage(3);
         }
@@ -414,18 +409,10 @@
     function confirmDropoff() {
         if (markerDropoff) {
           const pos = markerDropoff.getPosition();
-          bookingData.dropoffLat = pos.lat();
-          bookingData.dropoffLng = pos.lng();
+          bookingData.dropoffLat = pos.lat(); bookingData.dropoffLng = pos.lng();
           bookingData.dropoffName = document.getElementById('dropoffSearch').value || "จุดส่งที่เลือก";
           showPage(4);
         }
-    }
-
-    function setupCustomMarkers(pickupLoc, dropoffLoc) {
-        if(!mapMarkerA) mapMarkerA = new google.maps.Marker({map: mapTracking, icon: "https://maps.google.com/mapfiles/ms/icons/green-dot.png"});
-        if(!mapMarkerB) mapMarkerB = new google.maps.Marker({map: mapTracking, icon: "https://maps.google.com/mapfiles/ms/icons/red-dot.png"});
-        mapMarkerA.setMap(mapTracking); mapMarkerB.setMap(mapTracking);
-        mapMarkerA.setPosition(pickupLoc); mapMarkerB.setPosition(dropoffLoc);
     }
 
     function calculateFinalSummary() {
@@ -446,8 +433,7 @@
                 }, 100);
 
                 const distKm = (res.routes[0].legs[0].distance.value / 1000).toFixed(1);
-                bookingData.distKm = distKm;
-                bookingData.price = Math.floor(35 + (distKm * 10)); 
+                bookingData.distKm = distKm; bookingData.price = Math.floor(35 + (distKm * 10)); 
                 
                 document.getElementById('summaryDist').innerText = distKm + " กม.";
                 document.getElementById('summaryPrice').innerText = bookingData.price + " ฿";
@@ -457,7 +443,7 @@
 
     function submitBooking() {
         const phone = document.getElementById('userPhone').value.trim();
-        if(!phone || phone.length < 9) { alert("กรุณากรอกเบอร์โทรศัพท์ที่ติดต่อได้"); return; }
+        if(!phone || phone.length < 9) { alert("กรุณากรอกเบอร์โทรศัพท์ 10 หลัก ให้ครบถ้วนครับ"); return; }
 
         const payload = {
             userId: lineUserId, name: lineDisplayName, phone: phone,
@@ -486,17 +472,15 @@
         document.getElementById('trackPrice').innerText = "฿" + (data.price || bookingData.price);
         
         if(data.status === "รอดำเนินการ") {
-            showPage(5);
-            initTrackingMap();
+            showPage(5); initTrackingMap();
             
             setTimeout(() => {
                 const pickupPos = { lat: bookingData.pickupLat || bookingData.lat, lng: bookingData.pickupLng || bookingData.lng };
-                mapTracking.setCenter(pickupPos);
-                mapTracking.setZoom(16);
+                mapTracking.setCenter(pickupPos); mapTracking.setZoom(16);
                 
                 if(directionsRenderer) directionsRenderer.setDirections({routes: []});
                 if(mapMarkerA) mapMarkerA.setMap(null); 
-                if(!mapMarkerB) mapMarkerB = new google.maps.Marker({map: mapTracking, icon: "https://maps.google.com/mapfiles/ms/icons/green-dot.png"});
+                if(!mapMarkerB) mapMarkerB = new google.maps.Marker({map: mapTracking, icon: "https://img.icons8.com/color/48/marker.png"});
                 mapMarkerB.setPosition(pickupPos); mapMarkerB.setMap(mapTracking);
                 mapTracking.panBy(0, -120); 
             }, 100);
@@ -504,13 +488,11 @@
             statusIcon.className = "fas fa-search text-[#4458CC] animate-pulse";
             statusTitle.innerText = "กำลังค้นหารถ...";
             info.innerText = "ระบบกำลังค้นหาคนขับที่ใกล้ที่สุด กรุณารอสักครู่ครับ";
-            realtimeBox.classList.add('hidden');
-            driverAwayText.classList.add('hidden'); 
+            realtimeBox.classList.add('hidden'); driverAwayText.classList.add('hidden'); 
         } 
         else if(data.status === "รับงาน" || data.status === "ใกล้ถึงแล้ว" || data.status === "ถึงจุดรับแล้ว") {
-            showPage(5);
-            realtimeBox.classList.remove('hidden');
-            driverAwayText.classList.remove('hidden'); 
+            showPage(5); realtimeBox.classList.remove('hidden'); driverDistEl = document.getElementById('driverAwayText');
+            if (driverDistEl) driverDistEl.classList.remove('hidden'); 
 
             document.getElementById('realtimeDistLabel').innerText = "รถกำลังเดินทางมาหาคุณ";
             
@@ -531,28 +513,22 @@
             updateRealtimeDistance();
         } 
         else if (data.status === "รับผู้โดยสารแล้ว") {
-            showPage(6);
-            statusIcon.className = "fas fa-route text-[#4458CC]";
-            statusTitle.innerText = "ออกเดินทาง!";
-            info.innerText = "นั่งให้สบาย เรากำลังพาคุณไปส่งที่จุดหมาย";
-            
-            realtimeBox.classList.remove('hidden');
-            document.getElementById('realtimeDistLabel').innerText = "ระยะทางสู่จุดหมายปลายทาง";
-            driverAwayText.classList.add('hidden'); 
+            showPage(6); statusIcon.className = "fas fa-route text-[#4458CC]";
+            statusTitle.innerText = "ออกเดินทาง!"; info.innerText = "นั่งให้สบาย เรากำลังพาคุณไปส่งที่จุดหมาย";
+            realtimeBox.classList.remove('hidden'); document.getElementById('realtimeDistLabel').innerText = "ระยะทางสู่จุดหมายปลายทาง";
+            if (driverAwayText) driverAwayText.classList.add('hidden'); 
             updateRealtimeDistance();
         }
         else if (data.status === "เสร็จสิ้น") {
             if (currentPage >= 5) {
                 alert("🏁 ถึงที่หมายอย่างปลอดภัย ขอบคุณที่ใช้บริการครับ!");
-                db.ref('bookings/' + lineUserId).remove();
-                window.location.reload();
+                db.ref('bookings/' + lineUserId).remove(); window.location.reload();
             }
         }
         else if (data.status === "ยกเลิกโดยคนขับ") {
             if (currentPage >= 5) {
                 alert("⚠️ ขออภัย คนขับได้ทำการยกเลิกงานนี้ (คุณสามารถกดเรียกรถใหม่ได้ทันที)");
-                db.ref('bookings/' + lineUserId).remove();
-                window.location.reload();
+                db.ref('bookings/' + lineUserId).remove(); window.location.reload();
             }
         }
     }
@@ -570,33 +546,25 @@
         } else if (isGoingToDropoff) {
             origin = { lat: driverData.lat, lng: driverData.lng };
             destination = { lat: bookingData.dropLat || bookingData.dropoffLat, lng: bookingData.dropLng || bookingData.dropoffLng };
-        } else {
-            return;
-        }
+        } else { return; }
 
         directionsService.route({ origin: origin, destination: destination, travelMode: 'DRIVING' }, (res, stat) => {
             if(stat === 'OK') {
                 directionsRenderer.setDirections(res);
-                
-                setTimeout(() => {
-                    mapTracking.fitBounds(res.routes[0].bounds);
-                    mapTracking.panBy(0, -120); 
-                }, 100);
+                setTimeout(() => { mapTracking.fitBounds(res.routes[0].bounds); mapTracking.panBy(0, -120); }, 100);
 
                 if(mapMarkerA) mapMarkerA.setMap(null); 
                 if(!mapMarkerB) mapMarkerB = new google.maps.Marker({map: mapTracking});
-                
                 mapMarkerB.setMap(mapTracking);
-                mapMarkerB.setIcon(isGoingToPickup ? "https://maps.google.com/mapfiles/ms/icons/green-dot.png" : "https://maps.google.com/mapfiles/ms/icons/red-dot.png");
+                mapMarkerB.setIcon(isGoingToPickup ? "https://img.icons8.com/color/48/marker.png" : "https://img.icons8.com/color/48/checked-user-male.png");
                 mapMarkerB.setPosition(res.routes[0].legs[0].end_location);
 
                 const leg = res.routes[0].legs[0];
                 document.getElementById('realtimeTime').innerText = leg.duration.text;
                 document.getElementById('realtimeDist').innerText = leg.distance.text;
 
-                if (isGoingToPickup) {
-                  document.getElementById('driverAwayText').innerText = `ห่าง ${leg.distance.text}`; 
-                }
+                const driverAwayText = document.getElementById('driverAwayText');
+                if (isGoingToPickup && driverAwayText) { driverAwayText.innerText = `ห่าง ${leg.distance.text}`; }
             }
         });
     }
@@ -604,11 +572,11 @@
     function openGoogleMaps() {
         let url = "";
         if (bookingData.status === "รับงาน" || bookingData.status === "ใกล้ถึงแล้ว") {
-            url = `https://www.google.com/maps/dir/?api=1&origin=${driverData.lat},${driverData.lng}&destination=${bookingData.pickupLat},${bookingData.pickupLng}`;
+            url = `https://www.google.com/maps/dir/?api=1&origin=${driverData.lat},${driverData.lng}&destination=${bookingData.pickupLat},${bookingData.pickupLng}&travelmode=driving`;
         } else if (bookingData.status === "รับผู้โดยสารแล้ว") {
-            url = `https://www.google.com/maps/dir/?api=1&origin=${driverData.lat},${driverData.lng}&destination=${bookingData.dropLat},${bookingData.dropoffLat}`;
+            url = `https://www.google.com/maps/dir/?api=1&origin=${driverData.lat},${driverData.lng}&destination=${bookingData.dropLat},${bookingData.dropoffLat}&travelmode=driving`;
         } else {
-            url = `https://www.google.com/maps/dir/?api=1&origin=${bookingData.pickupLat},${bookingData.pickupLng}&destination=${bookingData.dropoffLat},${bookingData.dropoffLng}`;
+            url = `https://www.google.com/maps/dir/?api=1&origin=${bookingData.pickupLat},${bookingData.pickupLng}&destination=${bookingData.dropoffLat},${bookingData.dropoffLng}&travelmode=driving`;
         }
         window.open(url, '_blank');
     }
@@ -618,9 +586,7 @@
             db.ref('bookings/' + lineUserId).remove();
             const notifyUrl = `${APPS_SCRIPT_URL}?action=notify_driver&event=cancel_by_customer&customerId=${lineUserId}&name=${encodeURIComponent(lineDisplayName)}`;
             fetch(notifyUrl, { mode: 'no-cors' });
-            
-            alert("ยกเลิกงานเรียบร้อยแล้ว");
-            window.location.reload();
+            alert("ยกเลิกงานเรียบร้อยแล้ว"); window.location.reload();
         }
     }
 
@@ -628,7 +594,6 @@
     script.src = "https://maps.googleapis.com/maps/api/js?key=AIzaSyDsZ_tbFhH6fUXRz3I6C-tMshNwwrSevd4&libraries=places&callback=mapsReady";
     script.async = true; script.defer = true;
     document.head.appendChild(script);
-
   </script>
 </body>
 </html>
