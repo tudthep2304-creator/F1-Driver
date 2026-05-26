@@ -14,23 +14,30 @@
     @import url('https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;700&display=swap');
     body { font-family: 'Kanit', sans-serif; background-color: #f3f4f6; }
     
-    /* แผนที่พื้นหลังเต็มจอ 100% */
+    /* แผนที่พื้นหลังเต็มจอ 100% แก้อาการขอบเทา */
     #map-bg { position: fixed; inset: 0; width: 100vw; height: 100vh; z-index: 0; }
     
-    /* 🌟 เปลี่ยนเป็น position: fixed เพื่อล็อกให้กล่องขาวลอยติดขอบล่างของจอมือถือตลอดเวลา ไม่โดนดันหาย */
-    .fixed-bottom-card { 
-      position: fixed; 
-      bottom: 0; 
-      left: 0; 
-      right: 0;
+    /* 🌟 1. กล่องสำหรับหน้าเลือกจุดรับ/ส่ง (ต่อจากแผนที่ด้านล่าง) */
+    .bottom-panel { 
       height: 380px; 
       background: white; 
-      border-top-left-radius: 2rem; 
-      border-top-right-radius: 2rem; 
+      border-top-left-radius: 2rem; border-top-right-radius: 2rem; 
+      box-shadow: 0 -15px 30px rgba(0,0,0,0.15); 
+      z-index: 10;
+      display: flex; flex-direction: column;
+      padding: 1.5rem;
+      flex-shrink: 0; /* ห้ามโดนบีบขนาดเด็ดขาด */
+    }
+
+    /* 🌟 2. กล่องสำหรับหน้าสรุปและติดตามสถานะ (ลอยทับแผนที่) */
+    .overlay-panel { 
+      position: fixed; bottom: 0; left: 0; right: 0;
+      height: 380px; 
+      background: white; 
+      border-top-left-radius: 2rem; border-top-right-radius: 2rem; 
       box-shadow: 0 -15px 30px rgba(0,0,0,0.2); 
-      z-index: 100; /* ดันให้อยู่หน้าสุดเสมอ */
-      display: flex; 
-      flex-direction: column;
+      z-index: 100;
+      display: flex; flex-direction: column;
       padding: 1.5rem;
     }
     
@@ -84,7 +91,7 @@
       </div>
     </div>
 
-    <div id="page2" class="full-page pointer-events-auto hidden flex-col">
+    <div id="page2" class="full-page pointer-events-auto hidden">
       <div class="h-16 bg-[#2B3A6F] shadow-sm flex items-center justify-between px-4 z-10 text-white shrink-0">
         <button onclick="goHome()" class="p-2 text-xl w-10 h-10"><i class="fas fa-chevron-left"></i></button>
         <h3 class="font-medium text-lg">📍 เลือกจุดรับ</h3>
@@ -92,7 +99,7 @@
       </div>
       <div id="map-pickup" class="w-full flex-1 relative z-0 bg-gray-200"></div>
       
-      <div class="fixed-bottom-card bg-white pointer-events-auto">
+      <div class="bottom-panel relative z-10 -mt-6">
         <div class="w-12 h-1.5 bg-gray-300 rounded-full mx-auto mb-4 shrink-0"></div>
         <div class="flex justify-between items-center mb-3">
           <span class="text-xs text-gray-500"><i class="fas fa-arrows-alt text-indigo-400"></i> เลื่อนหมุดเพื่อเลือกจุดรับ</span>
@@ -103,7 +110,7 @@
       </div>
     </div>
 
-    <div id="page3" class="full-page pointer-events-auto hidden flex-col">
+    <div id="page3" class="full-page pointer-events-auto hidden">
       <div class="h-16 bg-[#2B3A6F] shadow-sm flex items-center justify-between px-4 z-10 text-white shrink-0">
         <button onclick="goBack()" class="p-2 text-xl w-10 h-10"><i class="fas fa-chevron-left"></i></button>
         <h3 class="font-medium text-lg">🏁 เลือกจุดส่ง</h3>
@@ -111,7 +118,7 @@
       </div>
       <div id="map-dropoff" class="w-full flex-1 relative z-0 bg-gray-200"></div>
       
-      <div class="fixed-bottom-card bg-white pointer-events-auto">
+      <div class="bottom-panel relative z-10 -mt-6">
         <div class="w-12 h-1.5 bg-gray-300 rounded-full mx-auto mb-4 shrink-0"></div>
         <div class="flex justify-between items-center mb-3">
           <span class="text-xs text-gray-500"><i class="fas fa-arrows-alt text-indigo-400"></i> เลื่อนหมุดเพื่อเลือกจุดส่ง</span>
@@ -121,7 +128,7 @@
       </div>
     </div>
 
-    <div id="page4" class="pointer-events-auto hidden fixed-bottom-card">
+    <div id="page4" class="pointer-events-auto hidden overlay-panel">
       <div class="w-12 h-1.5 bg-gray-300 rounded-full mx-auto mb-4 shrink-0"></div>
       <h2 class="text-xl font-bold text-center text-gray-800 mb-4 shrink-0">สรุปการเดินทาง</h2>
       
@@ -172,7 +179,7 @@
       </button>
     </div>
 
-    <div id="pageTracking" class="pointer-events-auto hidden fixed-bottom-card">
+    <div id="pageTracking" class="pointer-events-auto hidden overlay-panel">
       <div class="w-12 h-1.5 bg-gray-300 rounded-full mx-auto mb-4 shrink-0"></div>
       
       <div class="flex items-center justify-between border-b border-gray-100 pb-3 mb-4 shrink-0">
@@ -353,8 +360,12 @@
         });
     }
 
+    // 🌟 3. อัปเดต JavaScript แยกการซ่อนคลาสกล่องไม่ให้ตีกัน
     function showPage(pageNo) {
-      document.querySelectorAll('.full-page, .fixed-bottom-card, #pageLoading').forEach(el => el.classList.add('hidden'));
+      document.querySelectorAll('.full-page, .overlay-panel, #pageLoading').forEach(el => {
+          el.classList.add('hidden');
+          el.classList.remove('flex'); // ล้างสถานะ flex เก่า
+      });
       const nav = document.getElementById('navBar');
       const mapBg = document.getElementById('map-bg');
       currentPage = pageNo;
@@ -369,11 +380,11 @@
           document.getElementById('page3').classList.remove('hidden'); document.getElementById('page3').classList.add('flex');
           nav.classList.add('hidden'); mapBg.classList.add('hidden'); setTimeout(initDropoffMap, 100);
       } else if (pageNo === 4) {
-          document.getElementById('page4').classList.remove('hidden');
+          document.getElementById('page4').classList.remove('hidden'); document.getElementById('page4').classList.add('flex');
           nav.classList.remove('hidden'); mapBg.classList.remove('hidden'); document.getElementById('navTitle').innerText = "ยืนยันเรียกรถ";
           initTrackingMap(); calculateFinalSummary();
       } else if (pageNo === 5 || pageNo === 6) {
-          document.getElementById('pageTracking').classList.remove('hidden');
+          document.getElementById('pageTracking').classList.remove('hidden'); document.getElementById('pageTracking').classList.add('flex');
           nav.classList.remove('hidden'); mapBg.classList.remove('hidden'); document.getElementById('navTitle').innerText = "สถานะการเดินทาง";
           initTrackingMap();
       }
@@ -434,7 +445,7 @@
 
                 setTimeout(() => {
                     mapTracking.fitBounds(res.routes[0].bounds);
-                    mapTracking.panBy(0, -120); 
+                    mapTracking.panBy(0, 100); 
                 }, 100);
 
                 const distKm = (res.routes[0].legs[0].distance.value / 1000).toFixed(1);
@@ -487,7 +498,7 @@
                 if(mapMarkerA) mapMarkerA.setMap(null); 
                 if(!mapMarkerB) mapMarkerB = new google.maps.Marker({map: mapTracking, icon: "https://img.icons8.com/color/48/marker.png"});
                 mapMarkerB.setPosition(pickupPos); mapMarkerB.setMap(mapTracking);
-                mapTracking.panBy(0, -120); 
+                mapTracking.panBy(0, 100); 
             }, 100);
 
             statusIcon.className = "fas fa-search text-[#4458CC] animate-pulse";
@@ -556,7 +567,7 @@
         directionsService.route({ origin: origin, destination: destination, travelMode: 'DRIVING' }, (res, stat) => {
             if(stat === 'OK') {
                 directionsRenderer.setDirections(res);
-                setTimeout(() => { mapTracking.fitBounds(res.routes[0].bounds); mapTracking.panBy(0, -120); }, 100);
+                setTimeout(() => { mapTracking.fitBounds(res.routes[0].bounds); mapTracking.panBy(0, 100); }, 100);
 
                 if(mapMarkerA) mapMarkerA.setMap(null); 
                 if(!mapMarkerB) mapMarkerB = new google.maps.Marker({map: mapTracking});
