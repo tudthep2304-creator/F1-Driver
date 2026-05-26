@@ -565,7 +565,7 @@
                 document.getElementById('realtimeDist').innerText = leg.distance.text;
 
                 if (isGoingToPickup) {
-                  document.getElementById('driverAwayText').innerText = `ห่าง ${leg.distance.text}`; 
+                    document.getElementById('driverAwayText').innerText = `ห่าง ${leg.distance.text}`;
                 }
             }
         });
@@ -573,12 +573,15 @@
 
     function openGoogleMaps() {
         let url = "";
-        if (bookingData.status === "รับงาน" || bookingData.status === "ใกล้ถึงแล้ว") {
+        const destLat = bookingData.dropLat || bookingData.dropoffLat;
+        const destLng = bookingData.dropLng || bookingData.dropoffLng;
+
+        if (bookingData.status === "ใกล้ถึงแล้ว" || bookingData.status === "รับงาน" || bookingData.status === "ถึงจุดรับแล้ว") {
             url = `https://www.google.com/maps/dir/?api=1&origin=${driverData.lat},${driverData.lng}&destination=${bookingData.pickupLat},${bookingData.pickupLng}`;
         } else if (bookingData.status === "รับผู้โดยสารแล้ว") {
-            url = `https://www.google.com/maps/dir/?api=1&origin=${bookingData.pickupLat},${bookingData.pickupLng}&destination=${bookingData.dropLat},${bookingData.dropLng}`;
+            url = `https://www.google.com/maps/dir/?api=1&origin=${driverData.lat},${driverData.lng}&destination=${destLat},${destLng}`;
         } else {
-            url = `https://www.google.com/maps/dir/?api=1&origin=${bookingData.pickupLat},${bookingData.pickupLng}&destination=${bookingData.dropoffLat},${bookingData.dropoffLng}`;
+            url = `https://www.google.com/maps/dir/?api=1&origin=${bookingData.pickupLat},${bookingData.pickupLng}&destination=${destLat},${destLng}`;
         }
         window.open(url, '_blank');
     }
@@ -594,11 +597,10 @@
         }
     }
 
+    // โหลด Google Maps JavaScript API ⚠️อย่าลืมใส่ API Key ด้านล่างนี้
     const script = document.createElement('script');
-    script.src = "https://maps.googleapis.com/maps/api/js?key=AIzaSyDsZ_tbFhH6fUXRz3I6C-tMshNwwrSevd4&libraries=places&callback=mapsReady";
-    script.async = true; script.defer = true;
+    script.src = "https://maps.googleapis.com/maps/api/js?key=YOUR_GOOGLE_MAPS_API_KEY&libraries=places&callback=mapsReady";
     document.head.appendChild(script);
-
   </script>
 </body>
 </html>
