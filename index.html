@@ -118,10 +118,16 @@
     
     firebase.initializeApp({
       // ใส่ Firebase Config ตรงนี้
-      apiKey: "AIzaSyDkpd1lM6-ltQrQKMMikaAL9W5plm9oLQg",
-  authDomain: "my-ride-app-df14b.firebaseapp.com",
-  databaseURL: "https://my-ride-app-df14b-default-rtdb.asia-southeast1.firebasedatabase.app",
-  projectId: "my-ride-app-df14b",
+      firebase.initializeApp({
+      apiKey: "AIzaSyBNtaYaX1OW-86_9EGiVN9EpgPzWOX_twQ",
+      authDomain: "myride-chiangrai.firebaseapp.com",
+      databaseURL: "https://myride-chiangrai-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "myride-chiangrai",
+      storageBucket: "myride-chiangrai.firebasestorage.app",
+      messagingSenderId: "1048189690454",
+      appId: "1:1048189690454:web:7c2c4c9bbf12b9c77ed1f7"
+    });
+    const db = firebase.database();
     });
     const db = firebase.database();
 
