@@ -2,601 +2,377 @@
 <html lang="th">
 <head>
   <meta charset="UTF-8">
-  <title>บริการรถรับส่ง (เชียงราย)</title>
+  <title>F1 Driver - เรียกรถ</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
   <script charset="utf-8" src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
-  
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;700&display=swap');
     body { font-family: 'Kanit', sans-serif; background-color: #f3f4f6; }
-    
-    /* 🌟 ล็อกแผนที่ให้เต็มจอและใส่พื้นหลังสีเทาอ่อนไว้เผื่อดาวน์โหลดช้า */
-    #map-bg { position: fixed; inset: 0; width: 100vw; height: 100vh; z-index: 0; background-color: #e5e7eb; }
-    
-    /* 🌟 ล็อกขนาดกล่องด้านล่างให้สูง 380px คงที่เท่ากันทุกหน้า */
-    .fixed-bottom-card { 
-      position: fixed; bottom: 0; left: 0; right: 0;
-      height: 380px; 
-      background: white; 
-      border-top-left-radius: 2rem; border-top-right-radius: 2rem; 
-      box-shadow: 0 -15px 30px rgba(0,0,0,0.15); 
-      z-index: 100;
-      display: flex; flex-direction: column;
-      padding: 1.5rem;
-    }
-    
-    .full-page { position: fixed; inset: 0; z-index: 30; background: white; display: flex; flex-direction: column; }
-    .pac-container { z-index: 10000 !important; font-family: 'Kanit'; border-radius: 0.5rem; }
-    .route-line { width: 2px; height: 20px; background-image: linear-gradient(to bottom, #cbd5e1 50%, transparent 50%); background-size: 2px 8px; margin: 2px 0; }
+    .map-container { position: fixed; inset: 0; width: 100vw; height: 100vh; z-index: 0; background: #e5e7eb; }
+    .ui-panel { position: fixed; bottom: 0; left: 0; right: 0; background: white; border-top-left-radius: 24px; border-top-right-radius: 24px; box-shadow: 0 -10px 25px rgba(0,0,0,0.15); z-index: 10; display: flex; flex-direction: column; padding: 20px; max-height: 55vh; overflow-y: auto;}
+    .full-page { position: fixed; inset: 0; z-index: 30; background: white; flex-direction: column; }
+    .pac-container { z-index: 10000 !important; font-family: 'Kanit'; }
   </style>
 </head>
-<body class="h-screen w-screen m-0 flex flex-col overflow-hidden">
+<body class="h-screen w-screen m-0 overflow-hidden">
 
-  <div id="map-bg" class="hidden"></div>
+  <div id="map" class="map-container hidden"></div>
 
-  <div id="navBar" class="hidden fixed top-0 left-0 right-0 h-16 bg-[#2B3A6F] flex items-center justify-between px-4 shadow-md z-20">
-    <button onclick="goBack()" class="text-white text-2xl p-2 w-10 h-10 flex items-center justify-center hover:bg-white/10 rounded-full transition"><i class="fas fa-chevron-left"></i></button>
-    <h1 id="navTitle" class="text-white text-lg font-medium">ยืนยันเรียกรถ</h1>
-    <button onclick="goHome()" class="text-white text-xl p-2 w-10 h-10 flex items-center justify-center hover:bg-white/10 rounded-full transition"><i class="fas fa-home"></i></button>
+  <div id="navBar" class="hidden fixed top-0 w-full h-16 bg-[#2B3A6F] flex items-center justify-between px-4 z-20 text-white shadow-md">
+    <button onclick="goBack()" class="p-2 text-2xl"><i class="fas fa-chevron-left"></i></button>
+    <h1 id="navTitle" class="text-lg font-bold">F1 Driver</h1>
+    <button onclick="goHome()" class="p-2 text-xl"><i class="fas fa-home"></i></button>
   </div>
 
-  <div class="flex flex-col h-full w-full max-w-md mx-auto relative pointer-events-none">
-    
-    <div id="pageLoading" class="pointer-events-auto bg-white h-full w-full fixed top-0 left-0 z-50 flex flex-col items-center justify-center">
-      <div class="animate-spin rounded-full h-12 w-12 border-b-4 border-[#2B3A6F] border-t-transparent mb-4"></div>
-      <p class="font-bold text-gray-600 mt-4">กำลังเชื่อมต่อระบบ...</p>
+  <div id="page1" class="full-page flex">
+    <div class="bg-[#2B3A6F] text-white p-6 text-center shadow-lg"><h1 class="text-2xl font-black">F1 Driver</h1></div>
+    <div class="p-6 space-y-6 flex-1 flex flex-col justify-center">
+      <div class="text-center">
+        <img id="userPic" class="w-24 h-24 rounded-full mx-auto mb-4 border-4 border-[#2B3A6F] object-cover" src="https://via.placeholder.com/150">
+        <h2 class="text-xl font-bold" id="userName">กำลังโหลด...</h2>
+      </div>
+      <div class="bg-blue-50 p-6 rounded-2xl text-center border border-blue-100">
+        <h3 class="text-gray-600 mb-2">สถานะผู้ขับขี่</h3>
+        <div id="driverStatus" class="text-2xl font-black text-gray-400">กำลังโหลด...</div>
+      </div>
+      <button id="btnStart" onclick="showPage(2)" class="w-full bg-[#2B3A6F] text-white py-4 rounded-xl font-bold text-lg opacity-50 cursor-not-allowed transition" disabled>เริ่มต้นเรียกรถ</button>
     </div>
+  </div>
 
-    <div id="page1" class="full-page pointer-events-auto hidden">
-      <div class="bg-[#2B3A6F] text-white p-5 text-center shadow-md">
-        <h1 class="text-xl font-black">🚕 เรียกรถด่วน (เชียงราย)</h1>
+  <div id="page2" class="hidden">
+    <div class="ui-panel h-[350px]">
+      <div class="flex justify-between items-center mb-3">
+        <p class="text-sm font-bold text-gray-700">📍 เลือกจุดรับ</p>
+        <button onclick="useCurrentLocation()" class="text-xs bg-blue-100 text-blue-700 px-3 py-1 rounded-full"><i class="fas fa-crosshairs"></i> ตำแหน่งปัจจุบัน</button>
       </div>
-      <div class="p-6 space-y-6 mt-6">
-        <div class="text-center">
-          <img id="userPicture" class="w-24 h-24 rounded-full mx-auto mb-3 shadow-lg border-4 border-white object-cover" src="https://via.placeholder.com/150">
-          <h2 class="text-xl font-bold text-gray-800" id="userName">คุณ...</h2>
-        </div>
-        <div class="bg-indigo-50 p-6 rounded-3xl text-center shadow-inner border border-indigo-100">
-          <h3 class="text-gray-500 text-sm mb-2">สถานะรถในพื้นที่</h3>
-          <div id="driverStatusDisplay" class="text-2xl font-black text-emerald-600 mb-4">กำลังโหลด...</div>
-          <div class="flex justify-around bg-white p-4 rounded-2xl shadow-sm">
-            <div>
-              <p class="text-xs text-gray-400">คิวปัจจุบัน</p>
-              <p class="font-bold text-xl text-gray-700" id="queueCount">0</p>
-            </div>
-            <div class="w-px bg-gray-200"></div>
-            <div>
-              <p class="text-xs text-gray-400">เวลารอโดยประมาณ</p>
-              <p class="font-bold text-xl text-[#2B3A6F]" id="waitTime">0 นาที</p>
-            </div>
-          </div>
-        </div>
-        <button id="btnStartBooking" onclick="goToPage(2)" class="w-full bg-[#2B3A6F] text-white py-4 rounded-2xl font-bold text-lg shadow-lg hover:bg-blue-900 transition mt-4">เริ่มต้นเรียกรถ</button>
-      </div>
+      <input type="text" id="pickupSearch" class="w-full p-4 bg-gray-100 rounded-xl mb-4 outline-none font-medium" placeholder="ค้นหาสถานที่...">
+      <p class="text-xs text-gray-500 mb-2 truncate" id="pickupAddressText">กำลังดึงที่อยู่...</p>
+      <button onclick="confirmPickup()" class="w-full bg-[#2B3A6F] text-white py-4 rounded-xl font-bold mt-auto">ถัดไป</button>
     </div>
+  </div>
 
-    <div id="page2" class="full-page pointer-events-auto hidden flex-col">
-      <div class="h-16 bg-[#2B3A6F] shadow-sm flex items-center justify-between px-4 z-10 text-white shrink-0">
-        <button onclick="goHome()" class="p-2 text-xl w-10 h-10"><i class="fas fa-chevron-left"></i></button>
-        <h3 class="font-medium text-lg">📍 เลือกจุดรับ</h3>
-        <div class="w-10"></div>
+  <div id="page3" class="hidden">
+    <div class="ui-panel h-[350px]">
+      <div class="flex justify-between items-center mb-3">
+        <p class="text-sm font-bold text-gray-700">🏁 เลือกจุดส่ง</p>
       </div>
-      <div id="map-pickup" class="w-full flex-1 relative z-0 bg-gray-200"></div>
-      <div class="fixed-bottom-card bg-white z-10">
-        <div class="w-12 h-1.5 bg-gray-300 rounded-full mx-auto mb-4 shrink-0"></div>
-        <div class="flex justify-between items-center mb-3">
-          <span class="text-xs text-gray-500"><i class="fas fa-arrows-alt text-indigo-400"></i> เลื่อนหมุดเพื่อเลือกจุดรับ</span>
-          <button onclick="useCurrentLocation()" class="text-xs bg-indigo-50 text-[#2B3A6F] px-3 py-1.5 rounded-full font-bold shadow-sm border border-indigo-100"><i class="fas fa-crosshairs"></i> พิกัดปัจจุบัน</button>
-        </div>
-        <input type="text" id="pickupSearch" class="w-full p-4 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-[#2B3A6F] mb-auto font-semibold text-gray-700 placeholder-gray-400" placeholder="ค้นหาสถานที่จุดรับ...">
-        <button onclick="confirmPickup()" class="w-full bg-[#2B3A6F] text-white h-14 rounded-xl font-bold text-lg shadow-md mt-4 shrink-0 hover:bg-blue-800 transition">ยืนยันจุดรับ</button>
-      </div>
+      <input type="text" id="dropoffSearch" class="w-full p-4 bg-gray-100 rounded-xl mb-4 outline-none font-medium" placeholder="ค้นหาสถานที่...">
+      <p class="text-xs text-gray-500 mb-2 truncate" id="dropoffAddressText">กำลังดึงที่อยู่...</p>
+      <button onclick="confirmDropoff()" class="w-full bg-[#2B3A6F] text-white py-4 rounded-xl font-bold mt-auto">ถัดไป</button>
     </div>
+  </div>
 
-    <div id="page3" class="full-page pointer-events-auto hidden flex-col">
-      <div class="h-16 bg-[#2B3A6F] shadow-sm flex items-center justify-between px-4 z-10 text-white shrink-0">
-        <button onclick="goBack()" class="p-2 text-xl w-10 h-10"><i class="fas fa-chevron-left"></i></button>
-        <h3 class="font-medium text-lg">🏁 เลือกจุดส่ง</h3>
-        <div class="w-10"></div>
+  <div id="page4" class="hidden">
+    <div class="ui-panel h-[450px]">
+      <h2 class="font-bold text-center border-b pb-3 mb-3">สรุปการเดินทาง</h2>
+      <div class="bg-gray-50 p-3 rounded-xl mb-3 border text-sm">
+        <p class="text-gray-500 text-xs">จุดรับ: <span id="sumPick" class="text-gray-800 font-bold block truncate">...</span></p>
+        <p class="text-gray-500 text-xs mt-2">จุดส่ง: <span id="sumDrop" class="text-gray-800 font-bold block truncate">...</span></p>
       </div>
-      <div id="map-dropoff" class="w-full flex-1 relative z-0 bg-gray-200"></div>
-      <div class="fixed-bottom-card bg-white z-10">
-        <div class="w-12 h-1.5 bg-gray-300 rounded-full mx-auto mb-4 shrink-0"></div>
-        <div class="flex justify-between items-center mb-3">
-          <span class="text-xs text-gray-500"><i class="fas fa-arrows-alt text-indigo-400"></i> เลื่อนหมุดเพื่อเลือกจุดส่ง</span>
-        </div>
-        <input type="text" id="dropoffSearch" class="w-full p-4 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-[#2B3A6F] mb-auto font-semibold text-gray-700 placeholder-gray-400" placeholder="ค้นหาสถานที่จุดส่ง...">
-        <button onclick="confirmDropoff()" class="w-full bg-[#2B3A6F] text-white h-14 rounded-xl font-bold text-lg shadow-md mt-4 shrink-0 hover:bg-blue-800 transition">ยืนยันจุดส่ง</button>
-      </div>
-    </div>
-
-    <div id="page4" class="pointer-events-auto hidden fixed-bottom-card">
-      <div class="w-12 h-1.5 bg-gray-300 rounded-full mx-auto mb-4 shrink-0"></div>
-      <h2 class="text-xl font-bold text-center text-gray-800 mb-4 shrink-0">สรุปการเดินทาง</h2>
-      <div class="bg-white border border-gray-100 shadow-sm rounded-2xl p-3 mb-3 shrink-0">
-        <div class="flex items-center gap-3 mb-1">
-          <span class="w-6 h-6 rounded-full bg-green-600 text-white flex items-center justify-center font-bold text-xs shadow-sm shrink-0">A</span>
-          <div class="flex-1 overflow-hidden">
-            <p class="text-[10px] text-gray-400 font-medium -mb-1">จุดรับ</p>
-            <p class="text-sm font-semibold text-gray-800 truncate" id="summaryPickup">...</p>
-          </div>
-        </div>
-        <div class="ml-3 route-line"></div>
-        <div class="flex items-center gap-3 mt-1">
-          <span class="w-6 h-6 rounded-full bg-red-600 text-white flex items-center justify-center font-bold text-xs shadow-sm shrink-0">B</span>
-          <div class="flex-1 overflow-hidden">
-             <p class="text-[10px] text-gray-400 font-medium -mb-1">จุดส่ง</p>
-            <p class="text-sm font-semibold text-gray-800 truncate" id="summaryDropoff">...</p>
-          </div>
-        </div>
-      </div>
-      <div class="flex justify-between items-center mb-auto px-2">
-        <div class="flex items-center gap-2">
-            <div class="w-8 h-8 bg-emerald-50 rounded-full flex items-center justify-center border border-emerald-100">
-                <i class="fas fa-car-side text-emerald-600"></i>
-            </div>
-            <div>
-                <p class="text-[10px] font-bold text-gray-500">M-Ride Econ</p>
-                <p class="text-xs font-bold text-gray-800" id="summaryDist">0 กม.</p>
-            </div>
-        </div>
-        <div class="text-right">
-            <p class="text-[10px] text-gray-400 font-bold">ราคาเหมาจ่าย</p>
-            <p class="text-xl font-black text-emerald-600 leading-none" id="summaryPrice">0 ฿</p>
-        </div>
-      </div>
-      <div class="relative mt-2 shrink-0">
-          <div class="absolute left-4 top-1/2 -translate-y-1/2 flex items-center gap-2 text-gray-500 pointer-events-none">
-              <i class="fas fa-phone-alt"></i>
-              <span class="text-xs font-medium border-r pr-2 border-gray-300">เบอร์โทร</span>
-          </div>
-          <input type="tel" id="userPhone" autocomplete="tel" class="w-full bg-gray-50 rounded-xl h-12 pl-[100px] pr-4 text-gray-800 font-semibold text-sm border border-gray-200 outline-none focus:ring-2 focus:ring-[#2B3A6F]" placeholder="กรอกเบอร์ 10 หลัก" maxlength="10">
-      </div>
-      <button onclick="submitBooking()" class="w-full h-14 bg-[#4458CC] rounded-xl text-white font-bold text-lg shadow-lg hover:bg-blue-700 transition mt-3 shrink-0">
-          กดยืนยันเรียกรถ
-      </button>
-    </div>
-
-    <div id="pageTracking" class="pointer-events-auto hidden fixed-bottom-card">
-      <div class="w-12 h-1.5 bg-gray-300 rounded-full mx-auto mb-4 shrink-0"></div>
-      <div class="flex items-center justify-between border-b border-gray-100 pb-3 mb-4 shrink-0">
-        <div class="flex items-center gap-3">
-            <div class="w-10 h-10 bg-indigo-50 rounded-full flex items-center justify-center border border-indigo-100">
-                <i class="fas fa-hourglass-half text-[#4458CC] animate-pulse" id="statusIcon"></i>
-            </div>
-            <h2 class="text-gray-800 text-lg font-bold" id="trackStatus">รอคนขับรับงาน...</h2>
-        </div>
-        <span id="trackPrice" class="px-3 py-1 rounded-full bg-emerald-100 text-emerald-700 font-black text-base border border-emerald-200">฿0</span>
-      </div>
-      <div id="realtimeDistanceBox" class="hidden bg-[#2B3A6F]/5 p-3 rounded-xl border border-[#2B3A6F]/10 flex items-center gap-4 mb-3 shrink-0">
-        <div class="bg-white text-[#4458CC] w-10 h-10 rounded-full flex items-center justify-center shrink-0 shadow-sm border border-gray-100">
-           <i class="fas fa-car-side"></i>
+      <div class="flex justify-between bg-blue-50 p-3 rounded-xl mb-3 text-sm">
+        <div>
+          <p class="text-gray-500 text-xs">ระยะทาง</p>
+          <p class="font-bold text-blue-700"><span id="sumDist">0</span> กม.</p>
         </div>
         <div>
-          <p class="text-xs text-[#4458CC] font-bold" id="realtimeDistLabel">รถกำลังเดินทางมาหาคุณ</p>
-          <p class="text-sm font-black text-gray-800"><span id="realtimeTime">คำนวณ...</span> <span class="text-xs font-medium text-gray-500">(<span id="realtimeDist">...</span>)</span></p>
+          <p class="text-gray-500 text-xs">เวลารอ</p>
+          <p class="font-bold text-blue-700"><span id="sumWait">0</span> นาที</p>
+        </div>
+        <div class="text-right">
+          <p class="text-gray-500 text-xs">ราคา</p>
+          <p class="font-black text-xl text-green-600"><span id="sumPrice">0</span> ฿</p>
         </div>
       </div>
-      <div class="bg-gray-50 rounded-xl p-3 flex items-center gap-3 border border-gray-100 relative mb-auto">
-          <i class="fas fa-info-circle text-[#4458CC]"></i>
-          <p class="text-gray-600 text-xs font-medium" id="trackInfo">กำลังค้นหารถที่ใกล้ที่สุด กรุณารอ...</p>
-          <p id="driverAwayText" class="absolute top-1/2 right-3 -translate-y-1/2 text-xs font-bold text-[#4458CC] bg-white px-2 py-1 rounded shadow-sm hidden">ห่าง 0 กม.</p>
-      </div>
-      <button onclick="openGoogleMaps()" class="w-full h-12 bg-indigo-50 rounded-xl flex items-center justify-center gap-2 text-[#4458CC] font-bold text-sm border border-indigo-100 hover:bg-blue-100 transition shadow-sm mt-3 shrink-0">
-          <i class="fas fa-map-marked-alt text-base"></i> เปิดนำทาง GPS (Google Maps)
-      </button>
-      <button id="btnCancel" onclick="cancelBooking()" class="w-full h-12 bg-rose-50 rounded-xl flex items-center justify-center gap-2 text-rose-600 font-bold text-sm border border-rose-100 hover:bg-rose-100 transition mt-3 shrink-0">
-          <i class="fas fa-times"></i> ยกเลิกเรียกรถ
-      </button>
+      <input type="tel" id="userPhone" placeholder="เบอร์โทรติดต่อ (10 หลัก)" class="w-full p-3 border rounded-xl mb-4 text-center font-bold" maxlength="10">
+      <button onclick="submitBooking()" class="w-full bg-green-600 text-white py-4 rounded-xl font-bold text-lg mt-auto">ยืนยันเรียกรถ</button>
     </div>
+  </div>
 
+  <div id="pageTracking" class="hidden">
+    <div class="ui-panel h-[350px]">
+      <div class="flex justify-between items-center border-b pb-3 mb-3">
+        <h2 class="font-black text-indigo-700 text-lg" id="trackStatus">รอผู้ขับขี่ตอบรับ...</h2>
+        <span class="bg-gray-100 px-3 py-1 rounded-full font-bold text-gray-700" id="trackPrice">฿0</span>
+      </div>
+      
+      <div class="mb-4">
+        <p class="text-xs text-gray-400">จาก: <span class="font-bold text-gray-700" id="trackPick">...</span></p>
+        <p class="text-xs text-gray-400">ถึง: <span class="font-bold text-gray-700" id="trackDrop">...</span></p>
+      </div>
+
+      <button onclick="openNavMap()" class="w-full bg-blue-50 text-blue-600 py-3 rounded-xl font-bold mb-2 flex items-center justify-center gap-2 border border-blue-200">
+        <i class="fas fa-location-arrow"></i> แผนที่นำทาง (Google Maps)
+      </button>
+      <button id="btnCancel" onclick="cancelBooking()" class="w-full bg-red-50 text-red-600 py-3 rounded-xl font-bold border border-red-200 mt-auto">ยกเลิกเรียกรถ</button>
+    </div>
   </div>
 
   <script>
-    const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwwdopAPESHRrHEYTSa-CzFMbh0JX9WHUa37PMEJmxDkah7ui67cVtOn68cnM-2DtmR/exec"; 
-    const MY_LIFF_ID = "2010188449-b9Yq1R2L";
+    // --- ตั้งค่าระบบ ---
+    const APPS_SCRIPT_URL = "ใส่_URL_APPS_SCRIPT_ที่นี่"; // จะอธิบายด้านล่าง
+    const MY_LIFF_ID = "ใส่_LIFF_ID_ผู้โดยสาร";
     
-    const firebaseConfig = {
-      apiKey: "AIzaSyBNtaYaX1OW-86_9EGiVN9EpgPzWOX_twQ",
-      authDomain: "myride-chiangrai.firebaseapp.com",
-      databaseURL: "https://myride-chiangrai-default-rtdb.asia-southeast1.firebasedatabase.app",
-      projectId: "myride-chiangrai",
-      storageBucket: "myride-chiangrai.firebasestorage.app",
-      messagingSenderId: "1048189690454",
-      appId: "1:1048189690454:web:7c2c4c9bbf12b9c77ed1f7"
-    };
-    firebase.initializeApp(firebaseConfig);
+    firebase.initializeApp({
+      // ใส่ Firebase Config ตรงนี้
+      apiKey: "AIzaSyDkpd1lM6-ltQrQKMMikaAL9W5plm9oLQg",
+  authDomain: "my-ride-app-df14b.firebaseapp.com",
+  databaseURL: "https://my-ride-app-df14b-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "my-ride-app-df14b",
+    });
     const db = firebase.database();
 
-    let geocoder, placesService;
-    let mapPickup, mapDropoff, markerPickup, markerDropoff;
-    let mapTracking, directionsService, directionsRenderer, markerDriver;
-    let mapMarkerA, mapMarkerB; 
-    
-    const chiangRaiCenter = { lat: 19.910479, lng: 99.840576 };
-    const chiangRaiBounds = { north: 20.46, south: 18.91, east: 100.56, west: 99.16 };
-    
-    let lineUserId = "", lineDisplayName = "";
-    let driverData = { lat: chiangRaiCenter.lat, lng: chiangRaiCenter.lng, status: "ปิดระบบ" };
-    let bookingData = { pickupLat: 0, pickupLng: 0, pickupName: "", dropoffLat: 0, dropoffLng: 0, dropoffName: "", distKm: 0, price: 0, status: "" };
-    let currentPage = 1;
+    // ตัวแปรส่วนกลาง
+    let map, directionsService, directionsRenderer, geocoder, placesService;
+    let markerPick, markerDrop, markerDriver;
+    let lineUserId = "", lineName = "";
+    let driverData = { lat: 19.910479, lng: 99.840576, status: "ออฟไลน์" };
+    let bookData = { pLat:0, pLng:0, pName:"", dLat:0, dLng:0, dName:"", price:0, status:"" };
+    let currentStep = 1;
 
-    window.mapsReady = function() {
-      liff.init({ liffId: MY_LIFF_ID }).then(() => {
-        if (liff.isLoggedIn()) {
-          liff.getProfile().then(profile => {
-            lineUserId = profile.userId; lineDisplayName = profile.displayName;
-            document.getElementById('userName').innerText = "คุณ " + profile.displayName;
-            document.getElementById('userPicture').src = profile.pictureUrl || 'https://via.placeholder.com/150';
-            initBackendListeners();
-          });
-        } else { liff.login(); }
-      });
-    };
+    // 1. เริ่มต้น LIFF และดึงข้อมูล
+    liff.init({ liffId: Uc293fb578c6db9a9106fc0fd0f40c076 }).then(() => {
+      if(liff.isLoggedIn()){
+        liff.getProfile().then(p => {
+          lineUserId = p.userId; lineName = p.displayName;
+          document.getElementById('userName').innerText = lineName;
+          document.getElementById('userPic').src = p.pictureUrl;
+          initApp();
+        });
+      } else { liff.login(); }
+    });
 
-    function initBackendListeners() {
+    function initApp() {
+      // ฟังสถานะคนขับ
       db.ref('driver').on('value', snap => {
         const d = snap.val();
         if(d) {
-            driverData = d;
-            updatePage1DriverStatus();
-            if(currentPage >= 5) updateRealtimeDistance();
+          driverData = d;
+          let ds = document.getElementById('driverStatus');
+          let btn = document.getElementById('btnStart');
+          if(d.status === "ออนไลน์") {
+            ds.innerText = "🟢 ออนไลน์"; ds.className = "text-2xl font-black text-green-600";
+            btn.disabled = false; btn.classList.remove('opacity-50', 'cursor-not-allowed');
+          } else {
+            ds.innerText = "🔴 ออฟไลน์"; ds.className = "text-2xl font-black text-red-500";
+            btn.disabled = true; btn.classList.add('opacity-50', 'cursor-not-allowed');
+          }
+          if(currentStep >= 5) updateRealtimeMap();
         }
       });
-      db.ref('bookings').on('value', snap => {
-        const bookings = snap.val() || {};
-        const qCount = Object.keys(bookings).length;
-        document.getElementById('queueCount').innerText = qCount;
-        document.getElementById('waitTime').innerText = (qCount * 15) + " นาที";
-        
-        if(bookings[lineUserId]) {
-            handleTrackingLogic(bookings[lineUserId]);
-        } else {
-            if (currentPage === 1) showPage(1);
-        }
+
+      // จำสถานะลูกค้า
+      db.ref('bookings/' + lineUserId).on('value', snap => {
+        const b = snap.val();
+        if(b) { bookData = b; handleTracking(); } 
+        else if (currentStep === 5) window.location.reload();
       });
     }
 
-    function getAutocompleteOptions() { return { bounds: chiangRaiBounds, componentRestrictions: { country: "th" }, strictBounds: true }; }
-    function updateAddressFromLatLng(latLng, inputId) {
-      if (!geocoder) geocoder = new google.maps.Geocoder();
-      geocoder.geocode({ location: latLng }, (results, status) => {
-        if (status === "OK" && results[0]) { document.getElementById(inputId).value = results[0].formatted_address.replace(', ประเทศไทย', '').replace(' ประเทศไทย', ''); }
+    // 2. แผนที่พื้นฐาน
+    function initMap() {
+      if(map) return;
+      map = new google.maps.Map(document.getElementById('map'), { 
+        zoom: 16, center: {lat: driverData.lat, lng: driverData.lng}, mapTypeId: 'hybrid', disableDefaultUI: true, gestureHandling: 'greedy' 
       });
+      directionsService = new google.maps.DirectionsService();
+      directionsRenderer = new google.maps.DirectionsRenderer({ map: map, suppressMarkers: true, polylineOptions: {strokeColor:'#2B3A6F', strokeWeight:5} });
+      geocoder = new google.maps.Geocoder();
+      placesService = new google.maps.places.PlacesService(map);
+      
+      markerPick = new google.maps.Marker({map: map, icon: "https://img.icons8.com/color/48/marker.png", zIndex: 2});
+      markerDrop = new google.maps.Marker({map: map, icon: "https://img.icons8.com/color/48/flag.png", zIndex: 2});
+      markerDriver = new google.maps.Marker({map: map, icon: "https://img.icons8.com/color/48/car-top-view.png", zIndex: 3});
+
+      map.addListener('dragend', () => updateAddressBox());
     }
 
-    function setupMapPoiClick(mapObj, markerObj, searchInputId) {
-      mapObj.addListener('click', (event) => {
-        if (event.placeId) {
-          event.stop(); 
-          if (!placesService) placesService = new google.maps.places.PlacesService(mapObj);
-          placesService.getDetails({ placeId: event.placeId, fields: ['name', 'geometry'] }, (place, status) => {
-            if (status === google.maps.places.PlacesServiceStatus.OK && place.geometry) {
-              mapObj.setCenter(place.geometry.location); markerObj.setPosition(place.geometry.location);
-              document.getElementById(searchInputId).value = place.name;
-            }
-          });
-        } else {
-          mapObj.setCenter(event.latLng); markerObj.setPosition(event.latLng);
-          updateAddressFromLatLng(event.latLng, searchInputId);
-        }
-      });
-    }
+    // จัดการ UI
+    function showPage(page) {
+      currentStep = page;
+      [1,2,3,4,'Tracking'].forEach(p => document.getElementById('page'+p).classList.add('hidden'));
+      document.getElementById('page' + page).classList.remove('hidden');
+      
+      if(page > 1) {
+        document.getElementById('navBar').classList.remove('hidden');
+        document.getElementById('map').classList.remove('hidden');
+        initMap();
+        google.maps.event.trigger(map, 'resize');
+      }
 
-    function initPickupMap() {
-      if (typeof google === 'undefined' || !google.maps) return setTimeout(initPickupMap, 300);
-      if (mapPickup) return; 
-      mapPickup = new google.maps.Map(document.getElementById("map-pickup"), { zoom: 16, center: chiangRaiCenter, mapTypeControl: false, mapTypeId: 'hybrid', gestureHandling: "greedy", restriction: { latLngBounds: chiangRaiBounds, strictBounds: false }});
-      markerPickup = new google.maps.Marker({ position: chiangRaiCenter, map: mapPickup, draggable: false });
-      updateAddressFromLatLng(chiangRaiCenter, 'pickupSearch');
-      mapPickup.addListener('dragend', () => { updateAddressFromLatLng(mapPickup.getCenter(), 'pickupSearch'); });
-      mapPickup.addListener('center_changed', () => { markerPickup.setPosition(mapPickup.getCenter()); });
-      setupMapPoiClick(mapPickup, markerPickup, 'pickupSearch');
-      const ac = new google.maps.places.Autocomplete(document.getElementById('pickupSearch'), getAutocompleteOptions());
-      ac.addListener('place_changed', () => { const p = ac.getPlace(); if (p.geometry) { mapPickup.setCenter(p.geometry.location); markerPickup.setPosition(p.geometry.location); mapPickup.setZoom(16); } });
-    }
-
-    function useCurrentLocation() {
-      navigator.geolocation.getCurrentPosition(p => {
-        const pos = { lat: p.coords.latitude, lng: p.coords.longitude };
-        if (pos.lat < 18.80 || pos.lat > 20.46 || pos.lng < 99.15 || pos.lng > 100.55) { alert("พิกัดของคุณอยู่นอกเขตพื้นที่ให้บริการ (จ.เชียงราย)"); return; }
-        mapPickup.setCenter(pos); markerPickup.setPosition(pos); mapPickup.setZoom(16);
-        updateAddressFromLatLng(pos, 'pickupSearch');
-      }, () => { alert("ไม่สามารถเข้าถึงพิกัดของคุณได้"); });
-    }
-
-    function initDropoffMap() {
-      if (typeof google === 'undefined') return setTimeout(initDropoffMap, 300);
-      if (mapDropoff) return; 
-      const pos = markerPickup ? markerPickup.getPosition() : chiangRaiCenter;
-      mapDropoff = new google.maps.Map(document.getElementById("map-dropoff"), { zoom: 16, center: pos, mapTypeControl: false, mapTypeId: 'hybrid', gestureHandling: "greedy", restriction: { latLngBounds: chiangRaiBounds, strictBounds: false }});
-      markerDropoff = new google.maps.Marker({ position: pos, map: mapDropoff, draggable: false });
-      updateAddressFromLatLng(pos, 'dropoffSearch');
-      mapDropoff.addListener('dragend', () => { updateAddressFromLatLng(mapDropoff.getCenter(), 'dropoffSearch'); });
-      mapDropoff.addListener('center_changed', () => { markerDropoff.setPosition(mapDropoff.getCenter()); });
-      setupMapPoiClick(mapDropoff, markerDropoff, 'dropoffSearch');
-      const ac = new google.maps.places.Autocomplete(document.getElementById('dropoffSearch'), getAutocompleteOptions());
-      ac.addListener('place_changed', () => { const p = ac.getPlace(); if (p.geometry) { mapDropoff.setCenter(p.geometry.location); markerDropoff.setPosition(p.geometry.location); mapDropoff.setZoom(16); } });
-    }
-
-    function initTrackingMap() {
-        if(mapTracking) return;
-        mapTracking = new google.maps.Map(document.getElementById("map-bg"), { 
-            zoom: 16, center: chiangRaiCenter, disableDefaultUI: true,
-            mapTypeId: 'hybrid', gestureHandling: 'greedy'
-        });
-        directionsService = new google.maps.DirectionsService();
-        directionsRenderer = new google.maps.DirectionsRenderer({ 
-            map: mapTracking, suppressMarkers: true, preserveViewport: true,
-            polylineOptions: { strokeColor: '#4458CC', strokeWeight: 6 } 
-        });
-    }
-
-    // 🌟 1. ใช้วิธีซ่อน/แสดงหน้าใหม่ และเพิ่มการย้ายกล้องแก้แผนที่เทา 100%
-    function showPage(pageNo) {
-      document.querySelectorAll('.full-page, .fixed-bottom-card, #pageLoading').forEach(el => {
-          el.classList.add('hidden');
-          el.classList.remove('flex'); 
-      });
-      const nav = document.getElementById('navBar');
-      const mapBg = document.getElementById('map-bg');
-      currentPage = pageNo;
-
-      if(pageNo === 1) {
-          document.getElementById('page1').classList.remove('hidden'); document.getElementById('page1').classList.add('flex');
-          nav.classList.add('hidden'); mapBg.classList.add('hidden');
-      } else if (pageNo === 2) {
-          document.getElementById('page2').classList.remove('hidden'); document.getElementById('page2').classList.add('flex');
-          nav.classList.add('hidden'); mapBg.classList.add('hidden'); setTimeout(initPickupMap, 100);
-      } else if (pageNo === 3) {
-          document.getElementById('page3').classList.remove('hidden'); document.getElementById('page3').classList.add('flex');
-          nav.classList.add('hidden'); mapBg.classList.add('hidden'); setTimeout(initDropoffMap, 100);
-      } else if (pageNo === 4) {
-          document.getElementById('page4').classList.remove('hidden'); document.getElementById('page4').classList.add('flex');
-          nav.classList.remove('hidden'); mapBg.classList.remove('hidden'); document.getElementById('navTitle').innerText = "ยืนยันเรียกรถ";
-          initTrackingMap(); 
-          google.maps.event.trigger(mapTracking, 'resize'); // บังคับอัปเดตขนาด
-          calculateFinalSummary();
-      } else if (pageNo === 5 || pageNo === 6) {
-          document.getElementById('pageTracking').classList.remove('hidden'); document.getElementById('pageTracking').classList.add('flex');
-          nav.classList.remove('hidden'); mapBg.classList.remove('hidden'); document.getElementById('navTitle').innerText = "สถานะการเดินทาง";
-          initTrackingMap();
-          google.maps.event.trigger(mapTracking, 'resize'); // บังคับอัปเดตขนาด
+      if(page === 2) {
+        document.getElementById('navTitle').innerText = "เลือกจุดรับ";
+        markerDrop.setVisible(false); markerPick.setVisible(true);
+        map.setCenter({lat: driverData.lat, lng: driverData.lng});
+        updateAddressBox();
+        setupSearch('pickupSearch', markerPick);
+      } 
+      else if(page === 3) {
+        document.getElementById('navTitle').innerText = "เลือกจุดส่ง";
+        markerPick.setVisible(true); markerDrop.setVisible(true);
+        markerDrop.setPosition(markerPick.getPosition());
+        map.setCenter(markerPick.getPosition());
+        updateAddressBox();
+        setupSearch('dropoffSearch', markerDrop);
+      }
+      else if(page === 4) {
+        document.getElementById('navTitle').innerText = "ยืนยันเรียกรถ";
+        calculatePrice();
       }
     }
-
-    function goToPage(p) { showPage(p); }
-    function goBack() { if(currentPage > 1 && currentPage < 5) showPage(currentPage - 1); }
+    function goBack() { if(currentStep > 1 && currentStep < 5) showPage(currentStep - 1); }
     function goHome() { window.location.reload(); }
 
-    function updatePage1DriverStatus() {
-        const el = document.getElementById('driverStatusDisplay');
-        const btn = document.getElementById('btnStartBooking');
-        if(driverData.status === "ปิดระบบ") {
-            el.innerText = "🔴 ออฟไลน์ (ปิดระบบ)"; el.className = "text-2xl font-black text-rose-500 mb-4";
-            btn.disabled = true; btn.classList.add('opacity-50', 'cursor-not-allowed');
-        } else {
-            el.innerText = "🟢 " + driverData.status; el.className = "text-2xl font-black text-emerald-600 mb-4";
-            btn.disabled = false; btn.classList.remove('opacity-50', 'cursor-not-allowed');
+    function updateAddressBox() {
+      let isPick = (currentStep === 2);
+      let pos = map.getCenter();
+      let m = isPick ? markerPick : markerDrop;
+      m.setPosition(pos);
+      geocoder.geocode({location: pos}, (res, status) => {
+        if(status === 'OK' && res[0]) {
+          let addr = res[0].formatted_address.replace(', ประเทศไทย','');
+          if(isPick) { bookData.pName = addr; document.getElementById('pickupAddressText').innerText = addr; }
+          else { bookData.dName = addr; document.getElementById('dropoffAddressText').innerText = addr; }
         }
+      });
     }
 
-    function setupCustomMarkers(pickupLoc, dropoffLoc) {
-        if(!mapMarkerA) mapMarkerA = new google.maps.Marker({map: mapTracking, icon: "https://img.icons8.com/color/48/marker.png"});
-        if(!mapMarkerB) mapMarkerB = new google.maps.Marker({map: mapTracking, icon: "https://img.icons8.com/color/48/checked-user-male.png"});
-        mapMarkerA.setMap(mapTracking); mapMarkerB.setMap(mapTracking);
-        mapMarkerA.setPosition(pickupLoc); mapMarkerB.setPosition(dropoffLoc);
-    }
-
-    function confirmPickup() {
-        if (markerPickup) {
-          const pos = markerPickup.getPosition();
-          bookingData.pickupLat = pos.lat(); bookingData.pickupLng = pos.lng();
-          bookingData.pickupName = document.getElementById('pickupSearch').value || "จุดรับที่เลือก";
-          showPage(3);
+    function setupSearch(inputId, marker) {
+      const input = document.getElementById(inputId);
+      const auto = new google.maps.places.Autocomplete(input, {componentRestrictions: {country: 'th'}});
+      auto.addListener('place_changed', () => {
+        const place = auto.getPlace();
+        if(place.geometry) {
+          map.setCenter(place.geometry.location); marker.setPosition(place.geometry.location);
+          if(currentStep===2) bookData.pName = place.name; else bookData.dName = place.name;
         }
+      });
     }
-
-    function confirmDropoff() {
-        if (markerDropoff) {
-          const pos = markerDropoff.getPosition();
-          bookingData.dropoffLat = pos.lat(); bookingData.dropoffLng = pos.lng();
-          bookingData.dropoffName = document.getElementById('dropoffSearch').value || "จุดส่งที่เลือก";
-          showPage(4);
-        }
+    function useCurrentLocation() {
+      navigator.geolocation.getCurrentPosition(p => {
+        let pos = {lat: p.coords.latitude, lng: p.coords.longitude};
+        map.setCenter(pos); markerPick.setPosition(pos); updateAddressBox();
+      });
     }
+    function confirmPickup() { bookData.pLat = markerPick.getPosition().lat(); bookData.pLng = markerPick.getPosition().lng(); showPage(3); }
+    function confirmDropoff() { bookData.dLat = markerDrop.getPosition().lat(); bookData.dLng = markerDrop.getPosition().lng(); showPage(4); }
 
-    // 🌟 2. ดึงกล้องแผนที่ให้แสดงตรงกลางพื้นที่ว่างด้านบน ไม่หลุดขอบบน
-    function calculateFinalSummary() {
-        document.getElementById('summaryPickup').innerText = bookingData.pickupName;
-        document.getElementById('summaryDropoff').innerText = bookingData.dropoffName;
+    // 3. คำนวณราคา (ตามโจทย์: วิ่งจริง x 14) + (ระยะคนขับมารับ x 4)
+    function calculatePrice() {
+      document.getElementById('sumPick').innerText = bookData.pName;
+      document.getElementById('sumDrop').innerText = bookData.dName;
+      
+      let origin = new google.maps.LatLng(bookData.pLat, bookData.pLng);
+      let dest = new google.maps.LatLng(bookData.dLat, bookData.dLng);
+      let driverPos = new google.maps.LatLng(driverData.lat, driverData.lng);
 
-        const pickupLatLng = new google.maps.LatLng(bookingData.pickupLat, bookingData.pickupLng);
-        const dropoffLatLng = new google.maps.LatLng(bookingData.dropoffLat, bookingData.dropoffLng);
-
-        directionsService.route({origin: pickupLatLng, destination: dropoffLatLng, travelMode: 'DRIVING'}, (res, status) => {
-            if(status === 'OK') {
-                directionsRenderer.setDirections(res); 
-                setupCustomMarkers(res.routes[0].legs[0].start_location, res.routes[0].legs[0].end_location);
-
-                setTimeout(() => {
-                    mapTracking.fitBounds(res.routes[0].bounds);
-                    // ทริกจัดกึ่งกลาง: ติดลบคือดึงกล้องขึ้น เพื่อให้ภาพดาวเทียมเลื่อนลงมาด้านล่าง ไม่โดนบัง
-                    mapTracking.panBy(0, -150); 
-                }, 200);
-
-                const distKm = (res.routes[0].legs[0].distance.value / 1000).toFixed(1);
-                bookingData.distKm = distKm; bookingData.price = Math.floor(35 + (distKm * 10)); 
-                
-                document.getElementById('summaryDist').innerText = distKm + " กม.";
-                document.getElementById('summaryPrice').innerText = bookingData.price + " ฿";
+      // หาระยะ: จุดรับ -> จุดส่ง
+      directionsService.route({origin: origin, destination: dest, travelMode: 'DRIVING'}, (resRide, stat1) => {
+        if(stat1 === 'OK') {
+          directionsRenderer.setDirections(resRide);
+          map.panBy(0, -150);
+          let distRideKm = resRide.routes[0].legs[0].distance.value / 1000;
+          
+          // หาระยะ: คนขับ -> จุดรับ
+          directionsService.route({origin: driverPos, destination: origin, travelMode: 'DRIVING'}, (resDrive, stat2) => {
+            if(stat2 === 'OK') {
+              let distDriverKm = resDrive.routes[0].legs[0].distance.value / 1000;
+              let waitMins = Math.ceil(resDrive.routes[0].legs[0].duration.value / 60);
+              
+              // คำนวณสูตร
+              bookData.price = Math.ceil((distRideKm * 14) + (distDriverKm * 4));
+              
+              document.getElementById('sumDist').innerText = distRideKm.toFixed(1);
+              document.getElementById('sumWait').innerText = waitMins;
+              document.getElementById('sumPrice').innerText = bookData.price;
             }
-        });
+          });
+        }
+      });
     }
 
+    // 4. บันทึกข้อมูล & แจ้งเตือน
     function submitBooking() {
-        const phone = document.getElementById('userPhone').value.trim();
-        if(!phone || phone.length < 9) { alert("กรุณากรอกเบอร์โทรศัพท์ 10 หลัก ให้ครบถ้วนครับ"); return; }
-
-        const payload = {
-            userId: lineUserId, name: lineDisplayName, phone: phone,
-            lat: bookingData.pickupLat, lng: bookingData.pickupLng, pickup: bookingData.pickupName,
-            dropoff: bookingData.dropoffName, price: bookingData.price,
-            dropLat: bookingData.dropoffLat, dropLng: bookingData.dropoffLng,
-            status: "รอดำเนินการ", timestamp: firebase.database.ServerValue.TIMESTAMP
-        };
-
-        db.ref('bookings/' + lineUserId).set(payload).then(() => {
-            const notifyUrl = `${APPS_SCRIPT_URL}?action=notify_driver&event=new_booking&customerId=${lineUserId}&name=${encodeURIComponent(lineDisplayName)}&dropoff=${encodeURIComponent(bookingData.dropoffName)}&price=${bookingData.price}`;
-            fetch(notifyUrl, { mode: 'no-cors' });
-            showPage(5);
-        });
+      let tel = document.getElementById('userPhone').value;
+      if(tel.length < 9) return alert('กรอกเบอร์โทรให้ถูกต้อง');
+      bookData.userId = lineUserId; bookData.name = lineName; bookData.phone = tel;
+      bookData.status = "รอผู้ขับขี่ตอบรับ"; bookData.timestamp = firebase.database.ServerValue.TIMESTAMP;
+      
+      db.ref('bookings/' + lineUserId).set(bookData).then(() => {
+        // แจ้งเตือนไลน์
+        fetch(`${APPS_SCRIPT_URL}?action=notify&type=new_ride&name=${lineName}&pick=${bookData.pName}`, {mode: 'no-cors'});
+        showPage('Tracking');
+      });
     }
 
-    function handleTrackingLogic(data) {
-        bookingData = {...bookingData, ...data}; 
+    // 5. ติดตามสถานะ
+    function handleTracking() {
+      if(currentStep !== 'Tracking') showPage('Tracking');
+      let statusEl = document.getElementById('trackStatus');
+      let btnCancel = document.getElementById('btnCancel');
+      
+      statusEl.innerText = bookData.status;
+      document.getElementById('trackPrice').innerText = "฿" + bookData.price;
+      document.getElementById('trackPick').innerText = bookData.pName;
+      document.getElementById('trackDrop').innerText = bookData.dName;
 
-        const statusTitle = document.getElementById('trackStatus');
-        const info = document.getElementById('trackInfo');
-        const realtimeBox = document.getElementById('realtimeDistanceBox');
-        const statusIcon = document.getElementById('statusIcon');
-        const driverAwayText = document.getElementById('driverAwayText'); 
-        
-        document.getElementById('trackPrice').innerText = "฿" + (data.price || bookingData.price);
-        
-        if(data.status === "รอดำเนินการ") {
-            showPage(5); 
-            
-            setTimeout(() => {
-                const pickupPos = { lat: bookingData.pickupLat || bookingData.lat, lng: bookingData.pickupLng || bookingData.lng };
-                mapTracking.setCenter(pickupPos); mapTracking.setZoom(16);
-                
-                if(directionsRenderer) directionsRenderer.setDirections({routes: []});
-                if(mapMarkerA) mapMarkerA.setMap(null); 
-                if(!mapMarkerB) mapMarkerB = new google.maps.Marker({map: mapTracking, icon: "https://img.icons8.com/color/48/marker.png"});
-                mapMarkerB.setPosition(pickupPos); mapMarkerB.setMap(mapTracking);
-                
-                // ดึงกล้องขึ้น เพื่อให้ภาพจุดรับเลื่อนลงมากลางจอ
-                mapTracking.panBy(0, -150); 
-            }, 200);
+      // จัดการปุ่มยกเลิก
+      if(bookData.status === "รอผู้ขับขี่ตอบรับ" || bookData.status.includes("กำลังเดินทาง")) {
+        btnCancel.classList.remove('hidden');
+      } else {
+        btnCancel.classList.add('hidden');
+      }
 
-            statusIcon.className = "fas fa-search text-[#4458CC] animate-pulse";
-            statusTitle.innerText = "กำลังค้นหารถ...";
-            info.innerText = "ระบบกำลังค้นหาคนขับที่ใกล้ที่สุด กรุณารอสักครู่ครับ";
-            realtimeBox.classList.add('hidden'); driverAwayText.classList.add('hidden'); 
-        } 
-        else if(data.status === "รับงาน" || data.status === "ใกล้ถึงแล้ว" || data.status === "ถึงจุดรับแล้ว") {
-            showPage(5); realtimeBox.classList.remove('hidden'); driverDistEl = document.getElementById('driverAwayText');
-            if (driverDistEl) driverDistEl.classList.remove('hidden'); 
+      if(bookData.status.includes("ถึงที่หมาย")) {
+        alert("ถึงที่หมายอย่างปลอดภัย ขอบคุณที่ใช้บริการ F1 Driver ครับ!");
+        db.ref('bookings/' + lineUserId).remove();
+        window.location.reload();
+      }
 
-            document.getElementById('realtimeDistLabel').innerText = "รถกำลังเดินทางมาหาคุณ";
-            
-            if (data.status === "รับงาน") {
-                statusIcon.className = "fas fa-car-side text-[#4458CC]";
-                statusTitle.innerText = "คนขับรับงานแล้ว!";
-                info.innerText = "คนขับกำลังมุ่งหน้าไปรับคุณ ดูตำแหน่งบนแผนที่ได้เลย";
-            } else if (data.status === "ใกล้ถึงแล้ว") {
-                statusIcon.className = "fas fa-bell text-amber-500 animate-bounce";
-                statusTitle.innerText = "รถใกล้ถึงแล้ว!";
-                info.innerText = "กรุณาเตรียมตัวที่จุดรับ รถใกล้จะถึงแล้วครับ";
-            } else if (data.status === "ถึงจุดรับแล้ว") {
-                statusIcon.className = "fas fa-map-marker-alt text-emerald-500";
-                statusTitle.innerText = "รถมาถึงจุดรับแล้ว";
-                info.innerText = "คนขับจอดรออยู่บริเวณจุดรับเรียบร้อยแล้วครับ";
-                realtimeBox.classList.add('hidden'); 
-            }
-            updateRealtimeDistance();
-        } 
-        else if (data.status === "รับผู้โดยสารแล้ว") {
-            showPage(6); statusIcon.className = "fas fa-route text-[#4458CC]";
-            statusTitle.innerText = "ออกเดินทาง!"; info.innerText = "นั่งให้สบาย เรากำลังพาคุณไปส่งที่จุดหมาย";
-            realtimeBox.classList.remove('hidden'); document.getElementById('realtimeDistLabel').innerText = "ระยะทางสู่จุดหมายปลายทาง";
-            if (driverAwayText) driverAwayText.classList.add('hidden'); 
-            updateRealtimeDistance();
-        }
-        else if (data.status === "เสร็จสิ้น") {
-            if (currentPage >= 5) {
-                alert("🏁 ถึงที่หมายอย่างปลอดภัย ขอบคุณที่ใช้บริการครับ!");
-                db.ref('bookings/' + lineUserId).remove(); window.location.reload();
-            }
-        }
-        else if (data.status === "ยกเลิกโดยคนขับ") {
-            if (currentPage >= 5) {
-                alert("⚠️ ขออภัย คนขับได้ทำการยกเลิกงานนี้ (คุณสามารถกดเรียกรถใหม่ได้ทันที)");
-                db.ref('bookings/' + lineUserId).remove(); window.location.reload();
-            }
-        }
+      updateRealtimeMap();
     }
 
-    function updateRealtimeDistance() {
-        if (!directionsService || !bookingData.status || bookingData.status === "รอดำเนินการ") return;
-        
-        let origin, destination;
-        let isGoingToPickup = (bookingData.status === "รับงาน" || bookingData.status === "ใกล้ถึงแล้ว");
-        let isGoingToDropoff = (bookingData.status === "รับผู้โดยสารแล้ว");
+    function updateRealtimeMap() {
+      if(!directionsService || !bookData.status) return;
+      markerDriver.setPosition({lat: driverData.lat, lng: driverData.lng});
+      markerDriver.setVisible(true);
 
-        if (isGoingToPickup) {
-            origin = { lat: driverData.lat, lng: driverData.lng };
-            destination = { lat: bookingData.pickupLat || bookingData.lat, lng: bookingData.pickupLng || bookingData.lng };
-        } else if (isGoingToDropoff) {
-            origin = { lat: driverData.lat, lng: driverData.lng };
-            destination = { lat: bookingData.dropLat || bookingData.dropoffLat, lng: bookingData.dropLng || bookingData.dropoffLng };
-        } else { return; }
+      let origin, dest;
+      // แบ่ง Phase แผนที่
+      if(bookData.status === "รอผู้ขับขี่ตอบรับ" || bookData.status.includes("รับงาน") || bookData.status.includes("มาถึงจุดรับ")) {
+        origin = markerDriver.getPosition();
+        dest = {lat: bookData.pLat, lng: bookData.pLng};
+      } else {
+        // ออกเดินทาง
+        origin = markerDriver.getPosition();
+        dest = {lat: bookData.dLat, lng: bookData.dLng};
+      }
 
-        directionsService.route({ origin: origin, destination: destination, travelMode: 'DRIVING' }, (res, stat) => {
-            if(stat === 'OK') {
-                directionsRenderer.setDirections(res);
-                
-                setTimeout(() => { 
-                    mapTracking.fitBounds(res.routes[0].bounds); 
-                    mapTracking.panBy(0, -150); 
-                }, 200);
-
-                if(mapMarkerA) mapMarkerA.setMap(null); 
-                if(!mapMarkerB) mapMarkerB = new google.maps.Marker({map: mapTracking});
-                mapMarkerB.setMap(mapTracking);
-                mapMarkerB.setIcon(isGoingToPickup ? "https://img.icons8.com/color/48/marker.png" : "https://img.icons8.com/color/48/checked-user-male.png");
-                mapMarkerB.setPosition(res.routes[0].legs[0].end_location);
-
-                const leg = res.routes[0].legs[0];
-                document.getElementById('realtimeTime').innerText = leg.duration.text;
-                document.getElementById('realtimeDist').innerText = leg.distance.text;
-
-                const driverAwayText = document.getElementById('driverAwayText');
-                if (isGoingToPickup && driverAwayText) { driverAwayText.innerText = `ห่าง ${leg.distance.text}`; }
-            }
-        });
-    }
-
-    function openGoogleMaps() {
-        let url = "";
-        if (bookingData.status === "รับงาน" || bookingData.status === "ใกล้ถึงแล้ว") {
-            url = `https://www.google.com/maps/dir/?api=1&origin=${driverData.lat},${driverData.lng}&destination=${bookingData.pickupLat},${bookingData.pickupLng}&travelmode=driving`;
-        } else if (bookingData.status === "รับผู้โดยสารแล้ว") {
-            url = `https://www.google.com/maps/dir/?api=1&origin=${driverData.lat},${driverData.lng}&destination=${bookingData.dropLat},${bookingData.dropoffLat}&travelmode=driving`;
-        } else {
-            url = `https://www.google.com/maps/dir/?api=1&origin=${bookingData.pickupLat},${bookingData.pickupLng}&destination=${bookingData.dropoffLat},${bookingData.dropoffLng}&travelmode=driving`;
+      directionsService.route({origin: origin, destination: dest, travelMode: 'DRIVING'}, (res, stat) => {
+        if(stat === 'OK') {
+          directionsRenderer.setDirections(res);
+          setTimeout(()=>{ map.fitBounds(res.routes[0].bounds); map.panBy(0,-100); }, 200);
         }
-        window.open(url, '_blank');
+      });
     }
 
     function cancelBooking() {
-        if(confirm("แน่ใจหรือไม่ว่าต้องการยกเลิกการเรียกรถ?")) {
-            db.ref('bookings/' + lineUserId).remove();
-            const notifyUrl = `${APPS_SCRIPT_URL}?action=notify_driver&event=cancel_by_customer&customerId=${lineUserId}&name=${encodeURIComponent(lineDisplayName)}`;
-            fetch(notifyUrl, { mode: 'no-cors' });
-            alert("ยกเลิกงานเรียบร้อยแล้ว"); window.location.reload();
-        }
+      if(confirm('ยืนยันยกเลิกเรียกรถ?')) {
+        db.ref('bookings/' + lineUserId).remove();
+        fetch(`${APPS_SCRIPT_URL}?action=notify&type=cancel&name=${lineName}`, {mode:'no-cors'});
+        alert('ยกเลิกแล้ว'); window.location.reload();
+      }
     }
 
-    const script = document.createElement('script');
-    script.src = "https://maps.googleapis.com/maps/api/js?key=AIzaSyDsZ_tbFhH6fUXRz3I6C-tMshNwwrSevd4&libraries=places&callback=mapsReady";
-    script.async = true; script.defer = true;
-    document.head.appendChild(script);
+    function openNavMap() {
+      let lat = bookData.status.includes("ออกเดินทาง") ? bookData.dLat : bookData.pLat;
+      let lng = bookData.status.includes("ออกเดินทาง") ? bookData.dLng : bookData.pLng;
+      window.open(`https://www.google.com/maps/dir/?api=1&origin=${driverData.lat},${driverData.lng}&destination=${lat},${lng}&travelmode=driving`, '_blank');
+    }
   </script>
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSy...&libraries=places&callback=initMap" async defer></script>
 </body>
 </html>
