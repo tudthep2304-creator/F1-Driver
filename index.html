@@ -163,16 +163,19 @@
       geocoder = new google.maps.Geocoder();
       placesService = new google.maps.places.PlacesService(map);
       
-      markerPick = new google.maps.Marker({map: map, icon: "https://maps.google.com/mapfiles/ms/icons/green-dot.png", zIndex: 2});
-      markerDrop = new google.maps.Marker({map: map, icon: "https://maps.google.com/mapfiles/ms/icons/red-dot.png", zIndex: 2});
-      // 🌟 ใช้ไอคอนรถแข่ง F1 
+      // 🌟 ซ่อนหมุดทั้งหมดไว้ก่อน
+      markerPick = new google.maps.Marker({map: null, icon: "https://maps.google.com/mapfiles/ms/icons/green-dot.png", zIndex: 2});
+      markerDrop = new google.maps.Marker({map: null, icon: "https://maps.google.com/mapfiles/ms/icons/red-dot.png", zIndex: 2});
+      
+      // 🌟 ตั้งค่ารูปรถ F1 ให้มีจุดศูนย์กลาง (anchor) แม่นยำ และชั้นลอยสูงสุด
       markerDriver = new google.maps.Marker({
-          map: map, 
+          map: null, 
           icon: {
               url: "https://img.icons8.com/color/48/f1-car.png",
-              scaledSize: new google.maps.Size(48, 48)
+              scaledSize: new google.maps.Size(44, 44),
+              anchor: new google.maps.Point(22, 22) // ปักหมุดตรงกลางรูปรถเป๊ะๆ
           }, 
-          zIndex: 3
+          zIndex: 9999
       });
 
       map.addListener('center_changed', () => {
@@ -260,7 +263,8 @@
       if(page === 2) {
         document.getElementById('navTitle').innerText = "เลือกจุดรับ";
         if (markerDrop && markerPick) {
-          markerDrop.setVisible(false); markerPick.setVisible(true);
+          markerDrop.setMap(null); 
+          markerPick.setMap(map); // ใช้ setMap แทน setVisible
           map.setCenter({lat: driverData.lat, lng: driverData.lng});
           updateAddressBox();
           setupSearch('pickupSearch', markerPick);
@@ -269,7 +273,8 @@
       else if(page === 3) {
         document.getElementById('navTitle').innerText = "เลือกจุดส่ง";
         if (markerPick && markerDrop) {
-          markerPick.setVisible(true); markerDrop.setVisible(true);
+          markerPick.setMap(map); 
+          markerDrop.setMap(map);
           if(bookData.dLat !== 0 && bookData.dLng !== 0) {
              markerDrop.setPosition({lat: bookData.dLat, lng: bookData.dLng});
           } else {
@@ -283,7 +288,8 @@
       else if(page === 4) {
         document.getElementById('navTitle').innerText = "ยืนยันเรียกรถ";
         if (markerPick && markerDrop) {
-          markerPick.setVisible(true); markerDrop.setVisible(true);
+          markerPick.setMap(map); 
+          markerDrop.setMap(map);
         }
         calculatePrice();
       }
@@ -422,8 +428,10 @@
     function updateRealtimeMap() {
       if(!directionsService || !bookData.status) return;
 
+      // 🌟 ใช้ setMap เพื่อเปิด/ปิดหมุดแบบเสถียรที่สุด 100%
       if (bookData.status === "รอผู้ขับขี่ตอบรับ") {
-          if(markerDriver) markerDriver.setVisible(false);
+          if(markerDriver) markerDriver.setMap(null); // ปิดรูปรถ
+          
           let origin = {lat: bookData.pLat, lng: bookData.pLng};
           let dest = {lat: bookData.dLat, lng: bookData.dLng};
           
@@ -431,9 +439,9 @@
               if(stat === 'OK') {
                   directionsRenderer.setDirections(res);
                   markerPick.setPosition(origin);
-                  markerPick.setVisible(true);
+                  markerPick.setMap(map); // แสดงหมุดเขียว
                   markerDrop.setPosition(dest);
-                  markerDrop.setVisible(true);
+                  markerDrop.setMap(map); // แสดงหมุดแดง
                   setTimeout(()=>{ 
                       const mapPadding = { top: 50, right: 50, bottom: 300, left: 50 };
                       map.fitBounds(res.routes[0].bounds, mapPadding); 
@@ -443,22 +451,23 @@
           return; 
       }
 
+      // ถ้าคนขับรับงานแล้ว
+      if(markerDriver) markerDriver.setMap(map); // เปิดรูปรถ
       markerDriver.setPosition({lat: driverData.lat, lng: driverData.lng});
-      markerDriver.setVisible(true);
 
       let origin, dest;
       if(bookData.status.includes("รับงาน") || bookData.status.includes("มาถึงจุดรับ") || bookData.status.includes("กำลังเดินทาง")) {
         origin = markerDriver.getPosition();
         dest = {lat: bookData.pLat, lng: bookData.pLng};
         markerPick.setPosition(dest);
-        markerPick.setVisible(true);
-        markerDrop.setVisible(false);
+        markerPick.setMap(map); // แสดงหมุดเขียว
+        markerDrop.setMap(null); // ซ่อนหมุดแดง
       } else {
         origin = markerDriver.getPosition();
         dest = {lat: bookData.dLat, lng: bookData.dLng};
         markerDrop.setPosition(dest);
-        markerDrop.setVisible(true);
-        markerPick.setVisible(false);
+        markerDrop.setMap(map); // แสดงหมุดแดง
+        markerPick.setMap(null); // ซ่อนหมุดเขียว
       }
 
       directionsService.route({origin: origin, destination: dest, travelMode: 'DRIVING'}, (res, stat) => {
@@ -472,7 +481,6 @@
       });
     }
 
-    // 🌟 ฟังก์ชันจัดการป๊อปอัปยกเลิกงาน
     function openCancelModal() {
         document.getElementById('cancelModal').classList.remove('hidden');
     }
