@@ -14,9 +14,22 @@
     @import url('https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;700&display=swap');
     body { font-family: 'Kanit', sans-serif; background-color: #f3f4f6; }
     
-    /* ล็อกแผนที่พื้นหลังเต็มจอ แก้อาการขอบเทา */
-    #map-bg { position: fixed; inset: 0; width: 100vw; height: 100vh; z-index: 0; }
+    /* 🌟 ล็อกแผนที่ให้เต็มจอและใส่พื้นหลังสีเทาอ่อนไว้เผื่อดาวน์โหลดช้า */
+    #map-bg { position: fixed; inset: 0; width: 100vw; height: 100vh; z-index: 0; background-color: #e5e7eb; }
     
+    /* 🌟 ล็อกขนาดกล่องด้านล่างให้สูง 380px คงที่เท่ากันทุกหน้า */
+    .fixed-bottom-card { 
+      position: fixed; bottom: 0; left: 0; right: 0;
+      height: 380px; 
+      background: white; 
+      border-top-left-radius: 2rem; border-top-right-radius: 2rem; 
+      box-shadow: 0 -15px 30px rgba(0,0,0,0.15); 
+      z-index: 100;
+      display: flex; flex-direction: column;
+      padding: 1.5rem;
+    }
+    
+    .full-page { position: fixed; inset: 0; z-index: 30; background: white; display: flex; flex-direction: column; }
     .pac-container { z-index: 10000 !important; font-family: 'Kanit'; border-radius: 0.5rem; }
     .route-line { width: 2px; height: 20px; background-image: linear-gradient(to bottom, #cbd5e1 50%, transparent 50%); background-size: 2px 8px; margin: 2px 0; }
   </style>
@@ -33,16 +46,16 @@
 
   <div class="flex flex-col h-full w-full max-w-md mx-auto relative pointer-events-none">
     
-    <div id="pageLoading" class="pointer-events-auto bg-white fixed inset-0 z-50 flex flex-col items-center justify-center">
+    <div id="pageLoading" class="pointer-events-auto bg-white h-full w-full fixed top-0 left-0 z-50 flex flex-col items-center justify-center">
       <div class="animate-spin rounded-full h-12 w-12 border-b-4 border-[#2B3A6F] border-t-transparent mb-4"></div>
       <p class="font-bold text-gray-600 mt-4">กำลังเชื่อมต่อระบบ...</p>
     </div>
 
-    <div id="page1" class="pointer-events-auto fixed inset-0 z-30 bg-white hidden flex-col">
-      <div class="bg-[#2B3A6F] text-white p-5 text-center shadow-md shrink-0">
+    <div id="page1" class="full-page pointer-events-auto hidden">
+      <div class="bg-[#2B3A6F] text-white p-5 text-center shadow-md">
         <h1 class="text-xl font-black">🚕 เรียกรถด่วน (เชียงราย)</h1>
       </div>
-      <div class="p-6 space-y-6 mt-6 overflow-y-auto">
+      <div class="p-6 space-y-6 mt-6">
         <div class="text-center">
           <img id="userPicture" class="w-24 h-24 rounded-full mx-auto mb-3 shadow-lg border-4 border-white object-cover" src="https://via.placeholder.com/150">
           <h2 class="text-xl font-bold text-gray-800" id="userName">คุณ...</h2>
@@ -66,49 +79,44 @@
       </div>
     </div>
 
-    <div id="page2" class="pointer-events-auto fixed inset-0 z-30 bg-white hidden flex-col">
+    <div id="page2" class="full-page pointer-events-auto hidden flex-col">
       <div class="h-16 bg-[#2B3A6F] shadow-sm flex items-center justify-between px-4 z-10 text-white shrink-0">
         <button onclick="goHome()" class="p-2 text-xl w-10 h-10"><i class="fas fa-chevron-left"></i></button>
         <h3 class="font-medium text-lg">📍 เลือกจุดรับ</h3>
         <div class="w-10"></div>
       </div>
-      
       <div id="map-pickup" class="w-full flex-1 relative z-0 bg-gray-200"></div>
-      
-      <div class="h-[380px] bg-white rounded-t-[32px] shadow-[0_-15px_30px_rgba(0,0,0,0.15)] z-10 -mt-6 flex flex-col p-6 shrink-0">
+      <div class="fixed-bottom-card bg-white z-10">
         <div class="w-12 h-1.5 bg-gray-300 rounded-full mx-auto mb-4 shrink-0"></div>
         <div class="flex justify-between items-center mb-3">
           <span class="text-xs text-gray-500"><i class="fas fa-arrows-alt text-indigo-400"></i> เลื่อนหมุดเพื่อเลือกจุดรับ</span>
           <button onclick="useCurrentLocation()" class="text-xs bg-indigo-50 text-[#2B3A6F] px-3 py-1.5 rounded-full font-bold shadow-sm border border-indigo-100"><i class="fas fa-crosshairs"></i> พิกัดปัจจุบัน</button>
         </div>
         <input type="text" id="pickupSearch" class="w-full p-4 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-[#2B3A6F] mb-auto font-semibold text-gray-700 placeholder-gray-400" placeholder="ค้นหาสถานที่จุดรับ...">
-        <button onclick="confirmPickup()" class="w-full bg-[#2B3A6F] text-white h-14 rounded-xl font-bold text-lg shadow-md mt-4 shrink-0">ยืนยันจุดรับ</button>
+        <button onclick="confirmPickup()" class="w-full bg-[#2B3A6F] text-white h-14 rounded-xl font-bold text-lg shadow-md mt-4 shrink-0 hover:bg-blue-800 transition">ยืนยันจุดรับ</button>
       </div>
     </div>
 
-    <div id="page3" class="pointer-events-auto fixed inset-0 z-30 bg-white hidden flex-col">
+    <div id="page3" class="full-page pointer-events-auto hidden flex-col">
       <div class="h-16 bg-[#2B3A6F] shadow-sm flex items-center justify-between px-4 z-10 text-white shrink-0">
         <button onclick="goBack()" class="p-2 text-xl w-10 h-10"><i class="fas fa-chevron-left"></i></button>
         <h3 class="font-medium text-lg">🏁 เลือกจุดส่ง</h3>
         <div class="w-10"></div>
       </div>
-      
       <div id="map-dropoff" class="w-full flex-1 relative z-0 bg-gray-200"></div>
-      
-      <div class="h-[380px] bg-white rounded-t-[32px] shadow-[0_-15px_30px_rgba(0,0,0,0.15)] z-10 -mt-6 flex flex-col p-6 shrink-0">
+      <div class="fixed-bottom-card bg-white z-10">
         <div class="w-12 h-1.5 bg-gray-300 rounded-full mx-auto mb-4 shrink-0"></div>
         <div class="flex justify-between items-center mb-3">
           <span class="text-xs text-gray-500"><i class="fas fa-arrows-alt text-indigo-400"></i> เลื่อนหมุดเพื่อเลือกจุดส่ง</span>
         </div>
         <input type="text" id="dropoffSearch" class="w-full p-4 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-[#2B3A6F] mb-auto font-semibold text-gray-700 placeholder-gray-400" placeholder="ค้นหาสถานที่จุดส่ง...">
-        <button onclick="confirmDropoff()" class="w-full bg-[#2B3A6F] text-white h-14 rounded-xl font-bold text-lg shadow-md mt-4 shrink-0">ยืนยันจุดส่ง</button>
+        <button onclick="confirmDropoff()" class="w-full bg-[#2B3A6F] text-white h-14 rounded-xl font-bold text-lg shadow-md mt-4 shrink-0 hover:bg-blue-800 transition">ยืนยันจุดส่ง</button>
       </div>
     </div>
 
-    <div id="page4" class="pointer-events-auto fixed bottom-0 left-0 right-0 h-[380px] bg-white rounded-t-[32px] shadow-[0_-15px_30px_rgba(0,0,0,0.2)] z-30 flex flex-col p-6 hidden">
+    <div id="page4" class="pointer-events-auto hidden fixed-bottom-card">
       <div class="w-12 h-1.5 bg-gray-300 rounded-full mx-auto mb-4 shrink-0"></div>
       <h2 class="text-xl font-bold text-center text-gray-800 mb-4 shrink-0">สรุปการเดินทาง</h2>
-      
       <div class="bg-white border border-gray-100 shadow-sm rounded-2xl p-3 mb-3 shrink-0">
         <div class="flex items-center gap-3 mb-1">
           <span class="w-6 h-6 rounded-full bg-green-600 text-white flex items-center justify-center font-bold text-xs shadow-sm shrink-0">A</span>
@@ -126,7 +134,6 @@
           </div>
         </div>
       </div>
-
       <div class="flex justify-between items-center mb-auto px-2">
         <div class="flex items-center gap-2">
             <div class="w-8 h-8 bg-emerald-50 rounded-full flex items-center justify-center border border-emerald-100">
@@ -142,7 +149,6 @@
             <p class="text-xl font-black text-emerald-600 leading-none" id="summaryPrice">0 ฿</p>
         </div>
       </div>
-
       <div class="relative mt-2 shrink-0">
           <div class="absolute left-4 top-1/2 -translate-y-1/2 flex items-center gap-2 text-gray-500 pointer-events-none">
               <i class="fas fa-phone-alt"></i>
@@ -150,15 +156,13 @@
           </div>
           <input type="tel" id="userPhone" autocomplete="tel" class="w-full bg-gray-50 rounded-xl h-12 pl-[100px] pr-4 text-gray-800 font-semibold text-sm border border-gray-200 outline-none focus:ring-2 focus:ring-[#2B3A6F]" placeholder="กรอกเบอร์ 10 หลัก" maxlength="10">
       </div>
-
       <button onclick="submitBooking()" class="w-full h-14 bg-[#4458CC] rounded-xl text-white font-bold text-lg shadow-lg hover:bg-blue-700 transition mt-3 shrink-0">
           กดยืนยันเรียกรถ
       </button>
     </div>
 
-    <div id="pageTracking" class="pointer-events-auto fixed bottom-0 left-0 right-0 h-[380px] bg-white rounded-t-[32px] shadow-[0_-15px_30px_rgba(0,0,0,0.2)] z-30 flex flex-col p-6 hidden">
+    <div id="pageTracking" class="pointer-events-auto hidden fixed-bottom-card">
       <div class="w-12 h-1.5 bg-gray-300 rounded-full mx-auto mb-4 shrink-0"></div>
-      
       <div class="flex items-center justify-between border-b border-gray-100 pb-3 mb-4 shrink-0">
         <div class="flex items-center gap-3">
             <div class="w-10 h-10 bg-indigo-50 rounded-full flex items-center justify-center border border-indigo-100">
@@ -168,7 +172,6 @@
         </div>
         <span id="trackPrice" class="px-3 py-1 rounded-full bg-emerald-100 text-emerald-700 font-black text-base border border-emerald-200">฿0</span>
       </div>
-      
       <div id="realtimeDistanceBox" class="hidden bg-[#2B3A6F]/5 p-3 rounded-xl border border-[#2B3A6F]/10 flex items-center gap-4 mb-3 shrink-0">
         <div class="bg-white text-[#4458CC] w-10 h-10 rounded-full flex items-center justify-center shrink-0 shadow-sm border border-gray-100">
            <i class="fas fa-car-side"></i>
@@ -178,17 +181,14 @@
           <p class="text-sm font-black text-gray-800"><span id="realtimeTime">คำนวณ...</span> <span class="text-xs font-medium text-gray-500">(<span id="realtimeDist">...</span>)</span></p>
         </div>
       </div>
-
       <div class="bg-gray-50 rounded-xl p-3 flex items-center gap-3 border border-gray-100 relative mb-auto">
           <i class="fas fa-info-circle text-[#4458CC]"></i>
           <p class="text-gray-600 text-xs font-medium" id="trackInfo">กำลังค้นหารถที่ใกล้ที่สุด กรุณารอ...</p>
           <p id="driverAwayText" class="absolute top-1/2 right-3 -translate-y-1/2 text-xs font-bold text-[#4458CC] bg-white px-2 py-1 rounded shadow-sm hidden">ห่าง 0 กม.</p>
       </div>
-      
       <button onclick="openGoogleMaps()" class="w-full h-12 bg-indigo-50 rounded-xl flex items-center justify-center gap-2 text-[#4458CC] font-bold text-sm border border-indigo-100 hover:bg-blue-100 transition shadow-sm mt-3 shrink-0">
           <i class="fas fa-map-marked-alt text-base"></i> เปิดนำทาง GPS (Google Maps)
       </button>
-
       <button id="btnCancel" onclick="cancelBooking()" class="w-full h-12 bg-rose-50 rounded-xl flex items-center justify-center gap-2 text-rose-600 font-bold text-sm border border-rose-100 hover:bg-rose-100 transition mt-3 shrink-0">
           <i class="fas fa-times"></i> ยกเลิกเรียกรถ
       </button>
@@ -247,7 +247,6 @@
             if(currentPage >= 5) updateRealtimeDistance();
         }
       });
-
       db.ref('bookings').on('value', snap => {
         const bookings = snap.val() || {};
         const qCount = Object.keys(bookings).length;
@@ -337,17 +336,12 @@
         });
     }
 
-    // 🌟 เปลี่ยนระบบสลับหน้าให้ปลอดภัย 100% 
+    // 🌟 1. ใช้วิธีซ่อน/แสดงหน้าใหม่ และเพิ่มการย้ายกล้องแก้แผนที่เทา 100%
     function showPage(pageNo) {
-      // ซ่อนทุกหน้าอย่างปลอดภัย
-      ['page1', 'page2', 'page3', 'page4', 'pageTracking', 'pageLoading'].forEach(id => {
-          const el = document.getElementById(id);
-          if(el) {
-              el.classList.add('hidden');
-              if(id === 'page1' || id === 'page2' || id === 'page3') el.classList.remove('flex');
-          }
+      document.querySelectorAll('.full-page, .fixed-bottom-card, #pageLoading').forEach(el => {
+          el.classList.add('hidden');
+          el.classList.remove('flex'); 
       });
-      
       const nav = document.getElementById('navBar');
       const mapBg = document.getElementById('map-bg');
       currentPage = pageNo;
@@ -364,11 +358,14 @@
       } else if (pageNo === 4) {
           document.getElementById('page4').classList.remove('hidden'); document.getElementById('page4').classList.add('flex');
           nav.classList.remove('hidden'); mapBg.classList.remove('hidden'); document.getElementById('navTitle').innerText = "ยืนยันเรียกรถ";
-          initTrackingMap(); calculateFinalSummary();
+          initTrackingMap(); 
+          google.maps.event.trigger(mapTracking, 'resize'); // บังคับอัปเดตขนาด
+          calculateFinalSummary();
       } else if (pageNo === 5 || pageNo === 6) {
           document.getElementById('pageTracking').classList.remove('hidden'); document.getElementById('pageTracking').classList.add('flex');
           nav.classList.remove('hidden'); mapBg.classList.remove('hidden'); document.getElementById('navTitle').innerText = "สถานะการเดินทาง";
           initTrackingMap();
+          google.maps.event.trigger(mapTracking, 'resize'); // บังคับอัปเดตขนาด
       }
     }
 
@@ -413,6 +410,7 @@
         }
     }
 
+    // 🌟 2. ดึงกล้องแผนที่ให้แสดงตรงกลางพื้นที่ว่างด้านบน ไม่หลุดขอบบน
     function calculateFinalSummary() {
         document.getElementById('summaryPickup').innerText = bookingData.pickupName;
         document.getElementById('summaryDropoff').innerText = bookingData.dropoffName;
@@ -427,8 +425,9 @@
 
                 setTimeout(() => {
                     mapTracking.fitBounds(res.routes[0].bounds);
-                    mapTracking.panBy(0, 100); 
-                }, 100);
+                    // ทริกจัดกึ่งกลาง: ติดลบคือดึงกล้องขึ้น เพื่อให้ภาพดาวเทียมเลื่อนลงมาด้านล่าง ไม่โดนบัง
+                    mapTracking.panBy(0, -150); 
+                }, 200);
 
                 const distKm = (res.routes[0].legs[0].distance.value / 1000).toFixed(1);
                 bookingData.distKm = distKm; bookingData.price = Math.floor(35 + (distKm * 10)); 
@@ -470,7 +469,7 @@
         document.getElementById('trackPrice').innerText = "฿" + (data.price || bookingData.price);
         
         if(data.status === "รอดำเนินการ") {
-            showPage(5); initTrackingMap();
+            showPage(5); 
             
             setTimeout(() => {
                 const pickupPos = { lat: bookingData.pickupLat || bookingData.lat, lng: bookingData.pickupLng || bookingData.lng };
@@ -480,8 +479,10 @@
                 if(mapMarkerA) mapMarkerA.setMap(null); 
                 if(!mapMarkerB) mapMarkerB = new google.maps.Marker({map: mapTracking, icon: "https://img.icons8.com/color/48/marker.png"});
                 mapMarkerB.setPosition(pickupPos); mapMarkerB.setMap(mapTracking);
-                mapTracking.panBy(0, 100); 
-            }, 100);
+                
+                // ดึงกล้องขึ้น เพื่อให้ภาพจุดรับเลื่อนลงมากลางจอ
+                mapTracking.panBy(0, -150); 
+            }, 200);
 
             statusIcon.className = "fas fa-search text-[#4458CC] animate-pulse";
             statusTitle.innerText = "กำลังค้นหารถ...";
@@ -549,7 +550,11 @@
         directionsService.route({ origin: origin, destination: destination, travelMode: 'DRIVING' }, (res, stat) => {
             if(stat === 'OK') {
                 directionsRenderer.setDirections(res);
-                setTimeout(() => { mapTracking.fitBounds(res.routes[0].bounds); mapTracking.panBy(0, 100); }, 100);
+                
+                setTimeout(() => { 
+                    mapTracking.fitBounds(res.routes[0].bounds); 
+                    mapTracking.panBy(0, -150); 
+                }, 200);
 
                 if(mapMarkerA) mapMarkerA.setMap(null); 
                 if(!mapMarkerB) mapMarkerB = new google.maps.Marker({map: mapTracking});
