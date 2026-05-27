@@ -163,17 +163,16 @@
       geocoder = new google.maps.Geocoder();
       placesService = new google.maps.places.PlacesService(map);
       
-      // 🌟 ซ่อนหมุดทั้งหมดไว้ก่อน
       markerPick = new google.maps.Marker({map: null, icon: "https://maps.google.com/mapfiles/ms/icons/green-dot.png", zIndex: 2});
       markerDrop = new google.maps.Marker({map: null, icon: "https://maps.google.com/mapfiles/ms/icons/red-dot.png", zIndex: 2});
       
-      // 🌟 ตั้งค่ารูปรถ F1 ให้มีจุดศูนย์กลาง (anchor) แม่นยำ และชั้นลอยสูงสุด
+      // 🌟 เปลี่ยนกลับมาใช้ไอคอนรูปรถธรรมดาแบบเดิม
       markerDriver = new google.maps.Marker({
           map: null, 
           icon: {
-              url: "https://img.icons8.com/color/48/f1-car.png",
+              url: "https://img.icons8.com/color/48/car-top-view.png",
               scaledSize: new google.maps.Size(44, 44),
-              anchor: new google.maps.Point(22, 22) // ปักหมุดตรงกลางรูปรถเป๊ะๆ
+              anchor: new google.maps.Point(22, 22)
           }, 
           zIndex: 9999
       });
@@ -264,7 +263,7 @@
         document.getElementById('navTitle').innerText = "เลือกจุดรับ";
         if (markerDrop && markerPick) {
           markerDrop.setMap(null); 
-          markerPick.setMap(map); // ใช้ setMap แทน setVisible
+          markerPick.setMap(map); 
           map.setCenter({lat: driverData.lat, lng: driverData.lng});
           updateAddressBox();
           setupSearch('pickupSearch', markerPick);
@@ -428,9 +427,8 @@
     function updateRealtimeMap() {
       if(!directionsService || !bookData.status) return;
 
-      // 🌟 ใช้ setMap เพื่อเปิด/ปิดหมุดแบบเสถียรที่สุด 100%
       if (bookData.status === "รอผู้ขับขี่ตอบรับ") {
-          if(markerDriver) markerDriver.setMap(null); // ปิดรูปรถ
+          if(markerDriver) markerDriver.setMap(null); 
           
           let origin = {lat: bookData.pLat, lng: bookData.pLng};
           let dest = {lat: bookData.dLat, lng: bookData.dLng};
@@ -439,9 +437,9 @@
               if(stat === 'OK') {
                   directionsRenderer.setDirections(res);
                   markerPick.setPosition(origin);
-                  markerPick.setMap(map); // แสดงหมุดเขียว
+                  markerPick.setMap(map); 
                   markerDrop.setPosition(dest);
-                  markerDrop.setMap(map); // แสดงหมุดแดง
+                  markerDrop.setMap(map); 
                   setTimeout(()=>{ 
                       const mapPadding = { top: 50, right: 50, bottom: 300, left: 50 };
                       map.fitBounds(res.routes[0].bounds, mapPadding); 
@@ -451,8 +449,7 @@
           return; 
       }
 
-      // ถ้าคนขับรับงานแล้ว
-      if(markerDriver) markerDriver.setMap(map); // เปิดรูปรถ
+      if(markerDriver) markerDriver.setMap(map); 
       markerDriver.setPosition({lat: driverData.lat, lng: driverData.lng});
 
       let origin, dest;
@@ -460,14 +457,14 @@
         origin = markerDriver.getPosition();
         dest = {lat: bookData.pLat, lng: bookData.pLng};
         markerPick.setPosition(dest);
-        markerPick.setMap(map); // แสดงหมุดเขียว
-        markerDrop.setMap(null); // ซ่อนหมุดแดง
+        markerPick.setMap(map); 
+        markerDrop.setMap(null); 
       } else {
         origin = markerDriver.getPosition();
         dest = {lat: bookData.dLat, lng: bookData.dLng};
         markerDrop.setPosition(dest);
-        markerDrop.setMap(map); // แสดงหมุดแดง
-        markerPick.setMap(null); // ซ่อนหมุดเขียว
+        markerDrop.setMap(map); 
+        markerPick.setMap(null); 
       }
 
       directionsService.route({origin: origin, destination: dest, travelMode: 'DRIVING'}, (res, stat) => {
@@ -481,6 +478,7 @@
       });
     }
 
+    // ฟังก์ชันจัดการแจ้งเตือนป๊อปอัปยืนยันการยกเลิกงาน
     function openCancelModal() {
         document.getElementById('cancelModal').classList.remove('hidden');
     }
@@ -502,6 +500,6 @@
     
     window.initMap = initMap;
   </script>
-  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDsZ_tbFhH6fUXRz3I6C-tMshNwwrSevd4&libraries=places&callback=initMap" async defer></script>
+  <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_GOOGLE_MAPS_API_KEY&libraries=places&callback=initMap" async defer></script>
 </body>
 </html>
