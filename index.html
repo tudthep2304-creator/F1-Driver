@@ -85,7 +85,7 @@
           <p class="font-black text-lg text-green-600"><span id="sumPrice">0</span> ฿</p>
         </div>
       </div>
-      <input type="tel" id="userPhone" placeholder="เบอร์โทรติดต่อ (10 หลัก)" class="w-full p-2.5 border rounded-xl mb-3 text-center font-bold text-sm" maxlength="10">
+      <input type="tel" id="userPhone" autocomplete="tel" placeholder="เบอร์โทรติดต่อ (10 หลัก)" class="w-full p-2.5 border rounded-xl mb-3 text-center font-bold text-sm" maxlength="10">
       <button onclick="submitBooking()" class="w-full bg-green-600 text-white py-3.5 rounded-xl font-bold text-base mt-auto">ยืนยันเรียกรถ</button>
     </div>
   </div>
@@ -132,10 +132,7 @@
     let currentStep = 1;
 
     function initMap() {
-      if (typeof google === 'undefined' || typeof google.maps === 'undefined') {
-        console.warn('Google Maps API not yet loaded.');
-        return;
-      }
+      if (typeof google === 'undefined' || typeof google.maps === 'undefined') return;
       if(map) return;
       map = new google.maps.Map(document.getElementById('map'), { 
         zoom: 16, center: {lat: driverData.lat, lng: driverData.lng}, mapTypeId: 'hybrid', disableDefaultUI: true, gestureHandling: 'greedy' 
@@ -227,6 +224,11 @@
         }
       }
 
+      // 🌟 เคลียร์เส้นทางเสมอเมื่อย้อนกลับมาหน้า 2 หรือ 3
+      if (page === 2 || page === 3) {
+          if (directionsRenderer) directionsRenderer.setDirections({routes: []});
+      }
+
       if(page === 2) {
         document.getElementById('navTitle').innerText = "เลือกจุดรับ";
         if (markerDrop && markerPick) {
@@ -240,8 +242,15 @@
         document.getElementById('navTitle').innerText = "เลือกจุดส่ง";
         if (markerPick && markerDrop) {
           markerPick.setVisible(true); markerDrop.setVisible(true);
-          markerDrop.setPosition(markerPick.getPosition());
-          map.setCenter(markerPick.getPosition());
+          
+          // ถ้าย้อนกลับมา ให้จุดส่งอยู่ตรงตำแหน่งเดิม ไม่รีเซ็ตไปหาจุดรับ
+          if(bookData.dLat !== 0 && bookData.dLng !== 0) {
+             markerDrop.setPosition({lat: bookData.dLat, lng: bookData.dLng});
+          } else {
+             markerDrop.setPosition(markerPick.getPosition());
+          }
+          
+          map.setCenter(markerDrop.getPosition());
           updateAddressBox();
           setupSearch('dropoffSearch', markerDrop);
         }
@@ -335,12 +344,7 @@
               document.getElementById('sumPrice').innerText = bookData.price;
 
               setTimeout(() => {
-                const mapPadding = {
-                  top: 50,
-                  right: 50,
-                  bottom: 300,
-                  left: 50
-                };
+                const mapPadding = { top: 50, right: 50, bottom: 300, left: 50 };
                 map.fitBounds(resRide.routes[0].bounds, mapPadding);
               }, 200);
             }
@@ -388,11 +392,22 @@
 
     function updateRealtimeMap() {
       if(!directionsService || !bookData.status) return;
+
+      // 🌟 ถ้าสถานะยังรอคนขับตอบรับ ให้ซ่อนคนขับ ซ่อนเส้น และซูมไปที่จุดรับอย่างเดียว
+      if (bookData.status === "รอผู้ขับขี่ตอบรับ") {
+          if(markerDriver) markerDriver.setVisible(false);
+          if(directionsRenderer) directionsRenderer.setDirections({routes: []});
+          map.setCenter({lat: bookData.pLat, lng: bookData.pLng});
+          map.setZoom(16);
+          return;
+      }
+
+      // 🌟 ถ้าคนขับรับงานแล้ว ค่อยเปิดตำแหน่งและวาดเส้น
       markerDriver.setPosition({lat: driverData.lat, lng: driverData.lng});
       markerDriver.setVisible(true);
 
       let origin, dest;
-      if(bookData.status === "รอผู้ขับขี่ตอบรับ" || bookData.status.includes("รับงาน") || bookData.status.includes("มาถึงจุดรับ")) {
+      if(bookData.status.includes("รับงาน") || bookData.status.includes("มาถึงจุดรับ") || bookData.status.includes("กำลังเดินทาง")) {
         origin = markerDriver.getPosition();
         dest = {lat: bookData.pLat, lng: bookData.pLng};
       } else {
@@ -404,12 +419,7 @@
         if(stat === 'OK') {
           directionsRenderer.setDirections(res);
           setTimeout(()=>{ 
-              const mapPadding = {
-                top: 50,
-                right: 50,
-                bottom: 300, 
-                left: 50
-              };
+              const mapPadding = { top: 50, right: 50, bottom: 300, left: 50 };
               map.fitBounds(res.routes[0].bounds, mapPadding); 
           }, 200);
         }
