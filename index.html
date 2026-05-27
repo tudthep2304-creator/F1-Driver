@@ -44,8 +44,9 @@
   </div>
 
   <div id="page2" class="hidden">
-    <div class="ui-panel h-[280px]"> <div class="flex justify-between items-center mb-3">
-        <p class="text-sm font-bold text-gray-700">📍 เลือกจุดรับ</p>
+    <div class="ui-panel h-[280px]">
+      <div class="flex justify-between items-center mb-3">
+        <p class="text-sm font-bold text-gray-700">📍 เลือกจุดรับ (หมุดสีเขียว)</p>
         <button onclick="useCurrentLocation()" class="text-xs bg-blue-100 text-blue-700 px-3 py-1 rounded-full"><i class="fas fa-crosshairs"></i> ตำแหน่งปัจจุบัน</button>
       </div>
       <input type="text" id="pickupSearch" class="w-full p-4 bg-gray-100 rounded-xl mb-4 outline-none font-medium" placeholder="ค้นหาสถานที่...">
@@ -55,8 +56,9 @@
   </div>
 
   <div id="page3" class="hidden">
-    <div class="ui-panel h-[280px]"> <div class="flex justify-between items-center mb-3">
-        <p class="text-sm font-bold text-gray-700">🏁 เลือกจุดส่ง</p>
+    <div class="ui-panel h-[280px]">
+      <div class="flex justify-between items-center mb-3">
+        <p class="text-sm font-bold text-gray-700">🏁 เลือกจุดส่ง (หมุดสีแดง)</p>
       </div>
       <input type="text" id="dropoffSearch" class="w-full p-4 bg-gray-100 rounded-xl mb-4 outline-none font-medium" placeholder="ค้นหาสถานที่...">
       <p class="text-xs text-gray-500 mb-2 truncate" id="dropoffAddressText">กำลังดึงที่อยู่...</p>
@@ -65,28 +67,27 @@
   </div>
 
   <div id="page4" class="hidden">
-    <div class="ui-panel h-[450px]">
-      <h2 class="font-bold text-center border-b pb-3 mb-3">สรุปการเดินทาง</h2>
-      <div class="bg-gray-50 p-3 rounded-xl mb-3 border text-sm">
-        <p class="text-gray-500 text-xs">จุดรับ: <span id="sumPick" class="text-gray-800 font-bold block truncate">...</span></p>
-        <p class="text-gray-500 text-xs mt-2">จุดส่ง: <span id="sumDrop" class="text-gray-800 font-bold block truncate">...</span></p>
+    <div class="ui-panel h-[360px]"> <h2 class="font-bold text-center border-b pb-2 mb-2 text-sm">สรุปการเดินทาง</h2>
+      <div class="bg-gray-50 p-2.5 rounded-xl mb-2 border text-xs space-y-1">
+        <p class="text-gray-500">จุดรับ: <span id="sumPick" class="text-gray-800 font-bold block truncate">...</span></p>
+        <p class="text-gray-500">จุดส่ง: <span id="sumDrop" class="text-gray-800 font-bold block truncate">...</span></p>
       </div>
-      <div class="flex justify-between bg-blue-50 p-3 rounded-xl mb-3 text-sm">
+      <div class="flex justify-between bg-blue-50 p-2.5 rounded-xl mb-2 text-xs">
         <div>
-          <p class="text-gray-500 text-xs">ระยะทาง</p>
-          <p class="font-bold text-blue-700"><span id="sumDist">0</span> กม.</p>
+          <p class="text-gray-500">ระยะทาง</p>
+          <p class="font-bold text-blue-700 text-sm"><span id="sumDist">0</span> กม.</p>
         </div>
         <div>
-          <p class="text-gray-500 text-xs">เวลารอ</p>
-          <p class="font-bold text-blue-700"><span id="sumWait">0</span> นาที</p>
+          <p class="text-gray-500">เวลารอประมาณ</p>
+          <p class="font-bold text-blue-700 text-sm"><span id="sumWait">0</span> นาที</p>
         </div>
         <div class="text-right">
-          <p class="text-gray-500 text-xs">ราคา</p>
-          <p class="font-black text-xl text-green-600"><span id="sumPrice">0</span> ฿</p>
+          <p class="text-gray-500">ราคาเหมาจ่าย</p>
+          <p class="font-black text-lg text-green-600"><span id="sumPrice">0</span> ฿</p>
         </div>
       </div>
-      <input type="tel" id="userPhone" placeholder="เบอร์โทรติดต่อ (10 หลัก)" class="w-full p-3 border rounded-xl mb-4 text-center font-bold" maxlength="10">
-      <button onclick="submitBooking()" class="w-full bg-green-600 text-white py-4 rounded-xl font-bold text-lg mt-auto">ยืนยันเรียกรถ</button>
+      <input type="tel" id="userPhone" placeholder="เบอร์โทรติดต่อ (10 หลัก)" class="w-full p-2.5 border rounded-xl mb-3 text-center font-bold text-sm" maxlength="10">
+      <button onclick="submitBooking()" class="w-full bg-green-600 text-white py-3.5 rounded-xl font-bold text-base mt-auto">ยืนยันเรียกรถ</button>
     </div>
   </div>
 
@@ -177,9 +178,9 @@
       geocoder = new google.maps.Geocoder();
       placesService = new google.maps.places.PlacesService(map);
       
-      // ไม่ใส่รูป icon จะได้หมุดสีแดงมาตรฐานของ Google Maps
-      markerPick = new google.maps.Marker({map: map, zIndex: 2});
-      markerDrop = new google.maps.Marker({map: map, zIndex: 2});
+      // เปลี่ยนไอคอนจุดรับเป็นหมุดสีเขียวของ Google Maps ส่วนจุดส่งเป็นสีแดงปกติครับ
+      markerPick = new google.maps.Marker({map: map, icon: "https://maps.google.com/mapfiles/ms/icons/green-dot.png", zIndex: 2});
+      markerDrop = new google.maps.Marker({map: map, icon: "https://maps.google.com/mapfiles/ms/icons/red-dot.png", zIndex: 2});
       markerDriver = new google.maps.Marker({map: map, icon: "https://img.icons8.com/color/48/car-top-view.png", zIndex: 3});
 
       // จัดการให้หมุดอยู่กึ่งกลางตลอดเวลาที่เลื่อนแผนที่
@@ -189,6 +190,29 @@
       });
 
       map.addListener('dragend', () => updateAddressBox());
+
+      // ฟังก์ชันคลิกเลือกสถานที่ที่มีชื่อบนแผนที่ (POI Click)
+      map.addListener('click', (event) => {
+        if (event.placeId) {
+          event.stop(); // หยุดกล่องข้อความเดิมของ Google
+          placesService.getDetails({ placeId: event.placeId, fields: ['name', 'geometry'] }, (place, status) => {
+            if (status === 'OK' && place.geometry) {
+              map.setCenter(place.geometry.location);
+              if (currentStep === 2) {
+                markerPick.setPosition(place.geometry.location);
+                bookData.pName = place.name;
+                document.getElementById('pickupSearch').value = place.name;
+                document.getElementById('pickupAddressText').innerText = place.name;
+              } else if (currentStep === 3) {
+                markerDrop.setPosition(place.geometry.location);
+                bookData.dName = place.name;
+                document.getElementById('dropoffSearch').value = place.name;
+                document.getElementById('dropoffAddressText').innerText = place.name;
+              }
+            }
+          });
+        }
+      });
     }
 
     function showPage(page) {
@@ -220,6 +244,7 @@
       }
       else if(page === 4) {
         document.getElementById('navTitle').innerText = "ยืนยันเรียกรถ";
+        markerPick.setVisible(true); markerDrop.setVisible(true);
         calculatePrice();
       }
     }
@@ -246,6 +271,7 @@
         const place = auto.getPlace();
         if(place.geometry) {
           map.setCenter(place.geometry.location); 
+          marker.setPosition(place.geometry.location);
           if(currentStep===2) bookData.pName = place.name; else bookData.dName = place.name;
         }
       });
@@ -254,7 +280,9 @@
     function useCurrentLocation() {
       navigator.geolocation.getCurrentPosition(p => {
         let pos = {lat: p.coords.latitude, lng: p.coords.longitude};
-        map.setCenter(pos); updateAddressBox();
+        map.setCenter(pos);
+        if(currentStep===2) markerPick.setPosition(pos); else markerDrop.setPosition(pos);
+        updateAddressBox();
       });
     }
 
@@ -272,7 +300,11 @@
       directionsService.route({origin: origin, destination: dest, travelMode: 'DRIVING'}, (resRide, stat1) => {
         if(stat1 === 'OK') {
           directionsRenderer.setDirections(resRide);
-          map.panBy(0, -150);
+          
+          // ตั้งค่าไอคอนหมุดให้เป็น เขียว-แดง ในหน้าสรุปเส้นทางด้วยครับ
+          markerPick.setPosition(origin);
+          markerDrop.setPosition(dest);
+
           let distRideKm = resRide.routes[0].legs[0].distance.value / 1000;
           
           directionsService.route({origin: driverPos, destination: origin, travelMode: 'DRIVING'}, (resDrive, stat2) => {
@@ -285,6 +317,12 @@
               document.getElementById('sumDist').innerText = distRideKm.toFixed(1);
               document.getElementById('sumWait').innerText = waitMins;
               document.getElementById('sumPrice').innerText = bookData.price;
+
+              setTimeout(() => {
+                map.fitBounds(resRide.routes[0].bounds);
+                // ดึงแผนที่เส้นทางให้มาอยู่ตรงกลางพื้นที่ว่างด้านบน ไม่โดนกล่องขาวบังครับ
+                map.panBy(0, -100); 
+              }, 200);
             }
           });
         }
