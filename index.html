@@ -85,7 +85,7 @@
           <p class="font-black text-lg text-green-600"><span id="sumPrice">0</span> ฿</p>
         </div>
       </div>
-      <input type="tel" id="userPhone" autocomplete="tel" placeholder="เบอร์โทรติดต่อ (10 หลัก)" class="w-full p-2.5 border rounded-xl mb-3 text-center font-bold text-sm" maxlength="10">
+      <input type="tel" id="userPhone" autocomplete="tel" oninput="formatPhone(this)" placeholder="เบอร์โทรติดต่อ (10 หลัก)" class="w-full p-2.5 border rounded-xl mb-3 text-center font-bold text-sm">
       <button onclick="submitBooking()" class="w-full bg-green-600 text-white py-3.5 rounded-xl font-bold text-base mt-auto">ยืนยันเรียกรถ</button>
     </div>
   </div>
@@ -130,6 +130,16 @@
     let driverData = { lat: 19.910479, lng: 99.840576, status: "ออฟไลน์" };
     let bookData = { pLat:0, pLng:0, pName:"", dLat:0, dLng:0, dName:"", price:0, status:"" };
     let currentStep = 1;
+
+    // 🌟 ฟังก์ชันจัดการเบอร์โทร ลบช่องว่าง แปลง +66 และตัดให้เหลือ 10 หลัก
+    function formatPhone(input) {
+      let val = input.value.replace(/\D/g, ''); // ลบตัวอักษรที่ไม่ใช่ตัวเลขออกให้หมด (รวมถึงเครื่องหมาย + และช่องว่าง)
+      if (val.startsWith('66')) {
+         val = '0' + val.substring(2); // เปลี่ยน 66 นำหน้าให้เป็น 0
+      }
+      if (val.length > 10) val = val.substring(0, 10); // จำกัดไม่ให้เกิน 10 หลัก
+      input.value = val;
+    }
 
     function initMap() {
       if (typeof google === 'undefined' || typeof google.maps === 'undefined') return;
@@ -199,14 +209,14 @@
             ds.innerText = "🔴 ออฟไลน์"; ds.className = "text-2xl font-black text-red-500";
             btn.disabled = true; btn.classList.add('opacity-50', 'cursor-not-allowed');
           }
-          if(currentStep >= 5) updateRealtimeMap();
+          if(currentStep === 'Tracking') updateRealtimeMap();
         }
       });
 
       db.ref('bookings/' + lineUserId).on('value', snap => {
         const b = snap.val();
         if(b) { bookData = b; handleTracking(); } 
-        else if (currentStep === 5) window.location.reload();
+        else if (currentStep === 'Tracking') window.location.reload();
       });
     }
 
@@ -215,7 +225,8 @@
       [1,2,3,4,'Tracking'].forEach(p => document.getElementById('page'+p).classList.add('hidden'));
       document.getElementById('page' + page).classList.remove('hidden');
       
-      if(page > 1) {
+      // 🌟 แก้บั๊กแผนที่หน้า 5 ขาวโพลน (เปลี่ยนจาก page > 1 เป็น page !== 1)
+      if(page !== 1) {
         document.getElementById('navBar').classList.remove('hidden');
         document.getElementById('map').classList.remove('hidden');
         initMap();
@@ -224,7 +235,7 @@
         }
       }
 
-      // 🌟 เคลียร์เส้นทางเสมอเมื่อย้อนกลับมาหน้า 2 หรือ 3
+      // เคลียร์เส้นทางเสมอเมื่อย้อนกลับมาหน้า 2 หรือ 3
       if (page === 2 || page === 3) {
           if (directionsRenderer) directionsRenderer.setDirections({routes: []});
       }
@@ -243,7 +254,6 @@
         if (markerPick && markerDrop) {
           markerPick.setVisible(true); markerDrop.setVisible(true);
           
-          // ถ้าย้อนกลับมา ให้จุดส่งอยู่ตรงตำแหน่งเดิม ไม่รีเซ็ตไปหาจุดรับ
           if(bookData.dLat !== 0 && bookData.dLng !== 0) {
              markerDrop.setPosition({lat: bookData.dLat, lng: bookData.dLng});
           } else {
@@ -264,7 +274,12 @@
       }
     }
     
-    function goBack() { if(currentStep > 1 && currentStep < 5) showPage(currentStep - 1); }
+    function goBack() { 
+       if(currentStep === 2) showPage(1);
+       if(currentStep === 3) showPage(2);
+       if(currentStep === 4) showPage(3);
+    }
+    
     function goHome() { window.location.reload(); }
 
     function updateAddressBox() {
@@ -355,7 +370,7 @@
 
     function submitBooking() {
       let tel = document.getElementById('userPhone').value;
-      if(tel.length < 9) return alert('กรอกเบอร์โทรให้ถูกต้อง');
+      if(tel.length < 10) return alert('กรุณากรอกเบอร์โทรศัพท์ให้ครบ 10 หลัก');
       bookData.userId = lineUserId; bookData.name = lineName; bookData.phone = tel;
       bookData.status = "รอผู้ขับขี่ตอบรับ"; bookData.timestamp = firebase.database.ServerValue.TIMESTAMP;
       
@@ -393,16 +408,27 @@
     function updateRealtimeMap() {
       if(!directionsService || !bookData.status) return;
 
-      // 🌟 ถ้าสถานะยังรอคนขับตอบรับ ให้ซ่อนคนขับ ซ่อนเส้น และซูมไปที่จุดรับอย่างเดียว
+      // 🌟 ถ้ารอคนขับตอบรับ ให้แสดงเส้นทางจุดรับ-ส่ง เหมือนหน้า 4
       if (bookData.status === "รอผู้ขับขี่ตอบรับ") {
           if(markerDriver) markerDriver.setVisible(false);
-          if(directionsRenderer) directionsRenderer.setDirections({routes: []});
-          map.setCenter({lat: bookData.pLat, lng: bookData.pLng});
-          map.setZoom(16);
-          return;
+          let origin = {lat: bookData.pLat, lng: bookData.pLng};
+          let dest = {lat: bookData.dLat, lng: bookData.dLng};
+          
+          directionsService.route({origin: origin, destination: dest, travelMode: 'DRIVING'}, (res, stat) => {
+              if(stat === 'OK') {
+                  directionsRenderer.setDirections(res);
+                  markerPick.setPosition(origin);
+                  markerDrop.setPosition(dest);
+                  setTimeout(()=>{ 
+                      const mapPadding = { top: 50, right: 50, bottom: 300, left: 50 };
+                      map.fitBounds(res.routes[0].bounds, mapPadding); 
+                  }, 200);
+              }
+          });
+          return; // ออกจากฟังก์ชัน ไม่ต้องโชว์คนขับ
       }
 
-      // 🌟 ถ้าคนขับรับงานแล้ว ค่อยเปิดตำแหน่งและวาดเส้น
+      // 🌟 ถ้าสถานะเป็นอย่างอื่น (คนขับรับงานแล้ว) แสดงหมุดคนขับและเส้นทางไปยังเป้าหมาย
       markerDriver.setPosition({lat: driverData.lat, lng: driverData.lng});
       markerDriver.setVisible(true);
 
