@@ -44,8 +44,7 @@
   </div>
 
   <div id="page2" class="hidden">
-    <div class="ui-panel h-[350px]">
-      <div class="flex justify-between items-center mb-3">
+    <div class="ui-panel h-[280px]"> <div class="flex justify-between items-center mb-3">
         <p class="text-sm font-bold text-gray-700">📍 เลือกจุดรับ</p>
         <button onclick="useCurrentLocation()" class="text-xs bg-blue-100 text-blue-700 px-3 py-1 rounded-full"><i class="fas fa-crosshairs"></i> ตำแหน่งปัจจุบัน</button>
       </div>
@@ -56,8 +55,7 @@
   </div>
 
   <div id="page3" class="hidden">
-    <div class="ui-panel h-[350px]">
-      <div class="flex justify-between items-center mb-3">
+    <div class="ui-panel h-[280px]"> <div class="flex justify-between items-center mb-3">
         <p class="text-sm font-bold text-gray-700">🏁 เลือกจุดส่ง</p>
       </div>
       <input type="text" id="dropoffSearch" class="w-full p-4 bg-gray-100 rounded-xl mb-4 outline-none font-medium" placeholder="ค้นหาสถานที่...">
@@ -112,8 +110,7 @@
   </div>
 
   <script>
-    // --- ตั้งค่าระบบ (ประกอบร่างให้เรียบร้อยแล้ว) ---
-    const APPS_SCRIPT_URL = ""; // เดี๋ยวเราค่อยเอาลิงก์ Apps script มาเติมใส่ตรงนี้ได้ทีหลังครับ
+    const APPS_SCRIPT_URL = ""; 
     const MY_LIFF_ID = "2010188449-b9Yq1R2L";
     
     firebase.initializeApp({
@@ -127,7 +124,6 @@
     });
     const db = firebase.database();
 
-    // ตัวแปรส่วนกลาง
     let map, directionsService, directionsRenderer, geocoder, placesService;
     let markerPick, markerDrop, markerDriver;
     let lineUserId = "", lineName = "";
@@ -135,7 +131,6 @@
     let bookData = { pLat:0, pLng:0, pName:"", dLat:0, dLng:0, dName:"", price:0, status:"" };
     let currentStep = 1;
 
-    // 1. เริ่มต้น LIFF และดึงข้อมูล
     liff.init({ liffId: MY_LIFF_ID }).then(() => {
       if(liff.isLoggedIn()){
         liff.getProfile().then(p => {
@@ -148,7 +143,6 @@
     });
 
     function initApp() {
-      // ฟังสถานะคนขับ
       db.ref('driver').on('value', snap => {
         const d = snap.val();
         if(d) {
@@ -166,7 +160,6 @@
         }
       });
 
-      // จำสถานะลูกค้า
       db.ref('bookings/' + lineUserId).on('value', snap => {
         const b = snap.val();
         if(b) { bookData = b; handleTracking(); } 
@@ -174,7 +167,6 @@
       });
     }
 
-    // 2. แผนที่พื้นฐาน
     function initMap() {
       if(map) return;
       map = new google.maps.Map(document.getElementById('map'), { 
@@ -185,14 +177,20 @@
       geocoder = new google.maps.Geocoder();
       placesService = new google.maps.places.PlacesService(map);
       
-      markerPick = new google.maps.Marker({map: map, icon: "https://img.icons8.com/color/48/marker.png", zIndex: 2});
-      markerDrop = new google.maps.Marker({map: map, icon: "https://img.icons8.com/color/48/flag.png", zIndex: 2});
+      // ไม่ใส่รูป icon จะได้หมุดสีแดงมาตรฐานของ Google Maps
+      markerPick = new google.maps.Marker({map: map, zIndex: 2});
+      markerDrop = new google.maps.Marker({map: map, zIndex: 2});
       markerDriver = new google.maps.Marker({map: map, icon: "https://img.icons8.com/color/48/car-top-view.png", zIndex: 3});
+
+      // จัดการให้หมุดอยู่กึ่งกลางตลอดเวลาที่เลื่อนแผนที่
+      map.addListener('center_changed', () => {
+         if (currentStep === 2) markerPick.setPosition(map.getCenter());
+         if (currentStep === 3) markerDrop.setPosition(map.getCenter());
+      });
 
       map.addListener('dragend', () => updateAddressBox());
     }
 
-    // จัดการ UI
     function showPage(page) {
       currentStep = page;
       [1,2,3,4,'Tracking'].forEach(p => document.getElementById('page'+p).classList.add('hidden'));
@@ -225,14 +223,13 @@
         calculatePrice();
       }
     }
+    
     function goBack() { if(currentStep > 1 && currentStep < 5) showPage(currentStep - 1); }
     function goHome() { window.location.reload(); }
 
     function updateAddressBox() {
       let isPick = (currentStep === 2);
       let pos = map.getCenter();
-      let m = isPick ? markerPick : markerDrop;
-      m.setPosition(pos);
       geocoder.geocode({location: pos}, (res, status) => {
         if(status === 'OK' && res[0]) {
           let addr = res[0].formatted_address.replace(', ประเทศไทย','');
@@ -248,21 +245,22 @@
       auto.addListener('place_changed', () => {
         const place = auto.getPlace();
         if(place.geometry) {
-          map.setCenter(place.geometry.location); marker.setPosition(place.geometry.location);
+          map.setCenter(place.geometry.location); 
           if(currentStep===2) bookData.pName = place.name; else bookData.dName = place.name;
         }
       });
     }
+
     function useCurrentLocation() {
       navigator.geolocation.getCurrentPosition(p => {
         let pos = {lat: p.coords.latitude, lng: p.coords.longitude};
-        map.setCenter(pos); markerPick.setPosition(pos); updateAddressBox();
+        map.setCenter(pos); updateAddressBox();
       });
     }
+
     function confirmPickup() { bookData.pLat = markerPick.getPosition().lat(); bookData.pLng = markerPick.getPosition().lng(); showPage(3); }
     function confirmDropoff() { bookData.dLat = markerDrop.getPosition().lat(); bookData.dLng = markerDrop.getPosition().lng(); showPage(4); }
 
-    // 3. คำนวณราคา (ตามโจทย์: วิ่งจริง x 14) + (ระยะคนขับมารับ x 4)
     function calculatePrice() {
       document.getElementById('sumPick').innerText = bookData.pName;
       document.getElementById('sumDrop').innerText = bookData.dName;
@@ -271,20 +269,17 @@
       let dest = new google.maps.LatLng(bookData.dLat, bookData.dLng);
       let driverPos = new google.maps.LatLng(driverData.lat, driverData.lng);
 
-      // หาระยะ: จุดรับ -> จุดส่ง
       directionsService.route({origin: origin, destination: dest, travelMode: 'DRIVING'}, (resRide, stat1) => {
         if(stat1 === 'OK') {
           directionsRenderer.setDirections(resRide);
           map.panBy(0, -150);
           let distRideKm = resRide.routes[0].legs[0].distance.value / 1000;
           
-          // หาระยะ: คนขับ -> จุดรับ
           directionsService.route({origin: driverPos, destination: origin, travelMode: 'DRIVING'}, (resDrive, stat2) => {
             if(stat2 === 'OK') {
               let distDriverKm = resDrive.routes[0].legs[0].distance.value / 1000;
               let waitMins = Math.ceil(resDrive.routes[0].legs[0].duration.value / 60);
               
-              // คำนวณสูตร
               bookData.price = Math.ceil((distRideKm * 14) + (distDriverKm * 4));
               
               document.getElementById('sumDist').innerText = distRideKm.toFixed(1);
@@ -296,7 +291,6 @@
       });
     }
 
-    // 4. บันทึกข้อมูล & แจ้งเตือน
     function submitBooking() {
       let tel = document.getElementById('userPhone').value;
       if(tel.length < 9) return alert('กรอกเบอร์โทรให้ถูกต้อง');
@@ -309,7 +303,6 @@
       });
     }
 
-    // 5. ติดตามสถานะ
     function handleTracking() {
       if(currentStep !== 'Tracking') showPage('Tracking');
       let statusEl = document.getElementById('trackStatus');
@@ -320,7 +313,6 @@
       document.getElementById('trackPick').innerText = bookData.pName;
       document.getElementById('trackDrop').innerText = bookData.dName;
 
-      // จัดการปุ่มยกเลิก
       if(bookData.status === "รอผู้ขับขี่ตอบรับ" || bookData.status.includes("กำลังเดินทาง")) {
         btnCancel.classList.remove('hidden');
       } else {
@@ -342,12 +334,10 @@
       markerDriver.setVisible(true);
 
       let origin, dest;
-      // แบ่ง Phase แผนที่
       if(bookData.status === "รอผู้ขับขี่ตอบรับ" || bookData.status.includes("รับงาน") || bookData.status.includes("มาถึงจุดรับ")) {
         origin = markerDriver.getPosition();
         dest = {lat: bookData.pLat, lng: bookData.pLng};
       } else {
-        // ออกเดินทาง
         origin = markerDriver.getPosition();
         dest = {lat: bookData.dLat, lng: bookData.dLng};
       }
