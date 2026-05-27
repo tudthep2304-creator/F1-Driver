@@ -67,7 +67,8 @@
   </div>
 
   <div id="page4" class="hidden">
-    <div class="ui-panel h-[360px]"> <h2 class="font-bold text-center border-b pb-2 mb-2 text-sm">สรุปการเดินทาง</h2>
+    <div class="ui-panel h-[360px]">
+      <h2 class="font-bold text-center border-b pb-2 mb-2 text-sm">สรุปการเดินทาง</h2>
       <div class="bg-gray-50 p-2.5 rounded-xl mb-2 border text-xs space-y-1">
         <p class="text-gray-500">จุดรับ: <span id="sumPick" class="text-gray-800 font-bold block truncate">...</span></p>
         <p class="text-gray-500">จุดส่ง: <span id="sumDrop" class="text-gray-800 font-bold block truncate">...</span></p>
@@ -125,6 +126,7 @@
     });
     const db = firebase.database();
 
+    // ตัวแปรส่วนกลาง
     let map, directionsService, directionsRenderer, geocoder, placesService;
     let markerPick, markerDrop, markerDriver;
     let lineUserId = "", lineName = "";
@@ -132,53 +134,24 @@
     let bookData = { pLat:0, pLng:0, pName:"", dLat:0, dLng:0, dName:"", price:0, status:"" };
     let currentStep = 1;
 
-    liff.init({ liffId: MY_LIFF_ID }).then(() => {
-      if(liff.isLoggedIn()){
-        liff.getProfile().then(p => {
-          lineUserId = p.userId; lineName = p.displayName;
-          document.getElementById('userName').innerText = lineName;
-          document.getElementById('userPic').src = p.pictureUrl;
-          initApp();
-        });
-      } else { liff.login(); }
-    });
-
-    function initApp() {
-      db.ref('driver').on('value', snap => {
-        const d = snap.val();
-        if(d) {
-          driverData = d;
-          let ds = document.getElementById('driverStatus');
-          let btn = document.getElementById('btnStart');
-          if(d.status === "ออนไลน์") {
-            ds.innerText = "🟢 ออนไลน์"; ds.className = "text-2xl font-black text-green-600";
-            btn.disabled = false; btn.classList.remove('opacity-50', 'cursor-not-allowed');
-          } else {
-            ds.innerText = "🔴 ออฟไลน์"; ds.className = "text-2xl font-black text-red-500";
-            btn.disabled = true; btn.classList.add('opacity-50', 'cursor-not-allowed');
-          }
-          if(currentStep >= 5) updateRealtimeMap();
-        }
-      });
-
-      db.ref('bookings/' + lineUserId).on('value', snap => {
-        const b = snap.val();
-        if(b) { bookData = b; handleTracking(); } 
-        else if (currentStep === 5) window.location.reload();
-      });
-    }
-
+    // --- Definitions ... ---
     function initMap() {
+      // Check for 'google' before attempting init to prevent 'not a function' errors
+      if (typeof google === 'undefined' || typeof google.maps === 'undefined') {
+        console.warn('Google Maps API not yet loaded.');
+        return;
+      }
       if(map) return;
       map = new google.maps.Map(document.getElementById('map'), { 
         zoom: 16, center: {lat: driverData.lat, lng: driverData.lng}, mapTypeId: 'hybrid', disableDefaultUI: true, gestureHandling: 'greedy' 
       });
       directionsService = new google.maps.DirectionsService();
-      directionsRenderer = new google.maps.DirectionsRenderer({ map: map, suppressMarkers: true, polylineOptions: {strokeColor:'#2B3A6F', strokeWeight:5} });
+      // Changed to Google Maps Standard Blue line for visibility
+      directionsRenderer = new google.maps.DirectionsRenderer({ map: map, suppressMarkers: true, polylineOptions: {strokeColor:'#4285F4', strokeWeight:6} });
       geocoder = new google.maps.Geocoder();
       placesService = new google.maps.places.PlacesService(map);
       
-      // เปลี่ยนไอคอนจุดรับเป็นหมุดสีเขียวของ Google Maps ส่วนจุดส่งเป็นสีแดงปกติครับ
+      // Pickup icon changes to use green (Google Standard). Droppoff is Red (Google Standard).
       markerPick = new google.maps.Marker({map: map, icon: "https://maps.google.com/mapfiles/ms/icons/green-dot.png", zIndex: 2});
       markerDrop = new google.maps.Marker({map: map, icon: "https://maps.google.com/mapfiles/ms/icons/red-dot.png", zIndex: 2});
       markerDriver = new google.maps.Marker({map: map, icon: "https://img.icons8.com/color/48/car-top-view.png", zIndex: 3});
@@ -214,7 +187,48 @@
         }
       });
     }
+    // ...Definitions ...
 
+    // 1. เริ่มต้น LIFF และดึงข้อมูล
+    liff.init({ liffId: MY_LIFF_ID }).then(() => {
+      if(liff.isLoggedIn()){
+        liff.getProfile().then(p => {
+          lineUserId = p.userId; lineName = p.displayName;
+          document.getElementById('userName').innerText = lineName;
+          document.getElementById('userPic').src = p.pictureUrl;
+          initApp();
+        });
+      } else { liff.login(); }
+    });
+
+    function initApp() {
+      // ฟังสถานะคนขับ
+      db.ref('driver').on('value', snap => {
+        const d = snap.val();
+        if(d) {
+          driverData = d;
+          let ds = document.getElementById('driverStatus');
+          let btn = document.getElementById('btnStart');
+          if(d.status === "ออนไลน์") {
+            ds.innerText = "🟢 ออนไลน์"; ds.className = "text-2xl font-black text-green-600";
+            btn.disabled = false; btn.classList.remove('opacity-50', 'cursor-not-allowed');
+          } else {
+            ds.innerText = "🔴 ออฟไลน์"; ds.className = "text-2xl font-black text-red-500";
+            btn.disabled = true; btn.classList.add('opacity-50', 'cursor-not-allowed');
+          }
+          if(currentStep >= 5) updateRealtimeMap();
+        }
+      });
+
+      // จำสถานะลูกค้า
+      db.ref('bookings/' + lineUserId).on('value', snap => {
+        const b = snap.val();
+        if(b) { bookData = b; handleTracking(); } 
+        else if (currentStep === 5) window.location.reload();
+      });
+    }
+
+    // จัดการ UI
     function showPage(page) {
       currentStep = page;
       [1,2,3,4,'Tracking'].forEach(p => document.getElementById('page'+p).classList.add('hidden'));
@@ -224,27 +238,35 @@
         document.getElementById('navBar').classList.remove('hidden');
         document.getElementById('map').classList.remove('hidden');
         initMap();
-        google.maps.event.trigger(map, 'resize');
+        if (typeof google !== 'undefined' && typeof google.maps !== 'undefined') {
+          google.maps.event.trigger(map, 'resize');
+        }
       }
 
       if(page === 2) {
         document.getElementById('navTitle').innerText = "เลือกจุดรับ";
-        markerDrop.setVisible(false); markerPick.setVisible(true);
-        map.setCenter({lat: driverData.lat, lng: driverData.lng});
-        updateAddressBox();
-        setupSearch('pickupSearch', markerPick);
+        if (markerDrop && markerPick) {
+          markerDrop.setVisible(false); markerPick.setVisible(true);
+          map.setCenter({lat: driverData.lat, lng: driverData.lng});
+          updateAddressBox();
+          setupSearch('pickupSearch', markerPick);
+        }
       } 
       else if(page === 3) {
         document.getElementById('navTitle').innerText = "เลือกจุดส่ง";
-        markerPick.setVisible(true); markerDrop.setVisible(true);
-        markerDrop.setPosition(markerPick.getPosition());
-        map.setCenter(markerPick.getPosition());
-        updateAddressBox();
-        setupSearch('dropoffSearch', markerDrop);
+        if (markerPick && markerDrop) {
+          markerPick.setVisible(true); markerDrop.setVisible(true);
+          markerDrop.setPosition(markerPick.getPosition());
+          map.setCenter(markerPick.getPosition());
+          updateAddressBox();
+          setupSearch('dropoffSearch', markerDrop);
+        }
       }
       else if(page === 4) {
         document.getElementById('navTitle').innerText = "ยืนยันเรียกรถ";
-        markerPick.setVisible(true); markerDrop.setVisible(true);
+        if (markerPick && markerDrop) {
+          markerPick.setVisible(true); markerDrop.setVisible(true);
+        }
         calculatePrice();
       }
     }
@@ -266,12 +288,13 @@
 
     function setupSearch(inputId, marker) {
       const input = document.getElementById(inputId);
+      // components restrictions are buggy if Map isn't loaded properly
+      if (typeof google === 'undefined' || typeof google.maps === 'undefined' || typeof google.maps.places === 'undefined') return;
       const auto = new google.maps.places.Autocomplete(input, {componentRestrictions: {country: 'th'}});
       auto.addListener('place_changed', () => {
         const place = auto.getPlace();
         if(place.geometry) {
           map.setCenter(place.geometry.location); 
-          marker.setPosition(place.geometry.location);
           if(currentStep===2) bookData.pName = place.name; else bookData.dName = place.name;
         }
       });
@@ -289,6 +312,7 @@
     function confirmPickup() { bookData.pLat = markerPick.getPosition().lat(); bookData.pLng = markerPick.getPosition().lng(); showPage(3); }
     function confirmDropoff() { bookData.dLat = markerDrop.getPosition().lat(); bookData.dLng = markerDrop.getPosition().lng(); showPage(4); }
 
+    // 3. คำนวณราคา (ตามโจทย์: วิ่งจริง x 14) + (ระยะคนขับมารับ x 4)
     function calculatePrice() {
       document.getElementById('sumPick').innerText = bookData.pName;
       document.getElementById('sumDrop').innerText = bookData.dName;
@@ -297,6 +321,7 @@
       let dest = new google.maps.LatLng(bookData.dLat, bookData.dLng);
       let driverPos = new google.maps.LatLng(driverData.lat, driverData.lng);
 
+      // หาระยะ: จุดรับ -> จุดส่ง
       directionsService.route({origin: origin, destination: dest, travelMode: 'DRIVING'}, (resRide, stat1) => {
         if(stat1 === 'OK') {
           directionsRenderer.setDirections(resRide);
@@ -307,6 +332,7 @@
 
           let distRideKm = resRide.routes[0].legs[0].distance.value / 1000;
           
+          // หาระยะ: คนขับ -> จุดรับ
           directionsService.route({origin: driverPos, destination: origin, travelMode: 'DRIVING'}, (resDrive, stat2) => {
             if(stat2 === 'OK') {
               let distDriverKm = resDrive.routes[0].legs[0].distance.value / 1000;
@@ -319,9 +345,14 @@
               document.getElementById('sumPrice').innerText = bookData.price;
 
               setTimeout(() => {
-                map.fitBounds(resRide.routes[0].bounds);
-                // ดึงแผนที่เส้นทางให้มาอยู่ตรงกลางพื้นที่ว่างด้านบน ไม่โดนกล่องขาวบังครับ
-                map.panBy(0, -100); 
+                // Fixed Page 4 centering: Using Padding instead of PanBy, which is more reliable.
+                const mapPadding = {
+                  top: 50,
+                  right: 50,
+                  bottom: 300, // Account for the UI panel height approx 280px + margin
+                  left: 50
+                };
+                map.fitBounds(resRide.routes[0].bounds, mapPadding);
               }, 200);
             }
           });
@@ -329,6 +360,7 @@
       });
     }
 
+    // 4. บันทึกข้อมูล & แจ้งเตือน
     function submitBooking() {
       let tel = document.getElementById('userPhone').value;
       if(tel.length < 9) return alert('กรอกเบอร์โทรให้ถูกต้อง');
@@ -341,6 +373,7 @@
       });
     }
 
+    // 5. ติดตามสถานะ
     function handleTracking() {
       if(currentStep !== 'Tracking') showPage('Tracking');
       let statusEl = document.getElementById('trackStatus');
@@ -351,6 +384,7 @@
       document.getElementById('trackPick').innerText = bookData.pName;
       document.getElementById('trackDrop').innerText = bookData.dName;
 
+      // จัดการปุ่มยกเลิก
       if(bookData.status === "รอผู้ขับขี่ตอบรับ" || bookData.status.includes("กำลังเดินทาง")) {
         btnCancel.classList.remove('hidden');
       } else {
@@ -372,10 +406,12 @@
       markerDriver.setVisible(true);
 
       let origin, dest;
+      // แบ่ง Phase แผนที่
       if(bookData.status === "รอผู้ขับขี่ตอบรับ" || bookData.status.includes("รับงาน") || bookData.status.includes("มาถึงจุดรับ")) {
         origin = markerDriver.getPosition();
         dest = {lat: bookData.pLat, lng: bookData.pLng};
       } else {
+        // ออกเดินทาง
         origin = markerDriver.getPosition();
         dest = {lat: bookData.dLat, lng: bookData.dLng};
       }
@@ -383,7 +419,16 @@
       directionsService.route({origin: origin, destination: dest, travelMode: 'DRIVING'}, (res, stat) => {
         if(stat === 'OK') {
           directionsRenderer.setDirections(res);
-          setTimeout(()=>{ map.fitBounds(res.routes[0].bounds); map.panBy(0,-100); }, 200);
+          setTimeout(()=>{ 
+              // Improved Page 5 centering using same padding logic.
+              const mapPadding = {
+                top: 50,
+                right: 50,
+                bottom: 300, // Account for white box
+                left: 50
+              };
+              map.fitBounds(res.routes[0].bounds, mapPadding); 
+          }, 200);
         }
       });
     }
