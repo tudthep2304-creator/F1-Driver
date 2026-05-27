@@ -112,13 +112,11 @@
   </div>
 
   <script>
-    // --- ตั้งค่าระบบ ---
-    const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwwdopAPESHRrHEYTSa-CzFMbh0JX9WHUa37PMEJmxDkah7ui67cVtOn68cnM-2DtmR/exec"; // จะอธิบายด้านล่าง
-    const MY_LIFF_ID = "Uc293fb578c6db9a9106fc0fd0f40c076";
+    // --- ตั้งค่าระบบ (ประกอบร่างให้เรียบร้อยแล้ว) ---
+    const APPS_SCRIPT_URL = ""; // เดี๋ยวเราค่อยเอาลิงก์ Apps script มาเติมใส่ตรงนี้ได้ทีหลังครับ
+    const MY_LIFF_ID = "2010188449-b9Yq1R2L";
     
     firebase.initializeApp({
-      // ใส่ Firebase Config ตรงนี้
-      firebase.initializeApp({
       apiKey: "AIzaSyBNtaYaX1OW-86_9EGiVN9EpgPzWOX_twQ",
       authDomain: "myride-chiangrai.firebaseapp.com",
       databaseURL: "https://myride-chiangrai-default-rtdb.asia-southeast1.firebasedatabase.app",
@@ -126,8 +124,6 @@
       storageBucket: "myride-chiangrai.firebasestorage.app",
       messagingSenderId: "1048189690454",
       appId: "1:1048189690454:web:7c2c4c9bbf12b9c77ed1f7"
-    });
-    const db = firebase.database();
     });
     const db = firebase.database();
 
@@ -308,8 +304,7 @@
       bookData.status = "รอผู้ขับขี่ตอบรับ"; bookData.timestamp = firebase.database.ServerValue.TIMESTAMP;
       
       db.ref('bookings/' + lineUserId).set(bookData).then(() => {
-        // แจ้งเตือนไลน์
-        fetch(`${APPS_SCRIPT_URL}?action=notify&type=new_ride&name=${lineName}&pick=${bookData.pName}`, {mode: 'no-cors'});
+        if(APPS_SCRIPT_URL) fetch(`${APPS_SCRIPT_URL}?action=notify&type=new_ride&name=${lineName}&pick=${bookData.pName}`, {mode: 'no-cors'});
         showPage('Tracking');
       });
     }
@@ -368,7 +363,7 @@
     function cancelBooking() {
       if(confirm('ยืนยันยกเลิกเรียกรถ?')) {
         db.ref('bookings/' + lineUserId).remove();
-        fetch(`${APPS_SCRIPT_URL}?action=notify&type=cancel&name=${lineName}`, {mode:'no-cors'});
+        if(APPS_SCRIPT_URL) fetch(`${APPS_SCRIPT_URL}?action=notify&type=cancel&name=${lineName}`, {mode:'no-cors'});
         alert('ยกเลิกแล้ว'); window.location.reload();
       }
     }
@@ -379,6 +374,6 @@
       window.open(`https://www.google.com/maps/dir/?api=1&origin=${driverData.lat},${driverData.lng}&destination=${lat},${lng}&travelmode=driving`, '_blank');
     }
   </script>
-  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSy...&libraries=places&callback=initMap" async defer></script>
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDsZ_tbFhH6fUXRz3I6C-tMshNwwrSevd4&libraries=places&callback=initMap" async defer></script>
 </body>
 </html>
