@@ -49,7 +49,7 @@
         <p class="text-sm font-bold text-gray-700">📍 เลือกจุดรับ (หมุดสีเขียว)</p>
         <button onclick="useCurrentLocation()" class="text-xs bg-blue-100 text-blue-700 px-3 py-1 rounded-full"><i class="fas fa-crosshairs"></i> ตำแหน่งปัจจุบัน</button>
       </div>
-      <input type="text" id="pickupSearch" class="w-full p-3.5 bg-gray-100 rounded-xl mb-auto outline-none font-medium text-sm text-gray-700 truncate" placeholder="ค้นหาสถานที่...">
+      <input type="text" id="pickupSearch" onfocus="this.value=''" class="w-full p-3.5 bg-gray-100 rounded-xl mb-auto outline-none font-medium text-sm text-gray-700 truncate" placeholder="ค้นหาสถานที่...">
       <button onclick="confirmPickup()" class="w-full bg-[#2B3A6F] text-white py-3.5 rounded-xl font-bold mt-3 text-base">ถัดไป</button>
     </div>
   </div>
@@ -59,7 +59,7 @@
       <div class="flex justify-between items-center mb-3">
         <p class="text-sm font-bold text-gray-700">🏁 เลือกจุดส่ง (หมุดสีแดง)</p>
       </div>
-      <input type="text" id="dropoffSearch" class="w-full p-3.5 bg-gray-100 rounded-xl mb-auto outline-none font-medium text-sm text-gray-700 truncate" placeholder="ค้นหาสถานที่...">
+      <input type="text" id="dropoffSearch" onfocus="this.value=''" class="w-full p-3.5 bg-gray-100 rounded-xl mb-auto outline-none font-medium text-sm text-gray-700 truncate" placeholder="ค้นหาสถานที่...">
       <button onclick="confirmDropoff()" class="w-full bg-[#2B3A6F] text-white py-3.5 rounded-xl font-bold mt-3 text-base">ถัดไป</button>
     </div>
   </div>
@@ -91,21 +91,21 @@
   </div>
 
   <div id="pageTracking" class="hidden">
-    <div class="ui-panel h-[350px]">
-      <div class="flex justify-between items-center border-b pb-3 mb-3">
-        <h2 class="font-black text-indigo-700 text-lg" id="trackStatus">รอผู้ขับขี่ตอบรับ...</h2>
-        <span class="bg-gray-100 px-3 py-1 rounded-full font-bold text-gray-700" id="trackPrice">฿0</span>
+    <div class="ui-panel h-[280px]">
+      <div class="flex justify-between items-center border-b pb-2 mb-2">
+        <h2 class="font-black text-indigo-700 text-base" id="trackStatus">รอผู้ขับขี่ตอบรับ...</h2>
+        <span class="bg-gray-100 px-3 py-1 rounded-full font-bold text-gray-700 text-sm" id="trackPrice">฿0</span>
       </div>
       
-      <div class="mb-4">
-        <p class="text-xs text-gray-400">จาก: <span class="font-bold text-gray-700" id="trackPick">...</span></p>
-        <p class="text-xs text-gray-400">ถึง: <span class="font-bold text-gray-700" id="trackDrop">...</span></p>
+      <div class="mb-3 space-y-1">
+        <p class="text-[11px] text-gray-400 truncate">จาก: <span class="font-bold text-gray-700" id="trackPick">...</span></p>
+        <p class="text-[11px] text-gray-400 truncate">ถึง: <span class="font-bold text-gray-700" id="trackDrop">...</span></p>
       </div>
 
-      <button onclick="openNavMap()" class="w-full bg-blue-50 text-blue-600 py-3 rounded-xl font-bold mb-2 flex items-center justify-center gap-2 border border-blue-200">
+      <button onclick="openNavMap()" class="w-full bg-blue-50 text-blue-600 py-2.5 rounded-xl font-bold flex items-center justify-center gap-2 border border-blue-200 text-sm mb-2">
         <i class="fas fa-location-arrow"></i> แผนที่นำทาง (Google Maps)
       </button>
-      <button id="btnCancel" onclick="openCancelModal()" class="w-full bg-red-50 text-red-600 py-3 rounded-xl font-bold border border-red-200 mt-auto">ยกเลิกเรียกรถ</button>
+      <button id="btnCancel" onclick="openCancelModal()" class="w-full bg-red-50 text-red-600 py-2.5 rounded-xl font-bold border border-red-200 mt-auto text-sm">ยกเลิกเรียกรถ</button>
     </div>
   </div>
 
@@ -126,7 +126,7 @@
   <div id="alertModal" class="hidden fixed inset-0 z-[110] bg-black/50 flex items-center justify-center p-4">
       <div class="bg-white rounded-2xl p-6 w-full max-w-sm text-center shadow-xl">
           <div id="alertIcon" class="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl">
-              </div>
+          </div>
           <h3 id="alertTitle" class="text-xl font-bold text-gray-800 mb-2">...</h3>
           <p id="alertMessage" class="text-sm text-gray-500 mb-6">...</p>
           <button onclick="closeAlertModal()" class="w-full py-3 bg-[#2B3A6F] text-white font-bold rounded-xl shadow-md">ตกลง</button>
@@ -155,7 +155,6 @@
     let bookData = { pLat:0, pLng:0, pName:"", dLat:0, dLng:0, dName:"", price:0, status:"" };
     let currentStep = 1;
 
-    // 🌟 ระบบจัดการ Popup สวยๆ
     function showAlert(title, message, type = 'info', reloadOnClose = false) {
         document.getElementById('alertTitle').innerText = title;
         document.getElementById('alertMessage').innerText = message;
@@ -208,7 +207,7 @@
       markerPick = new google.maps.Marker({map: null, icon: "https://maps.google.com/mapfiles/ms/icons/green-dot.png", zIndex: 2});
       markerDrop = new google.maps.Marker({map: null, icon: "https://maps.google.com/mapfiles/ms/icons/red-dot.png", zIndex: 2});
       
-      // รูปรถคนขับ (กลับไปใช้รถมุมบน ธรรมดา)
+      // รูปรถคนขับ
       markerDriver = new google.maps.Marker({
           map: null, 
           icon: {
@@ -460,7 +459,6 @@
         btnCancel.classList.add('hidden');
       }
 
-      // เมื่อคนขับกดอัปเดตสถานะว่าถึงที่หมาย
       if(bookData.status.includes("ถึงที่หมาย")) {
         db.ref('bookings/' + lineUserId).remove();
         showAlert('ถึงที่หมายแล้ว', 'ถึงที่หมายอย่างปลอดภัย ขอบคุณที่ใช้บริการ F1 Driver ครับ!', 'success', true);
@@ -486,7 +484,7 @@
                   markerDrop.setPosition(dest);
                   markerDrop.setMap(map); 
                   setTimeout(()=>{ 
-                      const mapPadding = { top: 50, right: 50, bottom: 300, left: 50 };
+                      const mapPadding = { top: 50, right: 50, bottom: 280, left: 50 };
                       map.fitBounds(res.routes[0].bounds, mapPadding); 
                   }, 200);
               }
@@ -516,7 +514,7 @@
         if(stat === 'OK') {
           directionsRenderer.setDirections(res);
           setTimeout(()=>{ 
-              const mapPadding = { top: 50, right: 50, bottom: 300, left: 50 };
+              const mapPadding = { top: 50, right: 50, bottom: 280, left: 50 };
               map.fitBounds(res.routes[0].bounds, mapPadding); 
           }, 200);
         }
