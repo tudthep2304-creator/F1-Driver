@@ -113,8 +113,8 @@
 
   <script>
     // --- ตั้งค่าระบบ ---
-    const APPS_SCRIPT_URL = "ใส่_URL_APPS_SCRIPT_ที่นี่"; // จะอธิบายด้านล่าง
-    const MY_LIFF_ID = "ใส่_LIFF_ID_ผู้โดยสาร";
+    const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwwdopAPESHRrHEYTSa-CzFMbh0JX9WHUa37PMEJmxDkah7ui67cVtOn68cnM-2DtmR/exec"; // จะอธิบายด้านล่าง
+    const MY_LIFF_ID = "Uc293fb578c6db9a9106fc0fd0f40c076";
     
     firebase.initializeApp({
       // ใส่ Firebase Config ตรงนี้
@@ -134,7 +134,7 @@
     let currentStep = 1;
 
     // 1. เริ่มต้น LIFF และดึงข้อมูล
-    liff.init({ liffId: Uc293fb578c6db9a9106fc0fd0f40c076 }).then(() => {
+    liff.init({ liffId: MY_LIFF_ID }).then(() => {
       if(liff.isLoggedIn()){
         liff.getProfile().then(p => {
           lineUserId = p.userId; lineName = p.displayName;
