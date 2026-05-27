@@ -123,6 +123,16 @@
       </div>
   </div>
 
+  <div id="alertModal" class="hidden fixed inset-0 z-[110] bg-black/50 flex items-center justify-center p-4">
+      <div class="bg-white rounded-2xl p-6 w-full max-w-sm text-center shadow-xl">
+          <div id="alertIcon" class="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl">
+              </div>
+          <h3 id="alertTitle" class="text-xl font-bold text-gray-800 mb-2">...</h3>
+          <p id="alertMessage" class="text-sm text-gray-500 mb-6">...</p>
+          <button onclick="closeAlertModal()" class="w-full py-3 bg-[#2B3A6F] text-white font-bold rounded-xl shadow-md">ตกลง</button>
+      </div>
+  </div>
+
   <script>
     const APPS_SCRIPT_URL = ""; 
     const MY_LIFF_ID = "2010188449-b9Yq1R2L";
@@ -145,6 +155,38 @@
     let bookData = { pLat:0, pLng:0, pName:"", dLat:0, dLng:0, dName:"", price:0, status:"" };
     let currentStep = 1;
 
+    // 🌟 ระบบจัดการ Popup สวยๆ
+    function showAlert(title, message, type = 'info', reloadOnClose = false) {
+        document.getElementById('alertTitle').innerText = title;
+        document.getElementById('alertMessage').innerText = message;
+        
+        let iconHtml = '';
+        let iconBg = '';
+        let iconColor = '';
+        if (type === 'error') {
+            iconHtml = '<i class="fas fa-times"></i>';
+            iconBg = 'bg-red-100'; iconColor = 'text-red-500';
+        } else if (type === 'success') {
+            iconHtml = '<i class="fas fa-check"></i>';
+            iconBg = 'bg-green-100'; iconColor = 'text-green-500';
+        } else {
+            iconHtml = '<i class="fas fa-info"></i>';
+            iconBg = 'bg-blue-100'; iconColor = 'text-blue-500';
+        }
+        
+        const iconDiv = document.getElementById('alertIcon');
+        iconDiv.innerHTML = iconHtml;
+        iconDiv.className = `w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl ${iconBg} ${iconColor}`;
+        
+        document.getElementById('alertModal').classList.remove('hidden');
+        window.alertCloseCallback = reloadOnClose ? () => window.location.reload() : null;
+    }
+
+    function closeAlertModal() {
+        document.getElementById('alertModal').classList.add('hidden');
+        if (window.alertCloseCallback) window.alertCloseCallback();
+    }
+
     function formatPhone(input) {
       let val = input.value.replace(/\D/g, ''); 
       if (val.startsWith('66')) val = '0' + val.substring(2); 
@@ -166,7 +208,7 @@
       markerPick = new google.maps.Marker({map: null, icon: "https://maps.google.com/mapfiles/ms/icons/green-dot.png", zIndex: 2});
       markerDrop = new google.maps.Marker({map: null, icon: "https://maps.google.com/mapfiles/ms/icons/red-dot.png", zIndex: 2});
       
-      // 🌟 เปลี่ยนกลับมาใช้ไอคอนรูปรถธรรมดาแบบเดิม
+      // รูปรถคนขับ (กลับไปใช้รถมุมบน ธรรมดา)
       markerDriver = new google.maps.Marker({
           map: null, 
           icon: {
@@ -389,7 +431,10 @@
 
     function submitBooking() {
       let tel = document.getElementById('userPhone').value;
-      if(tel.length < 10) return alert('กรุณากรอกเบอร์โทรศัพท์ให้ครบ 10 หลัก');
+      if(tel.length < 10) {
+          showAlert('แจ้งเตือน', 'กรุณากรอกเบอร์โทรศัพท์ให้ครบ 10 หลัก', 'error');
+          return;
+      }
       bookData.userId = lineUserId; bookData.name = lineName; bookData.phone = tel;
       bookData.status = "รอผู้ขับขี่ตอบรับ"; bookData.timestamp = firebase.database.ServerValue.TIMESTAMP;
       
@@ -415,10 +460,10 @@
         btnCancel.classList.add('hidden');
       }
 
+      // เมื่อคนขับกดอัปเดตสถานะว่าถึงที่หมาย
       if(bookData.status.includes("ถึงที่หมาย")) {
-        alert("ถึงที่หมายอย่างปลอดภัย ขอบคุณที่ใช้บริการ F1 Driver ครับ!");
         db.ref('bookings/' + lineUserId).remove();
-        window.location.reload();
+        showAlert('ถึงที่หมายแล้ว', 'ถึงที่หมายอย่างปลอดภัย ขอบคุณที่ใช้บริการ F1 Driver ครับ!', 'success', true);
       }
 
       updateRealtimeMap();
@@ -478,7 +523,6 @@
       });
     }
 
-    // ฟังก์ชันจัดการแจ้งเตือนป๊อปอัปยืนยันการยกเลิกงาน
     function openCancelModal() {
         document.getElementById('cancelModal').classList.remove('hidden');
     }
@@ -489,7 +533,7 @@
         document.getElementById('cancelModal').classList.add('hidden');
         db.ref('bookings/' + lineUserId).remove();
         if(APPS_SCRIPT_URL) fetch(`${APPS_SCRIPT_URL}?action=notify&type=cancel&name=${lineName}`, {mode:'no-cors'});
-        window.location.reload();
+        showAlert('ยกเลิกสำเร็จ', 'ระบบได้ทำการยกเลิกการเรียกรถเรียบร้อยแล้ว', 'success', true);
     }
 
     function openNavMap() {
@@ -500,6 +544,6 @@
     
     window.initMap = initMap;
   </script>
-  <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_GOOGLE_MAPS_API_KEY&libraries=places&callback=initMap" async defer></script>
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDsZ_tbFhH6fUXRz3I6C-tMshNwwrSevd4&libraries=places&callback=initMap" async defer></script>
 </body>
 </html>
