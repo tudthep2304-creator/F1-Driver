@@ -103,9 +103,9 @@
       </div>
 
       <div id="driverContactBox" class="hidden gap-2 mb-2 shrink-0">
-        <button onclick="openLineOA()" class="flex-1 bg-green-500 text-white py-2.5 rounded-xl font-bold text-sm flex items-center justify-center gap-2 shadow-sm active:bg-green-600 transition-colors">
+        <a id="btnDriverChat" href="#" target="_blank" class="flex-1 bg-green-500 text-white py-2.5 rounded-xl font-bold text-sm flex items-center justify-center gap-2 shadow-sm active:bg-green-600 transition-colors">
           <i class="fab fa-line text-base"></i> แชทหาคนขับ
-        </button>
+        </a>
         <a id="btnDriverCall" href="tel:0946379669" class="flex-1 bg-[#2B3A6F] text-white py-2.5 rounded-xl font-bold text-sm flex items-center justify-center gap-2 shadow-sm active:bg-blue-800 transition-colors">
           <i class="fas fa-phone-alt text-xs"></i> 0946379669
         </a>
@@ -163,6 +163,9 @@
     let driverData = { lat: 19.910479, lng: 99.840576, status: "ออฟไลน์" };
     let bookData = { pLat:0, pLng:0, pName:"", dLat:0, dLng:0, dName:"", price:0, status:"" };
     let currentStep = 1;
+    
+    // ตัวแปรสำหรับป้องกันแผนที่ซูมรัวๆ
+    window.currentRouteStatus = "";
 
     function showAlert(title, message, type = 'info', callback = null) {
         document.getElementById('alertTitle').innerText = title;
@@ -194,18 +197,6 @@
       if (val.startsWith('66')) val = '0' + val.substring(2); 
       if (val.length > 10) val = val.substring(0, 10); 
       input.value = val;
-    }
-
-    // 🌟 ฟังก์ชันแชทหาคนขับผ่านระบบ LINE SDK (แก้บั๊กกดไม่ได้)
-    function openLineOA() {
-      if (liff.isInClient()) {
-        liff.openWindow({
-          url: "https://line.me/R/ti/p/%40YOUR_LINE_OA_ID", // ใส่ ID ของ LINE OA แทนที่ YOUR_LINE_OA_ID (ไม่ต้องมีเครื่องหมาย @ ในลิงก์นี้)
-          external: true
-        });
-      } else {
-        window.open("https://line.me/R/ti/p/%40YOUR_LINE_OA_ID", "_blank");
-      }
     }
 
     function initMap() {
@@ -467,7 +458,6 @@
       document.getElementById('trackPick').innerText = bookData.pName;
       document.getElementById('trackDrop').innerText = bookData.dName;
 
-      // 🌟 1. เงื่อนไขปุ่มยกเลิกงาน: ค้างปุ่มยกเลิกไว้เมื่อ "รอรับงาน" และ "คนขับกำลังเดินทางมาหา"
       if(bookData.status === "รอผู้ขับขี่ตอบรับ" || bookData.status.includes("กำลังเดินทางไปหา")) {
           btnCancel.classList.remove('hidden');
       } else {
@@ -478,10 +468,9 @@
       if (bookData.status === "รอผู้ขับขี่ตอบรับ" || bookData.status === "ยกเลิกโดยคนขับ") {
           contactBox.classList.add('hidden'); contactBox.classList.remove('flex');
       } else {
-          contactBox.document || contactBox.classList.remove('hidden'); contactBox.classList.add('flex');
+          contactBox.classList.remove('hidden'); contactBox.classList.add('flex');
       }
 
-      // 🌟 3. ระบบแจ้งเตือนเมื่อจบงาน: กดตกลงในป๊อปอัปก่อน หน้าจอถึงจะถูกเคลียร์และรีโหลด
       if(bookData.status.includes("ถึงที่หมาย") && !window.hasShownFinish) {
         window.hasShownFinish = true;
         showAlert('ถึงที่หมายแล้ว', 'ถึงที่หมายอย่างปลอดภัย ขอบคุณที่ใช้บริการ F1 Driver ครับ!', 'success', () => {
@@ -504,7 +493,11 @@
     function updateRealtimeMap() {
       if(!directionsService || !bookData.status) return;
 
-      if (bookData.status === "รอผู้ขับขี่ตอบรับ") {
+      // 🌟 ระบบป้องกันแผนที่ซูมรัวๆ: จะสั่งจัดกึ่งกลาง (fitBounds) เฉพาะเวลาสถานะเปลี่ยนเท่านั้น
+      let isStatusChanged = (window.currentRouteStatus !== bookData.status);
+      window.currentRouteStatus = bookData.status;
+
+      if (bookData.status === "รอผู้ขับขี่ตอบรับ" || bookData.status === "ยกเลิกโดยคนขับ") {
           if(markerDriver) markerDriver.setMap(null); 
           let origin = {lat: bookData.pLat, lng: bookData.pLng};
           let dest = {lat: bookData.dLat, lng: bookData.dLng};
@@ -514,7 +507,10 @@
                   directionsRenderer.setDirections(res);
                   markerPick.setPosition(origin); markerPick.setMap(map); 
                   markerDrop.setPosition(dest); markerDrop.setMap(map); 
-                  setTimeout(()=>{ const mapPadding = { top: 50, right: 50, bottom: 280, left: 50 }; map.fitBounds(res.routes[0].bounds, mapPadding); }, 200);
+                  
+                  if (isStatusChanged) {
+                     setTimeout(()=>{ const mapPadding = { top: 50, right: 50, bottom: 280, left: 50 }; map.fitBounds(res.routes[0].bounds, mapPadding); }, 200);
+                  }
               }
           });
           return; 
@@ -536,17 +532,18 @@
         if(stat === 'OK') {
           directionsRenderer.setDirections(res);
           
-          // 🌟 2. ระบบดักจับและส่งการแจ้งเตือนอัตโนมัติเมื่อคนขับเข้าใกล้ระยะ 2 กิโลเมตร
           const leg = res.routes[0].legs[0];
           let distanceKm = leg.distance.value / 1000;
           if(bookData.status.includes("กำลังเดินทางไปหา") && distanceKm <= 2.0 && bookData.notified2Km === false) {
-              db.ref('bookings/' + lineUserId).update({ notified2Km: true }); // บล็อกการส่งข้อความซ้ำซ้อน
+              db.ref('bookings/' + lineUserId).update({ notified2Km: true }); 
               if(APPS_SCRIPT_URL) {
                   fetch(`${APPS_SCRIPT_URL}?action=notify&type=status_update&userId=${lineUserId}&msg=${encodeURIComponent("⚡ คนขับใกล้ถึงจุดรับแล้วครับ! ระยะห่างอีกประมาณ " + distanceKm.toFixed(1) + " กม.")}`, {mode: 'no-cors'});
               }
           }
 
-          setTimeout(()=>{ const mapPadding = { top: 50, right: 50, bottom: 340, left: 50 }; map.fitBounds(res.routes[0].bounds, mapPadding); }, 200);
+          if (isStatusChanged) {
+              setTimeout(()=>{ const mapPadding = { top: 50, right: 50, bottom: 340, left: 50 }; map.fitBounds(res.routes[0].bounds, mapPadding); }, 200);
+          }
         }
       });
     }
