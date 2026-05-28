@@ -143,11 +143,8 @@
   </div>
 
   <script>
-    // --- ตั้งค่าระบบ ---
     const APPS_SCRIPT_URL = ""; 
     const MY_LIFF_ID = "2010188449-b9Yq1R2L";
-    
-    // 🌟 ใส่ลิงก์ LINE OA ที่ถูกแปลงให้อยู่ในรูปแบบ Deep Link เรียบร้อยแล้ว (อ้างอิงจาก ID: @805zvmii)
     const LINE_OA_URL = "https://line.me/R/ti/p/%40805zvmii";
     
     firebase.initializeApp({
@@ -167,7 +164,7 @@
     let driverData = { lat: 19.910479, lng: 99.840576, status: "ออฟไลน์" };
     let bookData = { pLat:0, pLng:0, pName:"", dLat:0, dLng:0, dName:"", price:0, status:"" };
     let currentStep = 1;
-    let currentRouteStatus = ""; // ตัวแปรล็อกการซูมแผนที่
+    let currentRouteStatus = ""; 
 
     function showAlert(title, message, type = 'info', callback = null) {
         document.getElementById('alertTitle').innerText = title;
@@ -201,7 +198,6 @@
       input.value = val;
     }
 
-    // 🌟 ฟังก์ชันเปิดแชท LINE (แก้ให้ใช้งานได้ 100%)
     function openLineOA() {
       if (liff.isInClient()) {
         liff.openWindow({ url: LINE_OA_URL, external: true });
@@ -469,7 +465,6 @@
       document.getElementById('trackPick').innerText = bookData.pName;
       document.getElementById('trackDrop').innerText = bookData.dName;
 
-      // จัดการปุ่มยกเลิก และแถบติดต่อคนขับ
       if(bookData.status === "รอผู้ขับขี่ตอบรับ" || bookData.status.includes("กำลังเดินทางไปหา")) {
           btnCancel.classList.remove('hidden');
       } else {
@@ -505,7 +500,6 @@
     function updateRealtimeMap() {
       if(!directionsService || !bookData.status) return;
 
-      // 🌟 บล็อกการซูมแผนที่ทุกครั้งที่ขยับ (ซูมเฉพาะตอนเปลี่ยนสถานะ)
       let isStatusChanged = (currentRouteStatus !== bookData.status);
       currentRouteStatus = bookData.status;
 
@@ -535,6 +529,7 @@
         origin = markerDriver.getPosition(); dest = {lat: bookData.pLat, lng: bookData.pLng};
         markerPick.setPosition(dest); markerPick.setMap(map); markerDrop.setMap(null); 
       } else {
+        // สถานะ "เริ่มออกเดินทาง" (ผู้โดยสารขึ้นรถมาแล้ว)
         origin = markerDriver.getPosition(); dest = {lat: bookData.dLat, lng: bookData.dLng};
         markerDrop.setPosition(dest); markerDrop.setMap(map); markerPick.setMap(null); 
       }
@@ -552,8 +547,16 @@
               }
           }
 
-          if(isStatusChanged) {
-              setTimeout(()=>{ const mapPadding = { top: 50, right: 50, bottom: 340, left: 50 }; map.fitBounds(res.routes[0].bounds, mapPadding); }, 200);
+          // 🌟 จัดการเงื่อนไขควบคุมกล้องตามโจทย์ที่คุณแจ้งมา
+          if(bookData.status.includes("ออกเดินทาง")) {
+              // 1. ถ้าขึ้นรถและเริ่มเดินทางแล้ว ให้ซูมเข้าไปที่รถ ระดับ 17 แบบ Real-time ตลอดทาง
+              map.setCenter(markerDriver.getPosition());
+              map.setZoom(17);
+          } else {
+              // 2. ถ้ายังไม่ขึ้นรถ ให้ซูมจัดมุมมองกว้าง (fitBounds) เฉพาะตอนที่สลับสถานะเท่านั้น
+              if(isStatusChanged) {
+                  setTimeout(()=>{ const mapPadding = { top: 50, right: 50, bottom: 340, left: 50 }; map.fitBounds(res.routes[0].bounds, mapPadding); }, 200);
+              }
           }
         }
       });
