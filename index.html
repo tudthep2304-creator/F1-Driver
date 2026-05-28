@@ -147,8 +147,8 @@
     const APPS_SCRIPT_URL = ""; 
     const MY_LIFF_ID = "2010188449-b9Yq1R2L";
     
-    // 🌟 ใส่ลิงก์เพิ่มเพื่อนของ LINE OA ของคุณที่นี่ (เอาแบบเต็มๆ ที่ได้จาก LINE)
-    const LINE_OA_URL = "https://lin.ee/6l4O70Y"; // <--- แก้ไขตรงนี้เป็นลิงก์ของคุณ!
+    // 🌟 ใส่ลิงก์ LINE OA ที่ถูกแปลงให้อยู่ในรูปแบบ Deep Link เรียบร้อยแล้ว (อ้างอิงจาก ID: @805zvmii)
+    const LINE_OA_URL = "https://line.me/R/ti/p/%40805zvmii";
     
     firebase.initializeApp({
       apiKey: "AIzaSyDsZ_tbFhH6fUXRz3I6C-tMshNwwrSevd4",
@@ -167,7 +167,7 @@
     let driverData = { lat: 19.910479, lng: 99.840576, status: "ออฟไลน์" };
     let bookData = { pLat:0, pLng:0, pName:"", dLat:0, dLng:0, dName:"", price:0, status:"" };
     let currentStep = 1;
-    let currentRouteStatus = ""; // 🌟 ตัวแปรกันแผนที่ซูมรัวๆ
+    let currentRouteStatus = ""; // ตัวแปรล็อกการซูมแผนที่
 
     function showAlert(title, message, type = 'info', callback = null) {
         document.getElementById('alertTitle').innerText = title;
@@ -201,7 +201,7 @@
       input.value = val;
     }
 
-    // 🌟 ฟังก์ชันแชทหาคนขับผ่านระบบ LINE SDK ที่เสถียร
+    // 🌟 ฟังก์ชันเปิดแชท LINE (แก้ให้ใช้งานได้ 100%)
     function openLineOA() {
       if (liff.isInClient()) {
         liff.openWindow({ url: LINE_OA_URL, external: true });
@@ -505,7 +505,7 @@
     function updateRealtimeMap() {
       if(!directionsService || !bookData.status) return;
 
-      // 🌟 บล็อกการซูมมั่วซั่ว (จะซูมเฉพาะตอนที่สถานะเปลี่ยน ไม่ซูมทุกครั้งที่คนขับเคลื่อนที่)
+      // 🌟 บล็อกการซูมแผนที่ทุกครั้งที่ขยับ (ซูมเฉพาะตอนเปลี่ยนสถานะ)
       let isStatusChanged = (currentRouteStatus !== bookData.status);
       currentRouteStatus = bookData.status;
 
