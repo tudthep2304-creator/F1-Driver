@@ -103,9 +103,9 @@
       </div>
 
       <div id="driverContactBox" class="hidden gap-2 mb-2 shrink-0">
-        <a id="btnDriverChat" href="https://line.me/R/ti/p/@805zvmii" target="_blank" class="flex-1 bg-green-500 text-white py-2.5 rounded-xl font-bold text-sm flex items-center justify-center gap-2 shadow-sm active:bg-green-600 transition-colors">
+        <button onclick="openLineOA()" class="flex-1 bg-green-500 text-white py-2.5 rounded-xl font-bold text-sm flex items-center justify-center gap-2 shadow-sm active:bg-green-600 transition-colors">
           <i class="fab fa-line text-base"></i> แชทหาคนขับ
-        </a>
+        </button>
         <a id="btnDriverCall" href="tel:0946379669" class="flex-1 bg-[#2B3A6F] text-white py-2.5 rounded-xl font-bold text-sm flex items-center justify-center gap-2 shadow-sm active:bg-blue-800 transition-colors">
           <i class="fas fa-phone-alt text-xs"></i> 0946379669
         </a>
@@ -114,7 +114,7 @@
       <button onclick="openNavMap()" class="w-full bg-blue-50 text-blue-600 py-2.5 rounded-xl font-bold flex items-center justify-center gap-2 border border-blue-200 text-sm mb-2 mt-1">
         <i class="fas fa-location-arrow"></i> แผนที่นำทาง (Google Maps)
       </button>
-      <button id="btnCancel" onclick="openCancelModal()" class="w-full bg-red-50 text-red-600 py-2.5 rounded-xl font-bold border border-red-200 text-sm mt-auto">ยกเลิกเรียกรถ</button>
+      <button id="btnCancel" onclick="openCancelModal()" class="w-full bg-red-50 text-red-600 py-2.5 rounded-xl font-bold border border-red-200 text-sm">ยกเลิกเรียกรถ</button>
     </div>
   </div>
 
@@ -143,11 +143,15 @@
   </div>
 
   <script>
+    // --- ตั้งค่าระบบ ---
     const APPS_SCRIPT_URL = ""; 
     const MY_LIFF_ID = "2010188449-b9Yq1R2L";
     
+    // 🌟 ใส่ลิงก์เพิ่มเพื่อนของ LINE OA ของคุณที่นี่ (เอาแบบเต็มๆ ที่ได้จาก LINE)
+    const LINE_OA_URL = "https://lin.ee/6l4O70Y"; // <--- แก้ไขตรงนี้เป็นลิงก์ของคุณ!
+    
     firebase.initializeApp({
-      apiKey: "AIzaSyBNtaYaX1OW-86_9EGiVN9EpgPzWOX_twQ",
+      apiKey: "AIzaSyDsZ_tbFhH6fUXRz3I6C-tMshNwwrSevd4",
       authDomain: "myride-chiangrai.firebaseapp.com",
       databaseURL: "https://myride-chiangrai-default-rtdb.asia-southeast1.firebasedatabase.app",
       projectId: "myride-chiangrai",
@@ -163,6 +167,7 @@
     let driverData = { lat: 19.910479, lng: 99.840576, status: "ออฟไลน์" };
     let bookData = { pLat:0, pLng:0, pName:"", dLat:0, dLng:0, dName:"", price:0, status:"" };
     let currentStep = 1;
+    let currentRouteStatus = ""; // 🌟 ตัวแปรกันแผนที่ซูมรัวๆ
 
     function showAlert(title, message, type = 'info', callback = null) {
         document.getElementById('alertTitle').innerText = title;
@@ -194,6 +199,15 @@
       if (val.startsWith('66')) val = '0' + val.substring(2); 
       if (val.length > 10) val = val.substring(0, 10); 
       input.value = val;
+    }
+
+    // 🌟 ฟังก์ชันแชทหาคนขับผ่านระบบ LINE SDK ที่เสถียร
+    function openLineOA() {
+      if (liff.isInClient()) {
+        liff.openWindow({ url: LINE_OA_URL, external: true });
+      } else {
+        window.open(LINE_OA_URL, '_blank');
+      }
     }
 
     function initMap() {
@@ -445,8 +459,6 @@
     }
 
     window.hasShownFinish = false; window.hasShownCancel = false;
-    window.lastMapStatus = "";
-
     function handleTracking() {
       if(currentStep !== 'Tracking') showPage('Tracking');
       let statusEl = document.getElementById('trackStatus');
@@ -457,6 +469,7 @@
       document.getElementById('trackPick').innerText = bookData.pName;
       document.getElementById('trackDrop').innerText = bookData.dName;
 
+      // จัดการปุ่มยกเลิก และแถบติดต่อคนขับ
       if(bookData.status === "รอผู้ขับขี่ตอบรับ" || bookData.status.includes("กำลังเดินทางไปหา")) {
           btnCancel.classList.remove('hidden');
       } else {
@@ -491,9 +504,12 @@
 
     function updateRealtimeMap() {
       if(!directionsService || !bookData.status) return;
-      let status = bookData.status;
 
-      if (status === "รอผู้ขับขี่ตอบรับ") {
+      // 🌟 บล็อกการซูมมั่วซั่ว (จะซูมเฉพาะตอนที่สถานะเปลี่ยน ไม่ซูมทุกครั้งที่คนขับเคลื่อนที่)
+      let isStatusChanged = (currentRouteStatus !== bookData.status);
+      currentRouteStatus = bookData.status;
+
+      if (bookData.status === "รอผู้ขับขี่ตอบรับ") {
           if(markerDriver) markerDriver.setMap(null); 
           let origin = {lat: bookData.pLat, lng: bookData.pLng};
           let dest = {lat: bookData.dLat, lng: bookData.dLng};
@@ -503,10 +519,8 @@
                   directionsRenderer.setDirections(res);
                   markerPick.setPosition(origin); markerPick.setMap(map); 
                   markerDrop.setPosition(dest); markerDrop.setMap(map); 
-                  
-                  if(window.lastMapStatus !== status) {
+                  if(isStatusChanged) {
                       setTimeout(()=>{ const mapPadding = { top: 50, right: 50, bottom: 280, left: 50 }; map.fitBounds(res.routes[0].bounds, mapPadding); }, 200);
-                      window.lastMapStatus = status;
                   }
               }
           });
@@ -514,24 +528,15 @@
       }
 
       if(markerDriver) markerDriver.setMap(map); 
-      let driverPos = {lat: driverData.lat, lng: driverData.lng};
-      markerDriver.setPosition(driverPos);
+      markerDriver.setPosition({lat: driverData.lat, lng: driverData.lng});
 
       let origin, dest;
-      if(status.includes("รับงาน") || status.includes("มาถึงจุดรับ") || status.includes("กำลังเดินทาง")) {
-        origin = driverPos; dest = {lat: bookData.pLat, lng: bookData.pLng};
+      if(bookData.status.includes("รับงาน") || bookData.status.includes("มาถึงจุดรับ") || bookData.status.includes("กำลังเดินทาง")) {
+        origin = markerDriver.getPosition(); dest = {lat: bookData.pLat, lng: bookData.pLng};
         markerPick.setPosition(dest); markerPick.setMap(map); markerDrop.setMap(null); 
       } else {
-        origin = driverPos; dest = {lat: bookData.dLat, lng: bookData.dLng};
+        origin = markerDriver.getPosition(); dest = {lat: bookData.dLat, lng: bookData.dLng};
         markerDrop.setPosition(dest); markerDrop.setMap(map); markerPick.setMap(null); 
-      }
-
-      // 🌟 ขยับกล้องตามตัวรถ เมื่อออกเดินทางหรือมุ่งหน้าไปเป้าหมาย
-      if(status.includes("ออกเดินทาง") || status.includes("มุ่งหน้า")) {
-         map.panTo(driverPos);
-         if(window.lastMapStatus !== status) {
-             map.setZoom(17); 
-         }
       }
 
       directionsService.route({origin: origin, destination: dest, travelMode: 'DRIVING'}, (res, stat) => {
@@ -540,18 +545,16 @@
           
           const leg = res.routes[0].legs[0];
           let distanceKm = leg.distance.value / 1000;
-          if(status.includes("กำลังเดินทางไปหา") && distanceKm <= 2.0 && bookData.notified2Km === false) {
+          if(bookData.status.includes("กำลังเดินทางไปหา") && distanceKm <= 2.0 && bookData.notified2Km === false) {
               db.ref('bookings/' + lineUserId).update({ notified2Km: true }); 
               if(APPS_SCRIPT_URL) {
                   fetch(`${APPS_SCRIPT_URL}?action=notify&type=status_update&userId=${lineUserId}&msg=${encodeURIComponent("⚡ คนขับใกล้ถึงจุดรับแล้วครับ! ระยะห่างอีกประมาณ " + distanceKm.toFixed(1) + " กม.")}`, {mode: 'no-cors'});
               }
           }
 
-          // 🌟 จัดกรอบแผนที่แค่ตอนเปลี่ยนสถานะ (เลิกซูมรัวๆ แล้ว)
-          if(window.lastMapStatus !== status && !status.includes("ออกเดินทาง") && !status.includes("มุ่งหน้า")) {
-              setTimeout(()=>{ const mapPadding = { top: 50, right: 50, bottom: 280, left: 50 }; map.fitBounds(res.routes[0].bounds, mapPadding); }, 200);
+          if(isStatusChanged) {
+              setTimeout(()=>{ const mapPadding = { top: 50, right: 50, bottom: 340, left: 50 }; map.fitBounds(res.routes[0].bounds, mapPadding); }, 200);
           }
-          window.lastMapStatus = status;
         }
       });
     }
