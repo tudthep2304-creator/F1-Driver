@@ -103,9 +103,9 @@
       </div>
 
       <div id="driverContactBox" class="hidden gap-2 mb-2 shrink-0">
-        <a id="btnDriverChat" href="https://line.me/R/ti/p/@YOUR_OA_ID" target="_blank" class="flex-1 bg-green-500 text-white py-2.5 rounded-xl font-bold text-sm flex items-center justify-center gap-2 shadow-sm active:bg-green-600 transition-colors">
+        <button onclick="openLineOA()" class="flex-1 bg-green-500 text-white py-2.5 rounded-xl font-bold text-sm flex items-center justify-center gap-2 shadow-sm active:bg-green-600 transition-colors">
           <i class="fab fa-line text-base"></i> แชทหาคนขับ
-        </a>
+        </button>
         <a id="btnDriverCall" href="tel:0946379669" class="flex-1 bg-[#2B3A6F] text-white py-2.5 rounded-xl font-bold text-sm flex items-center justify-center gap-2 shadow-sm active:bg-blue-800 transition-colors">
           <i class="fas fa-phone-alt text-xs"></i> 0946379669
         </a>
@@ -147,7 +147,7 @@
     const MY_LIFF_ID = "2010188449-b9Yq1R2L";
     
     firebase.initializeApp({
-      apiKey: "AIzaSyBNtaYaX1OW-86_9EGiVN9EpgPzWOX_twQ",
+      apiKey: "AIzaSyDsZ_tbFhH6fUXRz3I6C-tMshNwwrSevd4",
       authDomain: "myride-chiangrai.firebaseapp.com",
       databaseURL: "https://myride-chiangrai-default-rtdb.asia-southeast1.firebasedatabase.app",
       projectId: "myride-chiangrai",
@@ -164,44 +164,29 @@
     let bookData = { pLat:0, pLng:0, pName:"", dLat:0, dLng:0, dName:"", price:0, status:"" };
     let currentStep = 1;
 
-    // 🌟 อัปเกรด showAlert ให้รองรับการกดตกลงแล้วค่อยทำคำสั่ง (เช่น รีโหลดหน้าเว็บ)
-    window.alertCloseCallback = null;
     function showAlert(title, message, type = 'info', callback = null) {
         document.getElementById('alertTitle').innerText = title;
         document.getElementById('alertMessage').innerText = message;
         
-        let iconHtml = '';
-        let iconBg = '';
-        let iconColor = '';
+        let iconHtml = ''; let iconBg = ''; let iconColor = '';
         if (type === 'error') {
-            iconHtml = '<i class="fas fa-times"></i>';
-            iconBg = 'bg-red-100'; iconColor = 'text-red-500';
+            iconHtml = '<i class="fas fa-times"></i>'; iconBg = 'bg-red-100'; iconColor = 'text-red-500';
         } else if (type === 'success') {
-            iconHtml = '<i class="fas fa-check"></i>';
-            iconBg = 'bg-green-100'; iconColor = 'text-green-500';
+            iconHtml = '<i class="fas fa-check"></i>'; iconBg = 'bg-green-100'; iconColor = 'text-green-500';
         } else {
-            iconHtml = '<i class="fas fa-info"></i>';
-            iconBg = 'bg-blue-100'; iconColor = 'text-blue-500';
+            iconHtml = '<i class="fas fa-info"></i>'; iconBg = 'bg-blue-100'; iconColor = 'text-blue-500';
         }
         
         const iconDiv = document.getElementById('alertIcon');
         iconDiv.innerHTML = iconHtml;
         iconDiv.className = `w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl ${iconBg} ${iconColor}`;
-        
         document.getElementById('alertModal').classList.remove('hidden');
-        
-        if (typeof callback === 'function') {
-            window.alertCloseCallback = callback;
-        } else {
-            window.alertCloseCallback = null;
-        }
+        window.alertCloseCallback = typeof callback === 'function' ? callback : null;
     }
 
     function closeAlertModal() {
         document.getElementById('alertModal').classList.add('hidden');
-        if (window.alertCloseCallback) {
-            window.alertCloseCallback();
-        }
+        if (window.alertCloseCallback) window.alertCloseCallback();
     }
 
     function formatPhone(input) {
@@ -209,6 +194,18 @@
       if (val.startsWith('66')) val = '0' + val.substring(2); 
       if (val.length > 10) val = val.substring(0, 10); 
       input.value = val;
+    }
+
+    // 🌟 ฟังก์ชันแชทหาคนขับผ่านระบบ LINE SDK (แก้บั๊กกดไม่ได้)
+    function openLineOA() {
+      if (liff.isInClient()) {
+        liff.openWindow({
+          url: "https://line.me/R/ti/p/%40YOUR_LINE_OA_ID", // ใส่ ID ของ LINE OA แทนที่ YOUR_LINE_OA_ID (ไม่ต้องมีเครื่องหมาย @ ในลิงก์นี้)
+          external: true
+        });
+      } else {
+        window.open("https://line.me/R/ti/p/%40YOUR_LINE_OA_ID", "_blank");
+      }
     }
 
     function initMap() {
@@ -251,15 +248,11 @@
               if (currentStep === 2) {
                 markerPick.setPosition(place.geometry.location);
                 bookData.pName = place.name;
-                let el = document.getElementById('pickupSearch');
-                el.value = place.name;
-                el.dataset.oldValue = place.name; 
+                let el = document.getElementById('pickupSearch'); el.value = place.name; el.dataset.oldValue = place.name; 
               } else if (currentStep === 3) {
                 markerDrop.setPosition(place.geometry.location);
                 bookData.dName = place.name;
-                let el = document.getElementById('dropoffSearch');
-                el.value = place.name;
-                el.dataset.oldValue = place.name; 
+                let el = document.getElementById('dropoffSearch'); el.value = place.name; el.dataset.oldValue = place.name; 
               }
             }
           });
@@ -278,8 +271,7 @@
       } else { liff.login(); }
     });
 
-    window.isCompleting = false; // ป้องกันการรีโหลดหน้าซ้ำซ้อนตอนลบข้อมูล
-
+    window.isCompleting = false;
     function initApp() {
       db.ref('driver').on('value', snap => {
         const d = snap.val();
@@ -300,13 +292,8 @@
 
       db.ref('bookings/' + lineUserId).on('value', snap => {
         const b = snap.val();
-        if(b) { 
-            bookData = b; 
-            handleTracking(); 
-        } else if (currentStep === 'Tracking' && !window.isCompleting) {
-            // ถ้าระหว่าง Tracking ข้อมูลโดนลบ (เช่น คนขับกดยกเลิกแบบไม่ตั้งใจ)
-            window.location.reload();
-        }
+        if(b) { bookData = b; handleTracking(); } 
+        else if (currentStep === 'Tracking' && !window.isCompleting) window.location.reload();
       });
     }
 
@@ -331,8 +318,7 @@
       if(page === 2) {
         document.getElementById('navTitle').innerText = "เลือกจุดรับ";
         if (markerDrop && markerPick) {
-          markerDrop.setMap(null); 
-          markerPick.setMap(map); 
+          markerDrop.setMap(null); markerPick.setMap(map); 
           map.setCenter({lat: driverData.lat, lng: driverData.lng});
           updateAddressBox();
           setupSearch('pickupSearch', markerPick);
@@ -341,8 +327,7 @@
       else if(page === 3) {
         document.getElementById('navTitle').innerText = "เลือกจุดส่ง";
         if (markerPick && markerDrop) {
-          markerPick.setMap(map); 
-          markerDrop.setMap(map);
+          markerPick.setMap(map); markerDrop.setMap(map);
           if(bookData.dLat !== 0 && bookData.dLng !== 0) {
              markerDrop.setPosition({lat: bookData.dLat, lng: bookData.dLng});
           } else {
@@ -355,10 +340,7 @@
       }
       else if(page === 4) {
         document.getElementById('navTitle').innerText = "ยืนยันเรียกรถ";
-        if (markerPick && markerDrop) {
-          markerPick.setMap(map); 
-          markerDrop.setMap(map);
-        }
+        if (markerPick && markerDrop) { markerPick.setMap(map); markerDrop.setMap(map); }
         calculatePrice();
       }
     }
@@ -368,7 +350,6 @@
        if(currentStep === 3) showPage(2);
        if(currentStep === 4) showPage(3);
     }
-    
     function goHome() { window.location.reload(); }
 
     function updateAddressBox() {
@@ -377,17 +358,12 @@
       geocoder.geocode({location: pos}, (res, status) => {
         if(status === 'OK' && res[0]) {
           let fullAddr = res[0].formatted_address.replace(/,?\s*ประเทศไทย/g, '');
-          
           if(isPick) { 
             bookData.pName = fullAddr; 
-            let el = document.getElementById('pickupSearch');
-            el.value = fullAddr; 
-            el.dataset.oldValue = fullAddr;
+            let el = document.getElementById('pickupSearch'); el.value = fullAddr; el.dataset.oldValue = fullAddr;
           } else { 
             bookData.dName = fullAddr; 
-            let el = document.getElementById('dropoffSearch');
-            el.value = fullAddr; 
-            el.dataset.oldValue = fullAddr;
+            let el = document.getElementById('dropoffSearch'); el.value = fullAddr; el.dataset.oldValue = fullAddr;
           }
         }
       });
@@ -403,33 +379,20 @@
       );
 
       const auto = new google.maps.places.Autocomplete(input, {
-        bounds: chiangRaiBounds,
-        strictBounds: true,
-        componentRestrictions: {country: 'th'}
+        bounds: chiangRaiBounds, strictBounds: true, componentRestrictions: {country: 'th'}
       });
 
-      input.addEventListener('focus', function() {
-          this.dataset.oldValue = this.value;
-          this.value = '';
-      });
-      input.addEventListener('blur', function() {
-          if(this.value.trim() === '') {
-              this.value = this.dataset.oldValue || '';
-          }
-      });
+      input.addEventListener('focus', function() { this.dataset.oldValue = this.value; this.value = ''; });
+      input.addEventListener('blur', function() { if(this.value.trim() === '') this.value = this.dataset.oldValue || ''; });
 
       auto.addListener('place_changed', () => {
         const place = auto.getPlace();
         if(place.geometry) {
           map.setCenter(place.geometry.location); 
           if(currentStep===2) {
-             bookData.pName = place.name; 
-             input.value = place.name;
-             input.dataset.oldValue = place.name;
+             bookData.pName = place.name; input.value = place.name; input.dataset.oldValue = place.name;
           } else {
-             bookData.dName = place.name;
-             input.value = place.name;
-             input.dataset.oldValue = place.name;
+             bookData.dName = place.name; input.value = place.name; input.dataset.oldValue = place.name;
           }
         }
       });
@@ -458,16 +421,13 @@
       directionsService.route({origin: origin, destination: dest, travelMode: 'DRIVING'}, (resRide, stat1) => {
         if(stat1 === 'OK') {
           directionsRenderer.setDirections(resRide);
-          markerPick.setPosition(origin);
-          markerDrop.setPosition(dest);
-
+          markerPick.setPosition(origin); markerDrop.setPosition(dest);
           let distRideKm = resRide.routes[0].legs[0].distance.value / 1000;
           
           directionsService.route({origin: driverPos, destination: origin, travelMode: 'DRIVING'}, (resDrive, stat2) => {
             if(stat2 === 'OK') {
               let distDriverKm = resDrive.routes[0].legs[0].distance.value / 1000;
               let waitMins = Math.ceil(resDrive.routes[0].legs[0].duration.value / 60);
-              
               bookData.price = Math.ceil((distRideKm * 14) + (distDriverKm * 4));
               
               document.getElementById('sumDist').innerText = distRideKm.toFixed(1);
@@ -486,12 +446,9 @@
 
     function submitBooking() {
       let tel = document.getElementById('userPhone').value;
-      if(tel.length < 10) {
-          showAlert('แจ้งเตือน', 'กรุณากรอกเบอร์โทรศัพท์ให้ครบ 10 หลัก', 'error');
-          return;
-      }
+      if(tel.length < 10) { showAlert('แจ้งเตือน', 'กรุณากรอกเบอร์โทรศัพท์ให้ครบ 10 หลัก', 'error'); return; }
       bookData.userId = lineUserId; bookData.name = lineName; bookData.phone = tel;
-      bookData.status = "รอผู้ขับขี่ตอบรับ"; bookData.timestamp = firebase.database.ServerValue.TIMESTAMP;
+      bookData.status = "รอผู้ขับขี่ตอบรับ"; bookData.timestamp = firebase.database.ServerValue.TIMESTAMP; bookData.notified2Km = false;
       
       db.ref('bookings/' + lineUserId).set(bookData).then(() => {
         if(APPS_SCRIPT_URL) fetch(`${APPS_SCRIPT_URL}?action=notify&type=new_ride&name=${lineName}&pick=${bookData.pName}`, {mode: 'no-cors'});
@@ -499,9 +456,7 @@
       });
     }
 
-    window.hasShownFinish = false;
-    window.hasShownCancel = false;
-
+    window.hasShownFinish = false; window.hasShownCancel = false;
     function handleTracking() {
       if(currentStep !== 'Tracking') showPage('Tracking');
       let statusEl = document.getElementById('trackStatus');
@@ -512,37 +467,34 @@
       document.getElementById('trackPick').innerText = bookData.pName;
       document.getElementById('trackDrop').innerText = bookData.dName;
 
-      // 🌟 แถบติดต่อ (โชว์เมื่อคนขับรับงานแล้ว)
-      const contactBox = document.getElementById('driverContactBox');
-      if (bookData.status === "รอผู้ขับขี่ตอบรับ" || bookData.status === "ยกเลิกโดยคนขับ") {
+      // 🌟 1. เงื่อนไขปุ่มยกเลิกงาน: ค้างปุ่มยกเลิกไว้เมื่อ "รอรับงาน" และ "คนขับกำลังเดินทางมาหา"
+      if(bookData.status === "รอผู้ขับขี่ตอบรับ" || bookData.status.includes("กำลังเดินทางไปหา")) {
           btnCancel.classList.remove('hidden');
-          contactBox.classList.add('hidden');
-          contactBox.classList.remove('flex');
       } else {
           btnCancel.classList.add('hidden');
-          contactBox.classList.remove('hidden');
-          contactBox.classList.add('flex');
       }
 
-      // 🌟 ระบบแจ้งเตือนเมื่อคนขับกดจบงาน โชว์ป๊อปอัปก่อน แล้วค่อยกลับหน้าแรกตอนกดตกลง
+      const contactBox = document.getElementById('driverContactBox');
+      if (bookData.status === "รอผู้ขับขี่ตอบรับ" || bookData.status === "ยกเลิกโดยคนขับ") {
+          contactBox.classList.add('hidden'); contactBox.classList.remove('flex');
+      } else {
+          contactBox.document || contactBox.classList.remove('hidden'); contactBox.classList.add('flex');
+      }
+
+      // 🌟 3. ระบบแจ้งเตือนเมื่อจบงาน: กดตกลงในป๊อปอัปก่อน หน้าจอถึงจะถูกเคลียร์และรีโหลด
       if(bookData.status.includes("ถึงที่หมาย") && !window.hasShownFinish) {
         window.hasShownFinish = true;
         showAlert('ถึงที่หมายแล้ว', 'ถึงที่หมายอย่างปลอดภัย ขอบคุณที่ใช้บริการ F1 Driver ครับ!', 'success', () => {
             window.isCompleting = true;
-            db.ref('bookings/' + lineUserId).remove().then(() => {
-                window.location.reload();
-            });
+            db.ref('bookings/' + lineUserId).remove().then(() => { window.location.reload(); });
         });
       }
       
-      // 🌟 ถ้าระหว่างทางคนขับกดยกเลิก
       if(bookData.status === "ยกเลิกโดยคนขับ" && !window.hasShownCancel) {
         window.hasShownCancel = true;
         showAlert('ยกเลิกงาน', 'ขออภัย คนขับได้ยกเลิกงานนี้ กรุณาเรียกรถใหม่อีกครั้งครับ', 'error', () => {
             window.isCompleting = true;
-            db.ref('bookings/' + lineUserId).remove().then(() => {
-                window.location.reload();
-            });
+            db.ref('bookings/' + lineUserId).remove().then(() => { window.location.reload(); });
         });
       }
 
@@ -552,23 +504,17 @@
     function updateRealtimeMap() {
       if(!directionsService || !bookData.status) return;
 
-      if (bookData.status === "รอผู้ขับขี่ตอบรับ" || bookData.status === "ยกเลิกโดยคนขับ") {
+      if (bookData.status === "รอผู้ขับขี่ตอบรับ") {
           if(markerDriver) markerDriver.setMap(null); 
-          
           let origin = {lat: bookData.pLat, lng: bookData.pLng};
           let dest = {lat: bookData.dLat, lng: bookData.dLng};
           
           directionsService.route({origin: origin, destination: dest, travelMode: 'DRIVING'}, (res, stat) => {
               if(stat === 'OK') {
                   directionsRenderer.setDirections(res);
-                  markerPick.setPosition(origin);
-                  markerPick.setMap(map); 
-                  markerDrop.setPosition(dest);
-                  markerDrop.setMap(map); 
-                  setTimeout(()=>{ 
-                      const mapPadding = { top: 50, right: 50, bottom: 280, left: 50 }; 
-                      map.fitBounds(res.routes[0].bounds, mapPadding); 
-                  }, 200);
+                  markerPick.setPosition(origin); markerPick.setMap(map); 
+                  markerDrop.setPosition(dest); markerDrop.setMap(map); 
+                  setTimeout(()=>{ const mapPadding = { top: 50, right: 50, bottom: 280, left: 50 }; map.fitBounds(res.routes[0].bounds, mapPadding); }, 200);
               }
           });
           return; 
@@ -579,44 +525,40 @@
 
       let origin, dest;
       if(bookData.status.includes("รับงาน") || bookData.status.includes("มาถึงจุดรับ") || bookData.status.includes("กำลังเดินทาง")) {
-        origin = markerDriver.getPosition();
-        dest = {lat: bookData.pLat, lng: bookData.pLng};
-        markerPick.setPosition(dest);
-        markerPick.setMap(map); 
-        markerDrop.setMap(null); 
+        origin = markerDriver.getPosition(); dest = {lat: bookData.pLat, lng: bookData.pLng};
+        markerPick.setPosition(dest); markerPick.setMap(map); markerDrop.setMap(null); 
       } else {
-        origin = markerDriver.getPosition();
-        dest = {lat: bookData.dLat, lng: bookData.dLng};
-        markerDrop.setPosition(dest);
-        markerDrop.setMap(map); 
-        markerPick.setMap(null); 
+        origin = markerDriver.getPosition(); dest = {lat: bookData.dLat, lng: bookData.dLng};
+        markerDrop.setPosition(dest); markerDrop.setMap(map); markerPick.setMap(null); 
       }
 
       directionsService.route({origin: origin, destination: dest, travelMode: 'DRIVING'}, (res, stat) => {
         if(stat === 'OK') {
           directionsRenderer.setDirections(res);
-          setTimeout(()=>{ 
-              const mapPadding = { top: 50, right: 50, bottom: 280, left: 50 }; 
-              map.fitBounds(res.routes[0].bounds, mapPadding); 
-          }, 200);
+          
+          // 🌟 2. ระบบดักจับและส่งการแจ้งเตือนอัตโนมัติเมื่อคนขับเข้าใกล้ระยะ 2 กิโลเมตร
+          const leg = res.routes[0].legs[0];
+          let distanceKm = leg.distance.value / 1000;
+          if(bookData.status.includes("กำลังเดินทางไปหา") && distanceKm <= 2.0 && bookData.notified2Km === false) {
+              db.ref('bookings/' + lineUserId).update({ notified2Km: true }); // บล็อกการส่งข้อความซ้ำซ้อน
+              if(APPS_SCRIPT_URL) {
+                  fetch(`${APPS_SCRIPT_URL}?action=notify&type=status_update&userId=${lineUserId}&msg=${encodeURIComponent("⚡ คนขับใกล้ถึงจุดรับแล้วครับ! ระยะห่างอีกประมาณ " + distanceKm.toFixed(1) + " กม.")}`, {mode: 'no-cors'});
+              }
+          }
+
+          setTimeout(()=>{ const mapPadding = { top: 50, right: 50, bottom: 340, left: 50 }; map.fitBounds(res.routes[0].bounds, mapPadding); }, 200);
         }
       });
     }
 
-    function openCancelModal() {
-        document.getElementById('cancelModal').classList.remove('hidden');
-    }
-    function closeCancelModal() {
-        document.getElementById('cancelModal').classList.add('hidden');
-    }
+    function openCancelModal() { document.getElementById('cancelModal').classList.remove('hidden'); }
+    function closeCancelModal() { document.getElementById('cancelModal').classList.add('hidden'); }
     function confirmCancelBooking() {
         document.getElementById('cancelModal').classList.add('hidden');
         window.isCompleting = true;
         db.ref('bookings/' + lineUserId).remove().then(() => {
             if(APPS_SCRIPT_URL) fetch(`${APPS_SCRIPT_URL}?action=notify&type=cancel&name=${lineName}`, {mode:'no-cors'});
-            showAlert('ยกเลิกสำเร็จ', 'ระบบได้ทำการยกเลิกการเรียกรถเรียบร้อยแล้ว', 'success', () => {
-                window.location.reload();
-            });
+            showAlert('ยกเลิกสำเร็จ', 'ระบบได้ทำการยกเลิกการเรียกรถเรียบร้อยแล้ว', 'success', () => { window.location.reload(); });
         });
     }
 
@@ -625,7 +567,6 @@
       let lng = bookData.status.includes("ออกเดินทาง") ? bookData.dLng : bookData.pLng;
       window.open(`https://www.google.com/maps/dir/?api=1&origin=${driverData.lat},${driverData.lng}&destination=${lat},${lng}&travelmode=driving`, '_blank');
     }
-    
     window.initMap = initMap;
   </script>
   <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDsZ_tbFhH6fUXRz3I6C-tMshNwwrSevd4&libraries=places&callback=initMap" async defer></script>
