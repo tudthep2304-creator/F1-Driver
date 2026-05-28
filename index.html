@@ -49,7 +49,7 @@
         <p class="text-sm font-bold text-gray-700">📍 เลือกจุดรับ (หมุดสีเขียว)</p>
         <button onclick="useCurrentLocation()" class="text-xs bg-blue-100 text-blue-700 px-3 py-1 rounded-full"><i class="fas fa-crosshairs"></i> ตำแหน่งปัจจุบัน</button>
       </div>
-      <input type="text" id="pickupSearch" class="w-full p-4 bg-gray-50 border-2 border-gray-200 focus:border-[#2B3A6F] focus:bg-white rounded-xl mb-auto outline-none font-bold text-gray-800 shadow-inner transition-colors" placeholder="ค้นหาสถานที่...">
+      <input type="text" id="pickupSearch" class="w-full p-4 bg-gray-50 border-2 border-gray-200 focus:border-[#2B3A6F] focus:bg-white rounded-xl mb-auto outline-none font-bold text-gray-800 shadow-inner transition-colors truncate" placeholder="ค้นหาสถานที่...">
       <button onclick="confirmPickup()" class="w-full bg-[#2B3A6F] text-white py-3.5 rounded-xl font-bold mt-3 text-base">ถัดไป</button>
     </div>
   </div>
@@ -59,7 +59,7 @@
       <div class="flex justify-between items-center mb-3">
         <p class="text-sm font-bold text-gray-700">🏁 เลือกจุดส่ง (หมุดสีแดง)</p>
       </div>
-      <input type="text" id="dropoffSearch" class="w-full p-4 bg-gray-50 border-2 border-gray-200 focus:border-[#2B3A6F] focus:bg-white rounded-xl mb-auto outline-none font-bold text-gray-800 shadow-inner transition-colors" placeholder="ค้นหาสถานที่...">
+      <input type="text" id="dropoffSearch" class="w-full p-4 bg-gray-50 border-2 border-gray-200 focus:border-[#2B3A6F] focus:bg-white rounded-xl mb-auto outline-none font-bold text-gray-800 shadow-inner transition-colors truncate" placeholder="ค้นหาสถานที่...">
       <button onclick="confirmDropoff()" class="w-full bg-[#2B3A6F] text-white py-3.5 rounded-xl font-bold mt-3 text-base">ถัดไป</button>
     </div>
   </div>
@@ -207,6 +207,7 @@
       markerPick = new google.maps.Marker({map: null, icon: "https://maps.google.com/mapfiles/ms/icons/green-dot.png", zIndex: 2});
       markerDrop = new google.maps.Marker({map: null, icon: "https://maps.google.com/mapfiles/ms/icons/red-dot.png", zIndex: 2});
       
+      // รูปรถคนขับ (กลับไปใช้รถมุมบน ธรรมดา)
       markerDriver = new google.maps.Marker({
           map: null, 
           icon: {
@@ -235,13 +236,13 @@
                 bookData.pName = place.name;
                 let el = document.getElementById('pickupSearch');
                 el.value = place.name;
-                el.dataset.oldValue = place.name; // จำค่าไว้
+                el.dataset.oldValue = place.name; 
               } else if (currentStep === 3) {
                 markerDrop.setPosition(place.geometry.location);
                 bookData.dName = place.name;
                 let el = document.getElementById('dropoffSearch');
                 el.value = place.name;
-                el.dataset.oldValue = place.name; // จำค่าไว้
+                el.dataset.oldValue = place.name; 
               }
             }
           });
@@ -351,22 +352,19 @@
       let pos = map.getCenter();
       geocoder.geocode({location: pos}, (res, status) => {
         if(status === 'OK' && res[0]) {
-          // ดึงชื่อสถานที่สั้นๆ มาโชว์
-          let addr = res[0].address_components[0].short_name + " " + res[0].address_components[1].short_name;
-          if(res[0].name) addr = res[0].name;
-          
-          let fullAddr = res[0].formatted_address.replace(', ประเทศไทย','');
+          // 🌟 ดึงที่อยู่แบบเต็ม และใช้ Regex ลบคำว่าประเทศไทยออกให้เนียนขึ้น
+          let fullAddr = res[0].formatted_address.replace(/,?\s*ประเทศไทย/g, '');
           
           if(isPick) { 
             bookData.pName = fullAddr; 
             let el = document.getElementById('pickupSearch');
-            el.value = addr; 
-            el.dataset.oldValue = addr;
+            el.value = fullAddr; 
+            el.dataset.oldValue = fullAddr;
           } else { 
             bookData.dName = fullAddr; 
             let el = document.getElementById('dropoffSearch');
-            el.value = addr; 
-            el.dataset.oldValue = addr;
+            el.value = fullAddr; 
+            el.dataset.oldValue = fullAddr;
           }
         }
       });
@@ -388,7 +386,7 @@
         componentRestrictions: {country: 'th'}
       });
 
-      // 🌟 ระบบซ่อนข้อความตอนพิมพ์ และคืนค่าเดิมถ้าเปลี่ยนใจ
+      // 🌟 ระบบล้างข้อความตอนพิมพ์ และคืนค่าเดิมถ้าไม่พิมพ์อะไรเลย
       input.addEventListener('focus', function() {
           this.dataset.oldValue = this.value;
           this.value = '';
