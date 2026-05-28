@@ -91,7 +91,7 @@
   </div>
 
   <div id="pageTracking" class="hidden">
-    <div class="ui-panel h-[280px]">
+    <div class="ui-panel h-[340px]">
       <div class="flex justify-between items-center border-b pb-2 mb-2">
         <h2 class="font-black text-indigo-700 text-base" id="trackStatus">รอผู้ขับขี่ตอบรับ...</h2>
         <span class="bg-gray-100 px-3 py-1 rounded-full font-bold text-gray-700 text-sm" id="trackPrice">฿0</span>
@@ -100,6 +100,15 @@
       <div class="mb-3 space-y-1">
         <p class="text-[11px] text-gray-400 truncate">จาก: <span class="font-bold text-gray-700" id="trackPick">...</span></p>
         <p class="text-[11px] text-gray-400 truncate">ถึง: <span class="font-bold text-gray-700" id="trackDrop">...</span></p>
+      </div>
+
+      <div id="driverContactBox" class="hidden gap-2 mb-2 shrink-0">
+        <a id="btnDriverChat" href="https://line.me/R/ti/p/@YOUR_OA_ID" target="_blank" class="flex-1 bg-green-500 text-white py-2.5 rounded-xl font-bold text-sm flex items-center justify-center gap-2 shadow-sm active:bg-green-600 transition-colors">
+          <i class="fab fa-line text-base"></i> แชทกับคนขับ
+        </a>
+        <a id="btnDriverCall" href="#" class="flex-1 bg-emerald-600 text-white py-2.5 rounded-xl font-bold text-sm flex items-center justify-center gap-2 shadow-sm active:bg-emerald-700 transition-colors">
+          <i class="fas fa-phone-alt text-xs"></i> โทรหาคนขับ
+        </a>
       </div>
 
       <button onclick="openNavMap()" class="w-full bg-blue-50 text-blue-600 py-2.5 rounded-xl font-bold flex items-center justify-center gap-2 border border-blue-200 text-sm mb-2">
@@ -207,7 +216,6 @@
       markerPick = new google.maps.Marker({map: null, icon: "https://maps.google.com/mapfiles/ms/icons/green-dot.png", zIndex: 2});
       markerDrop = new google.maps.Marker({map: null, icon: "https://maps.google.com/mapfiles/ms/icons/red-dot.png", zIndex: 2});
       
-      // รูปรถคนขับ (กลับไปใช้รถมุมบน ธรรมดา)
       markerDriver = new google.maps.Marker({
           map: null, 
           icon: {
@@ -352,7 +360,6 @@
       let pos = map.getCenter();
       geocoder.geocode({location: pos}, (res, status) => {
         if(status === 'OK' && res[0]) {
-          // 🌟 ดึงที่อยู่แบบเต็ม และใช้ Regex ลบคำว่าประเทศไทยออกให้เนียนขึ้น
           let fullAddr = res[0].formatted_address.replace(/,?\s*ประเทศไทย/g, '');
           
           if(isPick) { 
@@ -374,7 +381,6 @@
       const input = document.getElementById(inputId);
       if (typeof google === 'undefined' || typeof google.maps === 'undefined' || typeof google.maps.places === 'undefined') return;
       
-      // 🌟 จำกัดขอบเขตการค้นหาให้อยู่ในเชียงรายเท่านั้น
       const chiangRaiBounds = new google.maps.LatLngBounds(
         new google.maps.LatLng(18.91, 99.16),
         new google.maps.LatLng(20.46, 100.56)
@@ -386,7 +392,6 @@
         componentRestrictions: {country: 'th'}
       });
 
-      // 🌟 ระบบล้างข้อความตอนพิมพ์ และคืนค่าเดิมถ้าไม่พิมพ์อะไรเลย
       input.addEventListener('focus', function() {
           this.dataset.oldValue = this.value;
           this.value = '';
@@ -494,6 +499,19 @@
         btnCancel.classList.add('hidden');
       }
 
+      // 🌟 ระบบสลับเปิดแถบติดต่อแชท/โทรศัพท์ เมื่อพ้นสถานะรอคนขับตอบรับ
+      const contactBox = document.getElementById('driverContactBox');
+      if (bookData.status === "รอผู้ขับขี่ตอบรับ") {
+          contactBox.classList.add('hidden');
+          contactBox.classList.remove('flex');
+      } else {
+          contactBox.classList.remove('hidden');
+          contactBox.classList.add('flex');
+          // จัดส่งเบอร์โทรคนขับเข้าสู่ระบบปุ่มโทรศัพท์
+          let driverPhone = bookData.driverPhone || driverData.phone || "";
+          document.getElementById('btnDriverCall').href = driverPhone ? "tel:" + driverPhone : "#";
+      }
+
       if(bookData.status.includes("ถึงที่หมาย")) {
         db.ref('bookings/' + lineUserId).remove();
         showAlert('ถึงที่หมายแล้ว', 'ถึงที่หมายอย่างปลอดภัย ขอบคุณที่ใช้บริการ F1 Driver ครับ!', 'success', true);
@@ -519,7 +537,7 @@
                   markerDrop.setPosition(dest);
                   markerDrop.setMap(map); 
                   setTimeout(()=>{ 
-                      const mapPadding = { top: 50, right: 50, bottom: 280, left: 50 };
+                      const mapPadding = { top: 50, right: 50, bottom: 340, left: 50 }; // ขยายระยะ padding แมพด้านล่าง
                       map.fitBounds(res.routes[0].bounds, mapPadding); 
                   }, 200);
               }
@@ -549,7 +567,7 @@
         if(stat === 'OK') {
           directionsRenderer.setDirections(res);
           setTimeout(()=>{ 
-              const mapPadding = { top: 50, right: 50, bottom: 280, left: 50 };
+              const mapPadding = { top: 50, right: 50, bottom: 340, left: 50 };
               map.fitBounds(res.routes[0].bounds, mapPadding); 
           }, 200);
         }
