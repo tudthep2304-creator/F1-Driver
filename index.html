@@ -13,7 +13,7 @@
     @import url('https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;700&display=swap');
     body { font-family: 'Kanit', sans-serif; background-color: #f3f4f6; }
     .map-container { position: fixed; inset: 0; width: 100vw; height: 100vh; z-index: 0; background: #e5e7eb; }
-    .ui-panel { position: fixed; bottom: 0; left: 0; right: 0; background: white; border-top-left-radius: 24px; border-top-right-radius: 24px; box-shadow: 0 -10px 25px rgba(0,0,0,0.15); z-index: 10; display: flex; flex-direction: column; padding: 20px; max-height: 55vh; overflow-y: auto;}
+    .ui-panel { position: fixed; bottom: 0; left: 0; right: 0; background: white; border-top-left-radius: 24px; border-top-right-radius: 24px; box-shadow: 0 -10px 25px rgba(0,0,0,0.15); z-index: 10; display: flex; flex-direction: column; padding: 20px; max-height: 80vh; overflow-y: auto;}
     .full-page { position: fixed; inset: 0; z-index: 30; background: white; flex-direction: column; }
     .pac-container { z-index: 10000 !important; font-family: 'Kanit'; }
   </style>
@@ -91,7 +91,7 @@
   </div>
 
   <div id="pageTracking" class="hidden">
-    <div class="ui-panel h-[340px]">
+    <div class="ui-panel h-auto pb-8 pt-5">
       <div class="flex justify-between items-center border-b pb-2 mb-2">
         <h2 class="font-black text-indigo-700 text-base" id="trackStatus">รอผู้ขับขี่ตอบรับ...</h2>
         <span class="bg-gray-100 px-3 py-1 rounded-full font-bold text-gray-700 text-sm" id="trackPrice">฿0</span>
@@ -104,17 +104,17 @@
 
       <div id="driverContactBox" class="hidden gap-2 mb-2 shrink-0">
         <a id="btnDriverChat" href="https://line.me/R/ti/p/@YOUR_OA_ID" target="_blank" class="flex-1 bg-green-500 text-white py-2.5 rounded-xl font-bold text-sm flex items-center justify-center gap-2 shadow-sm active:bg-green-600 transition-colors">
-          <i class="fab fa-line text-base"></i> แชทกับคนขับ
+          <i class="fab fa-line text-base"></i> แชทหาคนขับ
         </a>
-        <a id="btnDriverCall" href="#" class="flex-1 bg-emerald-600 text-white py-2.5 rounded-xl font-bold text-sm flex items-center justify-center gap-2 shadow-sm active:bg-emerald-700 transition-colors">
-          <i class="fas fa-phone-alt text-xs"></i> โทรหาคนขับ
+        <a id="btnDriverCall" href="tel:0946379669" class="flex-1 bg-[#2B3A6F] text-white py-2.5 rounded-xl font-bold text-sm flex items-center justify-center gap-2 shadow-sm active:bg-blue-800 transition-colors">
+          <i class="fas fa-phone-alt text-xs"></i> 0946379669
         </a>
       </div>
 
-      <button onclick="openNavMap()" class="w-full bg-blue-50 text-blue-600 py-2.5 rounded-xl font-bold flex items-center justify-center gap-2 border border-blue-200 text-sm mb-2">
+      <button onclick="openNavMap()" class="w-full bg-blue-50 text-blue-600 py-2.5 rounded-xl font-bold flex items-center justify-center gap-2 border border-blue-200 text-sm mb-2 mt-1">
         <i class="fas fa-location-arrow"></i> แผนที่นำทาง (Google Maps)
       </button>
-      <button id="btnCancel" onclick="openCancelModal()" class="w-full bg-red-50 text-red-600 py-2.5 rounded-xl font-bold border border-red-200 mt-auto text-sm">ยกเลิกเรียกรถ</button>
+      <button id="btnCancel" onclick="openCancelModal()" class="w-full bg-red-50 text-red-600 py-2.5 rounded-xl font-bold border border-red-200 text-sm">ยกเลิกเรียกรถ</button>
     </div>
   </div>
 
@@ -164,7 +164,9 @@
     let bookData = { pLat:0, pLng:0, pName:"", dLat:0, dLng:0, dName:"", price:0, status:"" };
     let currentStep = 1;
 
-    function showAlert(title, message, type = 'info', reloadOnClose = false) {
+    // 🌟 อัปเกรด showAlert ให้รองรับการกดตกลงแล้วค่อยทำคำสั่ง (เช่น รีโหลดหน้าเว็บ)
+    window.alertCloseCallback = null;
+    function showAlert(title, message, type = 'info', callback = null) {
         document.getElementById('alertTitle').innerText = title;
         document.getElementById('alertMessage').innerText = message;
         
@@ -187,12 +189,19 @@
         iconDiv.className = `w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl ${iconBg} ${iconColor}`;
         
         document.getElementById('alertModal').classList.remove('hidden');
-        window.alertCloseCallback = reloadOnClose ? () => window.location.reload() : null;
+        
+        if (typeof callback === 'function') {
+            window.alertCloseCallback = callback;
+        } else {
+            window.alertCloseCallback = null;
+        }
     }
 
     function closeAlertModal() {
         document.getElementById('alertModal').classList.add('hidden');
-        if (window.alertCloseCallback) window.alertCloseCallback();
+        if (window.alertCloseCallback) {
+            window.alertCloseCallback();
+        }
     }
 
     function formatPhone(input) {
@@ -269,6 +278,8 @@
       } else { liff.login(); }
     });
 
+    window.isCompleting = false; // ป้องกันการรีโหลดหน้าซ้ำซ้อนตอนลบข้อมูล
+
     function initApp() {
       db.ref('driver').on('value', snap => {
         const d = snap.val();
@@ -289,8 +300,13 @@
 
       db.ref('bookings/' + lineUserId).on('value', snap => {
         const b = snap.val();
-        if(b) { bookData = b; handleTracking(); } 
-        else if (currentStep === 'Tracking') window.location.reload();
+        if(b) { 
+            bookData = b; 
+            handleTracking(); 
+        } else if (currentStep === 'Tracking' && !window.isCompleting) {
+            // ถ้าระหว่าง Tracking ข้อมูลโดนลบ (เช่น คนขับกดยกเลิกแบบไม่ตั้งใจ)
+            window.location.reload();
+        }
       });
     }
 
@@ -483,6 +499,9 @@
       });
     }
 
+    window.hasShownFinish = false;
+    window.hasShownCancel = false;
+
     function handleTracking() {
       if(currentStep !== 'Tracking') showPage('Tracking');
       let statusEl = document.getElementById('trackStatus');
@@ -493,28 +512,38 @@
       document.getElementById('trackPick').innerText = bookData.pName;
       document.getElementById('trackDrop').innerText = bookData.dName;
 
-      if(bookData.status === "รอผู้ขับขี่ตอบรับ" || bookData.status.includes("กำลังเดินทาง")) {
-        btnCancel.classList.remove('hidden');
-      } else {
-        btnCancel.classList.add('hidden');
-      }
-
-      // 🌟 ระบบสลับเปิดแถบติดต่อแชท/โทรศัพท์ เมื่อพ้นสถานะรอคนขับตอบรับ
+      // 🌟 แถบติดต่อ (โชว์เมื่อคนขับรับงานแล้ว)
       const contactBox = document.getElementById('driverContactBox');
-      if (bookData.status === "รอผู้ขับขี่ตอบรับ") {
+      if (bookData.status === "รอผู้ขับขี่ตอบรับ" || bookData.status === "ยกเลิกโดยคนขับ") {
+          btnCancel.classList.remove('hidden');
           contactBox.classList.add('hidden');
           contactBox.classList.remove('flex');
       } else {
+          btnCancel.classList.add('hidden');
           contactBox.classList.remove('hidden');
           contactBox.classList.add('flex');
-          // จัดส่งเบอร์โทรคนขับเข้าสู่ระบบปุ่มโทรศัพท์
-          let driverPhone = bookData.driverPhone || driverData.phone || "";
-          document.getElementById('btnDriverCall').href = driverPhone ? "tel:" + driverPhone : "#";
       }
 
-      if(bookData.status.includes("ถึงที่หมาย")) {
-        db.ref('bookings/' + lineUserId).remove();
-        showAlert('ถึงที่หมายแล้ว', 'ถึงที่หมายอย่างปลอดภัย ขอบคุณที่ใช้บริการ F1 Driver ครับ!', 'success', true);
+      // 🌟 ระบบแจ้งเตือนเมื่อคนขับกดจบงาน โชว์ป๊อปอัปก่อน แล้วค่อยกลับหน้าแรกตอนกดตกลง
+      if(bookData.status.includes("ถึงที่หมาย") && !window.hasShownFinish) {
+        window.hasShownFinish = true;
+        showAlert('ถึงที่หมายแล้ว', 'ถึงที่หมายอย่างปลอดภัย ขอบคุณที่ใช้บริการ F1 Driver ครับ!', 'success', () => {
+            window.isCompleting = true;
+            db.ref('bookings/' + lineUserId).remove().then(() => {
+                window.location.reload();
+            });
+        });
+      }
+      
+      // 🌟 ถ้าระหว่างทางคนขับกดยกเลิก
+      if(bookData.status === "ยกเลิกโดยคนขับ" && !window.hasShownCancel) {
+        window.hasShownCancel = true;
+        showAlert('ยกเลิกงาน', 'ขออภัย คนขับได้ยกเลิกงานนี้ กรุณาเรียกรถใหม่อีกครั้งครับ', 'error', () => {
+            window.isCompleting = true;
+            db.ref('bookings/' + lineUserId).remove().then(() => {
+                window.location.reload();
+            });
+        });
       }
 
       updateRealtimeMap();
@@ -523,7 +552,7 @@
     function updateRealtimeMap() {
       if(!directionsService || !bookData.status) return;
 
-      if (bookData.status === "รอผู้ขับขี่ตอบรับ") {
+      if (bookData.status === "รอผู้ขับขี่ตอบรับ" || bookData.status === "ยกเลิกโดยคนขับ") {
           if(markerDriver) markerDriver.setMap(null); 
           
           let origin = {lat: bookData.pLat, lng: bookData.pLng};
@@ -537,7 +566,7 @@
                   markerDrop.setPosition(dest);
                   markerDrop.setMap(map); 
                   setTimeout(()=>{ 
-                      const mapPadding = { top: 50, right: 50, bottom: 340, left: 50 }; // ขยายระยะ padding แมพด้านล่าง
+                      const mapPadding = { top: 50, right: 50, bottom: 280, left: 50 }; 
                       map.fitBounds(res.routes[0].bounds, mapPadding); 
                   }, 200);
               }
@@ -567,7 +596,7 @@
         if(stat === 'OK') {
           directionsRenderer.setDirections(res);
           setTimeout(()=>{ 
-              const mapPadding = { top: 50, right: 50, bottom: 340, left: 50 };
+              const mapPadding = { top: 50, right: 50, bottom: 280, left: 50 }; 
               map.fitBounds(res.routes[0].bounds, mapPadding); 
           }, 200);
         }
@@ -582,9 +611,13 @@
     }
     function confirmCancelBooking() {
         document.getElementById('cancelModal').classList.add('hidden');
-        db.ref('bookings/' + lineUserId).remove();
-        if(APPS_SCRIPT_URL) fetch(`${APPS_SCRIPT_URL}?action=notify&type=cancel&name=${lineName}`, {mode:'no-cors'});
-        showAlert('ยกเลิกสำเร็จ', 'ระบบได้ทำการยกเลิกการเรียกรถเรียบร้อยแล้ว', 'success', true);
+        window.isCompleting = true;
+        db.ref('bookings/' + lineUserId).remove().then(() => {
+            if(APPS_SCRIPT_URL) fetch(`${APPS_SCRIPT_URL}?action=notify&type=cancel&name=${lineName}`, {mode:'no-cors'});
+            showAlert('ยกเลิกสำเร็จ', 'ระบบได้ทำการยกเลิกการเรียกรถเรียบร้อยแล้ว', 'success', () => {
+                window.location.reload();
+            });
+        });
     }
 
     function openNavMap() {
