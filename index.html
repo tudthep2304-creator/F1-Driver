@@ -49,7 +49,7 @@
         <p class="text-sm font-bold text-gray-700">📍 เลือกจุดรับ (หมุดสีเขียว)</p>
         <button onclick="useCurrentLocation()" class="text-xs bg-blue-100 text-blue-700 px-3 py-1 rounded-full"><i class="fas fa-crosshairs"></i> ตำแหน่งปัจจุบัน</button>
       </div>
-      <input type="text" id="pickupSearch" onfocus="this.value=''" class="w-full p-3.5 bg-gray-100 rounded-xl mb-auto outline-none font-medium text-sm text-gray-700 truncate" placeholder="ค้นหาสถานที่...">
+      <input type="text" id="pickupSearch" class="w-full p-4 bg-gray-50 border-2 border-gray-200 focus:border-[#2B3A6F] focus:bg-white rounded-xl mb-auto outline-none font-bold text-gray-800 shadow-inner transition-colors" placeholder="ค้นหาสถานที่...">
       <button onclick="confirmPickup()" class="w-full bg-[#2B3A6F] text-white py-3.5 rounded-xl font-bold mt-3 text-base">ถัดไป</button>
     </div>
   </div>
@@ -59,7 +59,7 @@
       <div class="flex justify-between items-center mb-3">
         <p class="text-sm font-bold text-gray-700">🏁 เลือกจุดส่ง (หมุดสีแดง)</p>
       </div>
-      <input type="text" id="dropoffSearch" onfocus="this.value=''" class="w-full p-3.5 bg-gray-100 rounded-xl mb-auto outline-none font-medium text-sm text-gray-700 truncate" placeholder="ค้นหาสถานที่...">
+      <input type="text" id="dropoffSearch" class="w-full p-4 bg-gray-50 border-2 border-gray-200 focus:border-[#2B3A6F] focus:bg-white rounded-xl mb-auto outline-none font-bold text-gray-800 shadow-inner transition-colors" placeholder="ค้นหาสถานที่...">
       <button onclick="confirmDropoff()" class="w-full bg-[#2B3A6F] text-white py-3.5 rounded-xl font-bold mt-3 text-base">ถัดไป</button>
     </div>
   </div>
@@ -207,7 +207,6 @@
       markerPick = new google.maps.Marker({map: null, icon: "https://maps.google.com/mapfiles/ms/icons/green-dot.png", zIndex: 2});
       markerDrop = new google.maps.Marker({map: null, icon: "https://maps.google.com/mapfiles/ms/icons/red-dot.png", zIndex: 2});
       
-      // รูปรถคนขับ
       markerDriver = new google.maps.Marker({
           map: null, 
           icon: {
@@ -234,11 +233,15 @@
               if (currentStep === 2) {
                 markerPick.setPosition(place.geometry.location);
                 bookData.pName = place.name;
-                document.getElementById('pickupSearch').value = place.name;
+                let el = document.getElementById('pickupSearch');
+                el.value = place.name;
+                el.dataset.oldValue = place.name; // จำค่าไว้
               } else if (currentStep === 3) {
                 markerDrop.setPosition(place.geometry.location);
                 bookData.dName = place.name;
-                document.getElementById('dropoffSearch').value = place.name;
+                let el = document.getElementById('dropoffSearch');
+                el.value = place.name;
+                el.dataset.oldValue = place.name; // จำค่าไว้
               }
             }
           });
@@ -348,13 +351,22 @@
       let pos = map.getCenter();
       geocoder.geocode({location: pos}, (res, status) => {
         if(status === 'OK' && res[0]) {
-          let addr = res[0].formatted_address.replace(', ประเทศไทย','');
+          // ดึงชื่อสถานที่สั้นๆ มาโชว์
+          let addr = res[0].address_components[0].short_name + " " + res[0].address_components[1].short_name;
+          if(res[0].name) addr = res[0].name;
+          
+          let fullAddr = res[0].formatted_address.replace(', ประเทศไทย','');
+          
           if(isPick) { 
-            bookData.pName = addr; 
-            document.getElementById('pickupSearch').value = addr; 
+            bookData.pName = fullAddr; 
+            let el = document.getElementById('pickupSearch');
+            el.value = addr; 
+            el.dataset.oldValue = addr;
           } else { 
-            bookData.dName = addr; 
-            document.getElementById('dropoffSearch').value = addr; 
+            bookData.dName = fullAddr; 
+            let el = document.getElementById('dropoffSearch');
+            el.value = addr; 
+            el.dataset.oldValue = addr;
           }
         }
       });
@@ -363,17 +375,42 @@
     function setupSearch(inputId, marker) {
       const input = document.getElementById(inputId);
       if (typeof google === 'undefined' || typeof google.maps === 'undefined' || typeof google.maps.places === 'undefined') return;
-      const auto = new google.maps.places.Autocomplete(input, {componentRestrictions: {country: 'th'}});
+      
+      // 🌟 จำกัดขอบเขตการค้นหาให้อยู่ในเชียงรายเท่านั้น
+      const chiangRaiBounds = new google.maps.LatLngBounds(
+        new google.maps.LatLng(18.91, 99.16),
+        new google.maps.LatLng(20.46, 100.56)
+      );
+
+      const auto = new google.maps.places.Autocomplete(input, {
+        bounds: chiangRaiBounds,
+        strictBounds: true,
+        componentRestrictions: {country: 'th'}
+      });
+
+      // 🌟 ระบบซ่อนข้อความตอนพิมพ์ และคืนค่าเดิมถ้าเปลี่ยนใจ
+      input.addEventListener('focus', function() {
+          this.dataset.oldValue = this.value;
+          this.value = '';
+      });
+      input.addEventListener('blur', function() {
+          if(this.value.trim() === '') {
+              this.value = this.dataset.oldValue || '';
+          }
+      });
+
       auto.addListener('place_changed', () => {
         const place = auto.getPlace();
         if(place.geometry) {
           map.setCenter(place.geometry.location); 
           if(currentStep===2) {
              bookData.pName = place.name; 
-             document.getElementById('pickupSearch').value = place.name;
+             input.value = place.name;
+             input.dataset.oldValue = place.name;
           } else {
              bookData.dName = place.name;
-             document.getElementById('dropoffSearch').value = place.name;
+             input.value = place.name;
+             input.dataset.oldValue = place.name;
           }
         }
       });
