@@ -107,7 +107,7 @@
           <i class="fab fa-line text-base"></i> แชทหาคนขับ
         </button>
         <a id="btnDriverCall" href="tel:0946379669" class="flex-1 bg-[#2B3A6F] text-white py-2.5 rounded-xl font-bold text-sm flex items-center justify-center gap-2 shadow-sm active:bg-blue-800 transition-colors">
-          <i class="fas fa-phone-alt text-xs"></i> 0946379669
+          <i class="fas fa-phone-alt text-xs"></i> โทรหาคนขับ
         </a>
       </div>
 
@@ -143,6 +143,7 @@
   </div>
 
   <script>
+    // --- ตั้งค่าระบบ ---
     const APPS_SCRIPT_URL = ""; 
     const MY_LIFF_ID = "2010188449-b9Yq1R2L";
     const LINE_OA_URL = "https://line.me/R/ti/p/%40805zvmii";
@@ -165,6 +166,7 @@
     let bookData = { pLat:0, pLng:0, pName:"", dLat:0, dLng:0, dName:"", price:0, status:"" };
     let currentStep = 1;
     let currentRouteStatus = ""; 
+    let lastNotifiedStatus = ""; // 🌟 ตัวแปรดักจับประวัติการแจ้งเตือน เพื่อไม่ให้ยิงแจ้งเตือนซ้ำซ้อน
 
     function showAlert(title, message, type = 'info', callback = null) {
         document.getElementById('alertTitle').innerText = title;
@@ -455,6 +457,7 @@
     }
 
     window.hasShownFinish = false; window.hasShownCancel = false;
+    
     function handleTracking() {
       if(currentStep !== 'Tracking') showPage('Tracking');
       let statusEl = document.getElementById('trackStatus');
@@ -465,6 +468,7 @@
       document.getElementById('trackPick').innerText = bookData.pName;
       document.getElementById('trackDrop').innerText = bookData.dName;
 
+      // 🌟 เงื่อนไขปุ่มยกเลิกงาน: ค้างปุ่มยกเลิกไว้เมื่อ "รอรับงาน" และ "คนขับกำลังเดินทางไปหา"
       if(bookData.status === "รอผู้ขับขี่ตอบรับ" || bookData.status.includes("กำลังเดินทางไปหา")) {
           btnCancel.classList.remove('hidden');
       } else {
@@ -476,6 +480,26 @@
           contactBox.classList.add('hidden'); contactBox.classList.remove('flex');
       } else {
           contactBox.classList.remove('hidden'); contactBox.classList.add('flex');
+      }
+
+      // 🌟 ระบบยิง Line แจ้งเตือนความคืบหน้าแบบอัตโนมัติ ตามการเปลี่ยนสถานะของคนขับ
+      if (APPS_SCRIPT_URL && bookData.status !== lastNotifiedStatus) {
+          let notifyMsg = "";
+          if (bookData.status.includes("รับงาน") || bookData.status.includes("กำลังเดินทางไปหา")) {
+              notifyMsg = "🏎️ คนขับได้ตอบรับงานของคุณแล้วเรียบร้อย! กำลังรีบเดินทางไปหาคุณครับ";
+          } else if (bookData.status.includes("มาถึงจุดรับ")) {
+              notifyMsg = "📍 คนขับได้เดินทางมาถึงจุดรับของคุณเรียบร้อยแล้วครับ!";
+          } else if (bookData.status.includes("ออกเดินทาง")) {
+              notifyMsg = "✨ ผู้โดยสารขึ้นรถเรียบร้อยแล้ว! กำลังเริ่มออกเดินทางไปยังจุดหมายปลายทาง";
+          } else if (bookData.status.includes("ถึงที่หมาย")) {
+              // 🌟 ส่งข้อมูลครบถ้วน: จุดรับ, จุดส่ง, ระยะทาง, ระยะเวลา, ราคาเหมาจ่าย เข้า LINE ทันทีเมื่อถึงที่หมาย
+              notifyMsg = `🏁 การเดินทางสิ้นสุดลงแล้วเรียบร้อย!\n\n📍 จุดรับ: ${bookData.pName}\n🏁 จุดส่ง: ${bookData.dName}\n🛣️ ระยะทาง: ${document.getElementById('sumDist').innerText} กม.\n⏱️ เวลาเดินทาง: ${document.getElementById('sumWait').innerText} นาที\n💵 ราคา: ${bookData.price} บาท\n\nขอบคุณที่ใช้บริการ F1 Driver ครับ!`;
+          }
+          
+          if (notifyMsg) {
+              fetch(`${APPS_SCRIPT_URL}?action=notify&type=status_update&userId=${lineUserId}&msg=${encodeURIComponent(notifyMsg)}`, {mode: 'no-cors'});
+          }
+          lastNotifiedStatus = bookData.status; // บันทึกสถานะล่าสุดไว้ป้องกันสแปมข้อความ
       }
 
       if(bookData.status.includes("ถึงที่หมาย") && !window.hasShownFinish) {
@@ -529,7 +553,6 @@
         origin = markerDriver.getPosition(); dest = {lat: bookData.pLat, lng: bookData.pLng};
         markerPick.setPosition(dest); markerPick.setMap(map); markerDrop.setMap(null); 
       } else {
-        // สถานะ "เริ่มออกเดินทาง" (ผู้โดยสารขึ้นรถมาแล้ว)
         origin = markerDriver.getPosition(); dest = {lat: bookData.dLat, lng: bookData.dLng};
         markerDrop.setPosition(dest); markerDrop.setMap(map); markerPick.setMap(null); 
       }
@@ -547,13 +570,10 @@
               }
           }
 
-          // 🌟 จัดการเงื่อนไขควบคุมกล้องตามโจทย์ที่คุณแจ้งมา
           if(bookData.status.includes("ออกเดินทาง")) {
-              // 1. ถ้าขึ้นรถและเริ่มเดินทางแล้ว ให้ซูมเข้าไปที่รถ ระดับ 17 แบบ Real-time ตลอดทาง
               map.setCenter(markerDriver.getPosition());
               map.setZoom(17);
           } else {
-              // 2. ถ้ายังไม่ขึ้นรถ ให้ซูมจัดมุมมองกว้าง (fitBounds) เฉพาะตอนที่สลับสถานะเท่านั้น
               if(isStatusChanged) {
                   setTimeout(()=>{ const mapPadding = { top: 50, right: 50, bottom: 340, left: 50 }; map.fitBounds(res.routes[0].bounds, mapPadding); }, 200);
               }
