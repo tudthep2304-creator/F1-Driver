@@ -134,10 +134,9 @@
 
   <div id="alertModal" class="hidden fixed inset-0 z-[110] bg-black/50 flex items-center justify-center p-4">
       <div class="bg-white rounded-2xl p-6 w-full max-w-sm text-center shadow-xl">
-          <div id="alertIcon" class="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl">
-          </div>
+          <div id="alertIcon" class="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl"></div>
           <h3 id="alertTitle" class="text-xl font-bold text-gray-800 mb-2">...</h3>
-          <p id="alertMessage" class="text-sm text-gray-500 mb-6">...</p>
+          <p id="alertMessage" class="text-sm text-gray-500 mb-6 whitespace-pre-line">...</p>
           <button onclick="closeAlertModal()" class="w-full py-3 bg-[#2B3A6F] text-white font-bold rounded-xl shadow-md">ตกลง</button>
       </div>
   </div>
@@ -163,10 +162,10 @@
     let markerPick, markerDrop, markerDriver;
     let lineUserId = "", lineName = "";
     let driverData = { lat: 19.910479, lng: 99.840576, status: "ออฟไลน์" };
-    let bookData = { pLat:0, pLng:0, pName:"", dLat:0, dLng:0, dName:"", price:0, status:"" };
+    let bookData = { pLat:0, pLng:0, pName:"", dLat:0, dLng:0, dName:"", price:0, distance:0, duration:0, status:"" };
     let currentStep = 1;
     let currentRouteStatus = ""; 
-    let lastNotifiedStatus = ""; // 🌟 ตัวแปรดักจับประวัติการแจ้งเตือน เพื่อไม่ให้ยิงแจ้งเตือนซ้ำซ้อน
+    let lastNotifiedStatus = ""; 
 
     function showAlert(title, message, type = 'info', callback = null) {
         document.getElementById('alertTitle').innerText = title;
@@ -430,8 +429,12 @@
               let waitMins = Math.ceil(resDrive.routes[0].legs[0].duration.value / 60);
               bookData.price = Math.ceil((distRideKm * 14) + (distDriverKm * 4));
               
-              document.getElementById('sumDist').innerText = distRideKm.toFixed(1);
-              document.getElementById('sumWait').innerText = waitMins;
+              // 🌟 บันทึกระยะทางและเวลาเดินทางลงตัวแปร เพื่อนำไปใช้สรุปผลตอนจบงาน
+              bookData.distance = distRideKm.toFixed(1);
+              bookData.duration = waitMins;
+
+              document.getElementById('sumDist').innerText = bookData.distance;
+              document.getElementById('sumWait').innerText = bookData.duration;
               document.getElementById('sumPrice').innerText = bookData.price;
 
               setTimeout(() => {
@@ -448,7 +451,11 @@
       let tel = document.getElementById('userPhone').value;
       if(tel.length < 10) { showAlert('แจ้งเตือน', 'กรุณากรอกเบอร์โทรศัพท์ให้ครบ 10 หลัก', 'error'); return; }
       bookData.userId = lineUserId; bookData.name = lineName; bookData.phone = tel;
-      bookData.status = "รอผู้ขับขี่ตอบรับ"; bookData.timestamp = firebase.database.ServerValue.TIMESTAMP; bookData.notified2Km = false;
+      bookData.status = "รอผู้ขับขี่ตอบรับ"; bookData.timestamp = firebase.database.ServerValue.TIMESTAMP; 
+      
+      // 🌟 รีเซ็ตสถานะการแจ้งเตือนอัตโนมัติก่อนเริ่มงาน
+      bookData.notifiedPick = false; 
+      bookData.notifiedDrop = false;
       
       db.ref('bookings/' + lineUserId).set(bookData).then(() => {
         if(APPS_SCRIPT_URL) fetch(`${APPS_SCRIPT_URL}?action=notify&type=new_ride&name=${lineName}&pick=${bookData.pName}`, {mode: 'no-cors'});
@@ -468,8 +475,8 @@
       document.getElementById('trackPick').innerText = bookData.pName;
       document.getElementById('trackDrop').innerText = bookData.dName;
 
-      // 🌟 เงื่อนไขปุ่มยกเลิกงาน: ค้างปุ่มยกเลิกไว้เมื่อ "รอรับงาน" และ "คนขับกำลังเดินทางไปหา"
-      if(bookData.status === "รอผู้ขับขี่ตอบรับ" || bookData.status.includes("กำลังเดินทางไปหา")) {
+      // จัดการการแสดงผลปุ่มยกเลิก และแถบติดต่อคนขับ
+      if(bookData.status === "รอผู้ขับขี่ตอบรับ" || bookData.status.includes("กำลังเดินทาง")) {
           btnCancel.classList.remove('hidden');
       } else {
           btnCancel.classList.add('hidden');
@@ -482,29 +489,35 @@
           contactBox.classList.remove('hidden'); contactBox.classList.add('flex');
       }
 
-      // 🌟 ระบบยิง Line แจ้งเตือนความคืบหน้าแบบอัตโนมัติ ตามการเปลี่ยนสถานะของคนขับ
+      // 🌟 ระบบยิง Line แจ้งเตือนความคืบหน้าแบบอัตโนมัติ ครบทุกจุด 100%
       if (APPS_SCRIPT_URL && bookData.status !== lastNotifiedStatus) {
           let notifyMsg = "";
-          if (bookData.status.includes("รับงาน") || bookData.status.includes("กำลังเดินทางไปหา")) {
-              notifyMsg = "🏎️ คนขับได้ตอบรับงานของคุณแล้วเรียบร้อย! กำลังรีบเดินทางไปหาคุณครับ";
-          } else if (bookData.status.includes("มาถึงจุดรับ")) {
-              notifyMsg = "📍 คนขับได้เดินทางมาถึงจุดรับของคุณเรียบร้อยแล้วครับ!";
-          } else if (bookData.status.includes("ออกเดินทาง")) {
-              notifyMsg = "✨ ผู้โดยสารขึ้นรถเรียบร้อยแล้ว! กำลังเริ่มออกเดินทางไปยังจุดหมายปลายทาง";
-          } else if (bookData.status.includes("ถึงที่หมาย")) {
-              // 🌟 ส่งข้อมูลครบถ้วน: จุดรับ, จุดส่ง, ระยะทาง, ระยะเวลา, ราคาเหมาจ่าย เข้า LINE ทันทีเมื่อถึงที่หมาย
-              notifyMsg = `🏁 การเดินทางสิ้นสุดลงแล้วเรียบร้อย!\n\n📍 จุดรับ: ${bookData.pName}\n🏁 จุดส่ง: ${bookData.dName}\n🛣️ ระยะทาง: ${document.getElementById('sumDist').innerText} กม.\n⏱️ เวลาเดินทาง: ${document.getElementById('sumWait').innerText} นาที\n💵 ราคา: ${bookData.price} บาท\n\nขอบคุณที่ใช้บริการ F1 Driver ครับ!`;
+          let s = bookData.status;
+
+          if (s.includes("รับงาน") || s.includes("กำลังเดินทางไปหา")) {
+              notifyMsg = "🏎️ คนขับตอบรับงานของคุณแล้ว! กำลังรีบเดินทางไปหาคุณครับ";
+          } else if (s.includes("ถึงจุดรับ") || s.includes("มาถึงจุดรับ")) {
+              notifyMsg = "📍 คนขับเดินทางมาถึงจุดรับของคุณเรียบร้อยแล้วครับ!";
+          } else if (s.includes("ออกเดินทาง") || s.includes("รับผู้โดยสาร") || s.includes("ไปยังจุดส่ง")) {
+              notifyMsg = "✨ ผู้โดยสารขึ้นรถเรียบร้อยแล้ว! กำลังเริ่มออกเดินทางไปยังจุดส่ง";
+          } else if (s.includes("ถึงที่หมาย") || s.includes("เสร็จสิ้น")) {
+              // 🌟 ส่งข้อมูลสรุปชุดใหญ่: จุดรับ, จุดส่ง, ระยะทาง, เวลา, ราคา
+              notifyMsg = `🏁 การเดินทางสิ้นสุดลงแล้วเรียบร้อย!\n\n📍 จุดรับ: ${bookData.pName}\n🏁 จุดส่ง: ${bookData.dName}\n🛣️ ระยะทาง: ${bookData.distance || 0} กม.\n⏱️ เวลาเดินทาง: ${bookData.duration || 0} นาที\n💵 ราคาเหมาจ่าย: ${bookData.price} บาท\n\nขอบคุณที่ใช้บริการ F1 Driver ครับ!`;
           }
           
           if (notifyMsg) {
               fetch(`${APPS_SCRIPT_URL}?action=notify&type=status_update&userId=${lineUserId}&msg=${encodeURIComponent(notifyMsg)}`, {mode: 'no-cors'});
           }
-          lastNotifiedStatus = bookData.status; // บันทึกสถานะล่าสุดไว้ป้องกันสแปมข้อความ
+          lastNotifiedStatus = s; 
       }
 
+      // ป๊อปอัปแจ้งเตือนเมื่อจบงาน
       if(bookData.status.includes("ถึงที่หมาย") && !window.hasShownFinish) {
         window.hasShownFinish = true;
-        showAlert('ถึงที่หมายแล้ว', 'ถึงที่หมายอย่างปลอดภัย ขอบคุณที่ใช้บริการ F1 Driver ครับ!', 'success', () => {
+        
+        let finalMessage = `จุดรับ: ${bookData.pName}\nจุดส่ง: ${bookData.dName}\nระยะทาง: ${bookData.distance || 0} กม. | ราคา: ${bookData.price} บาท\n\nขอบคุณที่ใช้บริการ F1 Driver ครับ!`;
+
+        showAlert('ถึงที่หมายเรียบร้อย!', finalMessage, 'success', () => {
             window.isCompleting = true;
             db.ref('bookings/' + lineUserId).remove().then(() => { window.location.reload(); });
         });
@@ -549,12 +562,17 @@
       markerDriver.setPosition({lat: driverData.lat, lng: driverData.lng});
 
       let origin, dest;
-      if(bookData.status.includes("รับงาน") || bookData.status.includes("มาถึงจุดรับ") || bookData.status.includes("กำลังเดินทาง")) {
+      let isGoingToPickup = false;
+      let isGoingToDropoff = false;
+
+      if(bookData.status.includes("รับงาน") || bookData.status.includes("มาถึงจุดรับ") || bookData.status.includes("กำลังเดินทางไปหา")) {
         origin = markerDriver.getPosition(); dest = {lat: bookData.pLat, lng: bookData.pLng};
         markerPick.setPosition(dest); markerPick.setMap(map); markerDrop.setMap(null); 
+        isGoingToPickup = true;
       } else {
         origin = markerDriver.getPosition(); dest = {lat: bookData.dLat, lng: bookData.dLng};
         markerDrop.setPosition(dest); markerDrop.setMap(map); markerPick.setMap(null); 
+        isGoingToDropoff = true;
       }
 
       directionsService.route({origin: origin, destination: dest, travelMode: 'DRIVING'}, (res, stat) => {
@@ -563,14 +581,26 @@
           
           const leg = res.routes[0].legs[0];
           let distanceKm = leg.distance.value / 1000;
-          if(bookData.status.includes("กำลังเดินทางไปหา") && distanceKm <= 2.0 && bookData.notified2Km === false) {
-              db.ref('bookings/' + lineUserId).update({ notified2Km: true }); 
+          
+          // 🌟 ดักจับแจ้งเตือนอัตโนมัติ: ใกล้ถึงจุดรับ (ระยะ 2 กม.)
+          if(isGoingToPickup && distanceKm <= 2.0 && bookData.notifiedPick !== true) {
+              db.ref('bookings/' + lineUserId).update({ notifiedPick: true }); 
+              bookData.notifiedPick = true;
               if(APPS_SCRIPT_URL) {
-                  fetch(`${APPS_SCRIPT_URL}?action=notify&type=status_update&userId=${lineUserId}&msg=${encodeURIComponent("⚡ คนขับใกล้ถึงจุดรับแล้วครับ! ระยะห่างอีกประมาณ " + distanceKm.toFixed(1) + " กม.")}`, {mode: 'no-cors'});
+                  fetch(`${APPS_SCRIPT_URL}?action=notify&type=status_update&userId=${lineUserId}&msg=${encodeURIComponent("⚡ คนขับใกล้ถึงจุดรับแล้วครับ! (ระยะห่างอีกประมาณ " + distanceKm.toFixed(1) + " กม.)")}`, {mode: 'no-cors'});
               }
           }
 
-          if(bookData.status.includes("ออกเดินทาง")) {
+          // 🌟 ดักจับแจ้งเตือนอัตโนมัติ: ใกล้ถึงจุดส่ง (ระยะ 2 กม.)
+          if(isGoingToDropoff && distanceKm <= 2.0 && bookData.notifiedDrop !== true) {
+              db.ref('bookings/' + lineUserId).update({ notifiedDrop: true }); 
+              bookData.notifiedDrop = true;
+              if(APPS_SCRIPT_URL) {
+                  fetch(`${APPS_SCRIPT_URL}?action=notify&type=status_update&userId=${lineUserId}&msg=${encodeURIComponent("⚡ ใกล้ถึงจุดหมายปลายทางแล้วครับ! (ระยะห่างอีกประมาณ " + distanceKm.toFixed(1) + " กม.)")}`, {mode: 'no-cors'});
+              }
+          }
+
+          if(bookData.status.includes("ออกเดินทาง") || bookData.status.includes("ไปยังจุดส่ง")) {
               map.setCenter(markerDriver.getPosition());
               map.setZoom(17);
           } else {
