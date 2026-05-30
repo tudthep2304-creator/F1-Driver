@@ -195,10 +195,12 @@
   </div>
 
   <script>
+    // --- ตั้งค่าระบบ ---
     const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwwdopAPESHRrHEYTSa-CzFMbh0JX9WHUa37PMEJmxDkah7ui67cVtOn68cnM-2DtmR/exec"; 
     const MY_LIFF_ID = "2010188449-b9Yq1R2L";
     const LINE_OA_URL = "https://line.me/R/ti/p/%40805zvmii";
     
+    // ตั้งค่า Firebase
     firebase.initializeApp({
       apiKey: "AIzaSyBNtaYaX1OW-86_9EGiVN9EpgPzWOX_twQ",
       authDomain: "myride-chiangrai.firebaseapp.com",
@@ -219,7 +221,6 @@
     let bookData = { pLat:0, pLng:0, pName:"", dLat:0, dLng:0, dName:"", price:0, distance:0, duration:0, status:"" };
     let currentStep = 1;
     let currentRouteStatus = ""; 
-    let lastNotifiedStatus = ""; 
 
     function showAlert(title, message, type = 'info', callback = null) {
         document.getElementById('alertTitle').innerText = title;
@@ -277,7 +278,6 @@
         }
     }
 
-    // 🌟 ระบบแผนที่ป้องกันบั๊ก (Safe Map Initialization)
     function initMap() {
       if (typeof google === 'undefined' || typeof google.maps === 'undefined') return;
       if (map) return; 
@@ -343,6 +343,10 @@
           });
         }
       });
+
+      if (currentStep !== 1) {
+          showPage(currentStep);
+      }
     }
 
     liff.init({ liffId: MY_LIFF_ID }).then(() => {
@@ -586,10 +590,8 @@
       bookData.userId = lineUserId; bookData.name = lineName; bookData.phone = tel;
       bookData.status = "รอผู้ขับขี่ตอบรับ"; bookData.timestamp = firebase.database.ServerValue.TIMESTAMP; 
       
-      bookData.notifiedPick = false; 
-      bookData.notifiedDrop = false;
-      
       db.ref('bookings/' + lineUserId).set(bookData).then(() => {
+        // 🌟 ส่งแจ้งเตือน LINE เฉพาะตอน "เริ่มเรียกรถ" (ฝั่งผู้โดยสารส่งเอง)
         if(APPS_SCRIPT_URL) fetch(`${APPS_SCRIPT_URL}?action=notify&type=new_ride&name=${lineName}&pick=${bookData.pName}`, {mode: 'no-cors'});
         showPage('Tracking');
       });
@@ -634,25 +636,7 @@
           }
       }
 
-      if (APPS_SCRIPT_URL && bookData.status !== lastNotifiedStatus) {
-          let notifyMsg = "";
-          let s = bookData.status;
-
-          if (s.includes("รับงาน") || s.includes("กำลังเดินทางไปหา")) {
-              notifyMsg = "🏎️ คนขับตอบรับงานของคุณแล้ว! กำลังรีบเดินทางไปหาคุณครับ";
-          } else if (s.includes("ถึงจุดรับ") || s.includes("มาถึงจุดรับ")) {
-              notifyMsg = "📍 คนขับเดินทางมาถึงจุดรับของคุณเรียบร้อยแล้วครับ!";
-          } else if (s.includes("ออกเดินทาง") || s.includes("รับผู้โดยสาร") || s.includes("ไปยังจุดส่ง")) {
-              notifyMsg = "✨ ผู้โดยสารขึ้นรถเรียบร้อยแล้ว! กำลังเริ่มออกเดินทางไปยังจุดส่ง";
-          } else if (s.includes("ถึงที่หมาย") || s.includes("เสร็จสิ้น")) {
-              notifyMsg = `🏁 การเดินทางสิ้นสุดลงแล้วเรียบร้อย!\n\n📍 จุดรับ: ${bookData.pName}\n🏁 จุดส่ง: ${bookData.dName}\n🛣️ ระยะทาง: ${bookData.distance || 0} กม.\n⏱️ เวลาเดินทาง: ${bookData.duration || 0} นาที\n💵 ราคาเหมาจ่าย: ${bookData.price} บาท\n\nขอบคุณที่ใช้บริการ F1 Driver ครับ!`;
-          }
-          
-          if (notifyMsg) {
-              fetch(`${APPS_SCRIPT_URL}?action=notify&type=status_update&userId=${lineUserId}&msg=${encodeURIComponent(notifyMsg)}`, {mode: 'no-cors'});
-          }
-          lastNotifiedStatus = s; 
-      }
+      // 🌟 ตัดระบบแจ้งเตือน LINE (fetch) ออกจากฝั่งผู้โดยสารทั้งหมด! ปล่อยให้คนขับเป็นคนส่งแต่เพียงผู้เดียว
 
       if(bookData.status.includes("ถึงที่หมาย") && !window.hasShownFinish) {
         window.hasShownFinish = true;
@@ -769,6 +753,7 @@
         document.getElementById('cancelModal').classList.add('hidden');
         window.isCompleting = true;
         db.ref('bookings/' + lineUserId).remove().then(() => {
+            // 🌟 ส่งแจ้งเตือน LINE เฉพาะตอน "ผู้โดยสารยกเลิกงาน" เท่านั้น
             if(APPS_SCRIPT_URL) fetch(`${APPS_SCRIPT_URL}?action=notify&type=cancel&name=${lineName}`, {mode:'no-cors'});
             showAlert('ยกเลิกสำเร็จ', 'ระบบได้ทำการยกเลิกการเรียกรถเรียบร้อยแล้ว', 'success', () => { window.location.reload(); });
         });
