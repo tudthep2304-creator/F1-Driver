@@ -27,7 +27,7 @@
         display: flex; 
         flex-direction: column; 
         padding: 20px; 
-        max-height: 80vh; 
+        max-height: 85vh; 
         overflow-y: auto;
     }
 
@@ -118,9 +118,17 @@
           <p class="font-black text-blue-700 text-sm"><span id="sumDist">0</span> กม. • <span id="sumWait">0</span> นาที</p>
         </div>
         <div class="text-right">
-          <p class="text-[11px] text-gray-500 font-bold mb-0.5">ราคาเหมาจ่าย</p>
-          <p class="font-black text-xl text-green-600 leading-none">฿<span id="sumPrice">0</span></p>
+          <p class="text-[11px] text-gray-500 font-bold mb-0.5">ราคาเหมาจ่าย <span id="discountTag" class="hidden text-green-600 bg-green-100 px-1.5 rounded"></span></p>
+          <div class="flex items-end justify-end gap-2">
+              <p id="sumPriceOld" class="hidden text-sm text-gray-400 line-through font-bold pb-0.5"></p>
+              <p class="font-black text-xl text-green-600 leading-none">฿<span id="sumPrice">0</span></p>
+          </div>
         </div>
+      </div>
+
+      <div class="flex gap-2 mb-4">
+          <input type="text" id="promoInput" placeholder="โค้ดส่วนลด (ถ้ามี)" class="flex-1 p-3 bg-gray-50 border border-gray-200 focus:border-blue-500 rounded-xl text-sm font-bold uppercase outline-none transition">
+          <button onclick="applyPromoCode()" class="bg-slate-800 text-white px-4 rounded-xl font-bold text-sm hover:bg-slate-700 transition active:scale-95 whitespace-nowrap">ใช้โค้ด</button>
       </div>
       
       <div class="relative mb-4">
@@ -130,20 +138,23 @@
           <input type="tel" id="userPhone" autocomplete="tel" oninput="formatPhone(this)" placeholder="เบอร์โทรติดต่อ (10 หลัก)" class="w-full p-3.5 pl-10 bg-gray-50 border-2 border-gray-200 focus:border-blue-500 focus:bg-white rounded-xl font-bold text-gray-800 outline-none transition-colors">
       </div>
 
-      <button onclick="submitBooking()" class="w-full bg-green-500 text-white py-4 rounded-xl font-bold text-lg mt-auto shadow-md hover:bg-green-600 active:scale-[0.98] transition">
-          ยืนยันเรียกรถ <i class="fas fa-car-side ml-1"></i>
+      <button onclick="submitBooking()" class="w-full bg-green-500 text-white py-4 rounded-xl font-bold text-lg mt-auto shadow-md hover:bg-green-600 active:scale-[0.98] transition flex justify-center items-center gap-2">
+          ยืนยันเรียกรถ <i class="fas fa-car-side"></i>
       </button>
     </div>
   </div>
 
   <div id="pageTracking" class="hidden">
     <div class="ui-panel h-auto pb-6 pt-5">
-      <div class="flex justify-between items-center border-b border-gray-100 pb-3 mb-3">
+        <div class="flex justify-between items-center border-b border-gray-100 pb-3 mb-3">
         <div>
             <h2 class="font-black text-[#2B3A6F] text-base leading-tight" id="trackStatus">รอผู้ขับขี่ตอบรับ...</h2>
             <p class="text-[11px] text-blue-600 font-bold mt-0.5 hidden" id="trackEtaDisplay">คนขับอยู่ห่าง: -- กม. • -- นาที</p>
         </div>
-        <span class="bg-gray-100 px-3 py-1.5 rounded-xl font-bold text-gray-700 text-sm shrink-0" id="trackPrice">฿0</span>
+        <div class="text-right">
+            <span class="bg-gray-100 px-3 py-1.5 rounded-xl font-bold text-gray-700 text-sm shrink-0 inline-block" id="trackPrice">฿0</span>
+            <p id="trackPromoText" class="text-[9px] text-green-500 font-bold mt-1 hidden"></p>
+        </div>
       </div>
       
       <div class="mb-4 bg-gray-50 p-3 rounded-2xl border border-gray-100 relative">
@@ -162,7 +173,7 @@
         <button onclick="openLineOA()" class="flex-1 bg-green-500 text-white py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2 shadow-sm hover:bg-green-600 transition">
           <i class="fab fa-line text-lg"></i> แชทหาคนขับ
         </button>
-        <a id="btnDriverCall" href="tel:0946379669" class="flex-[0.8] bg-[#2B3A6F] text-white py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2 shadow-sm hover:bg-blue-800 transition">
+        <a id="btnDriverCall" href="#" class="flex-[0.8] bg-[#2B3A6F] text-white py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2 shadow-sm hover:bg-blue-800 transition">
           <i class="fas fa-phone-alt"></i> โทรด่วน
         </a>
       </div>
@@ -195,7 +206,6 @@
   </div>
 
   <script>
-    // --- ตั้งค่าระบบ ---
     const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwwdopAPESHRrHEYTSa-CzFMbh0JX9WHUa37PMEJmxDkah7ui67cVtOn68cnM-2DtmR/exec"; 
     const MY_LIFF_ID = "2010188449-b9Yq1R2L";
     const LINE_OA_URL = "https://line.me/R/ti/p/%40805zvmii";
@@ -218,9 +228,16 @@
 
     let lineUserId = "", lineName = "";
     let driverData = { lat: 19.910479, lng: 99.840576, status: "ออฟไลน์" };
-    let bookData = { pLat:0, pLng:0, pName:"", dLat:0, dLng:0, dName:"", price:0, distance:0, duration:0, status:"" };
+    let bookData = { pLat:0, pLng:0, pName:"", dLat:0, dLng:0, dName:"", originalPrice:0, price:0, distance:0, duration:0, status:"", promoCode: "", discount: 0 };
     let currentStep = 1;
     let currentRouteStatus = ""; 
+    let lastNotifiedStatus = ""; 
+
+    // 🌟 ตัวแปรเก็บการตั้งค่าราคาจากแอดมิน
+    let pricingConfig = { base: 50, km: 10, pick: 5 }; 
+    db.ref('config/pricing').on('value', snap => {
+        if(snap.exists()) pricingConfig = snap.val();
+    });
 
     function showAlert(title, message, type = 'info', callback = null) {
         document.getElementById('alertTitle').innerText = title;
@@ -255,7 +272,7 @@
     }
 
     function openLineOA() {
-      if (liff.isInClient()) {
+      if (typeof liff !== 'undefined' && liff.isInClient()) {
         liff.openWindow({ url: LINE_OA_URL, external: true });
       } else {
         window.open(LINE_OA_URL, '_blank');
@@ -269,12 +286,8 @@
             else if(currentStep === 3 && markerDrop) pos = markerDrop.getPosition();
             else if(currentStep === 'Tracking' && markerDriver) pos = markerDriver.getPosition();
             
-            if(pos) {
-                map.panTo(pos);
-                map.setZoom(16);
-            } else {
-                useCurrentLocation();
-            }
+            if(pos) { map.panTo(pos); map.setZoom(16); } 
+            else { useCurrentLocation(); }
         }
     }
 
@@ -294,24 +307,16 @@
 
       directionsService = new google.maps.DirectionsService();
       directionsRenderer = new google.maps.DirectionsRenderer({ 
-          map: map, 
-          suppressMarkers: true, 
-          suppressPolylines: true, 
-          preserveViewport: true 
+          map: map, suppressMarkers: true, suppressPolylines: true, preserveViewport: true 
       });
       geocoder = new google.maps.Geocoder();
       placesService = new google.maps.places.PlacesService(map);
       
       markerPick = new google.maps.Marker({map: null, icon: "https://maps.google.com/mapfiles/ms/icons/green-dot.png", zIndex: 2});
       markerDrop = new google.maps.Marker({map: null, icon: "https://maps.google.com/mapfiles/ms/icons/red-dot.png", zIndex: 2});
-      
       markerDriver = new google.maps.Marker({
           map: null, 
-          icon: {
-              url: "https://img.icons8.com/color/48/car-top-view.png",
-              scaledSize: new google.maps.Size(44, 44),
-              anchor: new google.maps.Point(22, 22)
-          }, 
+          icon: { url: "https://img.icons8.com/color/48/car-top-view.png", scaledSize: new google.maps.Size(44, 44), anchor: new google.maps.Point(22, 22) }, 
           zIndex: 9999
       });
 
@@ -343,26 +348,33 @@
           });
         }
       });
-
-      if (currentStep !== 1) {
-          showPage(currentStep);
-      }
     }
 
-    liff.init({ liffId: MY_LIFF_ID }).then(() => {
-      if(liff.isLoggedIn()){
-        liff.getProfile().then(p => {
-          lineUserId = p.userId; lineName = p.displayName;
-          document.getElementById('userName').innerText = lineName;
-          if(p.pictureUrl) document.getElementById('userPic').src = p.pictureUrl; 
-          initApp();
-        }).catch(err => {
-            document.getElementById('userName').innerText = "โหลดข้อมูลล้มเหลว";
+    // 🌟 ระบบล็อกอินกันค้าง (Fallback Login)
+    function mockLoginForBrowser() {
+        lineUserId = "U" + Math.random().toString(36).substr(2, 9);
+        lineName = "ลูกค้าทดสอบ (Browser)";
+        document.getElementById('userName').innerText = lineName;
+        initApp();
+    }
+
+    if (typeof liff !== 'undefined') {
+        liff.init({ liffId: MY_LIFF_ID }).then(() => {
+          if(liff.isLoggedIn()){
+            liff.getProfile().then(p => {
+              lineUserId = p.userId; lineName = p.displayName;
+              document.getElementById('userName').innerText = lineName;
+              if(p.pictureUrl) document.getElementById('userPic').src = p.pictureUrl; 
+              initApp();
+            }).catch(err => { mockLoginForBrowser(); });
+          } else { liff.login(); }
+        }).catch(e => {
+            console.log("LIFF Init Failed, using Mock User");
+            mockLoginForBrowser();
         });
-      } else { liff.login(); }
-    }).catch(e => {
-        document.getElementById('userName').innerText = "กรุณาเปิดผ่านแอป LINE";
-    });
+    } else {
+        mockLoginForBrowser();
+    }
 
     window.isCompleting = false;
     
@@ -378,10 +390,12 @@
             ds.innerHTML = `<i class="fas fa-check-circle text-green-500 mr-1"></i> ออนไลน์`; 
             ds.className = "text-xl font-black text-green-600 relative z-10 flex items-center justify-center";
             btn.disabled = false; btn.classList.remove('opacity-50', 'cursor-not-allowed');
+            btn.innerHTML = `เริ่มต้นเรียกรถ <i class="fas fa-arrow-right ml-2"></i>`;
           } else {
             ds.innerHTML = `<i class="fas fa-times-circle text-red-400 mr-1"></i> ออฟไลน์`; 
             ds.className = "text-xl font-black text-red-500 relative z-10 flex items-center justify-center";
             btn.disabled = true; btn.classList.add('opacity-50', 'cursor-not-allowed');
+            btn.innerHTML = `<i class="fas fa-lock mr-2"></i> คนขับปิดรับงานชั่วคราว`;
           }
           
           if(currentStep === 'Tracking' && markerDriver) {
@@ -433,11 +447,8 @@
           markerDrop.setMap(null); markerPick.setMap(map); 
           map.setOptions({ padding: { top: 70, bottom: 250, left: 0, right: 0 } });
           
-          if(bookData.pLat !== 0) {
-              map.panTo({lat: bookData.pLat, lng: bookData.pLng});
-          } else {
-              map.panTo({lat: driverData.lat, lng: driverData.lng});
-          }
+          if(bookData.pLat !== 0) { map.panTo({lat: bookData.pLat, lng: bookData.pLng}); } 
+          else { map.panTo({lat: driverData.lat, lng: driverData.lng}); }
           
           updateAddressBox();
           setupSearch('pickupSearch', markerPick);
@@ -449,11 +460,8 @@
           markerPick.setMap(map); markerDrop.setMap(map);
           map.setOptions({ padding: { top: 70, bottom: 250, left: 0, right: 0 } });
 
-          if(bookData.dLat !== 0 && bookData.dLng !== 0) {
-             markerDrop.setPosition({lat: bookData.dLat, lng: bookData.dLng});
-          } else {
-             markerDrop.setPosition(markerPick.getPosition());
-          }
+          if(bookData.dLat !== 0 && bookData.dLng !== 0) { markerDrop.setPosition({lat: bookData.dLat, lng: bookData.dLng}); } 
+          else { markerDrop.setPosition(markerPick.getPosition()); }
           map.panTo(markerDrop.getPosition());
           updateAddressBox();
           setupSearch('dropoffSearch', markerDrop);
@@ -463,6 +471,13 @@
         document.getElementById('navTitle').innerText = "ยืนยันเรียกรถ";
         document.getElementById('btnCrosshairContainer').classList.add('hidden'); 
         if (markerPick && markerDrop && map) { markerPick.setMap(map); markerDrop.setMap(map); }
+        
+        // ล้างโค้ดส่วนลดถ้ากดย้อนกลับมา
+        document.getElementById('promoInput').value = '';
+        bookData.promoCode = ''; bookData.discount = 0;
+        document.getElementById('discountTag').classList.add('hidden');
+        document.getElementById('sumPriceOld').classList.add('hidden');
+
         calculatePrice();
       }
     }
@@ -538,6 +553,7 @@
     function confirmPickup() { if(markerPick) { bookData.pLat = markerPick.getPosition().lat(); bookData.pLng = markerPick.getPosition().lng(); showPage(3); } }
     function confirmDropoff() { if(markerDrop) { bookData.dLat = markerDrop.getPosition().lat(); bookData.dLng = markerDrop.getPosition().lng(); showPage(4); } }
 
+    // 🌟 ระบบคำนวณราคาแบบไดนามิก (ดึงจากแอดมิน)
     function calculatePrice() {
       if(!directionsService || !map) return;
       document.getElementById('sumPick').innerText = bookData.pName;
@@ -565,7 +581,16 @@
             if(stat2 === 'OK') {
               let distDriverKm = resDrive.routes[0].legs[0].distance.value / 1000;
               let waitMins = Math.ceil(resDrive.routes[0].legs[0].duration.value / 60);
-              bookData.price = Math.ceil((distRideKm * 14) + (distDriverKm * 4));
+              
+              // 🌟 ใช้เรตราคาจากฐานข้อมูล
+              let baseFare = parseInt(pricingConfig.base) || 0;
+              let kmRate = parseInt(pricingConfig.km) || 0;
+              let pickRate = parseInt(pricingConfig.pick) || 0;
+              
+              let calcPrice = Math.ceil(baseFare + (distRideKm * kmRate) + (distDriverKm * pickRate));
+              
+              bookData.originalPrice = calcPrice;
+              bookData.price = calcPrice; // จะถูกแก้ไขถ้ามีการใช้โปร
               
               bookData.distance = distRideKm.toFixed(1);
               bookData.duration = waitMins;
@@ -584,16 +609,77 @@
       });
     }
 
+    // 🌟 ฟังก์ชันใช้โค้ดส่วนลด
+    function applyPromoCode() {
+        let codeInput = document.getElementById('promoInput').value.trim().toUpperCase();
+        if(!codeInput) { showAlert('ข้อผิดพลาด', 'กรุณากรอกโค้ดส่วนลดก่อนครับ', 'error'); return; }
+
+        db.ref('promotions/' + codeInput).once('value', snap => {
+            let p = snap.val();
+            if (p && p.isActive !== false) {
+                // โปรใช้ได้
+                bookData.promoCode = p.code;
+                bookData.discount = p.value;
+                bookData.price = Math.max(0, bookData.originalPrice - p.value);
+                
+                document.getElementById('sumPriceOld').innerText = `฿${bookData.originalPrice}`;
+                document.getElementById('sumPriceOld').classList.remove('hidden');
+                
+                document.getElementById('sumPrice').innerText = bookData.price;
+                
+                document.getElementById('discountTag').innerText = `ประหยัด ฿${p.value}`;
+                document.getElementById('discountTag').classList.remove('hidden');
+                
+                showAlert('สำเร็จ!', `ใช้โค้ดส่วนลด ${p.code} ได้รับส่วนลด ${p.value} บาทเรียบร้อยแล้ว`, 'success');
+            } else {
+                showAlert('ขออภัย', 'โค้ดส่วนลดนี้ไม่ถูกต้อง หรือถูกปิดการใช้งานไปแล้วครับ', 'error');
+                document.getElementById('promoInput').value = '';
+                
+                // รีเซ็ตราคา
+                bookData.promoCode = ''; bookData.discount = 0;
+                bookData.price = bookData.originalPrice;
+                document.getElementById('sumPriceOld').classList.add('hidden');
+                document.getElementById('sumPrice').innerText = bookData.price;
+                document.getElementById('discountTag').classList.add('hidden');
+            }
+        });
+    }
+
+    // 🌟 ฟังก์ชันกดยืนยันเรียกรถ (เพิ่มเช็กแบล็กลิสต์ & บันทึกประวัติโค้ด)
     function submitBooking() {
       let tel = document.getElementById('userPhone').value;
       if(tel.length < 10) { showAlert('แจ้งเตือน', 'กรุณากรอกเบอร์โทรศัพท์ให้ครบ 10 หลัก', 'error'); return; }
-      bookData.userId = lineUserId; bookData.name = lineName; bookData.phone = tel;
-      bookData.status = "รอผู้ขับขี่ตอบรับ"; bookData.timestamp = firebase.database.ServerValue.TIMESTAMP; 
       
-      db.ref('bookings/' + lineUserId).set(bookData).then(() => {
-        // 🌟 ส่งแจ้งเตือน LINE เฉพาะตอน "เริ่มเรียกรถ" (ฝั่งผู้โดยสารส่งเอง)
-        if(APPS_SCRIPT_URL) fetch(`${APPS_SCRIPT_URL}?action=notify&type=new_ride&name=${lineName}&pick=${bookData.pName}`, {mode: 'no-cors'});
-        showPage('Tracking');
+      // 1. ตรวจสอบ Blacklist ก่อน
+      db.ref('blacklist/' + tel).once('value', snap => {
+          if (snap.exists()) {
+              showAlert('ระงับบริการ', 'ขออภัย เบอร์โทรศัพท์นี้ถูกระงับการให้บริการจากระบบชั่วคราว\nเหตุผล: ' + snap.val().reason, 'error');
+              return; // หยุดทำงานถนัดใจ
+          }
+          
+          // 2. ถ้าไม่ติดแบล็กลิสต์ ให้ทำงานต่อ
+          bookData.userId = lineUserId; bookData.name = lineName; bookData.phone = tel;
+          bookData.status = "รอผู้ขับขี่ตอบรับ"; bookData.timestamp = firebase.database.ServerValue.TIMESTAMP; 
+          
+          // 3. บันทึกข้อมูลงาน
+          db.ref('bookings/' + lineUserId).set(bookData).then(() => {
+              
+              // 4. ถ้ามีโค้ดส่วนลด ให้บวกยอดการใช้และส่งประวัติเข้าเซิร์ฟเวอร์
+              if(bookData.promoCode) {
+                  let histRef = db.ref('promotions/' + bookData.promoCode + '/history').push();
+                  histRef.set({
+                      date: new Date().toLocaleString('th-TH'),
+                      userName: lineName,
+                      phone: tel,
+                      discount: bookData.discount
+                  });
+                  // นับยอด usage
+                  db.ref('promotions/' + bookData.promoCode + '/usageCount').set(firebase.database.ServerValue.increment(1));
+              }
+
+              if(APPS_SCRIPT_URL) fetch(`${APPS_SCRIPT_URL}?action=notify&type=new_ride&name=${lineName}&pick=${bookData.pName}`, {mode: 'no-cors'});
+              showPage('Tracking');
+          });
       });
     }
 
@@ -609,6 +695,14 @@
       
       statusEl.innerText = bookData.status;
       document.getElementById('trackPrice').innerText = "฿" + bookData.price;
+      
+      // โชว์ติ่งโปรโมชั่นในหน้าติดตาม
+      if(bookData.promoCode) {
+          let promoText = document.getElementById('trackPromoText');
+          promoText.innerText = `ใช้โค้ดลด ฿${bookData.discount}`;
+          promoText.classList.remove('hidden');
+      }
+
       document.getElementById('trackPick').innerText = bookData.pName;
       document.getElementById('trackDrop').innerText = bookData.dName;
 
@@ -635,8 +729,6 @@
              document.getElementById('btnDriverCall').href = "tel:" + bookData.driverPhone;
           }
       }
-
-      // 🌟 ตัดระบบแจ้งเตือน LINE (fetch) ออกจากฝั่งผู้โดยสารทั้งหมด! ปล่อยให้คนขับเป็นคนส่งแต่เพียงผู้เดียว
 
       if(bookData.status.includes("ถึงที่หมาย") && !window.hasShownFinish) {
         window.hasShownFinish = true;
@@ -697,7 +789,6 @@
 
       let origin, dest;
       let isGoingToPickup = false;
-      let isGoingToDropoff = false;
 
       if(bookData.status.includes("รับงาน") || bookData.status.includes("มาถึงจุดรับ") || bookData.status.includes("กำลังเดินทางไปหา")) {
         origin = markerDriver ? markerDriver.getPosition() : {lat: driverData.lat, lng: driverData.lng}; 
@@ -710,7 +801,6 @@
         dest = {lat: bookData.dLat, lng: bookData.dLng};
         if(markerDrop) { markerDrop.setPosition(dest); markerDrop.setMap(map); }
         if(markerPick) markerPick.setMap(null); 
-        isGoingToDropoff = true;
       }
 
       directionsService.route({origin: origin, destination: dest, travelMode: 'DRIVING'}, (res, stat) => {
@@ -753,7 +843,6 @@
         document.getElementById('cancelModal').classList.add('hidden');
         window.isCompleting = true;
         db.ref('bookings/' + lineUserId).remove().then(() => {
-            // 🌟 ส่งแจ้งเตือน LINE เฉพาะตอน "ผู้โดยสารยกเลิกงาน" เท่านั้น
             if(APPS_SCRIPT_URL) fetch(`${APPS_SCRIPT_URL}?action=notify&type=cancel&name=${lineName}`, {mode:'no-cors'});
             showAlert('ยกเลิกสำเร็จ', 'ระบบได้ทำการยกเลิกการเรียกรถเรียบร้อยแล้ว', 'success', () => { window.location.reload(); });
         });
