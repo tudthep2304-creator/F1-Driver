@@ -39,14 +39,17 @@
 </head>
 <body class="h-screen w-screen m-0 overflow-hidden">
 
+  <!-- แผนที่พื้นหลัง -->
   <div id="map" class="map-container hidden"></div>
 
+  <!-- Navbar -->
   <div id="navBar" class="hidden fixed top-0 w-full h-16 bg-[#2B3A6F] flex items-center justify-between px-4 z-20 text-white shadow-md pointer-events-auto">
     <button onclick="goBack()" class="p-2 text-2xl active:opacity-50"><i class="fas fa-chevron-left"></i></button>
     <h1 id="navTitle" class="text-lg font-bold">F1 Driver</h1>
     <button onclick="goHome()" class="p-2 text-xl active:opacity-50"><i class="fas fa-home"></i></button>
   </div>
 
+  <!-- ปุ่มคุมแผนที่ (เป้าเล็ง & โอเวอร์วิว) -->
   <div id="mapControls" class="hidden fixed top-20 right-4 z-30 flex-col gap-3 pointer-events-auto">
       <button onclick="centerToFocus()" id="btnCrosshair" class="bg-white w-12 h-12 flex items-center justify-center rounded-full shadow-lg text-blue-600 border border-gray-200 active:bg-gray-100 transition">
           <i class="fas fa-crosshairs text-xl"></i>
@@ -56,6 +59,7 @@
       </button>
   </div>
 
+  <!-- หน้าที่ 1: หน้าต้อนรับและเช็คสถานะคนขับ -->
   <div id="page1" class="full-page flex">
     <div class="bg-[#2B3A6F] text-white p-6 text-center shadow-lg"><h1 class="text-2xl font-black tracking-wider">F1 DRIVER</h1></div>
     <div class="p-6 space-y-6 flex-1 flex flex-col justify-center">
@@ -78,6 +82,7 @@
     </div>
   </div>
 
+  <!-- หน้าที่ 2: เลือกจุดรับ -->
   <div id="page2" class="hidden">
     <div class="ui-panel h-auto pb-8">
       <div class="flex justify-between items-center mb-3">
@@ -89,6 +94,7 @@
     </div>
   </div>
 
+  <!-- หน้าที่ 3: เลือกจุดส่ง -->
   <div id="page3" class="hidden">
     <div class="ui-panel h-auto pb-8">
       <div class="flex justify-between items-center mb-3">
@@ -100,6 +106,7 @@
     </div>
   </div>
 
+  <!-- หน้าที่ 4: สรุปและยืนยันการเดินทาง -->
   <div id="page4" class="hidden">
     <div class="ui-panel h-auto pb-6">
       <h2 class="font-black text-center text-lg text-[#2B3A6F] mb-4">สรุปการเดินทาง</h2>
@@ -130,24 +137,28 @@
         </div>
       </div>
 
+      <!-- โซนกรอกโค้ดส่วนลด -->
       <div class="flex gap-2 mb-4">
           <input type="text" id="promoInput" placeholder="โค้ดส่วนลด (ถ้ามี)" class="flex-1 p-3 bg-gray-50 border border-gray-200 focus:border-blue-500 rounded-xl text-sm font-bold uppercase outline-none transition">
           <button onclick="applyPromoCode()" class="bg-slate-800 text-white px-4 rounded-xl font-bold text-sm hover:bg-slate-700 transition active:scale-95 whitespace-nowrap">ใช้โค้ด</button>
       </div>
       
-      <div class="relative mb-4">
-          <div class="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none text-gray-400">
-              <i class="fas fa-phone-alt"></i>
+      <!-- 🌟 ใช้แท็ก form ครอบไว้เพื่อกระตุ้นให้คีย์บอร์ดมือถือเด้งแนะนำเบอร์โทร -->
+      <form onsubmit="event.preventDefault(); submitBooking();" class="w-full">
+          <div class="relative mb-4">
+              <div class="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none text-gray-400">
+                  <i class="fas fa-phone-alt"></i>
+              </div>
+              <input type="tel" id="userPhone" name="tel" autocomplete="tel" oninput="formatPhone(this)" placeholder="เบอร์โทรติดต่อ (10 หลัก)" class="w-full p-3.5 pl-10 bg-gray-50 border-2 border-gray-200 focus:border-blue-500 focus:bg-white rounded-xl font-bold text-gray-800 outline-none transition-colors" required>
           </div>
-          <input type="tel" id="userPhone" name="phone" autocomplete="tel" oninput="formatPhone(this)" placeholder="เบอร์โทรติดต่อ (10 หลัก)" class="w-full p-3.5 pl-10 bg-gray-50 border-2 border-gray-200 focus:border-blue-500 focus:bg-white rounded-xl font-bold text-gray-800 outline-none transition-colors">
-      </div>
-
-      <button onclick="submitBooking()" class="w-full bg-green-500 text-white py-4 rounded-xl font-bold text-lg mt-auto shadow-md hover:bg-green-600 active:scale-[0.98] transition flex justify-center items-center gap-2">
-          ยืนยันเรียกรถ <i class="fas fa-car-side"></i>
-      </button>
+          <button type="submit" class="w-full bg-green-500 text-white py-4 rounded-xl font-bold text-lg mt-auto shadow-md hover:bg-green-600 active:scale-[0.98] transition flex justify-center items-center gap-2">
+              ยืนยันเรียกรถ <i class="fas fa-car-side"></i>
+          </button>
+      </form>
     </div>
   </div>
 
+  <!-- หน้าต่างติดตามสถานะคนขับ (Tracking) -->
   <div id="pageTracking" class="hidden">
     <div class="ui-panel h-auto pb-6 pt-5">
       <div class="flex justify-between items-center border-b border-gray-100 pb-3 mb-3">
@@ -186,6 +197,7 @@
     </div>
   </div>
 
+  <!-- ป๊อปอัปยืนยันยกเลิกการเรียกรถ -->
   <div id="cancelModal" class="hidden fixed inset-0 z-[100] bg-black/60 flex items-center justify-center p-4 pointer-events-auto">
       <div class="bg-white rounded-3xl p-6 w-full max-w-sm text-center shadow-2xl">
           <div class="w-16 h-16 bg-red-100 text-red-500 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl">
@@ -200,6 +212,7 @@
       </div>
   </div>
 
+  <!-- ป๊อปอัปแจ้งเตือนทั่วไป -->
   <div id="alertModal" class="hidden fixed inset-0 z-[120] bg-black/60 flex items-center justify-center p-4 pointer-events-auto">
       <div class="bg-white rounded-3xl p-6 w-full max-w-sm text-center shadow-2xl transform transition-all">
           <div id="alertIcon" class="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl"></div>
@@ -234,15 +247,21 @@
     let bookData = { pLat:0, pLng:0, pName:"", dLat:0, dLng:0, dName:"", originalPrice:0, price:0, distance:0, duration:0, status:"", promoCode: "", discount: 0 };
     let currentStep = 1;
     let currentRouteStatus = ""; 
-    let lastNotifiedStatus = ""; 
 
-    // 🌟 ตัวแปรใหม่สำหรับระบบคุมแผนที่
     let currentRouteBounds = null;
     let isTrackingMode = true;
 
     let pricingConfig = { base: 50, km: 10, pick: 5 }; 
     db.ref('config/pricing').on('value', snap => {
         if(snap.exists()) pricingConfig = snap.val();
+    });
+
+    // 🌟 ระบบจำเบอร์โทร (เมื่อเปิดเว็บขึ้นมา จะดึงเบอร์เก่าที่เคยกรอกมาใส่รอให้เลย)
+    document.addEventListener("DOMContentLoaded", () => {
+        let savedPhone = localStorage.getItem('passengerPhone');
+        if(savedPhone) {
+            document.getElementById('userPhone').value = savedPhone;
+        }
     });
 
     function showAlert(title, message, type = 'info', callback = null) {
@@ -285,7 +304,6 @@
       }
     }
 
-    // 🌟 ฟังก์ชันเล็งเป้า (Crosshair) ในแอปผู้โดยสาร
     function centerToFocus() {
         if(!map) return;
         let pos;
@@ -297,7 +315,7 @@
             map.panTo(pos);
             map.setZoom(16);
             if(currentStep === 'Tracking') {
-                isTrackingMode = true; // กลับเข้าสู่โหมดตามติดรถ
+                isTrackingMode = true; 
                 document.getElementById('btnCrosshair').classList.replace('text-gray-500', 'text-blue-600');
                 document.getElementById('btnOverview').classList.replace('text-blue-600', 'text-gray-500');
             }
@@ -306,11 +324,11 @@
         }
     }
 
-    // 🌟 ฟังก์ชันซูมดูภาพรวม (Overview)
     function fitRouteBounds() {
         if (map && currentRouteBounds) {
-            isTrackingMode = false; // ปิดโหมดตามติด ให้ผู้โดยสารดูจอรวมได้
-            map.fitBounds(currentRouteBounds, { top: 80, right: 50, bottom: 400, left: 50 });
+            isTrackingMode = false; 
+            // 🌟 ปรับ Padding มุมมอง Overview ให้อยู่เหนือกรอบ
+            map.fitBounds(currentRouteBounds, { top: 80, right: 50, bottom: 350, left: 50 });
             document.getElementById('btnCrosshair').classList.replace('text-blue-600', 'text-gray-500');
             document.getElementById('btnOverview').classList.replace('text-gray-500', 'text-blue-600');
         } else {
@@ -332,7 +350,6 @@
         padding: { top: 70, bottom: 250, left: 0, right: 0 } 
       });
 
-      // 🌟 หยุดโหมดติดตาม (Tracking) อัตโนมัติเวลาผู้โดยสารเอานิ้วลากแผนที่
       map.addListener('dragstart', () => {
          if (currentStep === 'Tracking') {
              isTrackingMode = false;
@@ -460,7 +477,7 @@
       if(page !== 1) {
         document.getElementById('navBar').classList.remove('hidden');
         document.getElementById('map').classList.remove('hidden');
-        document.getElementById('mapControls').classList.remove('hidden'); // แสดงปุ่มคุมแผนที่
+        document.getElementById('mapControls').classList.remove('hidden'); 
         initMap(); 
         if (typeof google !== 'undefined' && typeof google.maps !== 'undefined' && map) {
           google.maps.event.trigger(map, 'resize');
@@ -481,6 +498,7 @@
         document.getElementById('navTitle').innerText = "จุดให้รถไปรับ";
         if (markerDrop && markerPick && map) {
           markerDrop.setMap(null); markerPick.setMap(map); 
+          // 🌟 ปรับ Padding ของหน้าเลือกจุด
           map.setOptions({ padding: { top: 70, bottom: 250, left: 0, right: 0 } });
           
           if(bookData.pLat !== 0) { map.panTo({lat: bookData.pLat, lng: bookData.pLng}); } 
@@ -494,6 +512,7 @@
         document.getElementById('navTitle').innerText = "จุดหมายปลายทาง";
         if (markerPick && markerDrop && map) {
           markerPick.setMap(map); markerDrop.setMap(map);
+          // 🌟 ปรับ Padding ของหน้าเลือกจุด
           map.setOptions({ padding: { top: 70, bottom: 250, left: 0, right: 0 } });
 
           if(bookData.dLat !== 0 && bookData.dLng !== 0) { markerDrop.setPosition({lat: bookData.dLat, lng: bookData.dLng}); } 
@@ -506,7 +525,11 @@
       else if(page === 4) {
         document.getElementById('navTitle').innerText = "ยืนยันเรียกรถ";
         document.getElementById('mapControls').classList.add('hidden'); 
-        if (markerPick && markerDrop && map) { markerPick.setMap(map); markerDrop.setMap(map); }
+        if (markerPick && markerDrop && map) { 
+            markerPick.setMap(map); markerDrop.setMap(map); 
+            // 🌟 แก้ปัญหาหน้าสรุป: ดัน Padding แผนที่ขึ้นหนีบกรอบสีขาว
+            map.setOptions({ padding: { top: 70, bottom: 480, left: 0, right: 0 } });
+        }
         
         document.getElementById('promoInput').value = '';
         bookData.promoCode = ''; bookData.discount = 0;
@@ -633,7 +656,8 @@
               document.getElementById('sumPrice').innerText = bookData.price;
 
               setTimeout(() => {
-                const mapPadding = { top: 80, right: 50, bottom: 400, left: 50 }; 
+                // 🌟 ดันกรอบบนแผนที่หน้าสรุปหนีกรอบสีขาว
+                const mapPadding = { top: 100, right: 50, bottom: 480, left: 50 }; 
                 if(map) map.fitBounds(resRide.routes[0].bounds, mapPadding);
               }, 200);
             }
@@ -678,6 +702,9 @@
       let tel = document.getElementById('userPhone').value;
       if(tel.length < 10) { showAlert('แจ้งเตือน', 'กรุณากรอกเบอร์โทรศัพท์ให้ครบ 10 หลัก', 'error'); return; }
       
+      // 🌟 บันทึกเบอร์เก็บไว้ในเครื่องลูกค้า ครั้งหน้าไม่ต้องกรอกใหม่
+      localStorage.setItem('passengerPhone', tel);
+
       db.ref('blacklist/' + tel).once('value', snap => {
           if (snap.exists()) {
               showAlert('ระงับบริการ', 'ขออภัย เบอร์โทรศัพท์นี้ถูกระงับการให้บริการจากระบบชั่วคราว\nเหตุผล: ' + snap.val().reason, 'error');
@@ -688,7 +715,6 @@
           bookData.status = "รอผู้ขับขี่ตอบรับ"; bookData.timestamp = firebase.database.ServerValue.TIMESTAMP; 
           
           db.ref('bookings/' + lineUserId).set(bookData).then(() => {
-              
               if(bookData.promoCode) {
                   let histRef = db.ref('promotions/' + bookData.promoCode + '/history').push();
                   histRef.set({
@@ -711,7 +737,7 @@
     function handleTracking() {
       if(currentStep !== 'Tracking') {
           showPage('Tracking');
-          document.getElementById('btnOverview').classList.remove('hidden'); // แสดงปุ่ม Overview
+          document.getElementById('btnOverview').classList.remove('hidden'); 
       }
       
       document.getElementById('navTitle').innerText = "สถานะการเดินทาง";
@@ -785,6 +811,7 @@
 
       let etaEl = document.getElementById('trackEtaDisplay');
 
+      // กรณีที่ 1: กำลังรอกดรับงาน
       if (bookData.status === "รอผู้ขับขี่ตอบรับ") {
           if(markerDriver) markerDriver.setMap(null); 
           etaEl.classList.add('hidden'); 
@@ -814,6 +841,7 @@
           return; 
       }
 
+      // กรณีที่ 2: มีรถรับงานแล้ว
       if(markerDriver) { markerDriver.setMap(map); markerDriver.setPosition({lat: driverData.lat, lng: driverData.lng}); }
 
       let origin, dest;
@@ -837,7 +865,7 @@
           if(polylineRoute) polylineRoute.setMap(null);
           polylineRoute = new google.maps.Polyline({
               path: res.routes[0].legs[0].steps.flatMap(step => step.path),
-              strokeColor: '#3b82f6', // สีฟ้าทั้งหมด
+              strokeColor: '#3b82f6', // 🌟 สีฟ้าทั้งหมด 
               strokeWeight: 6,
               map: map
           });
@@ -857,6 +885,7 @@
           if(isStatusChanged && map) {
               setTimeout(()=>{ fitRouteBounds(); }, 200);
           } else if (isTrackingMode && map && markerDriver) {
+              map.setOptions({ padding: { top: 80, bottom: 350, left: 0, right: 0 } });
               map.panTo(markerDriver.getPosition());
           }
         }
