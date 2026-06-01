@@ -42,7 +42,6 @@
 
     .full-page { position: fixed; inset: 0; z-index: 30; background: #111827; flex-direction: column; }
     
-    /* กล่องค้นหา Google Maps Drop-up */
     .pac-container { 
         z-index: 10000 !important; 
         font-family: 'Kanit'; 
@@ -240,7 +239,7 @@
               <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-green-500">
                   <i class="fas fa-phone-alt text-sm"></i>
               </div>
-              <input type="tel" id="userPhone" name="phone" autocomplete="tel" inputmode="tel" oninput="formatPhone(this)" placeholder="เบอร์โทรติดต่อ" class="w-full py-3.5 pl-9 pr-2 bg-gray-800 border border-gray-700 focus:border-green-500 focus:bg-gray-900 text-white placeholder-gray-500 rounded-xl text-sm font-bold outline-none transition-colors" required>
+              <input type="tel" id="userPhone" name="phone" autocomplete="tel" inputmode="tel" oninput="formatPhone(this)" placeholder="เบอร์ติดต่อ" class="w-full py-3.5 pl-9 pr-2 bg-gray-800 border border-gray-700 focus:border-green-500 focus:bg-gray-900 text-white placeholder-gray-500 rounded-xl text-sm font-bold outline-none transition-colors" required>
           </div>
           <button type="submit" class="flex-1 bg-green-600 text-white py-3.5 rounded-xl font-bold text-sm shadow-[0_0_15px_rgba(34,197,94,0.3)] hover:bg-green-700 active:scale-[0.98] transition flex justify-center items-center gap-1.5 whitespace-nowrap">
               ยืนยันเรียกรถ <i class="fas fa-car-side"></i>
@@ -621,7 +620,6 @@
         if (window.alertCloseCallback) window.alertCloseCallback();
     }
 
-    // 🌟 อัปเดตสไตล์แผนที่ดาร์กโหมด ให้เห็นตึกชัดเจนขึ้นสุดๆ ตัดกับถนนสีเข้ม
     const darkMapStyle = [
         { elementType: "geometry", stylers: [{ color: "#242f3e" }] },
         { elementType: "labels.text.stroke", stylers: [{ color: "#242f3e" }] },
@@ -760,7 +758,9 @@
       if (typeof google === 'undefined' || typeof google.maps === 'undefined') return;
       if (map) return; 
       
-      // 🌟 ดันจุดศูนย์กลางแผนที่ขึ้นโดยตั้ง Bottom Padding เยอะๆ
+      // 🌟 ดันจุดศูนย์กลางแผนที่ขึ้นโดยตั้ง Bottom Padding เยอะๆ เพื่อไม่ให้โดนแผงหน้าต่างบัง
+      let padBottom = window.innerHeight * 0.55; 
+      
       map = new google.maps.Map(document.getElementById('map'), { 
         zoom: 16, 
         center: {lat: driverData.lat, lng: driverData.lng}, 
@@ -768,7 +768,7 @@
         disableDefaultUI: true, 
         gestureHandling: 'greedy',
         zoomControl: false,
-        padding: { top: 70, bottom: 450, left: 0, right: 0 } 
+        padding: { top: 70, bottom: padBottom, left: 0, right: 0 } 
       });
 
       map.addListener('dragstart', () => {
@@ -905,6 +905,8 @@
       [1,2,3,4,'Tracking'].forEach(p => document.getElementById('page'+p).classList.add('hidden'));
       document.getElementById('page' + page).classList.remove('hidden');
       
+      let padBottom = window.innerHeight * 0.55; 
+
       if(page !== 1) {
         document.getElementById('navBar').classList.remove('hidden');
         document.getElementById('map').classList.remove('hidden');
@@ -931,10 +933,11 @@
         document.getElementById('navTitle').innerText = "จุดให้รถไปรับ";
         if (markerDrop && markerPick && map) {
           markerDrop.setMap(null); markerPick.setMap(map); 
-          map.setOptions({ padding: { top: 70, bottom: 450, left: 0, right: 0 } }); // 🌟 ดันศูนย์กลางขึ้น
+          map.setOptions({ padding: { top: 70, bottom: padBottom, left: 0, right: 0 } });
           
-          if(bookData.pLat !== 0) { map.panTo({lat: bookData.pLat, lng: bookData.pLng}); } 
-          else { map.panTo({lat: driverData.lat, lng: driverData.lng}); }
+          let targetPos = (bookData.pLat !== 0) ? {lat: bookData.pLat, lng: bookData.pLng} : {lat: driverData.lat, lng: driverData.lng};
+          map.panTo(targetPos);
+          markerPick.setPosition(targetPos);
           
           updateAddressBox();
           setupSearch('pickupSearch', markerPick);
@@ -944,11 +947,12 @@
         document.getElementById('navTitle').innerText = "จุดหมายปลายทาง";
         if (markerPick && markerDrop && map) {
           markerPick.setMap(map); markerDrop.setMap(map);
-          map.setOptions({ padding: { top: 70, bottom: 450, left: 0, right: 0 } }); // 🌟 ดันศูนย์กลางขึ้น
+          map.setOptions({ padding: { top: 70, bottom: padBottom, left: 0, right: 0 } }); 
 
-          if(bookData.dLat !== 0 && bookData.dLng !== 0) { markerDrop.setPosition({lat: bookData.dLat, lng: bookData.dLng}); } 
-          else { markerDrop.setPosition(markerPick.getPosition()); }
-          map.panTo(markerDrop.getPosition());
+          let targetPos = (bookData.dLat !== 0 && bookData.dLng !== 0) ? {lat: bookData.dLat, lng: bookData.dLng} : markerPick.getPosition();
+          map.panTo(targetPos);
+          markerDrop.setPosition(targetPos);
+
           updateAddressBox();
           setupSearch('dropoffSearch', markerDrop);
         }
@@ -957,11 +961,11 @@
         document.getElementById('navTitle').innerText = "สรุปการเดินทาง";
         document.getElementById('btnOverview').classList.remove('hidden');
         document.getElementById('btnEmergency').classList.add('hidden');
-        document.getElementById('btnCrosshair').classList.add('hidden'); // 🌟 ซ่อนเป้าเล็งในหน้าสรุป
+        document.getElementById('btnCrosshair').classList.add('hidden');
 
         if (markerPick && markerDrop && map) { 
             markerPick.setMap(map); markerDrop.setMap(map); 
-            map.setOptions({ padding: { top: 70, bottom: 480, left: 0, right: 0 } });
+            map.setOptions({ padding: { top: 70, bottom: 350, left: 0, right: 0 } });
         }
         
         document.getElementById('promoInput').value = '';
