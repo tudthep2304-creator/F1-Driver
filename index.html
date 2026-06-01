@@ -42,7 +42,6 @@
 
     .full-page { position: fixed; inset: 0; z-index: 30; background: #111827; flex-direction: column; }
     
-    /* 🌟 แก้ไข: จำกัดความสูงและเปิดระบบเลื่อน Scroll ให้รายชื่อสถานที่ */
     .pac-container { 
         z-index: 10000 !important; 
         font-family: 'Kanit'; 
@@ -52,10 +51,9 @@
         box-shadow: 0 -8px 25px rgba(0,0,0,0.6); 
         margin-top: 0;
         transform: translateY(calc(-100% - 68px)) !important; 
-        max-height: 250px !important; /* จำกัดความสูงไม่ให้ทะลุจอ */
-        overflow-y: auto !important; /* เปิดระบบ Scroll */
+        max-height: 250px !important; 
+        overflow-y: auto !important; 
     }
-    /* ตกแต่ง Scrollbar ให้สวยงาม */
     .pac-container::-webkit-scrollbar { width: 6px; }
     .pac-container::-webkit-scrollbar-thumb { background-color: #4b5563; border-radius: 10px; }
     
@@ -138,7 +136,6 @@
       </div>
       
       <div class="flex gap-2 overflow-x-auto pb-2 hide-scrollbar mb-2 items-center w-full">
-          <!-- ปุ่มบ้าน -->
           <div class="flex shrink-0 bg-[#2a303c] border border-[#3b4252] rounded-full overflow-hidden shadow-sm items-center">
               <button onclick="handleSavedPlace('home')" class="px-3 py-1.5 flex items-center gap-1.5 hover:bg-[#343b4a] transition">
                   <i class="fas fa-home text-blue-400 text-xs"></i>
@@ -150,7 +147,6 @@
               </button>
           </div>
           
-          <!-- ปุ่มโปรด -->
           <div class="flex shrink-0 bg-[#2a303c] border border-[#3b4252] rounded-full overflow-hidden shadow-sm items-center">
               <button onclick="handleSavedPlace('favorite')" class="px-3 py-1.5 flex items-center gap-1.5 hover:bg-[#343b4a] transition">
                   <i class="fas fa-heart text-pink-500 text-xs"></i>
@@ -163,8 +159,6 @@
           </div>
 
           <div class="w-[1px] h-5 bg-gray-600 shrink-0 mx-0.5"></div>
-          
-          <!-- ปุ่มประวัติการเดินทาง -->
           <div id="recentPlacesPick" class="flex gap-2 shrink-0 items-center"></div>
       </div>
       
@@ -187,7 +181,6 @@
       </div>
       
       <div class="flex gap-2 overflow-x-auto pb-2 hide-scrollbar mb-2 items-center w-full">
-          <!-- ปุ่มบ้าน -->
           <div class="flex shrink-0 bg-[#2a303c] border border-[#3b4252] rounded-full overflow-hidden shadow-sm items-center">
               <button onclick="handleSavedPlace('home')" class="px-3 py-1.5 flex items-center gap-1.5 hover:bg-[#343b4a] transition">
                   <i class="fas fa-home text-blue-400 text-xs"></i>
@@ -199,7 +192,6 @@
               </button>
           </div>
           
-          <!-- ปุ่มโปรด -->
           <div class="flex shrink-0 bg-[#2a303c] border border-[#3b4252] rounded-full overflow-hidden shadow-sm items-center">
               <button onclick="handleSavedPlace('favorite')" class="px-3 py-1.5 flex items-center gap-1.5 hover:bg-[#343b4a] transition">
                   <i class="fas fa-heart text-pink-500 text-xs"></i>
@@ -212,8 +204,6 @@
           </div>
 
           <div class="w-[1px] h-5 bg-gray-600 shrink-0 mx-0.5"></div>
-          
-          <!-- ปุ่มประวัติการเดินทาง -->
           <div id="recentPlacesDrop" class="flex gap-2 shrink-0 items-center"></div>
       </div>
 
@@ -467,7 +457,6 @@
     window.hasSpokenFinish = false;
     window.hasSpokenCancel = false;
 
-    // 🌟 ฟังก์ชันล้างประวัติเสียง เมื่อจบงานหรือกดยกเลิก
     function resetTrackingFlags() {
         window.hasSpokenAccept = false;
         window.hasSpokenArrivePick = false;
@@ -522,7 +511,6 @@
     function openCancelModal() { document.getElementById('cancelModal').classList.remove('hidden'); }
     function closeCancelModal() { document.getElementById('cancelModal').classList.add('hidden'); }
     
-    // 🌟 หากผู้โดยสารกดยกเลิกเอง ให้กลับไปหน้า 4
     function confirmCancelBooking() {
         document.getElementById('cancelModal').classList.add('hidden');
         window.isCompleting = true;
@@ -969,9 +957,9 @@
             bookData = b; 
             handleTracking(); 
         } 
-        else if (currentStep === 'Tracking' && !window.isCompleting) {
+        else if ((currentStep === 'Tracking') && !window.isCompleting) {
             window.isCompleting = true;
-            showAlert('แจ้งเตือน', 'งานนี้ถูกยกเลิกหรือสิ้นสุดแล้ว กรุณาเรียกรถใหม่อีกครั้ง', 'info', () => {
+            showAlert('แจ้งเตือน', 'ขออภัยในความไม่สะดวกครับ งานนี้ถูกยกเลิก รบกวนคุณลูกค้ากดยืนยันเพื่อเรียกรถใหม่อีกครั้งนะครับ', 'info', () => {
                 resetTrackingFlags();
                 window.isCompleting = false;
                 showPage(4);
@@ -1226,6 +1214,7 @@
     }
 
     function submitBooking() {
+      // ปลดล็อกระบบเสียง
       if ('speechSynthesis' in window) {
           let unlockMsg = new SpeechSynthesisUtterance('');
           window.speechSynthesis.speak(unlockMsg);
@@ -1272,8 +1261,6 @@
       });
     }
 
-    window.hasShownFinish = false; window.hasShownCancel = false;
-    
     function handleTracking() {
       if(currentStep !== 'Tracking') {
           showPage('Tracking');
@@ -1316,7 +1303,7 @@
           document.getElementById('driverInfoBox').classList.add('hidden');
       }
 
-      // 🌟 ระบบดักจับการเปลี่ยนแปลงสถานะเพื่อเล่นเสียงพูด
+      // 🌟 ระบบพูดเสียงแจ้งเตือน (ครบทุกสเต็ป)
       if (lastNotifiedStatus !== bookData.status) {
           if ((bookData.status.includes("กำลังเดินทางไปหา") || bookData.status.includes("รับงานแล้ว")) && !window.hasSpokenAccept) {
               speakText("คนขับตอบรับแล้ว");
@@ -1381,16 +1368,14 @@
           actionBox.classList.add('hidden'); actionBox.classList.remove('flex');
       }
 
-      // 🌟 หากถึงที่หมายแล้ว ให้แสดงแจ้งเตือน และพอกดปุ๊บก็พาไปหน้า 4
+      // 🌟 หากถึงที่หมายแล้ว ให้แสดงแจ้งเตือน และพากลับไปหน้า 1 (หน้าต้อนรับ)
       if(bookData.status.includes("ถึงที่หมาย") && !window.hasShownFinish) {
         window.hasShownFinish = true;
         let finalMessage = `จุดรับ: ${bookData.pName}\nจุดส่ง: ${bookData.dName}\nระยะทาง: ${bookData.distance || 0} กม. | ราคา: ${bookData.price} บาท\n\nขอบคุณที่ใช้บริการ F1 Driver ครับ!`;
         showAlert('ถึงที่หมายเรียบร้อย!', finalMessage, 'success', () => {
             window.isCompleting = true;
             db.ref('bookings/' + lineUserId).remove().then(() => { 
-                resetTrackingFlags();
-                window.isCompleting = false;
-                showPage(4); 
+                window.location.reload(); 
             });
         });
       }
@@ -1398,7 +1383,7 @@
       // 🌟 หากโดนยกเลิก ให้แสดงป๊อปอัปและพากลับไปหน้า 4
       if(bookData.status.includes("ยกเลิก") && !window.hasShownCancel) {
         window.hasShownCancel = true;
-        showAlert('งานถูกยกเลิก', 'ขออภัย งานนี้ถูกยกเลิก กรุณาเรียกรถใหม่อีกครั้งครับ', 'error', () => {
+        showAlert('แจ้งเตือน', 'ขออภัยในความไม่สะดวกครับ งานนี้ถูกยกเลิก รบกวนคุณลูกค้ากดยืนยันเพื่อเรียกรถใหม่อีกครั้งนะครับ', 'error', () => {
             window.isCompleting = true;
             db.ref('bookings/' + lineUserId).remove().then(() => {
                 resetTrackingFlags();
@@ -1480,13 +1465,14 @@
           const leg = res.routes[0].legs[0];
           etaEl.classList.remove('hidden');
           
-          let etaSecs = leg.duration.value;
+          let distMeters = leg.distance.value;
 
           if(isGoingToPickup) {
               etaEl.innerText = `คนขับอยู่ห่าง: ${leg.distance.text} • อีก ${leg.duration.text}`;
               etaEl.className = "text-xs text-blue-400 font-bold mt-0.5 inline-block";
               
-              if (etaSecs <= 120 && !window.hasSpokenArrivePick && window.hasSpokenAccept) {
+              // 🌟 แจ้งเตือนเสียง ถ้าระยะทางเหลือต่ำกว่า 1 กม.
+              if (distMeters <= 1000 && !window.hasSpokenArrivePick && window.hasSpokenAccept) {
                   speakText("คนขับใกล้ถึงแล้ว");
                   window.hasSpokenArrivePick = true;
               }
@@ -1495,7 +1481,8 @@
               etaEl.innerText = `ระยะทางไปส่ง: ${leg.distance.text} • อีก ${leg.duration.text}`;
               etaEl.className = "text-xs text-blue-400 font-bold mt-0.5 inline-block";
               
-              if (etaSecs <= 120 && !window.hasSpokenArriveDrop && window.hasSpokenDepart) {
+              // 🌟 แจ้งเตือนเสียง ถ้าระยะทางเหลือต่ำกว่า 1 กม.
+              if (distMeters <= 1000 && !window.hasSpokenArriveDrop && bookData.status !== "รอผู้ขับขี่ตอบรับ") {
                   speakText("ใกล้ถึงจุดหมายแล้ว");
                   window.hasSpokenArriveDrop = true;
               }
