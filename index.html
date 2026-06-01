@@ -23,7 +23,6 @@
         border-top-left-radius: 24px; 
         border-top-right-radius: 24px; 
         box-shadow: 0 -10px 30px rgba(0,0,0,0.6); 
-        border-top: 2px solid #22c55e;
         z-index: 10; 
         display: flex; 
         flex-direction: column; 
@@ -42,30 +41,25 @@
 
     .full-page { position: fixed; inset: 0; z-index: 30; background: #111827; flex-direction: column; }
     
-    /* 🌟 แก้ไข: ย้ายกล่องค้นหาไปไว้ด้านบนจอ และปรับให้เลื่อน Scroll ง่ายขึ้น */
+    /* 🌟 ปรับปรุง CSS ของกล่องค้นหา Google Maps ใหม่ทั้งหมด ให้เลื่อนได้และดรอปลงล่าง */
     .pac-container { 
         z-index: 100000 !important; 
-        font-family: 'Kanit'; 
-        border-radius: 12px; 
-        border: 1px solid #374151; 
-        background-color: #1f2937; 
-        box-shadow: 0 10px 40px rgba(0,0,0,0.8); 
-        position: fixed !important;
-        top: 80px !important; /* ลอยอยู่ใต้ Navbar */
-        left: 15px !important;
-        right: 15px !important;
-        width: auto !important;
-        max-height: 45vh !important; /* ความสูงประมาณครึ่งจอ หลบคีย์บอร์ด */
-        overflow-y: auto !important;
+        font-family: 'Kanit' !important; 
+        border-radius: 12px !important; 
+        border: 1px solid #374151 !important; 
+        background-color: #1f2937 !important; 
+        box-shadow: 0 10px 40px rgba(0,0,0,0.8) !important; 
+        margin-top: 6px !important; 
+        max-height: 40vh !important; /* จำกัดความสูงไว้ที่ 40% ของจอ เพื่อให้เลื่อนดูได้ ไม่ล้นจอ */
+        overflow-y: auto !important; 
         -webkit-overflow-scrolling: touch;
-        overscroll-behavior-y: contain;
     }
     .pac-container::-webkit-scrollbar { width: 6px; }
     .pac-container::-webkit-scrollbar-thumb { background-color: #4b5563; border-radius: 10px; }
     
-    .pac-item { padding: 14px 12px; border-top: 1px solid #374151; cursor: pointer; color: #d1d5db; font-size: 14px; touch-action: manipulation; }
+    .pac-item { padding: 14px 12px; border-top: 1px solid #374151; cursor: pointer; color: #d1d5db; font-size: 14px; }
     .pac-item:first-child { border-top: none; }
-    .pac-item-query { color: #10b981; font-weight: bold; } /* ตัวหนังสือที่ค้นหาตรงกันจะเป็นสีเขียว */
+    .pac-item-query { color: #10b981; font-weight: bold; } /* ตัวหนังสือตรงกันเป็นสีเขียว */
     .pac-item .pac-icon { filter: invert(70%) sepia(50%) saturate(400%) hue-rotate(80deg); }
 
     .hide-scrollbar::-webkit-scrollbar { display: none; }
@@ -84,8 +78,28 @@
     <button onclick="goHome()" class="p-2 text-xl active:opacity-50 hover:text-green-400 transition"><i class="fas fa-home"></i></button>
   </div>
 
+  <!-- 🌟 แถบค้นหาลอยด้านบน สำหรับจุดรับ (หน้า 2) ธีมสีเขียว -->
+  <div id="topSearchPick" class="hidden fixed top-[76px] left-4 right-[70px] z-40 pointer-events-auto">
+      <div class="relative w-full shadow-2xl rounded-xl">
+          <div class="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none text-green-500">
+              <i class="fas fa-search"></i>
+          </div>
+          <input type="text" id="pickupSearch" class="w-full p-3.5 pl-11 bg-gray-900/95 backdrop-blur-md border-2 border-green-500/50 focus:border-green-500 focus:bg-gray-900 rounded-xl outline-none font-bold text-[13.5px] text-white transition-all truncate placeholder-gray-400" placeholder="ค้นหาจุดรับ หรือเลื่อนหมุดเพื่อปัก...">
+      </div>
+  </div>
+
+  <!-- 🌟 แถบค้นหาลอยด้านบน สำหรับจุดหมาย (หน้า 3) ธีมสีแดง -->
+  <div id="topSearchDrop" class="hidden fixed top-[76px] left-4 right-[70px] z-40 pointer-events-auto">
+      <div class="relative w-full shadow-2xl rounded-xl">
+          <div class="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none text-red-500">
+              <i class="fas fa-search"></i>
+          </div>
+          <input type="text" id="dropoffSearch" class="w-full p-3.5 pl-11 bg-gray-900/95 backdrop-blur-md border-2 border-red-500/50 focus:border-red-500 focus:bg-gray-900 rounded-xl outline-none font-bold text-[13.5px] text-white transition-all truncate placeholder-gray-400" placeholder="ค้นหาจุดหมาย หรือเลื่อนหมุดเพื่อปัก...">
+      </div>
+  </div>
+
   <!-- ปุ่มคุมแผนที่ -->
-  <div id="mapControls" class="hidden fixed top-20 right-4 z-30 flex-col gap-3 pointer-events-auto">
+  <div id="mapControls" class="hidden fixed top-[76px] right-4 z-30 flex-col gap-3 pointer-events-auto">
       <button onclick="toggleMapStyle()" id="btnMapStyle" class="bg-gray-800 w-12 h-12 flex items-center justify-center rounded-full shadow-lg text-gray-400 border border-green-500/30 active:bg-gray-700 transition" title="สลับโหมดแผนที่">
           <i class="fas fa-layer-group text-xl"></i>
       </button>
@@ -131,14 +145,13 @@
   <div id="page2" class="hidden">
     <div class="ui-panel border-t-[3px] border-green-500 h-auto pb-8">
       
+      <!-- 🌟 ปรับปรุงเลย์เอาต์แผงด้านล่าง เอาช่องค้นหาออก แล้วดันปุ่มลัดขึ้นมาแทน -->
       <div class="flex justify-between items-center mb-3">
         <p class="text-sm font-bold text-gray-300"><i class="fas fa-map-marker-alt text-green-500 mr-1.5"></i> จุดรับ</p>
-        <button onclick="useCurrentLocation()" class="text-xs font-bold bg-gray-700 border border-gray-600 text-green-400 px-3 py-1.5 rounded-full hover:bg-gray-600 transition shadow-sm flex items-center gap-1.5"><i class="fas fa-crosshairs"></i> ตำแหน่งปัจจุบัน</button>
-      </div>
-      
-      <div class="flex gap-2 mb-3">
-          <input type="text" id="pickupSearch" class="w-full p-3.5 bg-gray-800 border border-gray-700 focus:border-green-500 focus:bg-gray-900 rounded-xl outline-none font-bold text-sm text-white transition-all truncate placeholder-gray-500" placeholder="ค้นหาสถานที่ หรือขยับแผนที่...">
-          <button onclick="alertMultiStop()" class="px-4 shrink-0 bg-gray-800 border border-gray-700 rounded-xl text-gray-400 hover:text-green-400 hover:border-green-500/50 flex items-center justify-center text-sm font-bold transition shadow-sm" title="เพิ่มจุดแวะรับ"><i class="fas fa-plus mr-1"></i> จุดแวะ</button>
+        <div class="flex gap-2">
+            <button onclick="alertMultiStop()" class="text-[11px] font-bold bg-gray-800 border border-gray-700 text-gray-400 px-3 py-1.5 rounded-full hover:bg-gray-700 hover:text-white transition shadow-sm flex items-center gap-1.5"><i class="fas fa-plus"></i> จุดแวะ</button>
+            <button onclick="useCurrentLocation()" class="text-[11px] font-bold bg-gray-700 border border-gray-600 text-green-400 px-3 py-1.5 rounded-full hover:bg-gray-600 transition shadow-sm flex items-center gap-1.5"><i class="fas fa-crosshairs"></i> ตำแหน่งปัจจุบัน</button>
+        </div>
       </div>
       
       <div class="flex gap-2 overflow-x-auto pb-2 hide-scrollbar mb-2 items-center w-full">
@@ -178,12 +191,10 @@
       
       <div class="flex justify-between items-center mb-3">
         <p class="text-sm font-bold text-gray-300"><i class="fas fa-map-pin text-red-500 mr-1.5"></i> จุดหมาย</p>
-        <button onclick="useCurrentLocation()" class="text-xs font-bold bg-gray-700 border border-gray-600 text-red-400 px-3 py-1.5 rounded-full hover:bg-gray-600 transition shadow-sm flex items-center gap-1.5"><i class="fas fa-crosshairs"></i> ตำแหน่งปัจจุบัน</button>
-      </div>
-      
-      <div class="flex gap-2 mb-3">
-          <input type="text" id="dropoffSearch" class="w-full p-3.5 bg-gray-800 border border-gray-700 focus:border-red-500 focus:bg-gray-900 rounded-xl outline-none font-bold text-sm text-white transition-all truncate placeholder-gray-500" placeholder="ค้นหาสถานที่ หรือขยับแผนที่...">
-          <button onclick="alertMultiStop()" class="px-4 shrink-0 bg-gray-800 border border-gray-700 rounded-xl text-gray-400 hover:text-red-400 hover:border-red-500/50 flex items-center justify-center text-sm font-bold transition shadow-sm" title="เพิ่มจุดแวะส่ง"><i class="fas fa-plus mr-1"></i> จุดแวะ</button>
+        <div class="flex gap-2">
+            <button onclick="alertMultiStop()" class="text-[11px] font-bold bg-gray-800 border border-gray-700 text-gray-400 px-3 py-1.5 rounded-full hover:bg-gray-700 hover:text-white transition shadow-sm flex items-center gap-1.5"><i class="fas fa-plus"></i> จุดแวะ</button>
+            <button onclick="useCurrentLocation()" class="text-[11px] font-bold bg-gray-700 border border-gray-600 text-red-400 px-3 py-1.5 rounded-full hover:bg-gray-600 transition shadow-sm flex items-center gap-1.5"><i class="fas fa-crosshairs"></i> ตำแหน่งปัจจุบัน</button>
+        </div>
       </div>
       
       <div class="flex gap-2 overflow-x-auto pb-2 hide-scrollbar mb-2 items-center w-full">
@@ -446,7 +457,10 @@
     
     let lastNotifiedStatus = "";
     
-    // 🌟 ตัวแปร Wake Lock API ป้องกันจอดับ
+    // 🌟 ระบบการตรวจสอบเพื่อปล่อยช่องค้นหาให้ว่างเปล่าตอนเปิดครั้งแรก
+    let hasInteractedPick = false;
+    let hasInteractedDrop = false;
+    
     let wakeLock = null;
 
     function getDynamicBottomPadding() {
@@ -484,19 +498,16 @@
         lastNotifiedStatus = "";
     }
 
-    // 🌟 ระบบล็อคหน้าจอไม่ให้ดับ
     async function requestWakeLock() {
         if ('wakeLock' in navigator) {
             try {
                 wakeLock = await navigator.wakeLock.request('screen');
-                wakeLock.addEventListener('release', () => { console.log('Screen Wake Lock released'); });
             } catch (err) {
                 console.error(`Wake Lock error: ${err.message}`);
             }
         }
     }
 
-    // ขอ Wake Lock คืนเมื่อกลับเข้ามาหน้าแอป
     document.addEventListener('visibilitychange', () => {
         if (wakeLock !== null && document.visibilityState === 'visible') {
             requestWakeLock();
@@ -667,10 +678,12 @@
         let pos = {lat: lat, lng: lng};
         if(map) map.panTo(pos);
         if(currentStep === 2) {
+            hasInteractedPick = true;
             if(markerPick) markerPick.setPosition(pos);
             bookData.pName = name;
             document.getElementById('pickupSearch').value = name;
         } else if(currentStep === 3) {
+            hasInteractedDrop = true;
             if(markerDrop) markerDrop.setPosition(pos);
             bookData.dName = name;
             document.getElementById('dropoffSearch').value = name;
@@ -903,34 +916,13 @@
          if (currentStep === 3 && markerDrop) markerDrop.setPosition(map.getCenter());
       });
 
+      // 🌟 อัปเดตที่อยู่ลงช่องค้นหาเมื่อหยุดลากแผนที่
       map.addListener('dragend', () => {
-         if(currentStep === 2 || currentStep === 3) updateAddressBox();
+         if(currentStep === 2) hasInteractedPick = true;
+         if(currentStep === 3) hasInteractedDrop = true;
+         updateAddressBox(true); 
       });
 
-      // 🌟 เพิ่มป๊อปอัปยืนยันเมื่อเลือกสถานที่จากระบบค้นหา
-      map.addListener('click', (event) => {
-        if (event.placeId && placesService) {
-          event.stop(); 
-          placesService.getDetails({ placeId: event.placeId, fields: ['name', 'geometry'] }, (place, status) => {
-            if (status === 'OK' && place.geometry) {
-              
-              openConfirmActionModal('ยืนยันสถานที่', `คุณต้องการใช้สถานที่นี้ใช่หรือไม่?\n\n${place.name}`, () => {
-                  map.panTo(place.geometry.location);
-                  if (currentStep === 2) {
-                    markerPick.setPosition(place.geometry.location);
-                    bookData.pName = place.name;
-                    let el = document.getElementById('pickupSearch'); el.value = place.name; el.dataset.oldValue = place.name; 
-                  } else if (currentStep === 3) {
-                    markerDrop.setPosition(place.geometry.location);
-                    bookData.dName = place.name;
-                    let el = document.getElementById('dropoffSearch'); el.value = place.name; el.dataset.oldValue = place.name; 
-                  }
-              });
-              
-            }
-          });
-        }
-      });
     }
 
     function mockLoginForBrowser() {
@@ -961,7 +953,6 @@
     window.isCompleting = false;
     
     function initApp() {
-      // 🌟 ขอสิทธิ์ Lock หน้าจอเมื่อแอปเริ่มทำงาน
       requestWakeLock();
 
       db.ref('driver').on('value', snap => {
@@ -1013,8 +1004,19 @@
       [1,2,3,4,'Tracking'].forEach(p => document.getElementById('page'+p).classList.add('hidden'));
       document.getElementById('page' + page).classList.remove('hidden');
       
-      // ขอ Wake lock อีกครั้งเพื่อความชัวร์
       requestWakeLock();
+
+      // 🌟 ควบคุมการแสดงผลของแถบค้นหาลอยด้านบน
+      if (page === 2) {
+          document.getElementById('topSearchPick').classList.remove('hidden');
+          document.getElementById('topSearchDrop').classList.add('hidden');
+      } else if (page === 3) {
+          document.getElementById('topSearchPick').classList.add('hidden');
+          document.getElementById('topSearchDrop').classList.remove('hidden');
+      } else {
+          document.getElementById('topSearchPick').classList.add('hidden');
+          document.getElementById('topSearchDrop').classList.add('hidden');
+      }
 
       if(page !== 1) {
         document.getElementById('navBar').classList.remove('hidden');
@@ -1047,7 +1049,10 @@
           if(bookData.pLat !== 0) { map.panTo({lat: bookData.pLat, lng: bookData.pLng}); } 
           else { map.panTo({lat: driverData.lat, lng: driverData.lng}); }
           
-          updateAddressBox();
+          // 🌟 ทำให้ช่องว่างเปล่าในตอนแรก
+          updateAddressBox(false);
+          if (!hasInteractedPick) document.getElementById('pickupSearch').value = '';
+          
           setupSearch('pickupSearch', markerPick);
         }
       } 
@@ -1060,7 +1065,10 @@
           if(bookData.dLat !== 0 && bookData.dLng !== 0) { markerDrop.setPosition({lat: bookData.dLat, lng: bookData.dLng}); } 
           else { markerDrop.setPosition(markerPick.getPosition()); }
           map.panTo(markerDrop.getPosition());
-          updateAddressBox();
+          
+          updateAddressBox(false);
+          if (!hasInteractedDrop) document.getElementById('dropoffSearch').value = '';
+
           setupSearch('dropoffSearch', markerDrop);
         }
       }
@@ -1091,7 +1099,7 @@
     }
     function goHome() { window.location.reload(); }
 
-    function updateAddressBox() {
+    function updateAddressBox(isInteraction = false) {
       if(!map || !geocoder) return;
       let isPick = (currentStep === 2);
       let pos = map.getCenter();
@@ -1100,10 +1108,12 @@
           let fullAddr = res[0].formatted_address.replace(/,?\s*ประเทศไทย/g, '');
           if(isPick) { 
             bookData.pName = fullAddr; 
-            let el = document.getElementById('pickupSearch'); el.value = fullAddr; el.dataset.oldValue = fullAddr;
+            let el = document.getElementById('pickupSearch'); 
+            if(isInteraction) { el.value = fullAddr; el.dataset.oldValue = fullAddr; }
           } else { 
             bookData.dName = fullAddr; 
-            let el = document.getElementById('dropoffSearch'); el.value = fullAddr; el.dataset.oldValue = fullAddr;
+            let el = document.getElementById('dropoffSearch'); 
+            if(isInteraction) { el.value = fullAddr; el.dataset.oldValue = fullAddr; }
           }
         }
       });
@@ -1122,10 +1132,10 @@
         bounds: chiangRaiBounds, strictBounds: true, componentRestrictions: {country: 'th'}
       });
 
+      // 🌟 พอกดเข้าช่องค้นหา จะลบข้อความออกให้พิมพ์ใหม่ พอกดออก ถ้าช่องว่างจะดึงค่าเก่ามาใส่
       input.addEventListener('focus', function() { this.dataset.oldValue = this.value; this.value = ''; });
       input.addEventListener('blur', function() { if(this.value.trim() === '') this.value = this.dataset.oldValue || ''; });
 
-      // 🌟 เพิ่มป๊อปอัปยืนยันเมื่อเลือกสถานที่จากการพิมพ์ค้นหา
       auto.addListener('place_changed', () => {
         const place = auto.getPlace();
         if(place.geometry && map) {
@@ -1134,8 +1144,10 @@
           openConfirmActionModal('ยืนยันสถานที่', `คุณต้องการใช้สถานที่นี้ใช่หรือไม่?\n\n${place.name}`, () => {
               map.panTo(place.geometry.location); 
               if(currentStep===2) {
+                 hasInteractedPick = true;
                  bookData.pName = place.name; input.value = place.name; input.dataset.oldValue = place.name;
               } else {
+                 hasInteractedDrop = true;
                  bookData.dName = place.name; input.value = place.name; input.dataset.oldValue = place.name;
               }
           });
@@ -1148,9 +1160,9 @@
           navigator.geolocation.getCurrentPosition(p => {
             let pos = {lat: p.coords.latitude, lng: p.coords.longitude};
             if(map) map.panTo(pos);
-            if(currentStep===2 && markerPick) markerPick.setPosition(pos); 
-            else if(currentStep===3 && markerDrop) markerDrop.setPosition(pos);
-            updateAddressBox();
+            if(currentStep===2 && markerPick) { hasInteractedPick = true; markerPick.setPosition(pos); }
+            else if(currentStep===3 && markerDrop) { hasInteractedDrop = true; markerDrop.setPosition(pos); }
+            updateAddressBox(true);
           }, () => {
               showAlert('ผิดพลาด', 'ไม่สามารถดึงตำแหน่งปัจจุบันได้ กรุณาเปิด GPS', 'error');
           }, { enableHighAccuracy: true });
@@ -1414,7 +1426,6 @@
           actionBox.classList.add('hidden'); actionBox.classList.remove('flex');
       }
 
-      // 🌟 พอกดตกลงในสถานะถึงที่หมาย -> กลับไปโหลดหน้า 1 ใหม่อัตโนมัติ
       if(bookData.status.includes("ถึงที่หมาย") && !window.hasShownFinish) {
         window.hasShownFinish = true;
         let finalMessage = `จุดรับ: ${bookData.pName}\nจุดส่ง: ${bookData.dName}\nระยะทาง: ${bookData.distance || 0} กม. | ราคา: ${bookData.price} บาท\n\nขอบคุณที่ใช้บริการ F1 Driver ครับ!`;
@@ -1426,7 +1437,6 @@
         });
       }
       
-      // 🌟 พอกดตกลงเมื่อถูกยกเลิก -> เด้งป๊อปอัปให้กดเรียกรถใหม่ -> พาไปหน้า 4
       if(bookData.status.includes("ยกเลิก") && !window.hasShownCancel) {
         window.hasShownCancel = true;
         showAlert('แจ้งเตือน', 'ขออภัยในความไม่สะดวกครับ งานนี้ถูกยกเลิก รบกวนคุณลูกค้ากดยืนยันเพื่อเรียกรถใหม่อีกครั้งนะครับ', 'error', () => {
