@@ -64,17 +64,14 @@
 </head>
 <body class="h-screen w-screen m-0 overflow-hidden">
 
-  <!-- แผนที่พื้นหลัง -->
   <div id="map" class="map-container hidden"></div>
 
-  <!-- Navbar -->
   <div id="navBar" class="hidden fixed top-0 w-full h-16 bg-gray-900 border-b border-green-500/30 flex items-center justify-between px-4 z-20 text-white shadow-md pointer-events-auto">
     <button onclick="goBack()" class="p-2 text-2xl active:opacity-50 hover:text-green-400 transition"><i class="fas fa-chevron-left"></i></button>
     <h1 id="navTitle" class="text-lg font-bold text-green-400">F1 Driver</h1>
     <button onclick="goHome()" class="p-2 text-xl active:opacity-50 hover:text-green-400 transition"><i class="fas fa-home"></i></button>
   </div>
 
-  <!-- ปุ่มคุมแผนที่ -->
   <div id="mapControls" class="hidden fixed top-20 right-4 z-30 flex-col gap-3 pointer-events-auto">
       <button onclick="toggleMapStyle()" id="btnMapStyle" class="bg-gray-800 w-12 h-12 flex items-center justify-center rounded-full shadow-lg text-gray-400 border border-green-500/30 active:bg-gray-700 transition" title="สลับโหมดแผนที่">
           <i class="fas fa-layer-group text-xl"></i>
@@ -90,7 +87,6 @@
       </button>
   </div>
 
-  <!-- หน้าที่ 1: หน้าต้อนรับ -->
   <div id="page1" class="full-page flex">
     <div class="bg-gray-900 border-b border-green-500/30 text-green-400 p-6 text-center shadow-lg">
         <h1 class="text-2xl font-black tracking-wider flex justify-center items-center gap-2">
@@ -117,7 +113,6 @@
     </div>
   </div>
 
-  <!-- หน้าที่ 2: เลือกจุดรับ -->
   <div id="page2" class="hidden">
     <div class="ui-panel h-auto pb-8">
       <div class="flex justify-between items-center mb-3">
@@ -161,7 +156,6 @@
     </div>
   </div>
 
-  <!-- หน้าที่ 3: เลือกจุดส่ง -->
   <div id="page3" class="hidden">
     <div class="ui-panel h-auto pb-8">
       <div class="flex justify-between items-center mb-3">
@@ -204,7 +198,6 @@
     </div>
   </div>
 
-  <!-- หน้าที่ 4: สรุปและยืนยันการเดินทาง -->
   <div id="page4" class="hidden">
     <div class="ui-panel h-auto pb-6">
       
@@ -220,27 +213,28 @@
           </div>
       </div>
 
-      <!-- กล่องราคา + ปุ่มกดโค้ดส่วนลด -->
-      <div class="flex justify-between items-center bg-gray-800 p-4 rounded-2xl mb-4 border border-gray-700 shadow-inner">
-        <div>
-          <p class="text-[11px] text-gray-400 font-bold mb-0.5">ระยะทาง / เวลา</p>
-          <p class="font-black text-green-400 text-sm"><span id="sumDist">0</span> กม. • <span id="sumWait">0</span> นาที</p>
-        </div>
-        
-        <div class="flex items-center gap-3">
-          <button onclick="openPromoModal()" class="bg-gray-700 border border-gray-600 text-green-400 px-2.5 py-1.5 rounded text-[10px] font-bold hover:bg-gray-600 transition flex items-center gap-1 shadow-sm"><i class="fas fa-ticket-alt"></i> ใช้โค้ด</button>
-          
-          <div class="text-right">
-            <p class="text-[10px] text-gray-400 font-bold mb-0.5">ราคาเหมาจ่าย <span id="discountTag" class="hidden text-green-400 bg-green-900/50 border border-green-500/30 px-1 rounded"></span></p>
-            <div class="flex items-end justify-end gap-1.5">
-                <p id="sumPriceOld" class="hidden text-xs text-gray-500 line-through font-bold pb-0.5"></p>
-                <p class="font-black text-xl text-green-400 leading-none">฿<span id="sumPrice">0</span></p>
+      <div class="flex gap-2 mb-4">
+          <div class="flex-1 flex justify-between items-center bg-gray-800 p-4 rounded-2xl border border-gray-700 shadow-inner">
+            <div>
+              <p class="text-[11px] text-gray-400 font-bold mb-0.5">ระยะทาง / เวลา</p>
+              <p class="font-black text-green-400 text-sm"><span id="sumDist">0</span> กม. • <span id="sumWait">0</span> นาที</p>
+            </div>
+            
+            <div class="text-right">
+              <p class="text-[10px] text-gray-400 font-bold mb-0.5">ราคาเหมาจ่าย <span id="discountTag" class="hidden text-green-400 bg-green-900/50 border border-green-500/30 px-1 rounded"></span></p>
+              <div class="flex items-end justify-end gap-1.5">
+                  <p id="sumPriceOld" class="hidden text-xs text-gray-500 line-through font-bold pb-0.5"></p>
+                  <p class="font-black text-xl text-green-400 leading-none">฿<span id="sumPrice">0</span></p>
+              </div>
             </div>
           </div>
-        </div>
+
+          <button onclick="openPromoModal()" class="shrink-0 w-[4.5rem] bg-gray-800 border border-gray-700 text-green-400 rounded-2xl text-[11px] font-bold hover:bg-gray-700 transition flex flex-col items-center justify-center gap-1 shadow-sm">
+              <i class="fas fa-ticket-alt text-lg"></i>
+              <span>ใช้โค้ด</span>
+          </button>
       </div>
 
-      <!-- ฟอร์มกรอกเบอร์และยืนยันในแถวเดียว -->
       <form onsubmit="event.preventDefault(); submitBooking();" class="flex gap-2 w-full mt-1">
           <div class="relative flex-[1.2]">
               <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-green-500">
@@ -255,7 +249,6 @@
     </div>
   </div>
 
-  <!-- หน้าต่างติดตามสถานะคนขับ (Tracking) -->
   <div id="pageTracking" class="hidden">
     <div id="trackingPanel" class="ui-panel h-auto pb-6 pt-5">
       
@@ -302,15 +295,16 @@
       </div>
 
       <div id="actionButtonsBox" class="hidden gap-2 mb-1 shrink-0 w-full flex-row">
-          <button id="btnCancel" onclick="openCancelModal()" class="flex-[0.8] w-full bg-red-900/40 text-red-400 py-3 rounded-xl font-bold border border-red-500/30 text-sm hover:bg-red-900/60 transition flex justify-center items-center gap-1.5"><i class="fas fa-times"></i> ยกเลิก</button>
+          <button id="btnCancel" onclick="openCancelModal()" class="flex-1 w-full bg-red-900/40 text-red-400 py-3 rounded-xl font-bold border border-red-500/30 text-sm hover:bg-red-900/60 transition flex justify-center items-center gap-1.5"><i class="fas fa-times"></i> ยกเลิก</button>
+          
           <button id="btnChat" onclick="openLineOA()" class="flex-1 w-full bg-green-600 text-white py-3 rounded-xl font-bold text-sm shadow-sm hover:bg-green-700 transition flex justify-center items-center gap-1.5"><i class="fab fa-line text-lg leading-none"></i> แชท</button>
+          
           <button id="btnCall" onclick="openCallConfirmModal()" class="flex-1 w-full bg-gray-800 text-green-400 border border-green-500/30 py-3 rounded-xl font-bold text-sm shadow-sm hover:bg-gray-700 transition flex justify-center items-center gap-1.5"><i class="fas fa-phone-alt"></i> โทร</button>
       </div>
 
     </div>
   </div>
 
-  <!-- 🌟 ป๊อปอัปให้ผู้โดยสารกรอกโค้ดส่วนลด -->
   <div id="promoModal" class="hidden fixed inset-0 z-[140] bg-black/80 flex items-center justify-center p-4 pointer-events-auto">
       <div class="bg-[#242b35] border border-gray-700 rounded-3xl p-6 w-full max-w-sm text-center shadow-2xl">
           <div class="w-14 h-14 bg-gray-800 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl shadow-inner border border-gray-700">
@@ -326,7 +320,6 @@
       </div>
   </div>
 
-  <!-- ป๊อปอัปยืนยันการตั้งค่าสถานที่ (บ้าน/สถานที่โปรด) -->
   <div id="confirmActionModal" class="hidden fixed inset-0 z-[130] bg-black/80 flex items-center justify-center p-4 pointer-events-auto">
       <div class="bg-gray-800 border border-gray-700 rounded-3xl p-6 w-full max-w-sm text-center shadow-2xl">
           <div class="w-16 h-16 bg-blue-900/30 text-blue-500 border border-blue-500/30 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl">
@@ -341,7 +334,6 @@
       </div>
   </div>
 
-  <!-- ป๊อปอัปยืนยันการโทรหาคนขับ -->
   <div id="callConfirmModal" class="hidden fixed inset-0 z-[130] bg-black/80 flex items-center justify-center p-4 pointer-events-auto">
       <div class="bg-gray-800 border border-green-500/30 rounded-3xl p-6 w-full max-w-sm text-center shadow-2xl">
           <div class="w-16 h-16 bg-green-900/30 text-green-400 border border-green-500/30 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl">
@@ -356,7 +348,6 @@
       </div>
   </div>
 
-  <!-- ป๊อปอัปโทรฉุกเฉิน 191 -->
   <div id="emergencyModal" class="hidden fixed inset-0 z-[120] bg-black/80 flex items-center justify-center p-4 pointer-events-auto">
       <div class="bg-gray-800 border border-red-500/50 rounded-3xl p-6 w-full max-w-sm text-center shadow-[0_0_30px_rgba(239,68,68,0.2)]">
           <div class="w-16 h-16 bg-red-900/30 text-red-500 border border-red-500/30 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl">
@@ -371,7 +362,6 @@
       </div>
   </div>
 
-  <!-- ป๊อปอัปยืนยันยกเลิกการเรียกรถ -->
   <div id="cancelModal" class="hidden fixed inset-0 z-[100] bg-black/80 flex items-center justify-center p-4 pointer-events-auto">
       <div class="bg-gray-800 border border-gray-700 rounded-3xl p-6 w-full max-w-sm text-center shadow-2xl">
           <div class="w-16 h-16 bg-gray-900 text-gray-400 border border-gray-700 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl">
@@ -386,8 +376,7 @@
       </div>
   </div>
 
-  <!-- ป๊อปอัปแจ้งเตือนทั่วไป -->
-  <div id="alertModal" class="hidden fixed inset-0 z-[120] bg-black/80 flex items-center justify-center p-4 pointer-events-auto">
+  <div id="alertModal" class="hidden fixed inset-0 z-[9999] bg-black/80 flex items-center justify-center p-4 pointer-events-auto">
       <div class="bg-gray-800 border border-gray-700 rounded-3xl p-6 w-full max-w-sm text-center shadow-2xl transform transition-all">
           <div id="alertIcon" class="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl"></div>
           <h3 id="alertTitle" class="text-xl font-black text-white mb-2">...</h3>
@@ -638,10 +627,10 @@
         { elementType: "labels.text.stroke", stylers: [{ color: "#242f3e" }] },
         { elementType: "labels.text.fill", stylers: [{ color: "#746855" }] },
         { featureType: "administrative.locality", elementType: "labels.text.fill", stylers: [{ color: "#d59563" }] },
-        { featureType: "landscape.man_made", elementType: "geometry.fill", stylers: [{ color: "#3b4a5a" }] }, /* 🌟 พื้นที่มนุษย์สร้าง สว่างขึ้น */
+        { featureType: "landscape.man_made", elementType: "geometry.fill", stylers: [{ color: "#3b4a5a" }] }, 
         { featureType: "landscape.man_made", elementType: "geometry.stroke", stylers: [{ color: "#4f6277" }] }, 
-        { featureType: "landscape.man_made.building", elementType: "geometry.fill", stylers: [{ color: "#4a5d73" }] }, /* 🌟 ตัวตึกสว่างขึ้นชัดเจน */
-        { featureType: "landscape.man_made.building", elementType: "geometry.stroke", stylers: [{ color: "#617a94" }] }, /* 🌟 ขอบตึกชัดเจน */
+        { featureType: "landscape.man_made.building", elementType: "geometry.fill", stylers: [{ color: "#4a5d73" }] }, 
+        { featureType: "landscape.man_made.building", elementType: "geometry.stroke", stylers: [{ color: "#617a94" }] },
         { featureType: "landscape.natural", elementType: "geometry", stylers: [{ color: "#1e2836" }] }, 
         { featureType: "poi", elementType: "labels.text.fill", stylers: [{ color: "#d59563" }] },
         { featureType: "poi", elementType: "geometry", stylers: [{ color: "#283d3b" }] },
@@ -779,7 +768,7 @@
         disableDefaultUI: true, 
         gestureHandling: 'greedy',
         zoomControl: false,
-        padding: { top: 70, bottom: 400, left: 0, right: 0 } 
+        padding: { top: 70, bottom: 450, left: 0, right: 0 } 
       });
 
       map.addListener('dragstart', () => {
@@ -935,7 +924,6 @@
           document.getElementById('btnOverview').classList.add('hidden');
           document.getElementById('btnEmergency').classList.add('hidden'); 
           document.getElementById('btnCrosshair').classList.replace('text-gray-500', 'text-green-400');
-          // โชว์เป้าเล็งในหน้าเลือกจุด
           document.getElementById('btnCrosshair').classList.remove('hidden'); 
       }
 
@@ -943,7 +931,7 @@
         document.getElementById('navTitle').innerText = "จุดให้รถไปรับ";
         if (markerDrop && markerPick && map) {
           markerDrop.setMap(null); markerPick.setMap(map); 
-          map.setOptions({ padding: { top: 70, bottom: 400, left: 0, right: 0 } }); // 🌟 ดันศูนย์กลางขึ้น
+          map.setOptions({ padding: { top: 70, bottom: 450, left: 0, right: 0 } }); // 🌟 ดันศูนย์กลางขึ้น
           
           if(bookData.pLat !== 0) { map.panTo({lat: bookData.pLat, lng: bookData.pLng}); } 
           else { map.panTo({lat: driverData.lat, lng: driverData.lng}); }
@@ -956,7 +944,7 @@
         document.getElementById('navTitle').innerText = "จุดหมายปลายทาง";
         if (markerPick && markerDrop && map) {
           markerPick.setMap(map); markerDrop.setMap(map);
-          map.setOptions({ padding: { top: 70, bottom: 400, left: 0, right: 0 } }); // 🌟 ดันศูนย์กลางขึ้น
+          map.setOptions({ padding: { top: 70, bottom: 450, left: 0, right: 0 } }); // 🌟 ดันศูนย์กลางขึ้น
 
           if(bookData.dLat !== 0 && bookData.dLng !== 0) { markerDrop.setPosition({lat: bookData.dLat, lng: bookData.dLng}); } 
           else { markerDrop.setPosition(markerPick.getPosition()); }
@@ -973,6 +961,7 @@
 
         if (markerPick && markerDrop && map) { 
             markerPick.setMap(map); markerDrop.setMap(map); 
+            map.setOptions({ padding: { top: 70, bottom: 480, left: 0, right: 0 } });
         }
         
         document.getElementById('promoInput').value = '';
@@ -1114,7 +1103,6 @@
               document.getElementById('sumPrice').innerText = bookData.price;
 
               setTimeout(() => {
-                // 🌟 ขยายมุมมองแผนที่ในหน้าสรุปให้อยู่เหนือแผงข้อมูล
                 const mapPadding = { top: 100, right: 50, bottom: 350, left: 50 }; 
                 if(map) map.fitBounds(currentRouteBounds, mapPadding);
               }, 200);
@@ -1196,7 +1184,7 @@
       if(currentStep !== 'Tracking') {
           showPage('Tracking');
           document.getElementById('btnOverview').classList.remove('hidden'); 
-          document.getElementById('btnCrosshair').classList.remove('hidden'); // นำเป้าเล็งกลับมาโชว์ตอนติดตาม
+          document.getElementById('btnCrosshair').classList.remove('hidden'); 
       }
       
       document.getElementById('navTitle').innerText = "สถานะการเดินทาง";
