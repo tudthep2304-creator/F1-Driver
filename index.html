@@ -415,6 +415,11 @@
     let isTrackingMode = true;
     let isSatelliteMode = true; 
 
+    // 🌟 คำนวณระยะขอบให้หมุดอยู่สูงขึ้น (30% จากขอบบน)
+    function getDynamicBottomPadding() {
+        return 70 + (window.innerHeight * 0.4);
+    }
+
     let pricingConfig = { base: 50, km: 10, pick: 5 }; 
     db.ref('config/pricing').on('value', snap => {
         if(snap.exists()) pricingConfig = snap.val();
@@ -586,7 +591,7 @@
             if (panel.classList.contains('panel-collapsed')) {
                 map.setOptions({ padding: { top: 80, bottom: 120, left: 0, right: 0 } });
             } else {
-                map.setOptions({ padding: { top: 80, bottom: 350, left: 0, right: 0 } });
+                map.setOptions({ padding: { top: 80, bottom: getDynamicBottomPadding(), left: 0, right: 0 } });
             }
         }
     }
@@ -620,15 +625,16 @@
         if (window.alertCloseCallback) window.alertCloseCallback();
     }
 
+    // 🌟 ปรับสีตึก (Buildings) ให้สว่างขึ้นเห็นชัดใน Dark Mode
     const darkMapStyle = [
         { elementType: "geometry", stylers: [{ color: "#242f3e" }] },
         { elementType: "labels.text.stroke", stylers: [{ color: "#242f3e" }] },
         { elementType: "labels.text.fill", stylers: [{ color: "#746855" }] },
         { featureType: "administrative.locality", elementType: "labels.text.fill", stylers: [{ color: "#d59563" }] },
-        { featureType: "landscape.man_made", elementType: "geometry.fill", stylers: [{ color: "#3b4a5a" }] }, 
-        { featureType: "landscape.man_made", elementType: "geometry.stroke", stylers: [{ color: "#4f6277" }] }, 
-        { featureType: "landscape.man_made.building", elementType: "geometry.fill", stylers: [{ color: "#4a5d73" }] }, 
-        { featureType: "landscape.man_made.building", elementType: "geometry.stroke", stylers: [{ color: "#617a94" }] },
+        { featureType: "landscape.man_made", elementType: "geometry.fill", stylers: [{ color: "#364559" }] }, 
+        { featureType: "landscape.man_made", elementType: "geometry.stroke", stylers: [{ color: "#546a82" }] }, 
+        { featureType: "landscape.man_made.building", elementType: "geometry.fill", stylers: [{ color: "#506680" }] }, 
+        { featureType: "landscape.man_made.building", elementType: "geometry.stroke", stylers: [{ color: "#7089a6" }] },
         { featureType: "landscape.natural", elementType: "geometry", stylers: [{ color: "#1e2836" }] }, 
         { featureType: "poi", elementType: "labels.text.fill", stylers: [{ color: "#d59563" }] },
         { featureType: "poi", elementType: "geometry", stylers: [{ color: "#283d3b" }] },
@@ -758,9 +764,7 @@
       if (typeof google === 'undefined' || typeof google.maps === 'undefined') return;
       if (map) return; 
       
-      // 🌟 ดันจุดศูนย์กลางแผนที่ขึ้นโดยตั้ง Bottom Padding เยอะๆ เพื่อไม่ให้โดนแผงหน้าต่างบัง
-      let padBottom = window.innerHeight * 0.55; 
-      
+      // 🌟 ใช้ Dynamic Padding ตลอดเวลา
       map = new google.maps.Map(document.getElementById('map'), { 
         zoom: 16, 
         center: {lat: driverData.lat, lng: driverData.lng}, 
@@ -768,7 +772,7 @@
         disableDefaultUI: true, 
         gestureHandling: 'greedy',
         zoomControl: false,
-        padding: { top: 70, bottom: padBottom, left: 0, right: 0 } 
+        padding: { top: 70, bottom: getDynamicBottomPadding(), left: 0, right: 0 } 
       });
 
       map.addListener('dragstart', () => {
@@ -905,8 +909,6 @@
       [1,2,3,4,'Tracking'].forEach(p => document.getElementById('page'+p).classList.add('hidden'));
       document.getElementById('page' + page).classList.remove('hidden');
       
-      let padBottom = window.innerHeight * 0.55; 
-
       if(page !== 1) {
         document.getElementById('navBar').classList.remove('hidden');
         document.getElementById('map').classList.remove('hidden');
@@ -933,11 +935,11 @@
         document.getElementById('navTitle').innerText = "จุดให้รถไปรับ";
         if (markerDrop && markerPick && map) {
           markerDrop.setMap(null); markerPick.setMap(map); 
-          map.setOptions({ padding: { top: 70, bottom: padBottom, left: 0, right: 0 } });
+          // 🌟 ดันหมุดขึ้น 30% ของหน้าจอ
+          map.setOptions({ padding: { top: 70, bottom: getDynamicBottomPadding(), left: 0, right: 0 } }); 
           
-          let targetPos = (bookData.pLat !== 0) ? {lat: bookData.pLat, lng: bookData.pLng} : {lat: driverData.lat, lng: driverData.lng};
-          map.panTo(targetPos);
-          markerPick.setPosition(targetPos);
+          if(bookData.pLat !== 0) { map.panTo({lat: bookData.pLat, lng: bookData.pLng}); } 
+          else { map.panTo({lat: driverData.lat, lng: driverData.lng}); }
           
           updateAddressBox();
           setupSearch('pickupSearch', markerPick);
@@ -947,12 +949,12 @@
         document.getElementById('navTitle').innerText = "จุดหมายปลายทาง";
         if (markerPick && markerDrop && map) {
           markerPick.setMap(map); markerDrop.setMap(map);
-          map.setOptions({ padding: { top: 70, bottom: padBottom, left: 0, right: 0 } }); 
+          // 🌟 ดันหมุดขึ้น 30% ของหน้าจอ
+          map.setOptions({ padding: { top: 70, bottom: getDynamicBottomPadding(), left: 0, right: 0 } }); 
 
-          let targetPos = (bookData.dLat !== 0 && bookData.dLng !== 0) ? {lat: bookData.dLat, lng: bookData.dLng} : markerPick.getPosition();
-          map.panTo(targetPos);
-          markerDrop.setPosition(targetPos);
-
+          if(bookData.dLat !== 0 && bookData.dLng !== 0) { markerDrop.setPosition({lat: bookData.dLat, lng: bookData.dLng}); } 
+          else { markerDrop.setPosition(markerPick.getPosition()); }
+          map.panTo(markerDrop.getPosition());
           updateAddressBox();
           setupSearch('dropoffSearch', markerDrop);
         }
@@ -961,11 +963,11 @@
         document.getElementById('navTitle').innerText = "สรุปการเดินทาง";
         document.getElementById('btnOverview').classList.remove('hidden');
         document.getElementById('btnEmergency').classList.add('hidden');
-        document.getElementById('btnCrosshair').classList.add('hidden');
+        document.getElementById('btnCrosshair').classList.add('hidden'); 
 
         if (markerPick && markerDrop && map) { 
             markerPick.setMap(map); markerDrop.setMap(map); 
-            map.setOptions({ padding: { top: 70, bottom: 350, left: 0, right: 0 } });
+            map.setOptions({ padding: { top: 70, bottom: getDynamicBottomPadding(), left: 0, right: 0 } });
         }
         
         document.getElementById('promoInput').value = '';
@@ -1107,7 +1109,7 @@
               document.getElementById('sumPrice').innerText = bookData.price;
 
               setTimeout(() => {
-                const mapPadding = { top: 100, right: 50, bottom: 350, left: 50 }; 
+                const mapPadding = { top: 120, right: 50, bottom: (window.innerHeight * 0.45), left: 50 }; 
                 if(map) map.fitBounds(currentRouteBounds, mapPadding);
               }, 200);
             }
@@ -1366,7 +1368,7 @@
           } else if (isTrackingMode && map && markerDriver) {
               const panel = document.getElementById('trackingPanel');
               const isCollapsed = panel && panel.classList.contains('panel-collapsed');
-              const bottomPad = isCollapsed ? 120 : 420;
+              const bottomPad = isCollapsed ? 120 : getDynamicBottomPadding();
               map.setOptions({ padding: { top: 80, bottom: bottomPad, left: 0, right: 0 } });
               map.panTo(markerDriver.getPosition());
           }
