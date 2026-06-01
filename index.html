@@ -252,13 +252,18 @@
           </button>
       </div>
 
-      <!-- 🌟 แก้ไข: ลบ HTML5 'required' ออก เพื่อใช้ custom showAlert สีดำแทน -->
+      <!-- 🌟 แก้ไข: เพิ่ม autocomplete="tel" และ event onfocus / onblur ในช่องเบอร์โทร -->
       <form onsubmit="event.preventDefault(); submitBooking();" class="flex gap-2 w-full mt-1">
           <div class="relative flex-[1.2]">
               <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-green-500">
                   <i class="fas fa-phone-alt text-sm"></i>
               </div>
-              <input type="tel" id="userPhone" name="phone" autocomplete="tel" inputmode="tel" oninput="formatPhone(this)" placeholder="เบอร์ติดต่อ" class="w-full py-3.5 pl-9 pr-2 bg-gray-800 border border-gray-700 focus:border-green-500 focus:bg-gray-900 text-white placeholder-gray-500 rounded-xl text-sm font-bold outline-none transition-colors">
+              <input type="tel" id="userPhone" name="tel" autocomplete="tel" inputmode="tel" 
+                     oninput="formatPhone(this)" 
+                     onfocus="this.dataset.oldValue = this.value; this.value = '';" 
+                     onblur="if(this.value.trim() === '') this.value = this.dataset.oldValue || '';" 
+                     placeholder="เบอร์ติดต่อ" 
+                     class="w-full py-3.5 pl-9 pr-2 bg-gray-800 border border-gray-700 focus:border-green-500 focus:bg-gray-900 text-white placeholder-gray-500 rounded-xl text-sm font-bold outline-none transition-colors">
           </div>
           <button type="submit" class="flex-1 bg-green-600 text-white py-3.5 rounded-xl font-bold text-sm shadow-[0_0_15px_rgba(34,197,94,0.3)] hover:bg-green-700 active:scale-[0.98] transition flex justify-center items-center gap-1.5 whitespace-nowrap">
               ยืนยันเรียกรถ <i class="fas fa-car-side"></i>
@@ -582,7 +587,7 @@
             places.forEach(p => {
                 let shortName = p.name.split(' ')[0]; 
                 if(shortName.length > 15) shortName = shortName.substring(0,15) + '...';
-                html += `<button onclick="useRecentPlace('${p.name}', ${p.lat}, ${p.lng})" class="shrink-0 bg-gray-800 border border-gray-700 text-gray-300 px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 hover:bg-gray-700 transition shadow-sm"><i class="fas fa-history text-gray-500"></i> ${shortName}</button>`;
+                html += `<button onclick="useRecentPlace('${p.name}', ${p.lat}, ${p.lng})" class="shrink-0 bg-gray-800 border border-gray-700 text-gray-300 px-3 py-1.5 rounded-full text-xs font-bold flex items-center gap-1.5 hover:bg-gray-700 transition shadow-sm"><i class="fas fa-history text-gray-500"></i> ${shortName}</button>`;
             });
         }
         let pickEl = document.getElementById('recentPlacesPick');
@@ -1168,11 +1173,12 @@
         });
     }
 
-    // 🌟 เปลี่ยนระบบดักจับเบอร์โทร ให้ใช้ showAlert ของแอปแทน HTML5 Native Alert
+    // 🌟 ระบบจับการกดปุ่มยืนยัน ถ้าไม่มีเบอร์ให้ใช้ showAlert แทน alert เดิม
     function submitBooking() {
       let telInput = document.getElementById('userPhone').value;
-      let tel = telInput.replace(/\D/g, ''); // ดึงมาเฉพาะตัวเลข
+      let tel = telInput.replace(/\D/g, ''); // 🌟 ดึงเฉพาะตัวเลข
       
+      // 🌟 ตรวจสอบว่ากรอกเบอร์แล้วหรือยัง
       if(tel.length === 0) { 
           showAlert('แจ้งเตือน', 'กรุณากรอกเบอร์ติดต่อก่อนกดยืนยันเรียกรถครับ', 'error'); 
           return; 
