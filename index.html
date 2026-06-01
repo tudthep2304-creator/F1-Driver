@@ -252,7 +252,6 @@
           </button>
       </div>
 
-      <!-- 🌟 แก้ไข: เพิ่ม autocomplete="tel" และ event onfocus / onblur ในช่องเบอร์โทร -->
       <form onsubmit="event.preventDefault(); submitBooking();" class="flex gap-2 w-full mt-1">
           <div class="relative flex-[1.2]">
               <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-green-500">
@@ -451,6 +450,48 @@
         if(snap.exists()) pricingConfig = snap.val();
     });
 
+    // 🌟 1. ประกาศตัวแปรสำหรับระบบเสียง Web Audio API
+    let audioCtx = null;
+    let lastNotifiedStatus = "";
+
+    function initAudio() {
+        if (!audioCtx) {
+            const AudioContext = window.AudioContext || window.webkitAudioContext;
+            if(AudioContext) audioCtx = new AudioContext();
+        }
+        if(audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+    }
+
+    function playSound(type) {
+        if(!audioCtx) return;
+        try {
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            
+            if (type === 'update') {
+                // 🌟 เสียง "ติ้ง-ต่อง" เมื่อสถานะเปลี่ยนปกติ (รับงาน, กำลังไปหา, ถึงที่หมาย)
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(880, audioCtx.currentTime); 
+                osc.frequency.setValueAtTime(1046.50, audioCtx.currentTime + 0.15); 
+                gain.gain.setValueAtTime(0.5, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.6);
+                osc.start(audioCtx.currentTime);
+                osc.stop(audioCtx.currentTime + 0.6);
+            } else if (type === 'cancel') {
+                // 🌟 เสียง "ตื้ด" เมื่อคนขับยกเลิก
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(300, audioCtx.currentTime);
+                gain.gain.setValueAtTime(0.5, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.5);
+                osc.start(audioCtx.currentTime);
+                osc.stop(audioCtx.currentTime + 0.5);
+            }
+        } catch(e) { console.log("Audio API Error:", e); }
+    }
+
+
     document.addEventListener("DOMContentLoaded", () => {
         let savedPhone = localStorage.getItem('passengerPhone');
         if(savedPhone) {
@@ -587,7 +628,7 @@
             places.forEach(p => {
                 let shortName = p.name.split(' ')[0]; 
                 if(shortName.length > 15) shortName = shortName.substring(0,15) + '...';
-                html += `<button onclick="useRecentPlace('${p.name}', ${p.lat}, ${p.lng})" class="shrink-0 bg-gray-800 border border-gray-700 text-gray-300 px-3 py-1.5 rounded-full text-xs font-bold flex items-center gap-1.5 hover:bg-gray-700 transition shadow-sm"><i class="fas fa-history text-gray-500"></i> ${shortName}</button>`;
+                html += `<button onclick="useRecentPlace('${p.name}', ${p.lat}, ${p.lng})" class="shrink-0 bg-gray-800 border border-gray-700 text-gray-300 px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 hover:bg-gray-700 transition shadow-sm"><i class="fas fa-history text-gray-500"></i> ${shortName}</button>`;
             });
         }
         let pickEl = document.getElementById('recentPlacesPick');
@@ -1173,12 +1214,13 @@
         });
     }
 
-    // 🌟 ระบบจับการกดปุ่มยืนยัน ถ้าไม่มีเบอร์ให้ใช้ showAlert แทน alert เดิม
     function submitBooking() {
+      // 🌟 2. เรียกใช้ AudioContext เมื่อผู้โดยสารกดยืนยัน (User Interaction) เพื่อให้ระบบเสียงทำงานบน iOS/Safari
+      initAudio();
+
       let telInput = document.getElementById('userPhone').value;
-      let tel = telInput.replace(/\D/g, ''); // 🌟 ดึงเฉพาะตัวเลข
+      let tel = telInput.replace(/\D/g, ''); 
       
-      // 🌟 ตรวจสอบว่ากรอกเบอร์แล้วหรือยัง
       if(tel.length === 0) { 
           showAlert('แจ้งเตือน', 'กรุณากรอกเบอร์ติดต่อก่อนกดยืนยันเรียกรถครับ', 'error'); 
           return; 
@@ -1260,6 +1302,16 @@
       } else {
           document.getElementById('driverInfoBox').classList.add('hidden');
       }
+
+      // 🌟 3. ระบบเช็กเพื่อเล่นเสียงแจ้งเตือนเมื่อมีการเปลี่ยนแปลงสถานะ
+      if (lastNotifiedStatus !== "" && lastNotifiedStatus !== bookData.status) {
+          if (bookData.status === "ยกเลิกโดยคนขับ") {
+              playSound('cancel');
+          } else {
+              playSound('update');
+          }
+      }
+      lastNotifiedStatus = bookData.status;
 
       if(bookData.status === "รอผู้ขับขี่ตอบรับ") {
           statusEl.className = "font-black text-gray-500 text-lg leading-tight";
