@@ -42,6 +42,7 @@
 
     .full-page { position: fixed; inset: 0; z-index: 30; background: #111827; flex-direction: column; }
     
+    /* 🌟 แก้ไข: จำกัดความสูงและเปิดระบบเลื่อน Scroll ให้รายชื่อสถานที่ */
     .pac-container { 
         z-index: 10000 !important; 
         font-family: 'Kanit'; 
@@ -51,7 +52,13 @@
         box-shadow: 0 -8px 25px rgba(0,0,0,0.6); 
         margin-top: 0;
         transform: translateY(calc(-100% - 68px)) !important; 
+        max-height: 250px !important; /* จำกัดความสูงไม่ให้ทะลุจอ */
+        overflow-y: auto !important; /* เปิดระบบ Scroll */
     }
+    /* ตกแต่ง Scrollbar ให้สวยงาม */
+    .pac-container::-webkit-scrollbar { width: 6px; }
+    .pac-container::-webkit-scrollbar-thumb { background-color: #4b5563; border-radius: 10px; }
+    
     .pac-item { padding: 12px; border-top: 1px solid #374151; cursor: pointer; color: #d1d5db; font-size: 14px; }
     .pac-item:first-child { border-top: none; }
     .pac-item-query { color: #fff; font-weight: bold; }
@@ -441,7 +448,6 @@
     let isTrackingMode = true;
     let isSatelliteMode = true; 
     
-    // 🌟 แก้ไข: ประกาศตัวแปรเสียงไว้ด้านนอกให้หาเจอเสมอ
     let lastNotifiedStatus = "";
 
     function getDynamicBottomPadding() {
@@ -455,9 +461,25 @@
 
     window.hasSpokenAccept = false;
     window.hasSpokenArrivePick = false;
+    window.hasSpokenAtPickup = false;
+    window.hasSpokenDepart = false;
     window.hasSpokenArriveDrop = false;
     window.hasSpokenFinish = false;
     window.hasSpokenCancel = false;
+
+    // 🌟 ฟังก์ชันล้างประวัติเสียง เมื่อจบงานหรือกดยกเลิก
+    function resetTrackingFlags() {
+        window.hasSpokenAccept = false;
+        window.hasSpokenArrivePick = false;
+        window.hasSpokenAtPickup = false;
+        window.hasSpokenDepart = false;
+        window.hasSpokenArriveDrop = false;
+        window.hasSpokenFinish = false;
+        window.hasSpokenCancel = false;
+        window.hasShownFinish = false;
+        window.hasShownCancel = false;
+        lastNotifiedStatus = "";
+    }
 
     function speakText(text) {
         if ('speechSynthesis' in window) {
@@ -499,12 +521,18 @@
 
     function openCancelModal() { document.getElementById('cancelModal').classList.remove('hidden'); }
     function closeCancelModal() { document.getElementById('cancelModal').classList.add('hidden'); }
+    
+    // 🌟 หากผู้โดยสารกดยกเลิกเอง ให้กลับไปหน้า 4
     function confirmCancelBooking() {
         document.getElementById('cancelModal').classList.add('hidden');
         window.isCompleting = true;
         db.ref('bookings/' + lineUserId).remove().then(() => {
             if(APPS_SCRIPT_URL) fetch(`${APPS_SCRIPT_URL}?action=notify&type=cancel&name=${lineName}`, {mode:'no-cors'});
-            showAlert('ยกเลิกสำเร็จ', 'ระบบได้ทำการยกเลิกการเรียกรถเรียบร้อยแล้ว', 'success', () => { window.location.reload(); });
+            showAlert('ยกเลิกสำเร็จ', 'ระบบได้ทำการยกเลิกการเรียกรถเรียบร้อยแล้ว', 'success', () => { 
+                resetTrackingFlags();
+                window.isCompleting = false;
+                showPage(4); 
+            });
         });
     }
 
@@ -934,16 +962,19 @@
         }
       });
 
+      // 🌟 หากถูกลบข้อมูลจากระบบหลังบ้าน ให้เด้งกลับไปหน้า 4 เช่นกัน
       db.ref('bookings/' + lineUserId).on('value', snap => {
         const b = snap.val();
         if(b) { 
             bookData = b; 
             handleTracking(); 
         } 
-        else if ((currentStep === 'Tracking' || currentStep === 4) && !window.isCompleting) {
+        else if (currentStep === 'Tracking' && !window.isCompleting) {
             window.isCompleting = true;
             showAlert('แจ้งเตือน', 'งานนี้ถูกยกเลิกหรือสิ้นสุดแล้ว กรุณาเรียกรถใหม่อีกครั้ง', 'info', () => {
-                window.location.reload();
+                resetTrackingFlags();
+                window.isCompleting = false;
+                showPage(4);
             });
         }
       });
@@ -1285,11 +1316,20 @@
           document.getElementById('driverInfoBox').classList.add('hidden');
       }
 
+      // 🌟 ระบบดักจับการเปลี่ยนแปลงสถานะเพื่อเล่นเสียงพูด
       if (lastNotifiedStatus !== bookData.status) {
           if ((bookData.status.includes("กำลังเดินทางไปหา") || bookData.status.includes("รับงานแล้ว")) && !window.hasSpokenAccept) {
               speakText("คนขับตอบรับแล้ว");
               window.hasSpokenAccept = true;
           } 
+          else if (bookData.status.includes("มาถึงจุดรับ") && !window.hasSpokenAtPickup) {
+              speakText("คนขับมาถึงแล้ว");
+              window.hasSpokenAtPickup = true;
+          }
+          else if ((bookData.status.includes("ออกเดินทาง") || bookData.status.includes("ไปยังจุดส่ง")) && !window.hasSpokenDepart) {
+              speakText("กำลังออกเดินทางไปยังจุดหมาย");
+              window.hasSpokenDepart = true;
+          }
           else if (bookData.status.includes("ถึงที่หมาย") && !window.hasSpokenFinish) {
               speakText("ถึงจุดหมายแล้ว ขอบคุณที่ใช้บริการ");
               window.hasSpokenFinish = true;
@@ -1341,22 +1381,30 @@
           actionBox.classList.add('hidden'); actionBox.classList.remove('flex');
       }
 
+      // 🌟 หากถึงที่หมายแล้ว ให้แสดงแจ้งเตือน และพอกดปุ๊บก็พาไปหน้า 4
       if(bookData.status.includes("ถึงที่หมาย") && !window.hasShownFinish) {
         window.hasShownFinish = true;
         let finalMessage = `จุดรับ: ${bookData.pName}\nจุดส่ง: ${bookData.dName}\nระยะทาง: ${bookData.distance || 0} กม. | ราคา: ${bookData.price} บาท\n\nขอบคุณที่ใช้บริการ F1 Driver ครับ!`;
         showAlert('ถึงที่หมายเรียบร้อย!', finalMessage, 'success', () => {
             window.isCompleting = true;
-            db.ref('bookings/' + lineUserId).remove().then(() => { window.location.reload(); });
+            db.ref('bookings/' + lineUserId).remove().then(() => { 
+                resetTrackingFlags();
+                window.isCompleting = false;
+                showPage(4); 
+            });
         });
       }
       
-      // 🌟 อัปเดตตรรกะการเด้งป๊อปอัปให้ครอบคลุมการ "ยกเลิก"
+      // 🌟 หากโดนยกเลิก ให้แสดงป๊อปอัปและพากลับไปหน้า 4
       if(bookData.status.includes("ยกเลิก") && !window.hasShownCancel) {
         window.hasShownCancel = true;
         showAlert('งานถูกยกเลิก', 'ขออภัย งานนี้ถูกยกเลิก กรุณาเรียกรถใหม่อีกครั้งครับ', 'error', () => {
             window.isCompleting = true;
-            db.ref('bookings/' + lineUserId).remove();
-            window.location.reload(); 
+            db.ref('bookings/' + lineUserId).remove().then(() => {
+                resetTrackingFlags();
+                window.isCompleting = false;
+                showPage(4); 
+            });
         });
       }
 
@@ -1447,7 +1495,7 @@
               etaEl.innerText = `ระยะทางไปส่ง: ${leg.distance.text} • อีก ${leg.duration.text}`;
               etaEl.className = "text-xs text-blue-400 font-bold mt-0.5 inline-block";
               
-              if (etaSecs <= 120 && !window.hasSpokenArriveDrop && bookData.status.includes("ออกเดินทาง")) {
+              if (etaSecs <= 120 && !window.hasSpokenArriveDrop && window.hasSpokenDepart) {
                   speakText("ใกล้ถึงจุดหมายแล้ว");
                   window.hasSpokenArriveDrop = true;
               }
