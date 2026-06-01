@@ -42,6 +42,7 @@
 
     .full-page { position: fixed; inset: 0; z-index: 30; background: #111827; flex-direction: column; }
     
+    /* กล่องค้นหา Google Maps Drop-up */
     .pac-container { 
         z-index: 10000 !important; 
         font-family: 'Kanit'; 
@@ -431,7 +432,7 @@
     function openCallConfirmModal() { document.getElementById('callConfirmModal').classList.remove('hidden'); }
     function closeCallConfirmModal() { document.getElementById('callConfirmModal').classList.add('hidden'); }
 
-    // ฟังก์ชันป๊อปอัปยกเลิกที่หายไป
+    // 🌟 ฟังก์ชันจัดการป๊อปอัปยกเลิก (แก้บั๊ก ReferenceError แล้ว)
     function openCancelModal() { document.getElementById('cancelModal').classList.remove('hidden'); }
     function closeCancelModal() { document.getElementById('cancelModal').classList.add('hidden'); }
     function confirmCancelBooking() {
@@ -601,12 +602,17 @@
         if (window.alertCloseCallback) window.alertCloseCallback();
     }
 
+    // 🌟 ปรับปรุง Dark Map ให้เห็นสิ่งปลูกสร้าง (Buildings) ชัดเจนขึ้น
     const darkMapStyle = [
         { elementType: "geometry", stylers: [{ color: "#242f3e" }] },
         { elementType: "labels.text.stroke", stylers: [{ color: "#242f3e" }] },
         { elementType: "labels.text.fill", stylers: [{ color: "#746855" }] },
         { featureType: "administrative.locality", elementType: "labels.text.fill", stylers: [{ color: "#d59563" }] },
+        { featureType: "landscape.man_made", elementType: "geometry.fill", stylers: [{ color: "#2a3746" }] }, /* 🌟 สิ่งปลูกสร้าง */
+        { featureType: "landscape.man_made", elementType: "geometry.stroke", stylers: [{ color: "#1e2634" }] }, /* 🌟 ขอบอาคาร */
+        { featureType: "landscape.natural", elementType: "geometry", stylers: [{ color: "#202a35" }] }, /* พื้นที่ธรรมชาติ */
         { featureType: "poi", elementType: "labels.text.fill", stylers: [{ color: "#d59563" }] },
+        { featureType: "poi", elementType: "geometry", stylers: [{ color: "#283d3b" }] },
         { featureType: "poi.park", elementType: "geometry", stylers: [{ color: "#263c3f" }] },
         { featureType: "poi.park", elementType: "labels.text.fill", stylers: [{ color: "#6b9a76" }] },
         { featureType: "road", elementType: "geometry", stylers: [{ color: "#38414e" }] },
@@ -872,6 +878,7 @@
       });
     }
 
+    // 🌟 อนุญาตให้โชว์ปุ่มควบคุมแผนที่บนหน้าที่ 4 (หน้าสรุปการเดินทาง) ด้วย
     function showPage(page) {
       currentStep = page;
       [1,2,3,4,'Tracking'].forEach(p => document.getElementById('page'+p).classList.add('hidden'));
@@ -926,7 +933,10 @@
       }
       else if(page === 4) {
         document.getElementById('navTitle').innerText = "ยืนยันเรียกรถ";
-        document.getElementById('mapControls').classList.add('hidden'); 
+        // 🌟 โชว์ปุ่มคุมแผนที่และปุ่ม Overview ในหน้ายืนยัน
+        document.getElementById('btnOverview').classList.remove('hidden');
+        document.getElementById('btnEmergency').classList.add('hidden');
+
         if (markerPick && markerDrop && map) { 
             markerPick.setMap(map); markerDrop.setMap(map); 
             map.setOptions({ padding: { top: 70, bottom: 480, left: 0, right: 0 } });
@@ -1047,6 +1057,9 @@
           if(markerDrop) markerDrop.setPosition(dest);
           let distRideKm = resRide.routes[0].legs[0].distance.value / 1000;
           
+          // 🌟 บันทึกพิกัดให้ปุ่ม Overview ทำงานในหน้ายืนยัน
+          currentRouteBounds = resRide.routes[0].bounds;
+
           directionsService.route({origin: driverPos, destination: origin, travelMode: 'DRIVING'}, (resDrive, stat2) => {
             if(stat2 === 'OK') {
               let distDriverKm = resDrive.routes[0].legs[0].distance.value / 1000;
@@ -1070,7 +1083,7 @@
 
               setTimeout(() => {
                 const mapPadding = { top: 100, right: 50, bottom: 480, left: 50 }; 
-                if(map) map.fitBounds(resRide.routes[0].bounds, mapPadding);
+                if(map) map.fitBounds(currentRouteBounds, mapPadding);
               }, 200);
             }
           });
@@ -1315,10 +1328,10 @@
           
           if(isGoingToPickup) {
               etaEl.innerText = `คนขับอยู่ห่าง: ${leg.distance.text} • อีก ${leg.duration.text}`;
-              etaEl.className = "text-xs text-blue-400 font-bold mt-0.5 inline-block";
+              etaEl.className = "text-[11px] text-blue-400 font-bold mt-0.5 inline-block";
           } else {
               etaEl.innerText = `ระยะทางไปส่ง: ${leg.distance.text} • อีก ${leg.duration.text}`;
-              etaEl.className = "text-xs text-blue-400 font-bold mt-0.5 inline-block";
+              etaEl.className = "text-[11px] text-blue-400 font-bold mt-0.5 inline-block";
           }
 
           if(isStatusChanged && map) {
