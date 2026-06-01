@@ -120,65 +120,19 @@
   <div id="page2" class="hidden">
     <div class="ui-panel h-auto pb-8">
       
-      <div class="mb-2">
+      <!-- 🌟 กลับมาใช้เลย์เอาต์เดิม (จุดรับ - ตำแหน่งปัจจุบัน) -->
+      <div class="flex justify-between items-center mb-3">
         <p class="text-sm font-bold text-gray-300"><i class="fas fa-map-marker-alt text-green-500 mr-1.5"></i> จุดรับ</p>
+        <button onclick="useCurrentLocation()" class="text-xs font-bold bg-gray-700 border border-gray-600 text-green-400 px-3 py-1.5 rounded-full hover:bg-gray-600 transition shadow-sm flex items-center gap-1.5"><i class="fas fa-crosshairs"></i> ตำแหน่งปัจจุบัน</button>
       </div>
       
-      <!-- 🌟 แถบปุ่มทางลัดแนวนอน (ตำแหน่งปัจจุบัน, บ้าน, โปรด) -->
-      <div class="flex gap-2 overflow-x-auto pb-2 hide-scrollbar mb-1 items-center">
-          <button onclick="useCurrentLocation()" class="shrink-0 text-xs font-bold bg-gray-700 border border-gray-600 text-green-400 px-3 py-1.5 rounded-full hover:bg-gray-600 transition shadow-sm flex items-center gap-1.5">
-              <i class="fas fa-crosshairs"></i> ตำแหน่งปัจจุบัน
-          </button>
-          
-          <!-- ปุ่มบ้าน (แบบแคปซูลมีเส้นคั่น) -->
-          <div class="flex shrink-0 bg-[#2a303c] border border-[#3b4252] rounded-full overflow-hidden shadow-sm items-center">
-              <button onclick="handleSavedPlace('home')" class="px-3 py-1.5 flex items-center gap-1.5 hover:bg-[#343b4a] transition">
-                  <i class="fas fa-home text-blue-400 text-xs"></i>
-                  <span class="label-home text-xs font-bold text-gray-200">บ้าน</span>
-              </button>
-              <div class="w-[1px] h-4 bg-[#3b4252]"></div>
-              <button onclick="editSavedPlace('home', event)" class="px-2.5 py-1.5 text-gray-400 hover:text-white hover:bg-[#343b4a] transition flex items-center" title="ตั้งค่าพิกัด">
-                  <i class="fas fa-cog text-[11px]"></i>
-              </button>
-          </div>
-          
-          <!-- ปุ่มรายการโปรด (แบบแคปซูลมีเส้นคั่น) -->
-          <div class="flex shrink-0 bg-[#2a303c] border border-[#3b4252] rounded-full overflow-hidden shadow-sm items-center">
-              <button onclick="handleSavedPlace('favorite')" class="px-3 py-1.5 flex items-center gap-1.5 hover:bg-[#343b4a] transition">
-                  <i class="fas fa-heart text-pink-500 text-xs"></i>
-                  <span class="label-favorite text-xs font-bold text-gray-200">โปรด</span>
-              </button>
-              <div class="w-[1px] h-4 bg-[#3b4252]"></div>
-              <button onclick="editSavedPlace('favorite', event)" class="px-2.5 py-1.5 text-gray-400 hover:text-white hover:bg-[#343b4a] transition flex items-center" title="ตั้งค่าพิกัด">
-                  <i class="fas fa-cog text-[11px]"></i>
-              </button>
-          </div>
-      </div>
-
       <div class="flex gap-2 mb-3">
           <input type="text" id="pickupSearch" class="w-full p-3.5 bg-gray-800 border border-gray-700 focus:border-green-500 focus:bg-gray-900 rounded-xl outline-none font-bold text-sm text-white transition-all truncate placeholder-gray-500" placeholder="ค้นหาสถานที่ หรือขยับแผนที่...">
           <button onclick="alertMultiStop()" class="px-4 shrink-0 bg-gray-800 border border-gray-700 rounded-xl text-gray-400 hover:text-green-400 hover:border-green-500/50 flex items-center justify-center text-sm font-bold transition shadow-sm" title="เพิ่มจุดแวะรับ"><i class="fas fa-plus mr-1"></i> จุดแวะ</button>
       </div>
       
-      <div id="recentPlacesPick" class="flex gap-2 overflow-x-auto pb-1 hide-scrollbar mt-1 mb-3"></div>
-      
-      <button onclick="confirmPickup()" class="w-full bg-green-600 text-white py-3.5 rounded-xl font-bold mt-1 text-base shadow-md hover:bg-green-700 active:scale-[0.98] transition">ยืนยันจุดรับ</button>
-    </div>
-  </div>
-
-  <!-- หน้าที่ 3: เลือกจุดส่ง -->
-  <div id="page3" class="hidden">
-    <div class="ui-panel h-auto pb-8">
-      
-      <div class="mb-2">
-        <p class="text-sm font-bold text-gray-300"><i class="fas fa-map-marker-alt text-red-500 mr-1.5"></i> จุดหมาย</p>
-      </div>
-      
-      <!-- 🌟 แถบปุ่มทางลัดแนวนอน (ตำแหน่งปัจจุบัน, บ้าน, โปรด) -->
-      <div class="flex gap-2 overflow-x-auto pb-2 hide-scrollbar mb-1 items-center">
-          <button onclick="useCurrentLocation()" class="shrink-0 text-xs font-bold bg-gray-700 border border-gray-600 text-green-400 px-3 py-1.5 rounded-full hover:bg-gray-600 transition shadow-sm flex items-center gap-1.5">
-              <i class="fas fa-crosshairs"></i> ตำแหน่งปัจจุบัน
-          </button>
+      <!-- 🌟 แถบประวัติ + บ้าน + โปรด ให้อยู่ในแถวเดียวกัน เลื่อนขวาซ้ายได้ -->
+      <div class="flex gap-2 overflow-x-auto pb-2 hide-scrollbar mb-2 items-center w-full">
           
           <!-- ปุ่มบ้าน -->
           <div class="flex shrink-0 bg-[#2a303c] border border-[#3b4252] rounded-full overflow-hidden shadow-sm items-center">
@@ -192,7 +146,7 @@
               </button>
           </div>
           
-          <!-- ปุ่มรายการโปรด -->
+          <!-- ปุ่มโปรด -->
           <div class="flex shrink-0 bg-[#2a303c] border border-[#3b4252] rounded-full overflow-hidden shadow-sm items-center">
               <button onclick="handleSavedPlace('favorite')" class="px-3 py-1.5 flex items-center gap-1.5 hover:bg-[#343b4a] transition">
                   <i class="fas fa-heart text-pink-500 text-xs"></i>
@@ -203,14 +157,64 @@
                   <i class="fas fa-cog text-[11px]"></i>
               </button>
           </div>
-      </div>
 
+          <div class="w-[1px] h-5 bg-gray-600 shrink-0 mx-0.5"></div>
+          
+          <!-- ปุ่มประวัติการเดินทาง -->
+          <div id="recentPlacesPick" class="flex gap-2 shrink-0 items-center"></div>
+      </div>
+      
+      <button onclick="confirmPickup()" class="w-full bg-green-600 text-white py-3.5 rounded-xl font-bold mt-1 text-base shadow-md hover:bg-green-700 active:scale-[0.98] transition">ยืนยันจุดรับ</button>
+    </div>
+  </div>
+
+  <!-- หน้าที่ 3: เลือกจุดส่ง -->
+  <div id="page3" class="hidden">
+    <div class="ui-panel h-auto pb-8">
+      
+      <!-- 🌟 กลับมาใช้เลย์เอาต์เดิม (จุดหมาย - ตำแหน่งปัจจุบัน) -->
+      <div class="flex justify-between items-center mb-3">
+        <p class="text-sm font-bold text-gray-300"><i class="fas fa-map-pin text-red-500 mr-1.5"></i> จุดหมาย</p>
+        <button onclick="useCurrentLocation()" class="text-xs font-bold bg-gray-700 border border-gray-600 text-green-400 px-3 py-1.5 rounded-full hover:bg-gray-600 transition shadow-sm flex items-center gap-1.5"><i class="fas fa-crosshairs"></i> ตำแหน่งปัจจุบัน</button>
+      </div>
+      
       <div class="flex gap-2 mb-3">
           <input type="text" id="dropoffSearch" class="w-full p-3.5 bg-gray-800 border border-gray-700 focus:border-green-500 focus:bg-gray-900 rounded-xl outline-none font-bold text-sm text-white transition-all truncate placeholder-gray-500" placeholder="ค้นหาสถานที่ หรือขยับแผนที่...">
           <button onclick="alertMultiStop()" class="px-4 shrink-0 bg-gray-800 border border-gray-700 rounded-xl text-gray-400 hover:text-red-400 hover:border-red-500/50 flex items-center justify-center text-sm font-bold transition shadow-sm" title="เพิ่มจุดแวะส่ง"><i class="fas fa-plus mr-1"></i> จุดแวะ</button>
       </div>
       
-      <div id="recentPlacesDrop" class="flex gap-2 overflow-x-auto pb-1 hide-scrollbar mt-1 mb-3"></div>
+      <!-- 🌟 แถบประวัติ + บ้าน + โปรด ให้อยู่ในแถวเดียวกัน เลื่อนขวาซ้ายได้ -->
+      <div class="flex gap-2 overflow-x-auto pb-2 hide-scrollbar mb-2 items-center w-full">
+          
+          <!-- ปุ่มบ้าน -->
+          <div class="flex shrink-0 bg-[#2a303c] border border-[#3b4252] rounded-full overflow-hidden shadow-sm items-center">
+              <button onclick="handleSavedPlace('home')" class="px-3 py-1.5 flex items-center gap-1.5 hover:bg-[#343b4a] transition">
+                  <i class="fas fa-home text-blue-400 text-xs"></i>
+                  <span class="label-home text-xs font-bold text-gray-200">บ้าน</span>
+              </button>
+              <div class="w-[1px] h-4 bg-[#3b4252]"></div>
+              <button onclick="editSavedPlace('home', event)" class="px-2.5 py-1.5 text-gray-400 hover:text-white hover:bg-[#343b4a] transition flex items-center" title="ตั้งค่าพิกัด">
+                  <i class="fas fa-cog text-[11px]"></i>
+              </button>
+          </div>
+          
+          <!-- ปุ่มโปรด -->
+          <div class="flex shrink-0 bg-[#2a303c] border border-[#3b4252] rounded-full overflow-hidden shadow-sm items-center">
+              <button onclick="handleSavedPlace('favorite')" class="px-3 py-1.5 flex items-center gap-1.5 hover:bg-[#343b4a] transition">
+                  <i class="fas fa-heart text-pink-500 text-xs"></i>
+                  <span class="label-favorite text-xs font-bold text-gray-200">โปรด</span>
+              </button>
+              <div class="w-[1px] h-4 bg-[#3b4252]"></div>
+              <button onclick="editSavedPlace('favorite', event)" class="px-2.5 py-1.5 text-gray-400 hover:text-white hover:bg-[#343b4a] transition flex items-center" title="ตั้งค่าพิกัด">
+                  <i class="fas fa-cog text-[11px]"></i>
+              </button>
+          </div>
+
+          <div class="w-[1px] h-5 bg-gray-600 shrink-0 mx-0.5"></div>
+          
+          <!-- ปุ่มประวัติการเดินทาง -->
+          <div id="recentPlacesDrop" class="flex gap-2 shrink-0 items-center"></div>
+      </div>
 
       <button onclick="confirmDropoff()" class="w-full bg-green-600 text-white py-3.5 rounded-xl font-bold mt-1 text-base shadow-md hover:bg-green-700 active:scale-[0.98] transition">ยืนยันจุดส่ง</button>
     </div>
@@ -325,6 +329,7 @@
     </div>
   </div>
 
+  <!-- ป๊อปอัปให้ผู้โดยสารกรอกโค้ดส่วนลด -->
   <div id="promoModal" class="hidden fixed inset-0 z-[140] bg-black/80 flex items-center justify-center p-4 pointer-events-auto">
       <div class="bg-[#242b35] border border-gray-700 rounded-3xl p-6 w-full max-w-sm text-center shadow-2xl">
           <div class="w-14 h-14 bg-gray-800 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl shadow-inner border border-gray-700">
@@ -396,6 +401,7 @@
       </div>
   </div>
 
+  <!-- 🌟 แจ้งเตือนดัน Z-Index ขึ้นเป็น 9999 ให้อยู่หน้าสุดเสมอ -->
   <div id="alertModal" class="hidden fixed inset-0 z-[9999] bg-black/80 flex items-center justify-center p-4 pointer-events-auto">
       <div class="bg-gray-800 border border-gray-700 rounded-3xl p-6 w-full max-w-sm text-center shadow-2xl transform transition-all">
           <div id="alertIcon" class="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl"></div>
@@ -535,10 +541,10 @@
         let f = localStorage.getItem('saved_favorite');
         
         document.querySelectorAll('.label-home').forEach(el => {
-            el.innerText = h ? 'บ้าน' : 'เพิ่มบ้าน';
+            el.innerText = h ? 'บ้าน' : 'ตั้งค่า';
         });
         document.querySelectorAll('.label-favorite').forEach(el => {
-            el.innerText = f ? 'โปรด' : 'เพิ่มโปรด';
+            el.innerText = f ? 'โปรด' : 'ตั้งค่า';
         });
     }
 
@@ -581,7 +587,7 @@
             places.forEach(p => {
                 let shortName = p.name.split(' ')[0]; 
                 if(shortName.length > 15) shortName = shortName.substring(0,15) + '...';
-                html += `<button onclick="useRecentPlace('${p.name}', ${p.lat}, ${p.lng})" class="shrink-0 bg-gray-800 border border-gray-700 text-gray-300 px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 hover:bg-gray-700 transition shadow-sm"><i class="fas fa-history text-gray-500"></i> ${shortName}</button>`;
+                html += `<button onclick="useRecentPlace('${p.name}', ${p.lat}, ${p.lng})" class="shrink-0 bg-gray-800 border border-gray-700 text-gray-300 px-3 py-1.5 rounded-full text-xs font-bold flex items-center gap-1.5 hover:bg-gray-700 transition shadow-sm"><i class="fas fa-history text-gray-500"></i> ${shortName}</button>`;
             });
         }
         let pickEl = document.getElementById('recentPlacesPick');
@@ -645,6 +651,7 @@
         if (window.alertCloseCallback) window.alertCloseCallback();
     }
 
+    // 🌟 อัปเดตสไตล์แผนที่ดาร์กโหมด ให้เห็นตึกชัดเจนขึ้นสุดๆ ตัดกับถนนสีเข้ม
     const darkMapStyle = [
         { elementType: "geometry", stylers: [{ color: "#242f3e" }] },
         { elementType: "labels.text.stroke", stylers: [{ color: "#242f3e" }] },
