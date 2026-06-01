@@ -32,7 +32,6 @@
         overflow-y: auto;
     }
 
-    /* 🌟 เพิ่มแอนิเมชันสำหรับเปิดปิด Panel แทร็กกิ้ง */
     #trackingPanel {
         transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         padding-top: 12px;
@@ -50,14 +49,17 @@
 </head>
 <body class="h-screen w-screen m-0 overflow-hidden">
 
+  <!-- แผนที่พื้นหลัง -->
   <div id="map" class="map-container hidden"></div>
 
+  <!-- Navbar -->
   <div id="navBar" class="hidden fixed top-0 w-full h-16 bg-gray-900 border-b border-green-500/30 flex items-center justify-between px-4 z-20 text-white shadow-md pointer-events-auto">
     <button onclick="goBack()" class="p-2 text-2xl active:opacity-50 hover:text-green-400 transition"><i class="fas fa-chevron-left"></i></button>
     <h1 id="navTitle" class="text-lg font-bold text-green-400">F1 Driver</h1>
     <button onclick="goHome()" class="p-2 text-xl active:opacity-50 hover:text-green-400 transition"><i class="fas fa-home"></i></button>
   </div>
 
+  <!-- ปุ่มคุมแผนที่ (บนสุด) -->
   <div id="mapControls" class="hidden fixed top-20 right-4 z-30 flex-col gap-3 pointer-events-auto">
       <button onclick="toggleMapStyle()" id="btnMapStyle" class="bg-gray-800 w-12 h-12 flex items-center justify-center rounded-full shadow-lg text-gray-400 border border-green-500/30 active:bg-gray-700 transition" title="สลับโหมดแผนที่">
           <i class="fas fa-layer-group text-xl"></i>
@@ -68,11 +70,13 @@
       <button onclick="fitRouteBounds()" id="btnOverview" class="hidden bg-gray-800 w-12 h-12 flex items-center justify-center rounded-full shadow-lg text-gray-500 border border-green-500/30 active:bg-gray-700 transition">
           <i class="fas fa-route text-xl"></i>
       </button>
+      <!-- ปุ่มฉุกเฉิน 191 (จะโชว์เฉพาะตอนขึ้นรถแล้ว) -->
       <button onclick="openEmergencyModal()" id="btnEmergency" class="hidden bg-red-900/80 w-12 h-12 flex items-center justify-center rounded-full shadow-[0_0_15px_rgba(239,68,68,0.5)] text-red-400 border border-red-500/50 active:bg-red-800 transition mt-2">
           <i class="fas fa-shield-alt text-xl"></i>
       </button>
   </div>
 
+  <!-- หน้าที่ 1: หน้าต้อนรับ -->
   <div id="page1" class="full-page flex">
     <div class="bg-gray-900 border-b border-green-500/30 text-green-400 p-6 text-center shadow-lg">
         <h1 class="text-2xl font-black tracking-wider flex justify-center items-center gap-2">
@@ -99,6 +103,7 @@
     </div>
   </div>
 
+  <!-- หน้าที่ 2: เลือกจุดรับ -->
   <div id="page2" class="hidden">
     <div class="ui-panel h-auto pb-8">
       <div class="flex justify-between items-center mb-3">
@@ -107,12 +112,14 @@
       </div>
       <div class="flex gap-2 mb-auto">
           <input type="text" id="pickupSearch" class="w-full p-4 bg-gray-800 border-2 border-gray-700 focus:border-green-500 focus:bg-gray-900 rounded-xl outline-none font-bold text-white transition-all truncate placeholder-gray-500" placeholder="ค้นหาสถานที่ หรือขยับแผนที่...">
-          <button onclick="alertMultiStop()" class="px-4 shrink-0 bg-gray-800 border border-gray-700 rounded-xl text-gray-400 hover:text-green-400 hover:border-green-500/50 flex items-center justify-center text-sm font-bold transition shadow-sm" title="เพิ่มจุดแวะรับ"><i class="fas fa-plus mr-1"></i> เพิ่มจุด</button>
+          <!-- 🌟 แก้ไขคำว่า + จุดแวะ -->
+          <button onclick="alertMultiStop()" class="px-4 shrink-0 bg-gray-800 border border-gray-700 rounded-xl text-gray-400 hover:text-green-400 hover:border-green-500/50 flex items-center justify-center text-sm font-bold transition shadow-sm" title="เพิ่มจุดแวะรับ"><i class="fas fa-plus mr-1"></i> จุดแวะ</button>
       </div>
       <button onclick="confirmPickup()" class="w-full bg-green-600 text-white py-3.5 rounded-xl font-bold mt-4 text-base shadow-md hover:bg-green-700 active:scale-[0.98] transition">ยืนยันจุดรับ</button>
     </div>
   </div>
 
+  <!-- หน้าที่ 3: เลือกจุดส่ง -->
   <div id="page3" class="hidden">
     <div class="ui-panel h-auto pb-8">
       <div class="flex justify-between items-center mb-3">
@@ -121,12 +128,14 @@
       </div>
       <div class="flex gap-2 mb-auto">
           <input type="text" id="dropoffSearch" class="w-full p-4 bg-gray-800 border-2 border-gray-700 focus:border-green-500 focus:bg-gray-900 rounded-xl outline-none font-bold text-white transition-all truncate placeholder-gray-500" placeholder="ค้นหาสถานที่ หรือขยับแผนที่...">
-          <button onclick="alertMultiStop()" class="px-4 shrink-0 bg-gray-800 border border-gray-700 rounded-xl text-gray-400 hover:text-red-400 hover:border-red-500/50 flex items-center justify-center text-sm font-bold transition shadow-sm" title="เพิ่มจุดแวะส่ง"><i class="fas fa-plus mr-1"></i> เพิ่มจุด</button>
+          <!-- 🌟 แก้ไขคำว่า + จุดแวะ -->
+          <button onclick="alertMultiStop()" class="px-4 shrink-0 bg-gray-800 border border-gray-700 rounded-xl text-gray-400 hover:text-red-400 hover:border-red-500/50 flex items-center justify-center text-sm font-bold transition shadow-sm" title="เพิ่มจุดแวะส่ง"><i class="fas fa-plus mr-1"></i> จุดแวะ</button>
       </div>
       <button onclick="confirmDropoff()" class="w-full bg-green-600 text-white py-3.5 rounded-xl font-bold mt-4 text-base shadow-md hover:bg-green-700 active:scale-[0.98] transition">ยืนยันจุดส่ง</button>
     </div>
   </div>
 
+  <!-- หน้าที่ 4: สรุปและยืนยันการเดินทาง -->
   <div id="page4" class="hidden">
     <div class="ui-panel h-auto pb-6">
       <h2 class="font-black text-center text-lg text-green-400 mb-4">สรุปการเดินทาง</h2>
@@ -176,6 +185,7 @@
     </div>
   </div>
 
+  <!-- หน้าต่างติดตามสถานะคนขับ (Tracking) -->
   <div id="pageTracking" class="hidden">
     <div id="trackingPanel" class="ui-panel h-auto pb-6">
       
@@ -230,15 +240,12 @@
         </a>
       </div>
 
-      <div class="flex gap-2">
-          <a href="javascript:void(0)" onclick="openEmergencyModal()" class="flex-1 bg-red-900/40 text-red-400 py-3 rounded-xl font-bold border border-red-900/50 text-sm hover:bg-red-900/60 transition flex items-center justify-center gap-2">
-              <i class="fas fa-shield-alt"></i> ฉุกเฉิน 191
-          </a>
-          <button id="btnCancel" onclick="openCancelModal()" class="flex-1 bg-gray-800 text-gray-400 border border-gray-700 py-3 rounded-xl font-bold text-sm hover:bg-gray-700 transition">ยกเลิกงาน</button>
-      </div>
+      <!-- 🌟 ปุ่มยกเลิกเดี่ยวๆ (เพราะย้ายปุ่มฉุกเฉินไปไว้ที่แผนที่แล้ว) -->
+      <button id="btnCancel" onclick="openCancelModal()" class="w-full bg-gray-800 text-gray-400 py-3 rounded-xl font-bold border border-gray-700 text-sm hover:bg-gray-700 transition">ยกเลิกการเรียกรถ</button>
     </div>
   </div>
 
+  <!-- ป๊อปอัปโทรฉุกเฉิน 191 -->
   <div id="emergencyModal" class="hidden fixed inset-0 z-[120] bg-black/80 flex items-center justify-center p-4 pointer-events-auto">
       <div class="bg-gray-800 border border-red-500/50 rounded-3xl p-6 w-full max-w-sm text-center shadow-[0_0_30px_rgba(239,68,68,0.2)]">
           <div class="w-16 h-16 bg-red-900/30 text-red-500 border border-red-500/30 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl">
@@ -253,6 +260,7 @@
       </div>
   </div>
 
+  <!-- ป๊อปอัปยืนยันยกเลิกการเรียกรถ -->
   <div id="cancelModal" class="hidden fixed inset-0 z-[100] bg-black/80 flex items-center justify-center p-4 pointer-events-auto">
       <div class="bg-gray-800 border border-gray-700 rounded-3xl p-6 w-full max-w-sm text-center shadow-2xl">
           <div class="w-16 h-16 bg-gray-900 text-gray-400 border border-gray-700 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl">
@@ -267,6 +275,7 @@
       </div>
   </div>
 
+  <!-- ป๊อปอัปแจ้งเตือนทั่วไป -->
   <div id="alertModal" class="hidden fixed inset-0 z-[120] bg-black/80 flex items-center justify-center p-4 pointer-events-auto">
       <div class="bg-gray-800 border border-gray-700 rounded-3xl p-6 w-full max-w-sm text-center shadow-2xl transform transition-all">
           <div id="alertIcon" class="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl"></div>
@@ -318,7 +327,6 @@
         }
     });
 
-    // 🌟 ระบบควบคุมแผงแทร็กกิ้งยืด/หด
     function toggleTrackingPanel() {
         const panel = document.getElementById('trackingPanel');
         panel.classList.toggle('panel-collapsed');
@@ -427,7 +435,6 @@
                 document.getElementById('btnCrosshair').classList.replace('text-gray-500', 'text-green-400');
                 document.getElementById('btnOverview').classList.replace('text-green-400', 'text-gray-500');
                 
-                // 🌟 เล็งปุ๊บหดแผงลงอัตโนมัติ
                 const panel = document.getElementById('trackingPanel');
                 if(panel && !panel.classList.contains('panel-collapsed')) {
                     panel.classList.add('panel-collapsed');
@@ -450,23 +457,25 @@
         }
     }
 
-    // 🌟 รูปแบบหมุดทรงกลมมาตรฐาน (Grab Style)
+    // 🌟 เปลี่ยนดีไซน์หมุดให้เป็นแบบเจาะรูตรงกลาง (Hollow Location Pin)
     const customPickIcon = {
-        path: typeof google !== 'undefined' && google.maps ? google.maps.SymbolPath.CIRCLE : 0,
+        path: "M 0,0 C -12,-16 -18,-22 -18,-32 A 18,18 0 1,1 18,-32 C 18,-22 12,-16 0,0 Z M -8,-32 A 8,8 0 1,0 8,-32 A 8,8 0 1,0 -8,-32 Z",
         fillColor: '#22c55e',
         fillOpacity: 1,
-        strokeWeight: 3,
+        strokeWeight: 2,
         strokeColor: '#ffffff',
-        scale: 8
+        scale: 1,
+        anchor: typeof google !== 'undefined' && google.maps ? new google.maps.Point(0, 0) : null
     };
     
     const customDropIcon = {
-        path: typeof google !== 'undefined' && google.maps ? google.maps.SymbolPath.CIRCLE : 0,
+        path: "M 0,0 C -12,-16 -18,-22 -18,-32 A 18,18 0 1,1 18,-32 C 18,-22 12,-16 0,0 Z M -8,-32 A 8,8 0 1,0 8,-32 A 8,8 0 1,0 -8,-32 Z",
         fillColor: '#ef4444',
         fillOpacity: 1,
-        strokeWeight: 3,
+        strokeWeight: 2,
         strokeColor: '#ffffff',
-        scale: 8
+        scale: 1,
+        anchor: typeof google !== 'undefined' && google.maps ? new google.maps.Point(0, 0) : null
     };
 
     function initMap() {
@@ -497,8 +506,8 @@
       geocoder = new google.maps.Geocoder();
       placesService = new google.maps.places.PlacesService(map);
       
-      customPickIcon.path = google.maps.SymbolPath.CIRCLE;
-      customDropIcon.path = google.maps.SymbolPath.CIRCLE;
+      customPickIcon.anchor = new google.maps.Point(0, 0);
+      customDropIcon.anchor = new google.maps.Point(0, 0);
       
       markerPick = new google.maps.Marker({map: null, icon: customPickIcon, zIndex: 2});
       markerDrop = new google.maps.Marker({map: null, icon: customDropIcon, zIndex: 2});
@@ -870,7 +879,6 @@
       if(currentStep !== 'Tracking') {
           showPage('Tracking');
           document.getElementById('btnOverview').classList.remove('hidden'); 
-          document.getElementById('btnEmergency').classList.remove('hidden');
       }
       
       document.getElementById('navTitle').innerText = "สถานะการเดินทาง";
@@ -891,7 +899,6 @@
       document.getElementById('trackPick').innerText = bookData.pName;
       document.getElementById('trackDrop').innerText = bookData.dName;
 
-      // 🌟 ดึงข้อมูลป้ายทะเบียนและยี่ห้อรถมาโชว์
       if(bookData.driverPin) {
           document.getElementById('driverInfoBox').classList.remove('hidden');
           db.ref('drivers_profile/' + bookData.driverPin).once('value', snap => {
@@ -918,16 +925,19 @@
           statusEl.className = "font-black text-blue-400 text-base leading-tight";
       }
 
-      if(bookData.status === "รอผู้ขับขี่ตอบรับ") {
-          btnCancel.classList.remove('hidden');
+      // 🌟 ระบบซ่อน/โชว์ปุ่ม 191 และปุ่มยกเลิกงาน
+      const btnEmergency = document.getElementById('btnEmergency');
+      if (bookData.status.includes("มาถึงจุดรับ") || bookData.status.includes("ออกเดินทาง") || bookData.status.includes("ไปยังจุดส่ง")) {
+          btnEmergency.classList.remove('hidden'); // โชว์ 191 เมื่อขึ้นรถแล้ว
+          btnCancel.classList.add('hidden'); // ซ่อนปุ่มยกเลิก
       } else {
-          btnCancel.classList.add('hidden');
+          btnEmergency.classList.add('hidden'); // ซ่อน 191 ตอนรอรถ
+          btnCancel.classList.remove('hidden'); // โชว์ปุ่มยกเลิก
       }
 
       const contactBox = document.getElementById('driverContactBox');
       if (bookData.status === "รอผู้ขับขี่ตอบรับ" || bookData.status === "ยกเลิกโดยคนขับ") {
           contactBox.classList.add('hidden'); contactBox.classList.remove('flex');
-          document.getElementById('btnCancel').classList.remove('hidden'); 
       } else {
           contactBox.classList.remove('hidden'); contactBox.classList.add('flex');
           if(bookData.driverPhone) {
@@ -1015,7 +1025,7 @@
           if(polylineRoute) polylineRoute.setMap(null);
           polylineRoute = new google.maps.Polyline({
               path: res.routes[0].legs[0].steps.flatMap(step => step.path),
-              strokeColor: '#3b82f6', // สีฟ้า
+              strokeColor: '#3b82f6', 
               strokeWeight: 6,
               map: map
           });
@@ -1026,7 +1036,7 @@
           
           if(isGoingToPickup) {
               etaEl.innerText = `คนขับอยู่ห่าง: ${leg.distance.text} • อีก ${leg.duration.text}`;
-              etaEl.className = "text-[11px] text-green-400 font-bold mt-0.5 inline-block";
+              etaEl.className = "text-[11px] text-blue-400 font-bold mt-0.5 inline-block";
           } else {
               etaEl.innerText = `ระยะทางไปส่ง: ${leg.distance.text} • อีก ${leg.duration.text}`;
               etaEl.className = "text-[11px] text-blue-400 font-bold mt-0.5 inline-block";
@@ -1035,7 +1045,6 @@
           if(isStatusChanged && map) {
               setTimeout(()=>{ fitRouteBounds(); }, 200);
           } else if (isTrackingMode && map && markerDriver) {
-              // 🌟 เช็กสถานะการหดของแผงแทร็กกิ้ง เพื่อตั้ง Padding กล้องให้ถูก
               const panel = document.getElementById('trackingPanel');
               const isCollapsed = panel && panel.classList.contains('panel-collapsed');
               const bottomPad = isCollapsed ? 120 : 420;
@@ -1044,17 +1053,6 @@
           }
         }
       });
-    }
-
-    function openCancelModal() { document.getElementById('cancelModal').classList.remove('hidden'); }
-    function closeCancelModal() { document.getElementById('cancelModal').classList.add('hidden'); }
-    function confirmCancelBooking() {
-        document.getElementById('cancelModal').classList.add('hidden');
-        window.isCompleting = true;
-        db.ref('bookings/' + lineUserId).remove().then(() => {
-            if(APPS_SCRIPT_URL) fetch(`${APPS_SCRIPT_URL}?action=notify&type=cancel&name=${lineName}`, {mode:'no-cors'});
-            showAlert('ยกเลิกสำเร็จ', 'ระบบได้ทำการยกเลิกการเรียกรถเรียบร้อยแล้ว', 'success', () => { window.location.reload(); });
-        });
     }
 
   </script>
