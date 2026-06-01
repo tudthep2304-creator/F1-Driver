@@ -41,10 +41,24 @@
     }
 
     .full-page { position: fixed; inset: 0; z-index: 30; background: #111827; flex-direction: column; }
-    .pac-container { z-index: 10000 !important; font-family: 'Kanit'; border-radius: 12px; border: 1px solid #374151; background-color: #1f2937; box-shadow: 0 4px 20px rgba(0,0,0,0.5); margin-top: 8px;}
+    
+    /* 🌟 อัปเกรด: บังคับกล่องค้นหา Google Maps ให้เด้งขึ้นด้านบน (Drop-up) */
+    .pac-container { 
+        z-index: 10000 !important; 
+        font-family: 'Kanit'; 
+        border-radius: 16px; 
+        border: 1px solid #374151; 
+        background-color: #1f2937; 
+        box-shadow: 0 -8px 25px rgba(0,0,0,0.6); /* เปลี่ยนเงาให้ชี้ขึ้นบน */
+        margin-top: 0;
+        /* ดันกล่องขึ้นไปเหนือช่องกรอก (ความสูงตัวเอง + ความสูงช่องกรอก ~68px) */
+        transform: translateY(calc(-100% - 68px)) !important; 
+    }
     .pac-item { padding: 12px; border-top: 1px solid #374151; cursor: pointer; color: #d1d5db; }
     .pac-item:first-child { border-top: none; }
     .pac-item-query { color: #fff; font-weight: bold; }
+    /* เปลี่ยนสีไอคอนหมุดในกล่องค้นหาให้เข้าตีม */
+    .pac-item .pac-icon { filter: invert(70%) sepia(50%) saturate(400%) hue-rotate(80deg); }
   </style>
 </head>
 <body class="h-screen w-screen m-0 overflow-hidden">
@@ -59,7 +73,7 @@
     <button onclick="goHome()" class="p-2 text-xl active:opacity-50 hover:text-green-400 transition"><i class="fas fa-home"></i></button>
   </div>
 
-  <!-- ปุ่มคุมแผนที่ -->
+  <!-- ปุ่มคุมแผนที่ (บนสุด) -->
   <div id="mapControls" class="hidden fixed top-20 right-4 z-30 flex-col gap-3 pointer-events-auto">
       <button onclick="toggleMapStyle()" id="btnMapStyle" class="bg-gray-800 w-12 h-12 flex items-center justify-center rounded-full shadow-lg text-gray-400 border border-green-500/30 active:bg-gray-700 transition" title="สลับโหมดแผนที่">
           <i class="fas fa-layer-group text-xl"></i>
@@ -229,7 +243,6 @@
           </div>
       </div>
 
-      <!-- 🌟 ปุ่มติดต่อคนขับ (จะซ่อนเมื่อเริ่มออกเดินทางไปจุดส่ง) -->
       <div id="driverContactBox" class="hidden gap-2 mb-3 shrink-0">
         <button onclick="openLineOA()" class="flex-1 bg-green-600 text-white py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2 shadow-sm hover:bg-green-700 transition">
           <i class="fab fa-line text-lg"></i> แชทหาคนขับ
@@ -922,28 +935,26 @@
           statusEl.className = "font-black text-blue-400 text-base leading-tight";
       }
 
-      // 🌟 ระบบจัดการปุ่มบนแผนที่และด้านล่าง (โชว์/ซ่อนเฉพาะสถานะที่เหมาะสม)
       const btnEmergency = document.getElementById('btnEmergency');
       const contactBox = document.getElementById('driverContactBox');
 
       if (bookData.status === "รอผู้ขับขี่ตอบรับ") {
-          btnEmergency.classList.add('hidden'); // ซ่อน 191
-          contactBox.classList.add('hidden'); contactBox.classList.remove('flex'); // ซ่อนแชท
-          btnCancel.classList.remove('hidden'); // โชว์ปุ่มยกเลิก
+          btnEmergency.classList.add('hidden');
+          contactBox.classList.add('hidden'); contactBox.classList.remove('flex');
+          btnCancel.classList.remove('hidden'); 
       } 
       else if (bookData.status.includes("กำลังเดินทางไปหา") || bookData.status.includes("มาถึงจุดรับ") || bookData.status.includes("รับงานแล้ว")) {
-          btnEmergency.classList.add('hidden'); // ซ่อน 191 (ยังไม่ขึ้นรถ)
-          contactBox.classList.remove('hidden'); contactBox.classList.add('flex'); // โชว์แชท
-          btnCancel.classList.remove('hidden'); // โชว์ปุ่มยกเลิก
+          btnEmergency.classList.add('hidden'); 
+          contactBox.classList.remove('hidden'); contactBox.classList.add('flex'); 
+          btnCancel.classList.remove('hidden'); 
           if(bookData.driverPhone) document.getElementById('btnDriverCall').href = "tel:" + bookData.driverPhone;
       } 
       else if (bookData.status.includes("ออกเดินทาง") || bookData.status.includes("ไปยังจุดส่ง")) {
-          btnEmergency.classList.remove('hidden'); // 🌟 โชว์ 191 (ขึ้นรถแล้ว)
-          contactBox.classList.add('hidden'); contactBox.classList.remove('flex'); // 🌟 ซ่อนแชท (ขึ้นรถแล้ว)
-          btnCancel.classList.add('hidden'); // 🌟 ซ่อนปุ่มยกเลิก
+          btnEmergency.classList.remove('hidden'); 
+          contactBox.classList.add('hidden'); contactBox.classList.remove('flex'); 
+          btnCancel.classList.add('hidden'); 
       } 
       else {
-          // สถานะอื่น (เช่น ยกเลิก หรือ ถึงที่หมาย)
           btnEmergency.classList.add('hidden');
           contactBox.classList.add('hidden'); contactBox.classList.remove('flex');
           btnCancel.classList.add('hidden');
