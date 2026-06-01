@@ -42,7 +42,6 @@
 
     .full-page { position: fixed; inset: 0; z-index: 30; background: #111827; flex-direction: column; }
     
-    /* กล่องค้นหา Google Maps Drop-up */
     .pac-container { 
         z-index: 10000 !important; 
         font-family: 'Kanit'; 
@@ -53,7 +52,7 @@
         margin-top: 0;
         transform: translateY(calc(-100% - 68px)) !important; 
     }
-    .pac-item { padding: 12px; border-top: 1px solid #374151; cursor: pointer; color: #d1d5db; }
+    .pac-item { padding: 12px; border-top: 1px solid #374151; cursor: pointer; color: #d1d5db; font-size: 14px; }
     .pac-item:first-child { border-top: none; }
     .pac-item-query { color: #fff; font-weight: bold; }
     .pac-item .pac-icon { filter: invert(70%) sepia(50%) saturate(400%) hue-rotate(80deg); }
@@ -101,7 +100,7 @@
       
       <div class="bg-gray-800 p-6 rounded-2xl text-center border border-gray-700 shadow-sm relative overflow-hidden">
         <div class="absolute top-0 right-0 p-3 opacity-[0.03]"><i class="fas fa-car-side text-6xl text-white"></i></div>
-        <h3 class="text-gray-400 mb-2 font-medium relative z-10">สถานะรถพร้อมให้บริการ</h3>
+        <h3 class="text-sm text-gray-400 mb-2 font-bold relative z-10">สถานะรถพร้อมให้บริการ</h3>
         <div id="driverStatus" class="text-2xl font-black text-gray-500 relative z-10 flex items-center justify-center gap-2">
             <i class="fas fa-spinner fa-spin text-lg"></i> โหลดข้อมูล...
         </div>
@@ -120,7 +119,7 @@
         <button onclick="useCurrentLocation()" class="text-xs font-bold bg-gray-700 border border-gray-600 text-green-400 px-3 py-1.5 rounded-full hover:bg-gray-600 transition shadow-sm"><i class="fas fa-crosshairs mr-1"></i> ตำแหน่งปัจจุบัน</button>
       </div>
       <div class="flex gap-2 mb-3">
-          <input type="text" id="pickupSearch" class="w-full p-4 bg-gray-800 border-2 border-gray-700 focus:border-green-500 focus:bg-gray-900 rounded-xl outline-none font-bold text-white transition-all truncate placeholder-gray-500" placeholder="ค้นหาสถานที่ หรือขยับแผนที่...">
+          <input type="text" id="pickupSearch" class="w-full p-3.5 bg-gray-800 border-2 border-gray-700 focus:border-green-500 focus:bg-gray-900 rounded-xl outline-none font-bold text-sm text-white transition-all truncate placeholder-gray-500" placeholder="ค้นหาสถานที่ หรือขยับแผนที่...">
           <button onclick="alertMultiStop()" class="px-4 shrink-0 bg-gray-800 border border-gray-700 rounded-xl text-gray-400 hover:text-green-400 hover:border-green-500/50 flex items-center justify-center text-sm font-bold transition shadow-sm" title="เพิ่มจุดแวะรับ"><i class="fas fa-plus mr-1"></i> จุดแวะ</button>
       </div>
       
@@ -130,7 +129,7 @@
                   <div class="w-7 h-7 rounded-full bg-blue-500/20 flex items-center justify-center shrink-0">
                       <i class="fas fa-home text-blue-400 text-sm"></i>
                   </div>
-                  <span class="label-home text-[12px] sm:text-xs font-bold text-gray-200 truncate">บ้าน</span>
+                  <span class="label-home text-xs font-bold text-gray-200 truncate">บ้าน</span>
               </button>
               <button onclick="editSavedPlace('home', event)" class="absolute right-2 top-1/2 -translate-y-1/2 w-6 h-6 flex items-center justify-center text-gray-500 hover:text-white transition rounded-full hover:bg-gray-700" title="ตั้งค่าพิกัด">
                   <i class="fas fa-cog text-xs"></i>
@@ -142,7 +141,7 @@
                   <div class="w-7 h-7 rounded-full bg-pink-500/20 flex items-center justify-center shrink-0">
                       <i class="fas fa-heart text-pink-500 text-sm"></i>
                   </div>
-                  <span class="label-favorite text-[12px] sm:text-xs font-bold text-gray-200 truncate">รายการโปรด</span>
+                  <span class="label-favorite text-xs font-bold text-gray-200 truncate">รายการโปรด</span>
               </button>
               <button onclick="editSavedPlace('favorite', event)" class="absolute right-2 top-1/2 -translate-y-1/2 w-6 h-6 flex items-center justify-center text-gray-500 hover:text-white transition rounded-full hover:bg-gray-700" title="ตั้งค่าพิกัด">
                   <i class="fas fa-cog text-xs"></i>
@@ -163,7 +162,7 @@
         <button onclick="useCurrentLocation()" class="text-xs font-bold bg-gray-700 border border-gray-600 text-green-400 px-3 py-1.5 rounded-full hover:bg-gray-600 transition shadow-sm"><i class="fas fa-crosshairs mr-1"></i> ตำแหน่งปัจจุบัน</button>
       </div>
       <div class="flex gap-2 mb-3">
-          <input type="text" id="dropoffSearch" class="w-full p-4 bg-gray-800 border-2 border-gray-700 focus:border-green-500 focus:bg-gray-900 rounded-xl outline-none font-bold text-white transition-all truncate placeholder-gray-500" placeholder="ค้นหาสถานที่ หรือขยับแผนที่...">
+          <input type="text" id="dropoffSearch" class="w-full p-3.5 bg-gray-800 border-2 border-gray-700 focus:border-green-500 focus:bg-gray-900 rounded-xl outline-none font-bold text-sm text-white transition-all truncate placeholder-gray-500" placeholder="ค้นหาสถานที่ หรือขยับแผนที่...">
           <button onclick="alertMultiStop()" class="px-4 shrink-0 bg-gray-800 border border-gray-700 rounded-xl text-gray-400 hover:text-red-400 hover:border-red-500/50 flex items-center justify-center text-sm font-bold transition shadow-sm" title="เพิ่มจุดแวะส่ง"><i class="fas fa-plus mr-1"></i> จุดแวะ</button>
       </div>
       
@@ -173,7 +172,7 @@
                   <div class="w-7 h-7 rounded-full bg-blue-500/20 flex items-center justify-center shrink-0">
                       <i class="fas fa-home text-blue-400 text-sm"></i>
                   </div>
-                  <span class="label-home text-[12px] sm:text-xs font-bold text-gray-200 truncate">บ้าน</span>
+                  <span class="label-home text-xs font-bold text-gray-200 truncate">บ้าน</span>
               </button>
               <button onclick="editSavedPlace('home', event)" class="absolute right-2 top-1/2 -translate-y-1/2 w-6 h-6 flex items-center justify-center text-gray-500 hover:text-white transition rounded-full hover:bg-gray-700">
                   <i class="fas fa-cog text-xs"></i>
@@ -184,7 +183,7 @@
                   <div class="w-7 h-7 rounded-full bg-pink-500/20 flex items-center justify-center shrink-0">
                       <i class="fas fa-heart text-pink-500 text-sm"></i>
                   </div>
-                  <span class="label-favorite text-[12px] sm:text-xs font-bold text-gray-200 truncate">รายการโปรด</span>
+                  <span class="label-favorite text-xs font-bold text-gray-200 truncate">รายการโปรด</span>
               </button>
               <button onclick="editSavedPlace('favorite', event)" class="absolute right-2 top-1/2 -translate-y-1/2 w-6 h-6 flex items-center justify-center text-gray-500 hover:text-white transition rounded-full hover:bg-gray-700">
                   <i class="fas fa-cog text-xs"></i>
@@ -206,21 +205,21 @@
           <div class="absolute left-[1.35rem] top-6 bottom-6 w-0.5 border-l-2 border-dashed border-gray-600"></div>
           <div class="flex items-start gap-3 mb-3 relative z-10">
               <div class="mt-1"><i class="fas fa-circle text-[10px] text-green-500 border border-white rounded-full"></i></div>
-              <p class="text-[13px] text-gray-200 truncate font-medium flex-1 leading-tight" id="sumPick">...</p>
+              <p class="text-xs text-gray-200 truncate font-medium flex-1 leading-tight" id="sumPick">...</p>
           </div>
           <div class="flex items-start gap-3 relative z-10">
               <div class="mt-1"><i class="fas fa-circle text-[10px] text-red-500 border border-white rounded-full"></i></div>
-              <p class="text-[13px] text-gray-200 truncate font-medium flex-1 leading-tight" id="sumDrop">...</p>
+              <p class="text-xs text-gray-200 truncate font-medium flex-1 leading-tight" id="sumDrop">...</p>
           </div>
       </div>
 
       <div class="flex justify-between items-end bg-gray-800 p-3 rounded-2xl mb-4 border border-gray-700 shadow-inner">
         <div>
-          <p class="text-[11px] text-gray-400 font-bold mb-0.5">ระยะทาง / เวลา</p>
+          <p class="text-xs text-gray-400 font-bold mb-0.5">ระยะทาง / เวลา</p>
           <p class="font-black text-green-400 text-sm"><span id="sumDist">0</span> กม. • <span id="sumWait">0</span> นาที</p>
         </div>
         <div class="text-right">
-          <p class="text-[11px] text-gray-400 font-bold mb-0.5">ราคาเหมาจ่าย <span id="discountTag" class="hidden text-green-400 bg-green-900/50 border border-green-500/30 px-1.5 rounded"></span></p>
+          <p class="text-xs text-gray-400 font-bold mb-0.5">ราคาเหมาจ่าย <span id="discountTag" class="hidden text-green-400 bg-green-900/50 border border-green-500/30 px-1.5 rounded text-[10px]"></span></p>
           <div class="flex items-end justify-end gap-2">
               <p id="sumPriceOld" class="hidden text-sm text-gray-500 line-through font-bold pb-0.5"></p>
               <p class="font-black text-xl text-green-400 leading-none">฿<span id="sumPrice">0</span></p>
@@ -229,8 +228,8 @@
       </div>
 
       <div class="flex gap-2 mb-4">
-          <input type="text" id="promoInput" placeholder="โค้ดส่วนลด (ถ้ามี)" class="flex-1 p-3 bg-gray-800 border border-gray-700 focus:border-green-500 text-white rounded-xl text-sm font-bold uppercase outline-none transition placeholder-gray-500">
-          <button onclick="applyPromoCode()" class="bg-gray-700 border border-gray-600 text-white px-4 rounded-xl font-bold text-sm hover:bg-gray-600 transition active:scale-95 whitespace-nowrap">ใช้โค้ด</button>
+          <input type="text" id="promoInput" placeholder="โค้ดส่วนลด (ถ้ามี)" class="flex-1 p-3.5 bg-gray-800 border border-gray-700 focus:border-green-500 text-white rounded-xl text-sm font-bold uppercase outline-none transition placeholder-gray-500">
+          <button onclick="applyPromoCode()" class="bg-gray-700 border border-gray-600 text-white px-5 rounded-xl font-bold text-sm hover:bg-gray-600 transition active:scale-95 whitespace-nowrap">ใช้โค้ด</button>
       </div>
       
       <form onsubmit="event.preventDefault(); submitBooking();" class="w-full">
@@ -238,9 +237,9 @@
               <div class="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none text-green-500">
                   <i class="fas fa-phone-alt"></i>
               </div>
-              <input type="tel" id="userPhone" name="phone" autocomplete="tel" inputmode="tel" oninput="formatPhone(this)" placeholder="เบอร์โทรติดต่อ (10 หลัก)" class="w-full p-3.5 pl-10 bg-gray-800 border-2 border-gray-700 focus:border-green-500 focus:bg-gray-900 text-white placeholder-gray-500 rounded-xl font-bold outline-none transition-colors" required>
+              <input type="tel" id="userPhone" name="phone" autocomplete="tel" inputmode="tel" oninput="formatPhone(this)" placeholder="เบอร์โทรติดต่อ (10 หลัก)" class="w-full p-3.5 pl-10 bg-gray-800 border-2 border-gray-700 focus:border-green-500 focus:bg-gray-900 text-white placeholder-gray-500 rounded-xl text-sm font-bold outline-none transition-colors" required>
           </div>
-          <button type="submit" class="w-full bg-green-600 text-white py-4 rounded-xl font-bold text-lg mt-auto shadow-[0_0_15px_rgba(34,197,94,0.3)] hover:bg-green-700 active:scale-[0.98] transition flex justify-center items-center gap-2">
+          <button type="submit" class="w-full bg-green-600 text-white py-4 rounded-xl font-bold text-base mt-auto shadow-[0_0_15px_rgba(34,197,94,0.3)] hover:bg-green-700 active:scale-[0.98] transition flex justify-center items-center gap-2">
               ยืนยันเรียกรถ <i class="fas fa-car-side"></i>
           </button>
       </form>
@@ -256,12 +255,12 @@
 
       <div class="flex justify-between items-center border-b border-gray-700 pb-3 mb-3 cursor-pointer" onclick="toggleTrackingPanel()">
         <div>
-            <h2 class="font-black text-green-400 text-base leading-tight" id="trackStatus">รอผู้ขับขี่ตอบรับ...</h2>
-            <p class="text-[11px] text-blue-400 font-bold mt-0.5 hidden" id="trackEtaDisplay">คนขับอยู่ห่าง: -- กม. • -- นาที</p>
+            <h2 class="font-black text-green-400 text-lg leading-tight" id="trackStatus">รอผู้ขับขี่ตอบรับ...</h2>
+            <p class="text-xs text-blue-400 font-bold mt-0.5 hidden" id="trackEtaDisplay">คนขับอยู่ห่าง: -- กม. • -- นาที</p>
         </div>
         <div class="text-right">
-            <span class="bg-gray-800 border border-green-500/30 px-3 py-1.5 rounded-xl font-black text-green-400 text-sm shrink-0 inline-block" id="trackPrice">฿0</span>
-            <p id="trackPromoText" class="text-[9px] text-green-400 bg-green-900/30 border border-green-500/20 px-1 rounded font-bold mt-1 hidden"></p>
+            <span class="bg-gray-800 border border-green-500/30 px-3 py-1.5 rounded-xl font-black text-green-400 text-base shrink-0 inline-block" id="trackPrice">฿0</span>
+            <p id="trackPromoText" class="text-[10px] text-green-400 bg-green-900/30 border border-green-500/20 px-1 rounded font-bold mt-1 hidden"></p>
         </div>
       </div>
       
@@ -269,13 +268,13 @@
           <div class="flex items-center gap-3">
               <div class="w-12 h-12 bg-gray-700 rounded-full flex items-center justify-center text-green-400 text-2xl border border-gray-600"><i class="fas fa-user-tie"></i></div>
               <div>
-                  <p class="text-[10px] font-bold text-gray-400">คนขับของคุณ</p>
+                  <p class="text-xs font-bold text-gray-400">คนขับของคุณ</p>
                   <p class="text-sm font-black text-white" id="trackDriverName">กำลังดึงข้อมูล...</p>
-                  <p class="text-[11px] text-gray-400 mt-0.5" id="trackDriverCar">-</p>
-                  <p class="text-[11px] text-gray-400" id="trackDriverPlate">-</p>
+                  <p class="text-xs text-gray-400 mt-0.5" id="trackDriverCar">-</p>
+                  <p class="text-xs text-gray-400" id="trackDriverPlate">-</p>
               </div>
           </div>
-          <div class="text-[10px] text-right font-bold text-green-400 bg-green-900/30 px-2 py-1 rounded border border-green-500/20">
+          <div class="text-xs text-right font-bold text-green-400 bg-green-900/30 px-2 py-1 rounded border border-green-500/20">
               <i class="fas fa-shield-alt"></i> ยืนยันแล้ว
           </div>
       </div>
@@ -284,18 +283,20 @@
           <div class="absolute left-[1.35rem] top-6 bottom-6 w-0.5 border-l-2 border-dashed border-gray-600"></div>
           <div class="flex items-start gap-3 mb-3 relative z-10">
               <div class="mt-1"><i class="fas fa-circle text-[10px] text-green-500 border border-white rounded-full"></i></div>
-              <p class="text-[12px] text-gray-200 truncate font-medium flex-1 leading-tight" id="trackPick">...</p>
+              <p class="text-xs text-gray-200 truncate font-medium flex-1 leading-tight" id="trackPick">...</p>
           </div>
           <div class="flex items-start gap-3 relative z-10">
               <div class="mt-1"><i class="fas fa-circle text-[10px] text-red-500 border border-white rounded-full"></i></div>
-              <p class="text-[12px] text-gray-200 truncate font-medium flex-1 leading-tight" id="trackDrop">...</p>
+              <p class="text-xs text-gray-200 truncate font-medium flex-1 leading-tight" id="trackDrop">...</p>
           </div>
       </div>
 
       <div id="actionButtonsBox" class="hidden gap-2 mb-1 shrink-0 w-full flex-row">
-          <button id="btnCancel" onclick="openCancelModal()" class="flex-[0.8] bg-red-900/40 text-red-400 py-2.5 rounded-xl font-bold border border-red-500/30 text-[13px] hover:bg-red-900/60 transition flex justify-center items-center gap-1.5"><i class="fas fa-times"></i> ยกเลิก</button>
-          <button id="btnChat" onclick="openLineOA()" class="flex-1 bg-green-600 text-white py-2.5 rounded-xl font-bold text-[13px] shadow-sm hover:bg-green-700 transition flex justify-center items-center gap-1.5"><i class="fab fa-line text-lg leading-none"></i> แชท</button>
-          <button id="btnCall" onclick="openCallConfirmModal()" class="flex-[0.9] bg-gray-800 text-green-400 border border-green-500/30 py-2.5 rounded-xl font-bold text-[13px] shadow-sm hover:bg-gray-700 transition flex justify-center items-center gap-1.5"><i class="fas fa-phone-alt"></i> โทรด่วน</button>
+          <button id="btnCancel" onclick="openCancelModal()" class="flex-1 w-full bg-red-900/40 text-red-400 py-3 rounded-xl font-bold border border-red-500/30 text-sm hover:bg-red-900/60 transition flex justify-center items-center gap-1.5"><i class="fas fa-times"></i> ยกเลิก</button>
+          
+          <button id="btnChat" onclick="openLineOA()" class="flex-1 w-full bg-green-600 text-white py-3 rounded-xl font-bold text-sm shadow-sm hover:bg-green-700 transition flex justify-center items-center gap-1.5"><i class="fab fa-line text-lg leading-none"></i> แชท</button>
+          
+          <button id="btnCall" onclick="openCallConfirmModal()" class="flex-1 w-full bg-gray-800 text-green-400 border border-green-500/30 py-3 rounded-xl font-bold text-sm shadow-sm hover:bg-gray-700 transition flex justify-center items-center gap-1.5"><i class="fas fa-phone-alt"></i> โทร</button>
       </div>
 
     </div>
@@ -427,11 +428,10 @@
         closeConfirmActionModal();
     }
 
-    // ฟังก์ชันเปิดป๊อปอัปโทร
     function openCallConfirmModal() { document.getElementById('callConfirmModal').classList.remove('hidden'); }
     function closeCallConfirmModal() { document.getElementById('callConfirmModal').classList.add('hidden'); }
 
-    // ฟังก์ชันป๊อปอัปยกเลิก
+    // ฟังก์ชันป๊อปอัปยกเลิกที่หายไป
     function openCancelModal() { document.getElementById('cancelModal').classList.remove('hidden'); }
     function closeCancelModal() { document.getElementById('cancelModal').classList.add('hidden'); }
     function confirmCancelBooking() {
@@ -537,7 +537,7 @@
             places.forEach(p => {
                 let shortName = p.name.split(' ')[0]; 
                 if(shortName.length > 15) shortName = shortName.substring(0,15) + '...';
-                html += `<button onclick="useRecentPlace('${p.name}', ${p.lat}, ${p.lng})" class="shrink-0 bg-gray-800 border border-gray-700 text-gray-300 px-3 py-1.5 rounded-xl text-[11px] font-bold flex items-center gap-1.5 hover:bg-gray-700 transition shadow-sm"><i class="fas fa-history text-gray-500"></i> ${shortName}</button>`;
+                html += `<button onclick="useRecentPlace('${p.name}', ${p.lat}, ${p.lng})" class="shrink-0 bg-gray-800 border border-gray-700 text-gray-300 px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 hover:bg-gray-700 transition shadow-sm"><i class="fas fa-history text-gray-500"></i> ${shortName}</button>`;
             });
         }
         let pickEl = document.getElementById('recentPlacesPick');
@@ -1155,6 +1155,7 @@
       document.getElementById('mapControls').classList.remove('hidden');
 
       let statusEl = document.getElementById('trackStatus');
+      let btnCancel = document.getElementById('btnCancel');
       
       statusEl.innerText = bookData.status;
       document.getElementById('trackPrice').innerText = "฿" + bookData.price;
@@ -1187,18 +1188,17 @@
       }
 
       if(bookData.status === "รอผู้ขับขี่ตอบรับ") {
-          statusEl.className = "font-black text-gray-500 text-base leading-tight";
+          statusEl.className = "font-black text-gray-500 text-lg leading-tight";
       } else if (bookData.status.includes("กำลังเดินทางไปหา") || bookData.status.includes("รับงานแล้ว")) {
-          statusEl.className = "font-black text-green-400 text-base leading-tight";
+          statusEl.className = "font-black text-green-400 text-lg leading-tight";
       } else {
-          statusEl.className = "font-black text-blue-400 text-base leading-tight";
+          statusEl.className = "font-black text-blue-400 text-lg leading-tight";
       }
 
       const btnEmergency = document.getElementById('btnEmergency');
       const actionBox = document.getElementById('actionButtonsBox');
       const btnChat = document.getElementById('btnChat');
       const btnCall = document.getElementById('btnCall');
-      const btnCancel = document.getElementById('btnCancel');
 
       if (bookData.status === "รอผู้ขับขี่ตอบรับ") {
           btnEmergency.classList.add('hidden');
@@ -1315,10 +1315,10 @@
           
           if(isGoingToPickup) {
               etaEl.innerText = `คนขับอยู่ห่าง: ${leg.distance.text} • อีก ${leg.duration.text}`;
-              etaEl.className = "text-[11px] text-blue-400 font-bold mt-0.5 inline-block";
+              etaEl.className = "text-xs text-blue-400 font-bold mt-0.5 inline-block";
           } else {
               etaEl.innerText = `ระยะทางไปส่ง: ${leg.distance.text} • อีก ${leg.duration.text}`;
-              etaEl.className = "text-[11px] text-blue-400 font-bold mt-0.5 inline-block";
+              etaEl.className = "text-xs text-blue-400 font-bold mt-0.5 inline-block";
           }
 
           if(isStatusChanged && map) {
