@@ -14,7 +14,6 @@
     body { font-family: 'Kanit', sans-serif; background-color: #111827; color: #f3f4f6; }
     .map-container { position: fixed; inset: 0; width: 100vw; height: 100vh; z-index: 0; background: #1f2937; }
     
-    /* 🌟 ปรับสีกล่องเมนูด้านล่างให้เป็นสีดำ-ขอบเขียว */
     .ui-panel { 
         position: fixed; 
         bottom: 0; 
@@ -34,8 +33,6 @@
     }
 
     .full-page { position: fixed; inset: 0; z-index: 30; background: #111827; flex-direction: column; }
-    
-    /* 🌟 ปรับสีกล่องค้นหาสถานที่ของ Google Maps ให้เป็นสีดำ */
     .pac-container { z-index: 10000 !important; font-family: 'Kanit'; border-radius: 12px; border: 1px solid #374151; background-color: #1f2937; box-shadow: 0 4px 20px rgba(0,0,0,0.5); margin-top: 8px;}
     .pac-item { padding: 12px; border-top: 1px solid #374151; cursor: pointer; color: #d1d5db; }
     .pac-item:first-child { border-top: none; }
@@ -64,7 +61,7 @@
       </button>
   </div>
 
-  <!-- หน้าที่ 1: หน้าต้อนรับและเช็คสถานะคนขับ -->
+  <!-- หน้าที่ 1: หน้าต้อนรับ -->
   <div id="page1" class="full-page flex">
     <div class="bg-gray-900 border-b border-green-500/30 text-green-400 p-6 text-center shadow-lg">
         <h1 class="text-2xl font-black tracking-wider flex justify-center items-center gap-2">
@@ -95,11 +92,15 @@
   <div id="page2" class="hidden">
     <div class="ui-panel h-auto pb-8">
       <div class="flex justify-between items-center mb-3">
-        <p class="text-sm font-bold text-gray-300"><i class="fas fa-map-marker-alt text-green-500 mr-1"></i> จุดให้รถไปรับ (หมุดสีเขียว)</p>
+        <p class="text-sm font-bold text-gray-300"><i class="fas fa-map-marker-alt text-green-500 mr-1"></i> จุดให้รถไปรับ (ต้นทาง)</p>
         <button onclick="useCurrentLocation()" class="text-xs font-bold bg-gray-700 border border-gray-600 text-green-400 px-3 py-1.5 rounded-full hover:bg-gray-600 transition shadow-sm"><i class="fas fa-crosshairs mr-1"></i> ตำแหน่งปัจจุบัน</button>
       </div>
-      <input type="text" id="pickupSearch" class="w-full p-4 bg-gray-800 border-2 border-gray-700 focus:border-green-500 focus:bg-gray-900 rounded-xl mb-auto outline-none font-bold text-white transition-all truncate placeholder-gray-500" placeholder="ค้นหาสถานที่ หรือขยับแผนที่...">
-      <button onclick="confirmPickup()" class="w-full bg-green-600 text-white py-3.5 rounded-xl font-bold mt-3 text-base shadow-md hover:bg-green-700 active:scale-[0.98] transition">ยืนยันจุดรับ</button>
+      <!-- 🌟 ดีไซน์ปุ่มเพิ่มจุดแวะ (Multi-stop Mockup) -->
+      <div class="flex gap-2 mb-auto">
+          <input type="text" id="pickupSearch" class="w-full p-4 bg-gray-800 border-2 border-gray-700 focus:border-green-500 focus:bg-gray-900 rounded-xl outline-none font-bold text-white transition-all truncate placeholder-gray-500" placeholder="ค้นหาสถานที่ หรือขยับแผนที่...">
+          <button onclick="alertMultiStop()" class="w-14 shrink-0 bg-gray-800 border border-gray-700 rounded-xl text-gray-400 hover:text-green-400 hover:border-green-500/50 flex items-center justify-center text-xl transition shadow-sm" title="เพิ่มจุดแวะรับ"><i class="fas fa-plus"></i></button>
+      </div>
+      <button onclick="confirmPickup()" class="w-full bg-green-600 text-white py-3.5 rounded-xl font-bold mt-4 text-base shadow-md hover:bg-green-700 active:scale-[0.98] transition">ยืนยันจุดรับ</button>
     </div>
   </div>
 
@@ -107,11 +108,14 @@
   <div id="page3" class="hidden">
     <div class="ui-panel h-auto pb-8">
       <div class="flex justify-between items-center mb-3">
-        <p class="text-sm font-bold text-gray-300"><i class="fas fa-flag-checkered text-red-500 mr-1"></i> จุดหมายปลายทาง (หมุดสีแดง)</p>
+        <p class="text-sm font-bold text-gray-300"><i class="fas fa-flag-checkered text-red-500 mr-1"></i> จุดหมายปลายทาง</p>
         <button onclick="useCurrentLocation()" class="text-xs font-bold bg-gray-700 border border-gray-600 text-green-400 px-3 py-1.5 rounded-full hover:bg-gray-600 transition shadow-sm"><i class="fas fa-crosshairs mr-1"></i> ตำแหน่งปัจจุบัน</button>
       </div>
-      <input type="text" id="dropoffSearch" class="w-full p-4 bg-gray-800 border-2 border-gray-700 focus:border-green-500 focus:bg-gray-900 rounded-xl mb-auto outline-none font-bold text-white transition-all truncate placeholder-gray-500" placeholder="ค้นหาสถานที่ หรือขยับแผนที่...">
-      <button onclick="confirmDropoff()" class="w-full bg-green-600 text-white py-3.5 rounded-xl font-bold mt-3 text-base shadow-md hover:bg-green-700 active:scale-[0.98] transition">ยืนยันจุดส่ง</button>
+      <div class="flex gap-2 mb-auto">
+          <input type="text" id="dropoffSearch" class="w-full p-4 bg-gray-800 border-2 border-gray-700 focus:border-green-500 focus:bg-gray-900 rounded-xl outline-none font-bold text-white transition-all truncate placeholder-gray-500" placeholder="ค้นหาสถานที่ หรือขยับแผนที่...">
+          <button onclick="alertMultiStop()" class="w-14 shrink-0 bg-gray-800 border border-gray-700 rounded-xl text-gray-400 hover:text-red-400 hover:border-red-500/50 flex items-center justify-center text-xl transition shadow-sm" title="เพิ่มจุดแวะส่ง"><i class="fas fa-plus"></i></button>
+      </div>
+      <button onclick="confirmDropoff()" class="w-full bg-green-600 text-white py-3.5 rounded-xl font-bold mt-4 text-base shadow-md hover:bg-green-700 active:scale-[0.98] transition">ยืนยันจุดส่ง</button>
     </div>
   </div>
 
@@ -123,11 +127,11 @@
       <div class="bg-gray-900/50 p-3 rounded-2xl border border-gray-700 relative mb-4">
           <div class="absolute left-[1.35rem] top-6 bottom-6 w-0.5 border-l-2 border-dashed border-gray-600"></div>
           <div class="flex items-start gap-3 mb-3 relative z-10">
-              <div class="mt-1"><i class="fas fa-circle text-[10px] text-green-500"></i></div>
+              <div class="mt-1"><i class="fas fa-circle text-[10px] text-green-500 border border-white rounded-full"></i></div>
               <p class="text-[13px] text-gray-200 truncate font-medium flex-1 leading-tight" id="sumPick">...</p>
           </div>
           <div class="flex items-start gap-3 relative z-10">
-              <div class="mt-1"><i class="fas fa-square text-[10px] text-red-500"></i></div>
+              <div class="mt-1"><i class="fas fa-circle text-[10px] text-red-500 border border-white rounded-full"></i></div>
               <p class="text-[13px] text-gray-200 truncate font-medium flex-1 leading-tight" id="sumDrop">...</p>
           </div>
       </div>
@@ -152,7 +156,6 @@
           <button onclick="applyPromoCode()" class="bg-gray-700 border border-gray-600 text-white px-4 rounded-xl font-bold text-sm hover:bg-gray-600 transition active:scale-95 whitespace-nowrap">ใช้โค้ด</button>
       </div>
       
-      <!-- 🌟 ใช้ฟอร์มมาตรฐานให้มือถือเด้งแนะนำเบอร์โทร -->
       <form onsubmit="event.preventDefault(); submitBooking();" class="w-full">
           <div class="relative mb-4">
               <div class="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none text-green-500">
@@ -181,14 +184,28 @@
         </div>
       </div>
       
+      <!-- 🌟 โชว์ข้อมูลชื่อคนขับ -->
+      <div id="driverInfoBox" class="hidden mb-3 bg-gray-800/80 border border-green-500/30 p-2.5 rounded-xl flex justify-between items-center">
+          <div class="flex items-center gap-3">
+              <div class="w-10 h-10 bg-gray-700 rounded-full flex items-center justify-center text-green-400 text-lg border border-gray-600"><i class="fas fa-user-tie"></i></div>
+              <div>
+                  <p class="text-[10px] font-bold text-gray-400">คนขับของคุณ</p>
+                  <p class="text-sm font-black text-white" id="trackDriverName">กำลังดึงข้อมูล...</p>
+              </div>
+          </div>
+          <div class="text-[10px] text-right font-bold text-green-400 bg-green-900/30 px-2 py-1 rounded border border-green-500/20">
+              <i class="fas fa-shield-alt"></i> ยืนยันตัวตนแล้ว
+          </div>
+      </div>
+
       <div class="mb-4 bg-gray-900/50 p-3 rounded-2xl border border-gray-700 relative">
           <div class="absolute left-[1.35rem] top-6 bottom-6 w-0.5 border-l-2 border-dashed border-gray-600"></div>
           <div class="flex items-start gap-3 mb-3 relative z-10">
-              <div class="mt-1"><i class="fas fa-circle text-[10px] text-green-500"></i></div>
+              <div class="mt-1"><i class="fas fa-circle text-[10px] text-green-500 border border-white rounded-full"></i></div>
               <p class="text-[12px] text-gray-200 truncate font-medium flex-1 leading-tight" id="trackPick">...</p>
           </div>
           <div class="flex items-start gap-3 relative z-10">
-              <div class="mt-1"><i class="fas fa-square text-[10px] text-red-500"></i></div>
+              <div class="mt-1"><i class="fas fa-circle text-[10px] text-red-500 border border-white rounded-full"></i></div>
               <p class="text-[12px] text-gray-200 truncate font-medium flex-1 leading-tight" id="trackDrop">...</p>
           </div>
       </div>
@@ -202,7 +219,13 @@
         </a>
       </div>
 
-      <button id="btnCancel" onclick="openCancelModal()" class="w-full bg-red-900/20 text-red-400 py-3 rounded-xl font-bold border border-red-900/50 text-sm hover:bg-red-900/40 transition">ยกเลิกการเรียกรถ</button>
+      <!-- 🌟 เพิ่มปุ่มฉุกเฉิน 191 และจัดเรียงปุ่มยกเลิก -->
+      <div class="flex gap-2">
+          <a href="tel:191" class="flex-1 bg-red-900/40 text-red-400 py-3 rounded-xl font-bold border border-red-900/50 text-sm hover:bg-red-900/60 transition flex items-center justify-center gap-2">
+              <i class="fas fa-shield-alt"></i> ฉุกเฉิน 191
+          </a>
+          <button id="btnCancel" onclick="openCancelModal()" class="flex-1 bg-gray-800 text-gray-400 border border-gray-700 py-3 rounded-xl font-bold text-sm hover:bg-gray-700 transition">ยกเลิกงาน</button>
+      </div>
     </div>
   </div>
 
@@ -265,13 +288,16 @@
         if(snap.exists()) pricingConfig = snap.val();
     });
 
-    // ดึงเบอร์เดิมที่เคยกรอกมาใส่ช่อง input ทันที
     document.addEventListener("DOMContentLoaded", () => {
         let savedPhone = localStorage.getItem('passengerPhone');
         if(savedPhone) {
             document.getElementById('userPhone').value = savedPhone;
         }
     });
+
+    function alertMultiStop() {
+        showAlert("เพิ่มจุดรับ-ส่งหลายจุด", "ฟีเจอร์เพิ่มจุดแวะ (Multi-stop) กำลังอยู่ในการพัฒนาระบบหลังบ้านครับ จะเปิดให้ใช้งานในเวอร์ชันถัดไปเร็วๆ นี้!", "info");
+    }
 
     function showAlert(title, message, type = 'info', callback = null) {
         document.getElementById('alertTitle').innerText = title;
@@ -344,6 +370,25 @@
         }
     }
 
+    // 🌟 สร้างรูปแบบหมุด SVG ใหม่ให้เหมือนรูปตัวอย่าง (จุดสีทึบขอบขาวหนา)
+    const customPickIcon = {
+        path: typeof google !== 'undefined' && google.maps ? google.maps.SymbolPath.CIRCLE : 0,
+        fillColor: '#22c55e',
+        fillOpacity: 1,
+        strokeWeight: 3,
+        strokeColor: '#ffffff',
+        scale: 7
+    };
+    
+    const customDropIcon = {
+        path: typeof google !== 'undefined' && google.maps ? google.maps.SymbolPath.CIRCLE : 0,
+        fillColor: '#ef4444',
+        fillOpacity: 1,
+        strokeWeight: 3,
+        strokeColor: '#ffffff',
+        scale: 7
+    };
+
     function initMap() {
       if (typeof google === 'undefined' || typeof google.maps === 'undefined') return;
       if (map) return; 
@@ -372,8 +417,12 @@
       geocoder = new google.maps.Geocoder();
       placesService = new google.maps.places.PlacesService(map);
       
-      markerPick = new google.maps.Marker({map: null, icon: "https://maps.google.com/mapfiles/ms/icons/green-dot.png", zIndex: 2});
-      markerDrop = new google.maps.Marker({map: null, icon: "https://maps.google.com/mapfiles/ms/icons/red-dot.png", zIndex: 2});
+      // 🌟 ใช้หมุด SVG แบบใหม่
+      customPickIcon.path = google.maps.SymbolPath.CIRCLE;
+      customDropIcon.path = google.maps.SymbolPath.CIRCLE;
+      
+      markerPick = new google.maps.Marker({map: null, icon: customPickIcon, zIndex: 2});
+      markerDrop = new google.maps.Marker({map: null, icon: customDropIcon, zIndex: 2});
       markerDriver = new google.maps.Marker({
           map: null, 
           icon: { url: "https://img.icons8.com/color/48/car-top-view.png", scaledSize: new google.maps.Size(44, 44), anchor: new google.maps.Point(22, 22) }, 
@@ -630,7 +679,7 @@
           if(polylineRoute) polylineRoute.setMap(null);
           polylineRoute = new google.maps.Polyline({
               path: resRide.routes[0].legs[0].steps.flatMap(step => step.path),
-              strokeColor: '#22c55e', 
+              strokeColor: '#3b82f6', 
               strokeWeight: 6,
               map: map
           });
@@ -761,6 +810,20 @@
       document.getElementById('trackPick').innerText = bookData.pName;
       document.getElementById('trackDrop').innerText = bookData.dName;
 
+      // 🌟 โหลดชื่อคนขับมาแสดง
+      if(bookData.driverPin) {
+          document.getElementById('driverInfoBox').classList.remove('hidden');
+          db.ref('drivers_profile/' + bookData.driverPin).once('value', snap => {
+              if(snap.exists()) {
+                  document.getElementById('trackDriverName').innerText = snap.val().name;
+              } else {
+                  document.getElementById('trackDriverName').innerText = "คนขับรหัส " + bookData.driverPin;
+              }
+          });
+      } else {
+          document.getElementById('driverInfoBox').classList.add('hidden');
+      }
+
       if(bookData.status === "รอผู้ขับขี่ตอบรับ") {
           statusEl.className = "font-black text-gray-500 text-base leading-tight";
       } else if (bookData.status.includes("กำลังเดินทางไปหา") || bookData.status.includes("รับงานแล้ว")) {
@@ -769,7 +832,8 @@
           statusEl.className = "font-black text-blue-400 text-base leading-tight";
       }
 
-      if(bookData.status === "รอผู้ขับขี่ตอบรับ" || bookData.status.includes("กำลังเดินทางไปหา")) {
+      // ซ่อนปุ่มยกเลิกปกติถ้ารับงานแล้ว เพื่อโชว์ปุ่มฉุกเฉินและปุ่มยกเลิกงานล่างสุด
+      if(bookData.status === "รอผู้ขับขี่ตอบรับ") {
           btnCancel.classList.remove('hidden');
       } else {
           btnCancel.classList.add('hidden');
@@ -778,6 +842,7 @@
       const contactBox = document.getElementById('driverContactBox');
       if (bookData.status === "รอผู้ขับขี่ตอบรับ" || bookData.status === "ยกเลิกโดยคนขับ") {
           contactBox.classList.add('hidden'); contactBox.classList.remove('flex');
+          document.getElementById('btnCancel').classList.remove('hidden'); // โชว์ปุ่มยกเลิกงานตอนรอ
       } else {
           contactBox.classList.remove('hidden'); contactBox.classList.add('flex');
           if(bookData.driverPhone) {
@@ -805,7 +870,6 @@
       updateRealtimeMap();
     }
 
-    // 🌟 ระบบคุมเส้นทางแบบใหม่ (สีเขียว Neon ทัังหมด + ซูมตามติดอัตโนมัติ)
     function updateRealtimeMap() {
       if(!directionsService || !bookData.status || !map) return;
 
@@ -826,7 +890,7 @@
                   if(polylineRoute) polylineRoute.setMap(null);
                   polylineRoute = new google.maps.Polyline({
                       path: res.routes[0].legs[0].steps.flatMap(step => step.path),
-                      strokeColor: '#22c55e', // 🌟 Neon Green
+                      strokeColor: '#3b82f6', // สีฟ้า
                       strokeWeight: 6,
                       map: map
                   });
@@ -866,7 +930,7 @@
           if(polylineRoute) polylineRoute.setMap(null);
           polylineRoute = new google.maps.Polyline({
               path: res.routes[0].legs[0].steps.flatMap(step => step.path),
-              strokeColor: '#22c55e', // 🌟 Neon Green
+              strokeColor: '#3b82f6', // 🌟 สีฟ้าทั้งหมด
               strokeWeight: 6,
               map: map
           });
@@ -877,7 +941,7 @@
           
           if(isGoingToPickup) {
               etaEl.innerText = `คนขับอยู่ห่าง: ${leg.distance.text} • อีก ${leg.duration.text}`;
-              etaEl.className = "text-[11px] text-green-400 font-bold mt-0.5 inline-block";
+              etaEl.className = "text-[11px] text-blue-400 font-bold mt-0.5 inline-block";
           } else {
               etaEl.innerText = `ระยะทางไปส่ง: ${leg.distance.text} • อีก ${leg.duration.text}`;
               etaEl.className = "text-[11px] text-blue-400 font-bold mt-0.5 inline-block";
@@ -886,7 +950,7 @@
           if(isStatusChanged && map) {
               setTimeout(()=>{ fitRouteBounds(); }, 200);
           } else if (isTrackingMode && map && markerDriver) {
-              map.setOptions({ padding: { top: 80, bottom: 350, left: 0, right: 0 } });
+              map.setOptions({ padding: { top: 80, bottom: 380, left: 0, right: 0 } });
               map.panTo(markerDriver.getPosition());
           }
         }
