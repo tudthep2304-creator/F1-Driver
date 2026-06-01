@@ -454,8 +454,10 @@
     let isSatelliteMode = true; 
     
     let lastNotifiedStatus = "";
+    
     let hasInteractedPick = false;
     let hasInteractedDrop = false;
+    
     let wakeLock = null;
 
     function getDynamicBottomPadding() {
@@ -917,24 +919,31 @@
          updateAddressBox(true); 
       });
 
+      // 🌟 ย้ายระบบป๊อปอัปยืนยันเมื่อแตะจากบนแผนที่ ให้ใช้งานระบบดึงชื่อที่ดีขึ้น
       map.addListener('click', (event) => {
         if (event.placeId && placesService) {
           event.stop(); 
-          placesService.getDetails({ placeId: event.placeId, fields: ['name', 'geometry'] }, (place, status) => {
+          placesService.getDetails({ placeId: event.placeId, fields: ['name', 'geometry', 'formatted_address'] }, (place, status) => {
             if (status === 'OK' && place.geometry) {
               
               openConfirmActionModal('ยืนยันสถานที่', `คุณต้องการใช้สถานที่นี้ใช่หรือไม่?\n\n${place.name}`, () => {
                   map.panTo(place.geometry.location);
+                  let finalAddr = place.name;
+                  if (place.formatted_address) {
+                      let cleanAddr = place.formatted_address.replace(/,?\s*ประเทศไทย/g, '').replace(/Unnamed Road,?\s*/g, '').trim();
+                      if(!cleanAddr.includes(place.name)) finalAddr += " (" + cleanAddr + ")";
+                  }
+                  
                   if (currentStep === 2) {
                     hasInteractedPick = true;
                     markerPick.setPosition(place.geometry.location);
-                    bookData.pName = place.name;
-                    let el = document.getElementById('pickupSearch'); el.value = place.name; el.dataset.oldValue = place.name; 
+                    bookData.pName = finalAddr;
+                    let el = document.getElementById('pickupSearch'); el.value = finalAddr; el.dataset.oldValue = finalAddr; 
                   } else if (currentStep === 3) {
                     hasInteractedDrop = true;
                     markerDrop.setPosition(place.geometry.location);
-                    bookData.dName = place.name;
-                    let el = document.getElementById('dropoffSearch'); el.value = place.name; el.dataset.oldValue = place.name; 
+                    bookData.dName = finalAddr;
+                    let el = document.getElementById('dropoffSearch'); el.value = finalAddr; el.dataset.oldValue = finalAddr; 
                   }
               });
               
@@ -1120,20 +1129,47 @@
       if(!map || !geocoder) return;
       let isPick = (currentStep === 2);
       let pos = map.getCenter();
+
       geocoder.geocode({location: pos}, (res, status) => {
         if(status === 'OK' && res[0]) {
-          let fullAddr = res[0].formatted_address.replace(/,?\s*ประเทศไทย/g, '');
-          if(isPick) { 
-            bookData.pName = fullAddr; 
-            let el = document.getElementById('pickupSearch'); 
-            if(isInteraction) { el.value = fullAddr; el.dataset.oldValue = fullAddr; }
-          } else { 
-            bookData.dName = fullAddr; 
-            let el = document.getElementById('dropoffSearch'); 
-            if(isInteraction) { el.value = fullAddr; el.dataset.oldValue = fullAddr; }
+          
+          // 🌟 กรอง Plus Code ทิ้ง (รหัสแบบ WQ7X+4XJ)
+          let validResults = res.filter(r => !r.types.includes('plus_code') && !r.formatted_address.match(/^[A-Z0-9]{2,8}\+/));
+          let bestRes = validResults.length > 0 ? validResults[0] : res[0];
+          
+          let fullAddr = bestRes.formatted_address.replace(/,?\s*ประเทศไทย/g, '').replace(/Unnamed Road,?\s*/g, '').trim();
+
+          // 🌟 ลองหาสถานที่ใกล้เคียงสุด (รัศมี 40 เมตร) เพื่อดึงชื่อร้าน/ตึก
+          if (placesService) {
+              placesService.nearbySearch({
+                  location: pos,
+                  radius: 40 
+              }, (pRes, pStatus) => {
+                  if (pStatus === 'OK' && pRes.length > 0) {
+                      let placeName = pRes[0].name;
+                      if (placeName && !fullAddr.includes(placeName)) {
+                          fullAddr = placeName + " (" + fullAddr + ")";
+                      }
+                  }
+                  applyAddress(fullAddr, isPick, isInteraction);
+              });
+          } else {
+              applyAddress(fullAddr, isPick, isInteraction);
           }
         }
       });
+    }
+
+    function applyAddress(addr, isPick, isInteraction) {
+        if(isPick) { 
+          bookData.pName = addr; 
+          let el = document.getElementById('pickupSearch'); 
+          if(isInteraction) { el.value = addr; el.dataset.oldValue = addr; }
+        } else { 
+          bookData.dName = addr; 
+          let el = document.getElementById('dropoffSearch'); 
+          if(isInteraction) { el.value = addr; el.dataset.oldValue = addr; }
+        }
     }
 
     function setupSearch(inputId, marker) {
@@ -1149,14 +1185,14 @@
         bounds: chiangRaiBounds, strictBounds: true, componentRestrictions: {country: 'th'}
       });
 
-      // ลบข้อความตอนจิ้มพิมพ์ และดึงค่าเก่ามาถ้าไม่พิมพ์อะไรเลยแบบฉลาดๆ
+      // 🌟 พอกดเข้าช่องค้นหา จะลบข้อความออกให้พิมพ์ใหม่ พอกดออก ถ้าช่องว่างจะดึงค่าเก่ามาใส่
       input.addEventListener('focus', function() { 
           if(this.value.trim() !== '') this.dataset.oldValue = this.value; 
           this.value = ''; 
       });
       input.addEventListener('blur', function() { 
           if(this.value.trim() === '') {
-              // 🌟 โค้ดส่วนนี้ช่วยดึงชื่อสถานที่ที่ปักหมุดอยู่ปัจจุบันมาใส่เลย ถ้าผู้ใช้ไม่ได้กดเลือกสถานที่ใหม่
+              // ดึงชื่อสถานที่ที่ปักหมุดอยู่ปัจจุบันมาใส่ ถ้าผู้ใช้ไม่ได้กดเลือกสถานที่ใหม่
               let isPick = (currentStep === 2);
               if (isPick && bookData.pName) this.value = bookData.pName;
               else if (!isPick && bookData.dName) this.value = bookData.dName;
@@ -1164,6 +1200,7 @@
           }
       });
 
+      // 🌟 เพิ่มป๊อปอัปยืนยันเมื่อเลือกสถานที่จากการพิมพ์ค้นหา
       auto.addListener('place_changed', () => {
         const place = auto.getPlace();
         if(place.geometry && map) {
@@ -1171,12 +1208,18 @@
           
           openConfirmActionModal('ยืนยันสถานที่', `คุณต้องการใช้สถานที่นี้ใช่หรือไม่?\n\n${place.name}`, () => {
               map.panTo(place.geometry.location); 
+              let finalAddr = place.name;
+              if (place.formatted_address) {
+                  let cleanAddr = place.formatted_address.replace(/,?\s*ประเทศไทย/g, '').replace(/Unnamed Road,?\s*/g, '').trim();
+                  if(!cleanAddr.includes(place.name)) finalAddr += " (" + cleanAddr + ")";
+              }
+
               if(currentStep===2) {
                  hasInteractedPick = true;
-                 bookData.pName = place.name; input.value = place.name; input.dataset.oldValue = place.name;
+                 bookData.pName = finalAddr; input.value = finalAddr; input.dataset.oldValue = finalAddr;
               } else {
                  hasInteractedDrop = true;
-                 bookData.dName = place.name; input.value = place.name; input.dataset.oldValue = place.name;
+                 bookData.dName = finalAddr; input.value = finalAddr; input.dataset.oldValue = finalAddr;
               }
           });
         }
