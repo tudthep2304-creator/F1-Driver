@@ -41,7 +41,6 @@
 
     .full-page { position: fixed; inset: 0; z-index: 30; background: #111827; flex-direction: column; }
     
-    /* 🌟 ปรับปรุง CSS ของกล่องค้นหา Google Maps ใหม่ทั้งหมด ให้เลื่อนได้และดรอปลงล่าง */
     .pac-container { 
         z-index: 100000 !important; 
         font-family: 'Kanit' !important; 
@@ -50,7 +49,7 @@
         background-color: #1f2937 !important; 
         box-shadow: 0 10px 40px rgba(0,0,0,0.8) !important; 
         margin-top: 6px !important; 
-        max-height: 40vh !important; /* จำกัดความสูงไว้ที่ 40% ของจอ เพื่อให้เลื่อนดูได้ ไม่ล้นจอ */
+        max-height: 40vh !important; 
         overflow-y: auto !important; 
         -webkit-overflow-scrolling: touch;
     }
@@ -59,7 +58,7 @@
     
     .pac-item { padding: 14px 12px; border-top: 1px solid #374151; cursor: pointer; color: #d1d5db; font-size: 14px; }
     .pac-item:first-child { border-top: none; }
-    .pac-item-query { color: #10b981; font-weight: bold; } /* ตัวหนังสือตรงกันเป็นสีเขียว */
+    .pac-item-query { color: #10b981; font-weight: bold; } 
     .pac-item .pac-icon { filter: invert(70%) sepia(50%) saturate(400%) hue-rotate(80deg); }
 
     .hide-scrollbar::-webkit-scrollbar { display: none; }
@@ -78,7 +77,7 @@
     <button onclick="goHome()" class="p-2 text-xl active:opacity-50 hover:text-green-400 transition"><i class="fas fa-home"></i></button>
   </div>
 
-  <!-- 🌟 แถบค้นหาลอยด้านบน สำหรับจุดรับ (หน้า 2) ธีมสีเขียว -->
+  <!-- แถบค้นหาลอยด้านบน สำหรับจุดรับ (หน้า 2) -->
   <div id="topSearchPick" class="hidden fixed top-[76px] left-4 right-[70px] z-40 pointer-events-auto">
       <div class="relative w-full shadow-2xl rounded-xl">
           <div class="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none text-green-500">
@@ -88,7 +87,7 @@
       </div>
   </div>
 
-  <!-- 🌟 แถบค้นหาลอยด้านบน สำหรับจุดหมาย (หน้า 3) ธีมสีแดง -->
+  <!-- แถบค้นหาลอยด้านบน สำหรับจุดหมาย (หน้า 3) -->
   <div id="topSearchDrop" class="hidden fixed top-[76px] left-4 right-[70px] z-40 pointer-events-auto">
       <div class="relative w-full shadow-2xl rounded-xl">
           <div class="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none text-red-500">
@@ -145,7 +144,6 @@
   <div id="page2" class="hidden">
     <div class="ui-panel border-t-[3px] border-green-500 h-auto pb-8">
       
-      <!-- 🌟 ปรับปรุงเลย์เอาต์แผงด้านล่าง เอาช่องค้นหาออก แล้วดันปุ่มลัดขึ้นมาแทน -->
       <div class="flex justify-between items-center mb-3">
         <p class="text-sm font-bold text-gray-300"><i class="fas fa-map-marker-alt text-green-500 mr-1.5"></i> จุดรับ</p>
         <div class="flex gap-2">
@@ -456,11 +454,8 @@
     let isSatelliteMode = true; 
     
     let lastNotifiedStatus = "";
-    
-    // 🌟 ระบบการตรวจสอบเพื่อปล่อยช่องค้นหาให้ว่างเปล่าตอนเปิดครั้งแรก
     let hasInteractedPick = false;
     let hasInteractedDrop = false;
-    
     let wakeLock = null;
 
     function getDynamicBottomPadding() {
@@ -916,13 +911,37 @@
          if (currentStep === 3 && markerDrop) markerDrop.setPosition(map.getCenter());
       });
 
-      // 🌟 อัปเดตที่อยู่ลงช่องค้นหาเมื่อหยุดลากแผนที่
       map.addListener('dragend', () => {
          if(currentStep === 2) hasInteractedPick = true;
          if(currentStep === 3) hasInteractedDrop = true;
          updateAddressBox(true); 
       });
 
+      map.addListener('click', (event) => {
+        if (event.placeId && placesService) {
+          event.stop(); 
+          placesService.getDetails({ placeId: event.placeId, fields: ['name', 'geometry'] }, (place, status) => {
+            if (status === 'OK' && place.geometry) {
+              
+              openConfirmActionModal('ยืนยันสถานที่', `คุณต้องการใช้สถานที่นี้ใช่หรือไม่?\n\n${place.name}`, () => {
+                  map.panTo(place.geometry.location);
+                  if (currentStep === 2) {
+                    hasInteractedPick = true;
+                    markerPick.setPosition(place.geometry.location);
+                    bookData.pName = place.name;
+                    let el = document.getElementById('pickupSearch'); el.value = place.name; el.dataset.oldValue = place.name; 
+                  } else if (currentStep === 3) {
+                    hasInteractedDrop = true;
+                    markerDrop.setPosition(place.geometry.location);
+                    bookData.dName = place.name;
+                    let el = document.getElementById('dropoffSearch'); el.value = place.name; el.dataset.oldValue = place.name; 
+                  }
+              });
+              
+            }
+          });
+        }
+      });
     }
 
     function mockLoginForBrowser() {
@@ -1006,7 +1025,6 @@
       
       requestWakeLock();
 
-      // 🌟 ควบคุมการแสดงผลของแถบค้นหาลอยด้านบน
       if (page === 2) {
           document.getElementById('topSearchPick').classList.remove('hidden');
           document.getElementById('topSearchDrop').classList.add('hidden');
@@ -1044,12 +1062,11 @@
         document.getElementById('navTitle').innerText = "จุดให้รถไปรับ";
         if (markerDrop && markerPick && map) {
           markerDrop.setMap(null); markerPick.setMap(map); 
-          map.setOptions({ padding: { top: 70, bottom: getDynamicBottomPadding(), left: 0, right: 0 } }); 
+          map.setOptions({ padding: { top: 140, bottom: getDynamicBottomPadding(), left: 0, right: 0 } }); 
           
           if(bookData.pLat !== 0) { map.panTo({lat: bookData.pLat, lng: bookData.pLng}); } 
           else { map.panTo({lat: driverData.lat, lng: driverData.lng}); }
           
-          // 🌟 ทำให้ช่องว่างเปล่าในตอนแรก
           updateAddressBox(false);
           if (!hasInteractedPick) document.getElementById('pickupSearch').value = '';
           
@@ -1060,7 +1077,7 @@
         document.getElementById('navTitle').innerText = "จุดหมายปลายทาง";
         if (markerPick && markerDrop && map) {
           markerPick.setMap(map); markerDrop.setMap(map);
-          map.setOptions({ padding: { top: 70, bottom: getDynamicBottomPadding(), left: 0, right: 0 } }); 
+          map.setOptions({ padding: { top: 140, bottom: getDynamicBottomPadding(), left: 0, right: 0 } }); 
 
           if(bookData.dLat !== 0 && bookData.dLng !== 0) { markerDrop.setPosition({lat: bookData.dLat, lng: bookData.dLng}); } 
           else { markerDrop.setPosition(markerPick.getPosition()); }
@@ -1132,14 +1149,25 @@
         bounds: chiangRaiBounds, strictBounds: true, componentRestrictions: {country: 'th'}
       });
 
-      // 🌟 พอกดเข้าช่องค้นหา จะลบข้อความออกให้พิมพ์ใหม่ พอกดออก ถ้าช่องว่างจะดึงค่าเก่ามาใส่
-      input.addEventListener('focus', function() { this.dataset.oldValue = this.value; this.value = ''; });
-      input.addEventListener('blur', function() { if(this.value.trim() === '') this.value = this.dataset.oldValue || ''; });
+      // ลบข้อความตอนจิ้มพิมพ์ และดึงค่าเก่ามาถ้าไม่พิมพ์อะไรเลยแบบฉลาดๆ
+      input.addEventListener('focus', function() { 
+          if(this.value.trim() !== '') this.dataset.oldValue = this.value; 
+          this.value = ''; 
+      });
+      input.addEventListener('blur', function() { 
+          if(this.value.trim() === '') {
+              // 🌟 โค้ดส่วนนี้ช่วยดึงชื่อสถานที่ที่ปักหมุดอยู่ปัจจุบันมาใส่เลย ถ้าผู้ใช้ไม่ได้กดเลือกสถานที่ใหม่
+              let isPick = (currentStep === 2);
+              if (isPick && bookData.pName) this.value = bookData.pName;
+              else if (!isPick && bookData.dName) this.value = bookData.dName;
+              else this.value = this.dataset.oldValue || ''; 
+          }
+      });
 
       auto.addListener('place_changed', () => {
         const place = auto.getPlace();
         if(place.geometry && map) {
-          input.blur(); // พับคีย์บอร์ดเก็บเพื่อไม่ให้บัง
+          input.blur(); 
           
           openConfirmActionModal('ยืนยันสถานที่', `คุณต้องการใช้สถานที่นี้ใช่หรือไม่?\n\n${place.name}`, () => {
               map.panTo(place.geometry.location); 
@@ -1521,7 +1549,7 @@
           const leg = res.routes[0].legs[0];
           etaEl.classList.remove('hidden');
           
-          let distMeters = leg.distance.value;
+          let distMeters = leg.distance.value; 
 
           if(isGoingToPickup) {
               etaEl.innerText = `คนขับอยู่ห่าง: ${leg.distance.text} • อีก ${leg.duration.text}`;
