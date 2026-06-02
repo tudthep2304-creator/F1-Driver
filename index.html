@@ -41,14 +41,16 @@
 
     .full-page { position: fixed; inset: 0; z-index: 30; background: #111827; flex-direction: column; }
     
+    /* 🌟 ปรับกล่องผลลัพธ์ Google Maps ให้อยู่ถูกที่ เลื่อนดูง่าย และไม่โดนบัง */
     .pac-container { 
         z-index: 100000 !important; 
         font-family: 'Kanit' !important; 
-        border-radius: 12px !important; 
+        border-radius: 0 0 16px 16px !important; 
         border: 1px solid #374151 !important; 
+        border-top: none !important;
         background-color: #1f2937 !important; 
-        box-shadow: 0 10px 40px rgba(0,0,0,0.8) !important; 
-        margin-top: 6px !important; 
+        box-shadow: 0 15px 30px rgba(0,0,0,0.8) !important; 
+        margin-top: -10px !important; /* ดึงขึ้นไปซ่อนใต้กรอบโค้งของ Search Bar */
         max-height: 40vh !important; 
         overflow-y: auto !important; 
         -webkit-overflow-scrolling: touch;
@@ -56,7 +58,7 @@
     .pac-container::-webkit-scrollbar { width: 6px; }
     .pac-container::-webkit-scrollbar-thumb { background-color: #4b5563; border-radius: 10px; }
     
-    .pac-item { padding: 14px 12px; border-top: 1px solid #374151; cursor: pointer; color: #d1d5db; font-size: 14px; }
+    .pac-item { padding: 14px 16px; border-top: 1px solid #374151; cursor: pointer; color: #d1d5db; font-size: 14px; }
     .pac-item:first-child { border-top: none; }
     .pac-item-query { color: #10b981; font-weight: bold; } 
     .pac-item .pac-icon { filter: invert(70%) sepia(50%) saturate(400%) hue-rotate(80deg); }
@@ -71,41 +73,41 @@
   <div id="map" class="map-container hidden"></div>
 
   <!-- Navbar -->
-  <div id="navBar" class="hidden fixed top-0 w-full h-16 bg-gray-900 border-b border-green-500/30 flex items-center justify-between px-4 z-20 text-white shadow-md pointer-events-auto">
+  <div id="navBar" class="hidden fixed top-0 w-full h-16 bg-gray-900 border-b border-gray-800 flex items-center justify-between px-4 z-20 text-white shadow-md pointer-events-auto">
     <button onclick="goBack()" class="p-2 text-2xl active:opacity-50 hover:text-green-400 transition"><i class="fas fa-chevron-left"></i></button>
-    <h1 id="navTitle" class="text-lg font-bold text-green-400">F1 Driver</h1>
+    <h1 id="navTitle" class="text-lg font-bold text-white">F1 Driver</h1>
     <button onclick="goHome()" class="p-2 text-xl active:opacity-50 hover:text-green-400 transition"><i class="fas fa-home"></i></button>
   </div>
 
-  <!-- แถบค้นหาลอยด้านบน สำหรับจุดรับ (หน้า 2) -->
-  <div id="topSearchPick" class="hidden fixed top-[76px] left-4 right-[70px] z-40 pointer-events-auto">
-      <div class="relative w-full shadow-2xl rounded-xl">
+  <!-- 🌟 แถบค้นหาลอยด้านบน จุดรับ (ธีมเขียว) -->
+  <div id="topSearchPick" class="hidden fixed top-[76px] left-4 right-4 z-40 pointer-events-auto transition-transform duration-300">
+      <div class="relative w-full shadow-[0_10px_20px_rgba(34,197,94,0.2)] rounded-2xl bg-gray-900 border-2 border-green-500 overflow-visible">
           <div class="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none text-green-500">
-              <i class="fas fa-search"></i>
+              <i class="fas fa-map-marker-alt text-lg"></i>
           </div>
-          <input type="text" id="pickupSearch" class="w-full p-3.5 pl-11 bg-gray-900/95 backdrop-blur-md border-2 border-green-500/50 focus:border-green-500 focus:bg-gray-900 rounded-xl outline-none font-bold text-[13.5px] text-white transition-all truncate placeholder-gray-400" placeholder="ค้นหาจุดรับ หรือเลื่อนหมุดเพื่อปัก...">
+          <input type="text" id="pickupSearch" class="w-full py-4 pl-12 pr-4 bg-transparent outline-none font-bold text-[13.5px] text-green-50 truncate placeholder-gray-400" placeholder="ค้นหาจุดรับ (เลือกจากรายการ)...">
       </div>
   </div>
 
-  <!-- แถบค้นหาลอยด้านบน สำหรับจุดหมาย (หน้า 3) -->
-  <div id="topSearchDrop" class="hidden fixed top-[76px] left-4 right-[70px] z-40 pointer-events-auto">
-      <div class="relative w-full shadow-2xl rounded-xl">
+  <!-- 🌟 แถบค้นหาลอยด้านบน จุดหมาย (ธีมแดง) -->
+  <div id="topSearchDrop" class="hidden fixed top-[76px] left-4 right-4 z-40 pointer-events-auto transition-transform duration-300">
+      <div class="relative w-full shadow-[0_10px_20px_rgba(239,68,68,0.2)] rounded-2xl bg-gray-900 border-2 border-red-500 overflow-visible">
           <div class="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none text-red-500">
-              <i class="fas fa-search"></i>
+              <i class="fas fa-map-pin text-lg"></i>
           </div>
-          <input type="text" id="dropoffSearch" class="w-full p-3.5 pl-11 bg-gray-900/95 backdrop-blur-md border-2 border-red-500/50 focus:border-red-500 focus:bg-gray-900 rounded-xl outline-none font-bold text-[13.5px] text-white transition-all truncate placeholder-gray-400" placeholder="ค้นหาจุดหมาย หรือเลื่อนหมุดเพื่อปัก...">
+          <input type="text" id="dropoffSearch" class="w-full py-4 pl-12 pr-4 bg-transparent outline-none font-bold text-[13.5px] text-red-50 truncate placeholder-gray-400" placeholder="ค้นหาจุดหมาย (เลือกจากรายการ)...">
       </div>
   </div>
 
-  <!-- ปุ่มคุมแผนที่ -->
-  <div id="mapControls" class="hidden fixed top-[76px] right-4 z-30 flex-col gap-3 pointer-events-auto">
-      <button onclick="toggleMapStyle()" id="btnMapStyle" class="bg-gray-800 w-12 h-12 flex items-center justify-center rounded-full shadow-lg text-gray-400 border border-green-500/30 active:bg-gray-700 transition" title="สลับโหมดแผนที่">
+  <!-- ปุ่มคุมแผนที่ (ขยับลงให้พ้นแถบค้นหา) -->
+  <div id="mapControls" class="hidden fixed top-[160px] right-4 z-30 flex-col gap-3 pointer-events-auto">
+      <button onclick="toggleMapStyle()" id="btnMapStyle" class="bg-gray-800 w-12 h-12 flex items-center justify-center rounded-full shadow-lg text-gray-400 border border-gray-600 active:bg-gray-700 transition" title="สลับโหมดแผนที่">
           <i class="fas fa-layer-group text-xl"></i>
       </button>
-      <button onclick="centerToFocus()" id="btnCrosshair" class="bg-gray-800 w-12 h-12 flex items-center justify-center rounded-full shadow-lg text-green-400 border border-green-500/30 active:bg-gray-700 transition">
+      <button onclick="centerToFocus()" id="btnCrosshair" class="bg-gray-800 w-12 h-12 flex items-center justify-center rounded-full shadow-lg text-gray-300 border border-gray-600 active:bg-gray-700 transition">
           <i class="fas fa-crosshairs text-xl"></i>
       </button>
-      <button onclick="fitRouteBounds()" id="btnOverview" class="hidden bg-gray-800 w-12 h-12 flex items-center justify-center rounded-full shadow-lg text-gray-500 border border-green-500/30 active:bg-gray-700 transition">
+      <button onclick="fitRouteBounds()" id="btnOverview" class="hidden bg-gray-800 w-12 h-12 flex items-center justify-center rounded-full shadow-lg text-gray-300 border border-gray-600 active:bg-gray-700 transition">
           <i class="fas fa-route text-xl"></i>
       </button>
       <button onclick="openEmergencyModal()" id="btnEmergency" class="hidden bg-red-900/80 w-12 h-12 flex items-center justify-center rounded-full shadow-[0_0_15px_rgba(239,68,68,0.5)] text-red-400 border border-red-500/50 active:bg-red-800 transition mt-2">
@@ -140,15 +142,17 @@
     </div>
   </div>
 
-  <!-- หน้าที่ 2: เลือกจุดรับ -->
+  <!-- หน้าที่ 2: เลือกจุดรับ (แผงล่างธีมเขียว) -->
   <div id="page2" class="hidden">
-    <div class="ui-panel border-t-[3px] border-green-500 h-auto pb-8">
-      
-      <div class="flex justify-between items-center mb-3">
-        <p class="text-sm font-bold text-gray-300"><i class="fas fa-map-marker-alt text-green-500 mr-1.5"></i> จุดรับ</p>
+    <div class="ui-panel border-t-[4px] border-green-500 h-auto pb-8 pt-5">
+      <div class="flex justify-between items-center mb-4">
+        <div>
+            <p class="text-[10px] font-black text-green-500 mb-0.5 tracking-widest"><i class="fas fa-circle"></i> STEP 1</p>
+            <p class="text-lg font-black text-white">จุดให้รถไปรับ</p>
+        </div>
         <div class="flex gap-2">
-            <button onclick="alertMultiStop()" class="text-[11px] font-bold bg-gray-800 border border-gray-700 text-gray-400 px-3 py-1.5 rounded-full hover:bg-gray-700 hover:text-white transition shadow-sm flex items-center gap-1.5"><i class="fas fa-plus"></i> จุดแวะ</button>
-            <button onclick="useCurrentLocation()" class="text-[11px] font-bold bg-gray-700 border border-gray-600 text-green-400 px-3 py-1.5 rounded-full hover:bg-gray-600 transition shadow-sm flex items-center gap-1.5"><i class="fas fa-crosshairs"></i> ตำแหน่งปัจจุบัน</button>
+            <button onclick="alertMultiStop()" class="text-[11px] font-bold bg-gray-800 border border-gray-700 text-gray-400 px-3 py-2 rounded-xl hover:bg-gray-700 hover:text-white transition shadow-sm flex items-center gap-1.5"><i class="fas fa-plus"></i> จุดแวะ</button>
+            <button onclick="useCurrentLocation()" class="text-[11px] font-bold bg-green-900/30 border border-green-500/30 text-green-400 px-3 py-2 rounded-xl hover:bg-green-800/50 transition shadow-sm flex items-center gap-1.5"><i class="fas fa-crosshairs"></i> ปัจจุบัน</button>
         </div>
       </div>
       
@@ -179,19 +183,21 @@
           <div id="recentPlacesPick" class="flex gap-2 shrink-0 items-center"></div>
       </div>
       
-      <button onclick="confirmPickup()" class="w-full bg-green-600 text-white py-3.5 rounded-xl font-bold mt-1 text-base shadow-[0_0_15px_rgba(34,197,94,0.2)] hover:bg-green-700 active:scale-[0.98] transition">ยืนยันจุดรับ</button>
+      <button onclick="confirmPickup()" class="w-full bg-green-600 text-white py-4 rounded-xl font-bold mt-2 text-[15px] shadow-[0_0_20px_rgba(34,197,94,0.3)] hover:bg-green-700 active:scale-[0.98] transition">ยืนยันจุดรับรถ</button>
     </div>
   </div>
 
-  <!-- หน้าที่ 3: เลือกจุดส่ง -->
+  <!-- หน้าที่ 3: เลือกจุดส่ง (แผงล่างธีมแดง) -->
   <div id="page3" class="hidden">
-    <div class="ui-panel border-t-[3px] border-red-500 h-auto pb-8">
-      
-      <div class="flex justify-between items-center mb-3">
-        <p class="text-sm font-bold text-gray-300"><i class="fas fa-map-pin text-red-500 mr-1.5"></i> จุดหมาย</p>
+    <div class="ui-panel border-t-[4px] border-red-500 h-auto pb-8 pt-5">
+      <div class="flex justify-between items-center mb-4">
+        <div>
+            <p class="text-[10px] font-black text-red-500 mb-0.5 tracking-widest"><i class="fas fa-circle"></i> STEP 2</p>
+            <p class="text-lg font-black text-white">จุดหมายปลายทาง</p>
+        </div>
         <div class="flex gap-2">
-            <button onclick="alertMultiStop()" class="text-[11px] font-bold bg-gray-800 border border-gray-700 text-gray-400 px-3 py-1.5 rounded-full hover:bg-gray-700 hover:text-white transition shadow-sm flex items-center gap-1.5"><i class="fas fa-plus"></i> จุดแวะ</button>
-            <button onclick="useCurrentLocation()" class="text-[11px] font-bold bg-gray-700 border border-gray-600 text-red-400 px-3 py-1.5 rounded-full hover:bg-gray-600 transition shadow-sm flex items-center gap-1.5"><i class="fas fa-crosshairs"></i> ตำแหน่งปัจจุบัน</button>
+            <button onclick="alertMultiStop()" class="text-[11px] font-bold bg-gray-800 border border-gray-700 text-gray-400 px-3 py-2 rounded-xl hover:bg-gray-700 hover:text-white transition shadow-sm flex items-center gap-1.5"><i class="fas fa-plus"></i> จุดแวะ</button>
+            <button onclick="useCurrentLocation()" class="text-[11px] font-bold bg-red-900/30 border border-red-500/30 text-red-400 px-3 py-2 rounded-xl hover:bg-red-800/50 transition shadow-sm flex items-center gap-1.5"><i class="fas fa-crosshairs"></i> ปัจจุบัน</button>
         </div>
       </div>
       
@@ -222,13 +228,13 @@
           <div id="recentPlacesDrop" class="flex gap-2 shrink-0 items-center"></div>
       </div>
 
-      <button onclick="confirmDropoff()" class="w-full bg-red-600 text-white py-3.5 rounded-xl font-bold mt-1 text-base shadow-[0_0_15px_rgba(220,38,38,0.2)] hover:bg-red-700 active:scale-[0.98] transition">ยืนยันจุดส่ง</button>
+      <button onclick="confirmDropoff()" class="w-full bg-red-600 text-white py-4 rounded-xl font-bold mt-2 text-[15px] shadow-[0_0_20px_rgba(239,68,68,0.3)] hover:bg-red-700 active:scale-[0.98] transition">ยืนยันจุดหมาย</button>
     </div>
   </div>
 
   <!-- หน้าที่ 4: สรุปและยืนยันการเดินทาง -->
   <div id="page4" class="hidden">
-    <div class="ui-panel border-t-[3px] border-blue-500 h-auto pb-6">
+    <div class="ui-panel border-t-[4px] border-blue-500 h-auto pb-6 pt-5">
       
       <div class="bg-gray-900/50 p-3.5 rounded-2xl border border-gray-700 relative mb-4 mt-2">
           <div class="absolute left-[1.45rem] top-7 bottom-7 w-0.5 border-l-2 border-dashed border-gray-600"></div>
@@ -285,7 +291,7 @@
 
   <!-- หน้าต่างติดตามสถานะคนขับ (Tracking) -->
   <div id="pageTracking" class="hidden">
-    <div id="trackingPanel" class="ui-panel border-t-[3px] border-green-500 h-auto pb-6 pt-5">
+    <div id="trackingPanel" class="ui-panel border-t-[4px] border-green-500 h-auto pb-6 pt-5">
       
       <div class="w-full flex justify-center pb-2 pt-1 cursor-pointer" onclick="toggleTrackingPanel()">
           <div class="w-12 h-1.5 bg-gray-600 rounded-full"></div>
@@ -454,10 +460,8 @@
     let isSatelliteMode = true; 
     
     let lastNotifiedStatus = "";
-    
     let hasInteractedPick = false;
     let hasInteractedDrop = false;
-    
     let wakeLock = null;
 
     function getDynamicBottomPadding() {
@@ -679,11 +683,13 @@
             if(markerPick) markerPick.setPosition(pos);
             bookData.pName = name;
             document.getElementById('pickupSearch').value = name;
+            document.getElementById('pickupSearch').dataset.oldValue = name;
         } else if(currentStep === 3) {
             hasInteractedDrop = true;
             if(markerDrop) markerDrop.setPosition(pos);
             bookData.dName = name;
             document.getElementById('dropoffSearch').value = name;
+            document.getElementById('dropoffSearch').dataset.oldValue = name;
         }
     }
 
@@ -919,34 +925,31 @@
          updateAddressBox(true); 
       });
 
-      // 🌟 ย้ายระบบป๊อปอัปยืนยันเมื่อแตะจากบนแผนที่ ให้ใช้งานระบบดึงชื่อที่ดีขึ้น
+      // 🌟 ยกเลิกการขึ้นป๊อปอัปยืนยันเวลากดปักหมุดบนแผนที่ 
       map.addListener('click', (event) => {
         if (event.placeId && placesService) {
           event.stop(); 
           placesService.getDetails({ placeId: event.placeId, fields: ['name', 'geometry', 'formatted_address'] }, (place, status) => {
             if (status === 'OK' && place.geometry) {
-              
-              openConfirmActionModal('ยืนยันสถานที่', `คุณต้องการใช้สถานที่นี้ใช่หรือไม่?\n\n${place.name}`, () => {
-                  map.panTo(place.geometry.location);
-                  let finalAddr = place.name;
-                  if (place.formatted_address) {
-                      let cleanAddr = place.formatted_address.replace(/,?\s*ประเทศไทย/g, '').replace(/Unnamed Road,?\s*/g, '').trim();
-                      if(!cleanAddr.includes(place.name)) finalAddr += " (" + cleanAddr + ")";
-                  }
-                  
-                  if (currentStep === 2) {
-                    hasInteractedPick = true;
-                    markerPick.setPosition(place.geometry.location);
-                    bookData.pName = finalAddr;
-                    let el = document.getElementById('pickupSearch'); el.value = finalAddr; el.dataset.oldValue = finalAddr; 
-                  } else if (currentStep === 3) {
-                    hasInteractedDrop = true;
-                    markerDrop.setPosition(place.geometry.location);
-                    bookData.dName = finalAddr;
-                    let el = document.getElementById('dropoffSearch'); el.value = finalAddr; el.dataset.oldValue = finalAddr; 
-                  }
-              });
-              
+                // ดึงข้อมูลแล้วใส่ช่องเลย ไม่ต้องถาม
+                map.panTo(place.geometry.location);
+                let finalAddr = place.name;
+                if (place.formatted_address) {
+                    let cleanAddr = place.formatted_address.replace(/,?\s*ประเทศไทย/g, '').replace(/Unnamed Road,?\s*/g, '').trim();
+                    if(!cleanAddr.includes(place.name)) finalAddr += " (" + cleanAddr + ")";
+                }
+                
+                if (currentStep === 2) {
+                  hasInteractedPick = true;
+                  markerPick.setPosition(place.geometry.location);
+                  bookData.pName = finalAddr;
+                  let el = document.getElementById('pickupSearch'); el.value = finalAddr; el.dataset.oldValue = finalAddr; 
+                } else if (currentStep === 3) {
+                  hasInteractedDrop = true;
+                  markerDrop.setPosition(place.geometry.location);
+                  bookData.dName = finalAddr;
+                  let el = document.getElementById('dropoffSearch'); el.value = finalAddr; el.dataset.oldValue = finalAddr; 
+                }
             }
           });
         }
@@ -1125,49 +1128,56 @@
     }
     function goHome() { window.location.reload(); }
 
+    // 🌟 ระบบดึงชื่อสถานที่แบบเจาะจงเวลาลากแผนที่
     function updateAddressBox(isInteraction = false) {
       if(!map || !geocoder) return;
       let isPick = (currentStep === 2);
       let pos = map.getCenter();
 
-      geocoder.geocode({location: pos}, (res, status) => {
-        if(status === 'OK' && res[0]) {
-          
-          // 🌟 กรอง Plus Code ทิ้ง (รหัสแบบ WQ7X+4XJ)
-          let validResults = res.filter(r => !r.types.includes('plus_code') && !r.formatted_address.match(/^[A-Z0-9]{2,8}\+/));
-          let bestRes = validResults.length > 0 ? validResults[0] : res[0];
-          
-          let fullAddr = bestRes.formatted_address.replace(/,?\s*ประเทศไทย/g, '').replace(/Unnamed Road,?\s*/g, '').trim();
+      if (placesService && isInteraction) {
+          placesService.nearbySearch({
+              location: pos,
+              radius: 25, // รัศมีแคบๆ 25 เมตร เพื่อให้ตรงกับจุดที่ปักเป๊ะๆ
+              type: 'point_of_interest'
+          }, (pRes, pStatus) => {
+              if (pStatus === 'OK' && pRes.length > 0) {
+                  let placeName = pRes[0].name;
+                  geocoderFallback(pos, isPick, isInteraction, placeName);
+              } else {
+                  geocoderFallback(pos, isPick, isInteraction, null);
+              }
+          });
+      } else {
+          geocoderFallback(pos, isPick, isInteraction, null);
+      }
+    }
 
-          // 🌟 ลองหาสถานที่ใกล้เคียงสุด (รัศมี 40 เมตร) เพื่อดึงชื่อร้าน/ตึก
-          if (placesService) {
-              placesService.nearbySearch({
-                  location: pos,
-                  radius: 40 
-              }, (pRes, pStatus) => {
-                  if (pStatus === 'OK' && pRes.length > 0) {
-                      let placeName = pRes[0].name;
-                      if (placeName && !fullAddr.includes(placeName)) {
-                          fullAddr = placeName + " (" + fullAddr + ")";
-                      }
-                  }
-                  applyAddress(fullAddr, isPick, isInteraction);
-              });
-          } else {
-              applyAddress(fullAddr, isPick, isInteraction);
-          }
-        }
-      });
+    function geocoderFallback(pos, isPick, isInteraction, prefixName) {
+        geocoder.geocode({location: pos}, (res, status) => {
+            if(status === 'OK' && res[0]) {
+                // กรองเอา Plus Code (พวก WQ7X+4XJ) ออกไป
+                let validResults = res.filter(r => !r.types.includes('plus_code') && !r.formatted_address.match(/^[A-Z0-9]{2,8}\+/));
+                let bestRes = validResults.length > 0 ? validResults[0] : res[0];
+
+                let fullAddr = bestRes.formatted_address.replace(/,?\s*ประเทศไทย/g, '').replace(/Unnamed Road,?\s*/g, '').replace(/^[A-Z0-9]{2,8}\+.*?\s/g, '').trim();
+
+                if (prefixName && !fullAddr.includes(prefixName)) {
+                    fullAddr = prefixName + " (" + fullAddr + ")";
+                }
+
+                applyAddress(fullAddr, isPick, isInteraction);
+            }
+        });
     }
 
     function applyAddress(addr, isPick, isInteraction) {
-        if(isPick) { 
-          bookData.pName = addr; 
-          let el = document.getElementById('pickupSearch'); 
+        if(isPick) {
+          bookData.pName = addr;
+          let el = document.getElementById('pickupSearch');
           if(isInteraction) { el.value = addr; el.dataset.oldValue = addr; }
-        } else { 
-          bookData.dName = addr; 
-          let el = document.getElementById('dropoffSearch'); 
+        } else {
+          bookData.dName = addr;
+          let el = document.getElementById('dropoffSearch');
           if(isInteraction) { el.value = addr; el.dataset.oldValue = addr; }
         }
     }
@@ -1185,22 +1195,20 @@
         bounds: chiangRaiBounds, strictBounds: true, componentRestrictions: {country: 'th'}
       });
 
-      // 🌟 พอกดเข้าช่องค้นหา จะลบข้อความออกให้พิมพ์ใหม่ พอกดออก ถ้าช่องว่างจะดึงค่าเก่ามาใส่
+      // 🌟 พอกดคลิกที่ช่อง จะลบข้อความออกเพื่อให้พิมพ์ง่ายๆ
       input.addEventListener('focus', function() { 
           if(this.value.trim() !== '') this.dataset.oldValue = this.value; 
           this.value = ''; 
       });
+
+      // 🌟 ถ้ากดยกเลิกหรือพิมพ์ไม่เสร็จ แล้วไม่ได้กดเลือกจากรายการ ให้ดึงชื่อเก่ากลับมา
       input.addEventListener('blur', function() { 
-          if(this.value.trim() === '') {
-              // ดึงชื่อสถานที่ที่ปักหมุดอยู่ปัจจุบันมาใส่ ถ้าผู้ใช้ไม่ได้กดเลือกสถานที่ใหม่
-              let isPick = (currentStep === 2);
-              if (isPick && bookData.pName) this.value = bookData.pName;
-              else if (!isPick && bookData.dName) this.value = bookData.dName;
-              else this.value = this.dataset.oldValue || ''; 
-          }
+          setTimeout(() => {
+              this.value = this.dataset.oldValue || ''; 
+          }, 200);
       });
 
-      // 🌟 เพิ่มป๊อปอัปยืนยันเมื่อเลือกสถานที่จากการพิมพ์ค้นหา
+      // 🌟 เพิ่มป๊อปอัปยืนยันเมื่อเลือกสถานที่จากการพิมพ์ค้นหาเท่านั้น
       auto.addListener('place_changed', () => {
         const place = auto.getPlace();
         if(place.geometry && map) {
@@ -1216,10 +1224,16 @@
 
               if(currentStep===2) {
                  hasInteractedPick = true;
-                 bookData.pName = finalAddr; input.value = finalAddr; input.dataset.oldValue = finalAddr;
+                 markerPick.setPosition(place.geometry.location);
+                 bookData.pName = finalAddr; 
+                 input.dataset.oldValue = finalAddr;
+                 input.value = finalAddr;
               } else {
                  hasInteractedDrop = true;
-                 bookData.dName = finalAddr; input.value = finalAddr; input.dataset.oldValue = finalAddr;
+                 markerDrop.setPosition(place.geometry.location);
+                 bookData.dName = finalAddr; 
+                 input.dataset.oldValue = finalAddr;
+                 input.value = finalAddr;
               }
           });
         }
