@@ -72,17 +72,14 @@
 </head>
 <body class="h-screen w-screen m-0 overflow-hidden">
 
-  <!-- แผนที่พื้นหลัง -->
   <div id="map" class="map-container hidden"></div>
 
-  <!-- Navbar -->
   <div id="navBar" class="hidden fixed top-0 w-full h-16 bg-gray-900 border-b border-gray-800 flex items-center justify-between px-4 z-20 text-white shadow-md pointer-events-auto">
     <button onclick="goBack()" class="p-2 text-2xl active:opacity-50 hover:text-green-400 transition"><i class="fas fa-chevron-left"></i></button>
     <h1 id="navTitle" class="text-lg font-bold text-white">F1 Driver</h1>
     <button onclick="goHome()" class="p-2 text-xl active:opacity-50 hover:text-green-400 transition"><i class="fas fa-home"></i></button>
   </div>
 
-  <!-- แถบค้นหาลอยด้านบน จุดรับ (ธีมเขียว) -->
   <div id="topSearchPick" class="hidden fixed top-[76px] left-4 right-4 z-40 pointer-events-auto transition-transform duration-300">
       <div class="relative w-full shadow-[0_10px_20px_rgba(34,197,94,0.2)] rounded-2xl bg-gray-900 border-2 border-green-500 overflow-visible">
           <div class="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none text-green-500">
@@ -92,7 +89,6 @@
       </div>
   </div>
 
-  <!-- แถบค้นหาลอยด้านบน จุดหมาย (ธีมแดง) -->
   <div id="topSearchDrop" class="hidden fixed top-[76px] left-4 right-4 z-40 pointer-events-auto transition-transform duration-300">
       <div class="relative w-full shadow-[0_10px_20px_rgba(239,68,68,0.2)] rounded-2xl bg-gray-900 border-2 border-red-500 overflow-visible">
           <div class="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none text-red-500">
@@ -102,24 +98,22 @@
       </div>
   </div>
 
-  <!-- 🌟 กล่องสถานะการเดินทาง (แสดงเฉพาะตอน Tracking) แยกกรอบลอยตัวตามคำขอ -->
   <div id="topStatusTracking" class="hidden fixed top-[76px] left-4 right-4 z-40 pointer-events-auto transition-transform duration-300">
-      <div class="relative w-full shadow-[0_10px_20px_rgba(0,0,0,0.4)] rounded-2xl bg-gray-900 border border-gray-700 p-4">
-          <div class="flex justify-between items-start">
+      <div class="relative w-full shadow-[0_5px_15px_rgba(0,0,0,0.3)] rounded-2xl bg-gray-900/70 backdrop-blur-md border border-gray-600/50 py-2.5 px-4">
+          <div class="flex justify-between items-center">
               <div class="flex-1 pr-2">
-                  <h2 class="font-black text-lg leading-tight" id="trackStatusFloat">รอผู้ขับขี่ตอบรับ...</h2>
-                  <p class="text-[12px] font-bold mt-1.5 text-blue-400 hidden" id="trackEtaDisplayFloat">ระยะทาง -- กม. • -- นาที • ถึง --:-- น.</p>
+                  <h2 class="font-black text-[15px] leading-tight" id="trackStatusFloat">รอผู้ขับขี่ตอบรับ...</h2>
+                  <p class="text-[11px] font-bold mt-0.5 text-blue-300 hidden" id="trackEtaDisplayFloat">ระยะทาง -- กม. • -- นาที • ถึง --:-- น.</p>
               </div>
               <div class="text-right shrink-0">
-                  <span class="bg-gray-800 border border-gray-600 px-3 py-1.5 rounded-xl font-black text-green-400 text-base inline-block" id="trackPriceFloat">฿0</span>
-                  <p id="trackPromoTextFloat" class="text-[10px] text-green-400 font-bold mt-1 hidden">ใช้โค้ดลด</p>
+                  <span class="bg-gray-800/80 border border-gray-600/50 px-2.5 py-1 rounded-xl font-black text-green-400 text-sm inline-block" id="trackPriceFloat">฿0</span>
+                  <p id="trackPromoTextFloat" class="text-[9px] text-green-400 font-bold mt-0.5 hidden">ใช้โค้ดลด</p>
               </div>
           </div>
       </div>
   </div>
 
-  <!-- ปุ่มคุมแผนที่ -->
-  <div id="mapControls" class="hidden fixed top-[160px] right-4 z-30 flex-col gap-3 pointer-events-auto">
+  <div id="mapControls" class="hidden fixed top-[145px] right-4 z-30 flex-col gap-3 pointer-events-auto">
       <button onclick="toggleMapStyle()" id="btnMapStyle" class="bg-gray-800 w-12 h-12 flex items-center justify-center rounded-full shadow-lg text-gray-400 border border-gray-600 active:bg-gray-700 transition" title="สลับโหมดแผนที่">
           <i class="fas fa-layer-group text-xl"></i>
       </button>
@@ -134,7 +128,6 @@
       </button>
   </div>
 
-  <!-- หน้าที่ 1: หน้าต้อนรับ -->
   <div id="page1" class="full-page flex">
     <div class="bg-gray-900 border-b border-green-500/30 text-green-400 p-6 text-center shadow-lg">
         <h1 class="text-2xl font-black tracking-wider flex justify-center items-center gap-2">
@@ -161,7 +154,6 @@
     </div>
   </div>
 
-  <!-- หน้าที่ 2: เลือกจุดรับ -->
   <div id="page2" class="hidden">
     <div class="ui-panel border-t-[4px] border-green-500 h-auto pb-8 pt-5">
       <div class="flex justify-between items-center mb-4">
@@ -206,7 +198,6 @@
     </div>
   </div>
 
-  <!-- หน้าที่ 3: เลือกจุดส่ง -->
   <div id="page3" class="hidden">
     <div class="ui-panel border-t-[4px] border-red-500 h-auto pb-8 pt-5">
       <div class="flex justify-between items-center mb-4">
@@ -251,24 +242,23 @@
     </div>
   </div>
 
-  <!-- หน้าที่ 4: สรุปและยืนยันการเดินทาง -->
   <div id="page4" class="hidden">
     <div class="ui-panel border-t-[4px] border-blue-500 h-auto pb-6 pt-5">
       
-      <div class="bg-gray-900/50 p-3.5 rounded-2xl border border-gray-700 relative mb-4 mt-2">
-          <div class="absolute left-[1.45rem] top-7 bottom-7 w-0.5 border-l-2 border-dashed border-gray-600"></div>
-          <div class="flex items-start gap-3 mb-4 relative z-10">
-              <div class="mt-1"><i class="fas fa-circle text-[11px] text-green-500 border border-white rounded-full"></i></div>
-              <p class="text-sm text-gray-200 truncate font-medium flex-1 leading-tight" id="sumPick">...</p>
+      <div class="bg-gray-900/50 py-2.5 px-3.5 rounded-xl border border-gray-700 relative mb-3 mt-1">
+          <div class="absolute left-[1.4rem] top-6 bottom-6 w-0.5 border-l-[1.5px] border-dashed border-gray-600"></div>
+          <div class="flex items-center gap-3 mb-2.5 relative z-10">
+              <div><i class="fas fa-circle text-[10px] text-green-500 border border-white rounded-full"></i></div>
+              <p class="text-[13px] text-gray-200 truncate font-medium flex-1 leading-tight" id="sumPick">...</p>
           </div>
-          <div class="flex items-start gap-3 relative z-10">
-              <div class="mt-1"><i class="fas fa-circle text-[11px] text-red-500 border border-white rounded-full"></i></div>
-              <p class="text-sm text-gray-200 truncate font-medium flex-1 leading-tight" id="sumDrop">...</p>
+          <div class="flex items-center gap-3 relative z-10">
+              <div><i class="fas fa-circle text-[10px] text-red-500 border border-white rounded-full"></i></div>
+              <p class="text-[13px] text-gray-200 truncate font-medium flex-1 leading-tight" id="sumDrop">...</p>
           </div>
       </div>
 
       <div class="flex gap-2 mb-4">
-          <div class="flex-1 flex justify-between items-center bg-gray-800 p-4 rounded-2xl border border-gray-700 shadow-inner">
+          <div class="flex-1 flex justify-between items-center bg-gray-800 p-4 rounded-xl border border-gray-700 shadow-inner">
             <div>
               <p class="text-[11px] text-gray-400 font-bold mb-0.5">ระยะทาง / เวลา</p>
               <p class="font-black text-blue-400 text-sm"><span id="sumDist">0</span> กม. • <span id="sumWait">0</span> นาที</p>
@@ -283,7 +273,7 @@
             </div>
           </div>
 
-          <button onclick="openPromoModal()" class="shrink-0 w-[4.5rem] bg-gray-800 border border-gray-700 text-green-400 rounded-2xl text-[11px] font-bold hover:bg-gray-700 transition flex flex-col items-center justify-center gap-1 shadow-sm">
+          <button onclick="openPromoModal()" class="shrink-0 w-[4.5rem] bg-gray-800 border border-gray-700 text-green-400 rounded-xl text-[11px] font-bold hover:bg-gray-700 transition flex flex-col items-center justify-center gap-1 shadow-sm">
               <i class="fas fa-ticket-alt text-lg"></i>
               <span>ใช้โค้ด</span>
           </button>
@@ -308,39 +298,34 @@
     </div>
   </div>
 
-  <!-- หน้าต่างติดตามสถานะคนขับ (Tracking Panel ส่วนล่าง) -->
   <div id="pageTracking" class="hidden">
-    <div id="trackingPanel" class="ui-panel border-t-[4px] border-gray-600 h-auto pb-6 pt-4"> 
+    <div id="trackingPanel" class="ui-panel border-t-[4px] border-gray-600 h-auto pb-5 pt-3"> 
       
-      <div class="w-full flex justify-center pb-2 cursor-pointer" onclick="toggleTrackingPanel()">
+      <div class="w-full flex justify-center pb-3 cursor-pointer" onclick="toggleTrackingPanel()">
           <div class="w-12 h-1.5 bg-gray-600 rounded-full"></div>
       </div>
-
-      <!-- แถบสถานะเดิมถูกย้ายไปด้านบนกล่องลอยแล้ว ตรงนี้เลยโล่งขึ้น -->
       
-      <!-- 🌟 กล่องสถานที่จุดรับ-จุดส่ง -->
-      <div class="mb-4 bg-gray-900/50 p-3.5 rounded-2xl border border-gray-700 relative">
-          <div class="absolute left-[1.45rem] top-7 bottom-7 w-0.5 border-l-2 border-dashed border-gray-600"></div>
-          <div class="flex items-start gap-3 mb-4 relative z-10">
-              <div class="mt-1"><i class="fas fa-circle text-[11px] text-green-500 border border-white rounded-full"></i></div>
-              <p class="text-sm text-gray-200 truncate font-medium flex-1 leading-tight" id="trackPick">...</p>
+      <div class="mb-3 bg-gray-900/50 py-2.5 px-3.5 rounded-xl border border-gray-700 relative">
+          <div class="absolute left-[1.4rem] top-6 bottom-6 w-0.5 border-l-[1.5px] border-dashed border-gray-600"></div>
+          <div class="flex items-center gap-3 mb-2.5 relative z-10">
+              <div><i class="fas fa-circle text-[10px] text-green-500 border border-white rounded-full"></i></div>
+              <p class="text-[13px] text-gray-200 truncate font-medium flex-1 leading-tight" id="trackPick">...</p>
           </div>
-          <div class="flex items-start gap-3 relative z-10">
-              <div class="mt-1"><i class="fas fa-circle text-[11px] text-red-500 border border-white rounded-full"></i></div>
-              <p class="text-sm text-gray-200 truncate font-medium flex-1 leading-tight" id="trackDrop">...</p>
+          <div class="flex items-center gap-3 relative z-10">
+              <div><i class="fas fa-circle text-[10px] text-red-500 border border-white rounded-full"></i></div>
+              <p class="text-[13px] text-gray-200 truncate font-medium flex-1 leading-tight" id="trackDrop">...</p>
           </div>
       </div>
 
-      <!-- 🌟 ข้อมูลคนขับ -->
-      <div id="driverInfoBox" class="hidden mb-4 bg-gray-800/80 border border-gray-600 p-3 rounded-xl flex justify-between items-start">
+      <div id="driverInfoBox" class="hidden mb-3 bg-gray-800/80 border border-gray-600 p-2.5 rounded-xl flex justify-between items-center">
           <div class="flex items-center gap-3 w-full">
-              <div class="w-12 h-12 bg-gray-700 rounded-full flex items-center justify-center text-green-400 text-2xl border border-gray-600 shrink-0"><i class="fas fa-user-tie"></i></div>
-              <div class="flex flex-col gap-0.5 w-full">
-                  <p class="text-[13px] text-white font-bold" id="trackDriverPlate">กำลังดึงข้อมูล...</p>
-                  <p class="text-[13px] text-white font-medium" id="trackDriverCar">-</p>
-                  <div class="flex justify-between items-center w-full">
-                      <p class="text-[13px] text-white font-medium" id="trackDriverName">-</p>
-                      <div class="text-[10px] font-bold text-green-400 bg-green-900/30 px-2 py-0.5 rounded border border-green-500/20">
+              <div class="w-10 h-10 bg-gray-700 rounded-full flex items-center justify-center text-green-400 text-xl border border-gray-600 shrink-0"><i class="fas fa-user-tie"></i></div>
+              <div class="flex flex-col w-full">
+                  <p class="text-[12px] text-white font-bold" id="trackDriverPlate">กำลังดึงข้อมูล...</p>
+                  <p class="text-[12px] text-white font-medium" id="trackDriverCar">-</p>
+                  <div class="flex justify-between items-center w-full mt-0.5">
+                      <p class="text-[12px] text-white font-medium" id="trackDriverName">-</p>
+                      <div class="text-[9px] font-bold text-green-400 bg-green-900/30 px-2 py-0.5 rounded border border-green-500/20">
                           <i class="fas fa-shield-alt"></i> ยืนยันแล้ว
                       </div>
                   </div>
@@ -348,9 +333,7 @@
           </div>
       </div>
 
-      <!-- ปุ่ม Action -->
       <div id="actionButtonsBox" class="hidden gap-2 mb-1 shrink-0 w-full flex-row">
-          
           <button id="btnChat" onclick="openLineOA()" class="flex-1 w-full bg-gray-800 text-gray-300 py-3 rounded-xl font-bold border border-gray-700 text-sm shadow-sm hover:bg-gray-700 transition flex justify-center items-center gap-1.5"><i class="fab fa-line text-[20px] text-[#06C755] leading-none"></i> แชท</button>
           
           <button id="btnCall" onclick="openCallConfirmModal()" class="flex-1 w-full bg-green-600 text-white py-3 rounded-xl font-bold text-sm shadow-sm hover:bg-green-700 transition flex justify-center items-center gap-1.5"><i class="fas fa-phone-alt"></i> โทร</button>
@@ -1068,7 +1051,6 @@
       
       requestWakeLock();
 
-      // 🌟 ควบคุมการซ่อนแสดงแถบค้นหาและกล่อง Tracking Float
       if (page === 2) {
           document.body.classList.remove('theme-dropoff');
           document.getElementById('topSearchPick').classList.remove('hidden');
@@ -1083,7 +1065,7 @@
           document.body.classList.remove('theme-dropoff');
           document.getElementById('topSearchPick').classList.add('hidden');
           document.getElementById('topSearchDrop').classList.add('hidden');
-          document.getElementById('topStatusTracking').classList.remove('hidden'); // แสดงกล่อง Float
+          document.getElementById('topStatusTracking').classList.remove('hidden'); 
           document.getElementById('navTitle').innerText = "สถานะการเดินทาง";
       } else {
           document.body.classList.remove('theme-dropoff');
@@ -1450,7 +1432,6 @@
       
       document.getElementById('mapControls').classList.remove('hidden');
 
-      // 🌟 ดึง ID จากกล่องลอยมาใช้งาน
       const statusEl = document.getElementById('trackStatusFloat');
       const priceEl = document.getElementById('trackPriceFloat');
       const promoEl = document.getElementById('trackPromoTextFloat');
@@ -1467,19 +1448,17 @@
       }
 
       if(bookData.status === "รอผู้ขับขี่ตอบรับ") {
-          statusEl.className = "font-black text-gray-500 text-lg leading-tight";
+          statusEl.className = "font-black text-gray-400 text-[15px] leading-tight";
           etaEl.classList.add('hidden');
       } else if (bookData.status.includes("ยกเลิก")) {
-          statusEl.className = "font-black text-red-500 text-lg leading-tight"; 
+          statusEl.className = "font-black text-red-500 text-[15px] leading-tight"; 
           etaEl.classList.add('hidden');
       } else if (bookData.status.includes("กำลังเดินทางไปหา") || bookData.status.includes("รับงานแล้ว")) {
-          statusEl.className = "font-black text-green-400 text-lg leading-tight";
-          // ETA จะถูกแสดงตอนคำนวณใน updateRealtimeMap
+          statusEl.className = "font-black text-green-400 text-[15px] leading-tight";
       } else if (bookData.status.includes("ออกเดินทาง") || bookData.status.includes("ไปยังจุดส่ง")) {
-          statusEl.className = "font-black text-blue-400 text-lg leading-tight";
-          // ETA จะถูกแสดงตอนคำนวณใน updateRealtimeMap
+          statusEl.className = "font-black text-blue-400 text-[15px] leading-tight";
       } else {
-          statusEl.className = "font-black text-white text-lg leading-tight";
+          statusEl.className = "font-black text-white text-[15px] leading-tight";
           etaEl.classList.add('hidden');
       }
 
@@ -1654,7 +1633,6 @@
           
           let distMeters = leg.distance.value; 
           
-          // 🌟 คำนวณเวลาที่จะถึงเป๊ะๆ
           const now = new Date();
           const etaDate = new Date(now.getTime() + leg.duration.value * 1000);
           const etaHours = etaDate.getHours().toString().padStart(2, '0');
@@ -1662,7 +1640,7 @@
 
           if(isGoingToPickup) {
               etaEl.innerText = `${leg.distance.text} • ${leg.duration.text} • ถึง ${etaHours}:${etaMinutes} น.`;
-              etaEl.className = "text-[12px] text-blue-400 font-bold mt-1.5 block";
+              etaEl.className = "text-[11px] text-blue-300 font-bold mt-0.5 block";
               
               if (distMeters <= 2000) {
                   if (!window.hasSpokenArrivePick && window.hasSpokenAccept) {
@@ -1677,7 +1655,7 @@
 
           } else {
               etaEl.innerText = `${leg.distance.text} • ${leg.duration.text} • ถึง ${etaHours}:${etaMinutes} น.`;
-              etaEl.className = "text-[12px] text-blue-400 font-bold mt-1.5 block";
+              etaEl.className = "text-[11px] text-blue-300 font-bold mt-0.5 block";
 
               if (distMeters <= 1000) {
                   if (!window.hasSpokenArriveDrop && bookData.status !== "รอผู้ขับขี่ตอบรับ") {
@@ -1696,9 +1674,8 @@
           } else if (isTrackingMode && map && markerDriver) {
               const panel = document.getElementById('trackingPanel');
               const isCollapsed = panel && panel.classList.contains('panel-collapsed');
-              // ปรับระยะ padding แผนที่ใหม่ ไม่ให้โดนกล่องสถานะบนบัง
               const bottomPad = isCollapsed ? 120 : getDynamicBottomPadding();
-              map.setOptions({ padding: { top: 160, bottom: bottomPad, left: 0, right: 0 } });
+              map.setOptions({ padding: { top: 130, bottom: bottomPad, left: 0, right: 0 } });
               map.panTo(markerDriver.getPosition());
           }
         }
