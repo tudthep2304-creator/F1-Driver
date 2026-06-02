@@ -19,7 +19,7 @@
         bottom: 0; 
         left: 0; 
         right: 0; 
-        background: #111827; 
+        background: #1f2937; 
         border-top-left-radius: 24px; 
         border-top-right-radius: 24px; 
         box-shadow: 0 -10px 30px rgba(0,0,0,0.6); 
@@ -35,10 +35,8 @@
         transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         padding-top: 12px;
     }
-    
-    /* 🌟 ตั้งค่าให้เวลาพับกล่อง โผล่มาเฉพาะข้อมูลสถานะ (สูงประมาณ 105px) */
     .panel-collapsed {
-        transform: translateY(calc(100% - 105px)) !important;
+        transform: translateY(calc(100% - 100px)) !important;
     }
 
     .full-page { position: fixed; inset: 0; z-index: 30; background: #111827; flex-direction: column; }
@@ -49,7 +47,7 @@
         border-radius: 0 0 16px 16px !important; 
         border: 1px solid #374151 !important; 
         border-top: none !important;
-        background-color: #111827 !important; 
+        background-color: #1f2937 !important; 
         box-shadow: 0 15px 30px rgba(0,0,0,0.8) !important; 
         margin-top: -10px !important; 
         max-height: 40vh !important; 
@@ -100,7 +98,22 @@
       </div>
   </div>
 
-  <div id="mapControls" class="hidden fixed top-[76px] right-4 z-30 flex-col gap-3 pointer-events-auto transition-all duration-300">
+  <div id="topStatusTracking" class="hidden fixed top-[76px] left-4 right-4 z-40 pointer-events-auto transition-transform duration-300">
+      <div class="relative w-full shadow-[0_5px_15px_rgba(0,0,0,0.3)] rounded-2xl bg-gray-900/70 backdrop-blur-md border border-gray-600/50 py-2.5 px-4">
+          <div class="flex justify-between items-center">
+              <div class="flex-1 pr-2">
+                  <h2 class="font-black text-[15px] leading-tight" id="trackStatusFloat">รอผู้ขับขี่ตอบรับ...</h2>
+                  <p class="text-[11px] font-bold mt-0.5 text-blue-300 hidden" id="trackEtaDisplayFloat">ระยะทาง -- กม. • -- นาที • ถึง --:-- น.</p>
+              </div>
+              <div class="text-right shrink-0">
+                  <span class="bg-gray-800/80 border border-gray-600/50 px-2.5 py-1 rounded-xl font-black text-green-400 text-sm inline-block" id="trackPriceFloat">฿0</span>
+                  <p id="trackPromoTextFloat" class="text-[9px] text-green-400 font-bold mt-0.5 hidden">ใช้โค้ดลด</p>
+              </div>
+          </div>
+      </div>
+  </div>
+
+  <div id="mapControls" class="hidden fixed top-[145px] right-4 z-30 flex-col gap-3 pointer-events-auto">
       <button onclick="toggleMapStyle()" id="btnMapStyle" class="bg-gray-800 w-12 h-12 flex items-center justify-center rounded-full shadow-lg text-gray-400 border border-gray-600 active:bg-gray-700 transition" title="สลับโหมดแผนที่">
           <i class="fas fa-layer-group text-xl"></i>
       </button>
@@ -155,24 +168,24 @@
       </div>
       
       <div class="flex gap-2 overflow-x-auto pb-2 hide-scrollbar mb-2 items-center w-full">
-          <div class="flex shrink-0 bg-gray-800 border border-gray-700 rounded-full overflow-hidden shadow-sm items-center">
-              <button onclick="handleSavedPlace('home')" class="px-3 py-1.5 flex items-center gap-1.5 hover:bg-gray-700 transition">
+          <div class="flex shrink-0 bg-[#2a303c] border border-[#3b4252] rounded-full overflow-hidden shadow-sm items-center">
+              <button onclick="handleSavedPlace('home')" class="px-3 py-1.5 flex items-center gap-1.5 hover:bg-[#343b4a] transition">
                   <i class="fas fa-home text-blue-400 text-xs"></i>
                   <span class="label-home text-xs font-bold text-gray-200">บ้าน</span>
               </button>
-              <div class="w-[1px] h-4 bg-gray-600"></div>
-              <button onclick="editSavedPlace('home', event)" class="px-2.5 py-1.5 text-gray-400 hover:text-white hover:bg-gray-700 transition flex items-center" title="ตั้งค่าพิกัด">
+              <div class="w-[1px] h-4 bg-[#3b4252]"></div>
+              <button onclick="editSavedPlace('home', event)" class="px-2.5 py-1.5 text-gray-400 hover:text-white hover:bg-[#343b4a] transition flex items-center" title="ตั้งค่าพิกัด">
                   <i class="fas fa-cog text-[11px]"></i>
               </button>
           </div>
           
-          <div class="flex shrink-0 bg-gray-800 border border-gray-700 rounded-full overflow-hidden shadow-sm items-center">
-              <button onclick="handleSavedPlace('favorite')" class="px-3 py-1.5 flex items-center gap-1.5 hover:bg-gray-700 transition">
+          <div class="flex shrink-0 bg-[#2a303c] border border-[#3b4252] rounded-full overflow-hidden shadow-sm items-center">
+              <button onclick="handleSavedPlace('favorite')" class="px-3 py-1.5 flex items-center gap-1.5 hover:bg-[#343b4a] transition">
                   <i class="fas fa-heart text-pink-500 text-xs"></i>
                   <span class="label-favorite text-xs font-bold text-gray-200">โปรด</span>
               </button>
-              <div class="w-[1px] h-4 bg-gray-600"></div>
-              <button onclick="editSavedPlace('favorite', event)" class="px-2.5 py-1.5 text-gray-400 hover:text-white hover:bg-gray-700 transition flex items-center" title="ตั้งค่าพิกัด">
+              <div class="w-[1px] h-4 bg-[#3b4252]"></div>
+              <button onclick="editSavedPlace('favorite', event)" class="px-2.5 py-1.5 text-gray-400 hover:text-white hover:bg-[#343b4a] transition flex items-center" title="ตั้งค่าพิกัด">
                   <i class="fas fa-cog text-[11px]"></i>
               </button>
           </div>
@@ -199,24 +212,24 @@
       </div>
       
       <div class="flex gap-2 overflow-x-auto pb-2 hide-scrollbar mb-2 items-center w-full">
-          <div class="flex shrink-0 bg-gray-800 border border-gray-700 rounded-full overflow-hidden shadow-sm items-center">
-              <button onclick="handleSavedPlace('home')" class="px-3 py-1.5 flex items-center gap-1.5 hover:bg-gray-700 transition">
+          <div class="flex shrink-0 bg-[#2a303c] border border-[#3b4252] rounded-full overflow-hidden shadow-sm items-center">
+              <button onclick="handleSavedPlace('home')" class="px-3 py-1.5 flex items-center gap-1.5 hover:bg-[#343b4a] transition">
                   <i class="fas fa-home text-blue-400 text-xs"></i>
                   <span class="label-home text-xs font-bold text-gray-200">บ้าน</span>
               </button>
-              <div class="w-[1px] h-4 bg-gray-600"></div>
-              <button onclick="editSavedPlace('home', event)" class="px-2.5 py-1.5 text-gray-400 hover:text-white hover:bg-gray-700 transition flex items-center" title="ตั้งค่าพิกัด">
+              <div class="w-[1px] h-4 bg-[#3b4252]"></div>
+              <button onclick="editSavedPlace('home', event)" class="px-2.5 py-1.5 text-gray-400 hover:text-white hover:bg-[#343b4a] transition flex items-center" title="ตั้งค่าพิกัด">
                   <i class="fas fa-cog text-[11px]"></i>
               </button>
           </div>
           
-          <div class="flex shrink-0 bg-gray-800 border border-gray-700 rounded-full overflow-hidden shadow-sm items-center">
-              <button onclick="handleSavedPlace('favorite')" class="px-3 py-1.5 flex items-center gap-1.5 hover:bg-gray-700 transition">
+          <div class="flex shrink-0 bg-[#2a303c] border border-[#3b4252] rounded-full overflow-hidden shadow-sm items-center">
+              <button onclick="handleSavedPlace('favorite')" class="px-3 py-1.5 flex items-center gap-1.5 hover:bg-[#343b4a] transition">
                   <i class="fas fa-heart text-pink-500 text-xs"></i>
                   <span class="label-favorite text-xs font-bold text-gray-200">โปรด</span>
               </button>
-              <div class="w-[1px] h-4 bg-gray-600"></div>
-              <button onclick="editSavedPlace('favorite', event)" class="px-2.5 py-1.5 text-gray-400 hover:text-white hover:bg-gray-700 transition flex items-center" title="ตั้งค่าพิกัด">
+              <div class="w-[1px] h-4 bg-[#3b4252]"></div>
+              <button onclick="editSavedPlace('favorite', event)" class="px-2.5 py-1.5 text-gray-400 hover:text-white hover:bg-[#343b4a] transition flex items-center" title="ตั้งค่าพิกัด">
                   <i class="fas fa-cog text-[11px]"></i>
               </button>
           </div>
@@ -232,16 +245,7 @@
   <div id="page4" class="hidden">
     <div class="ui-panel border-t-[4px] border-blue-500 h-auto pb-6 pt-5">
       
-      <!-- 🌟 เพิ่มหัวข้อ STEP 3 -->
-      <div class="flex justify-between items-center mb-3">
-        <div>
-            <p class="text-[10px] font-black text-blue-500 mb-0.5 tracking-widest"><i class="fas fa-circle"></i> STEP 3</p>
-            <p class="text-lg font-black text-white">สรุปข้อมูลก่อนยืนยัน</p>
-        </div>
-      </div>
-
-      <!-- 🌟 ลดระยะห่างโดยเปลี่ยน mb-4 เป็น mb-3 ทุกกล่อง -->
-      <div class="bg-gray-800 py-2.5 px-3.5 rounded-xl border border-gray-700 relative mb-3">
+      <div class="bg-gray-900/50 py-2.5 px-3.5 rounded-xl border border-gray-700 relative mb-3 mt-1">
           <div class="absolute left-[1.4rem] top-6 bottom-6 w-0.5 border-l-[1.5px] border-dashed border-gray-600"></div>
           <div class="flex items-center gap-3 mb-2.5 relative z-10">
               <div><i class="fas fa-circle text-[10px] text-green-500 border border-white rounded-full"></i></div>
@@ -253,8 +257,8 @@
           </div>
       </div>
 
-      <div class="flex gap-2 mb-3">
-          <div class="flex-1 flex justify-between items-center bg-gray-800 p-3 rounded-xl border border-gray-700 shadow-sm">
+      <div class="flex gap-2 mb-4">
+          <div class="flex-1 flex justify-between items-center bg-gray-800 p-4 rounded-xl border border-gray-700 shadow-inner">
             <div>
               <p class="text-[11px] text-gray-400 font-bold mb-0.5">ระยะทาง / เวลา</p>
               <p class="font-black text-blue-400 text-sm"><span id="sumDist">0</span> กม. • <span id="sumWait">0</span> นาที</p>
@@ -275,8 +279,7 @@
           </button>
       </div>
 
-      <!-- ลบ margin-top ของฟอร์มออกเพื่อให้ชิดขึ้น -->
-      <form onsubmit="event.preventDefault(); submitBooking();" class="flex gap-2 w-full">
+      <form onsubmit="event.preventDefault(); submitBooking();" class="flex gap-2 w-full mt-1">
           <div class="relative flex-[1.2]">
               <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-green-500">
                   <i class="fas fa-phone-alt text-sm"></i>
@@ -296,28 +299,11 @@
   </div>
 
   <div id="pageTracking" class="hidden">
-    <div id="trackingPanel" class="ui-panel border-t-[4px] border-gray-600 h-auto pb-5 pt-3 transition-transform duration-300"> 
+    <div id="trackingPanel" class="ui-panel border-t-[4px] border-gray-600 h-auto pb-5 pt-3"> 
       
-      <!-- 🌟 กดขีดนี้ แผงจะเลื่อนลงไปโชว์แค่สถานะ -->
       <div class="w-full flex justify-center pb-3 cursor-pointer" onclick="toggleTrackingPanel()">
           <div class="w-12 h-1.5 bg-gray-600 rounded-full"></div>
       </div>
-      
-      <!-- 🌟 แถบสถานะหลัก (เอามาจากข้างบนมารวมไว้ที่นี่) -->
-      <div id="unifiedStatusBox" class="mb-3 flex justify-between items-center w-full">
-          <div class="min-w-0 flex-1 pr-2">
-              <p class="text-[10px] font-black text-gray-400 mb-0.5 tracking-widest" id="unifiedStatusLabel"><i class="fas fa-spinner fa-spin"></i> STATUS</p>
-              <h2 class="font-black text-[15px] leading-tight text-white truncate" id="unifiedStatusText">กำลังค้นหาคนขับ...</h2>
-              <p class="text-[11px] font-bold mt-0.5 text-blue-400 hidden truncate" id="unifiedEtaText">ระยะทาง -- กม. • -- นาที • ถึง --:-- น.</p>
-          </div>
-          <div class="text-right shrink-0">
-              <span class="bg-gray-900 border border-gray-600 px-3 py-1.5 rounded-xl font-black text-green-400 text-sm inline-block shadow-inner" id="unifiedPriceText">฿0</span>
-              <p id="trackPromoText" class="text-[9px] text-green-400 font-bold mt-1 hidden text-center">ใช้โค้ดลด</p>
-          </div>
-      </div>
-
-      <!-- 🌟 เส้นคั่นแบ่งสัดส่วน -->
-      <div class="border-b border-gray-700 mb-3 w-full opacity-50"></div>
       
       <div class="mb-3 bg-gray-900/50 py-2.5 px-3.5 rounded-xl border border-gray-700 relative">
           <div class="absolute left-[1.4rem] top-6 bottom-6 w-0.5 border-l-[1.5px] border-dashed border-gray-600"></div>
@@ -709,24 +695,22 @@
             hasInteractedPick = true;
             if(markerPick) markerPick.setPosition(pos);
             bookData.pName = name;
-            document.getElementById('pickupSearch').value = name;
-            document.getElementById('pickupSearch').dataset.oldValue = name;
+            let el = document.getElementById('pickupSearch');
+            if(el) { el.value = name; el.dataset.oldValue = name; }
         } else if(currentStep === 3) {
             hasInteractedDrop = true;
             if(markerDrop) markerDrop.setPosition(pos);
             bookData.dName = name;
-            document.getElementById('dropoffSearch').value = name;
-            document.getElementById('dropoffSearch').dataset.oldValue = name;
+            let el = document.getElementById('dropoffSearch');
+            if(el) { el.value = name; el.dataset.oldValue = name; }
         }
     }
 
-    // 🌟 ระบบสไลด์ขึ้นลงที่อัปเกรดให้โชว์แค่สถานะตอนพับ
     function toggleTrackingPanel() {
         const panel = document.getElementById('trackingPanel');
-        panel.classList.toggle('panel-collapsed');
-        if (map) {
+        if(panel) panel.classList.toggle('panel-collapsed');
+        if (map && panel) {
             if (panel.classList.contains('panel-collapsed')) {
-                // พับแผงลง ให้แผนที่กว้างขึ้น
                 map.setOptions({ padding: { top: 80, bottom: 120, left: 0, right: 0 } });
             } else {
                 map.setOptions({ padding: { top: 80, bottom: 350, left: 0, right: 0 } });
@@ -752,8 +736,10 @@
         }
         
         const iconDiv = document.getElementById('alertIcon');
-        iconDiv.innerHTML = iconHtml;
-        iconDiv.className = `w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl ${iconBg} ${iconColor}`;
+        if(iconDiv) {
+            iconDiv.innerHTML = iconHtml;
+            iconDiv.className = `w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl ${iconBg} ${iconColor}`;
+        }
         document.getElementById('alertModal').classList.remove('hidden');
         window.alertCloseCallback = typeof callback === 'function' ? callback : null;
     }
@@ -763,6 +749,7 @@
         if (window.alertCloseCallback) window.alertCloseCallback();
     }
 
+    // 🌟 แก้ไขบั๊ก Dark Mode ให้กลับมาใช้งานได้แบบต้นฉบับ 100%
     const darkMapStyle = [
         { elementType: "geometry", stylers: [{ color: "#242f3e" }] },
         { elementType: "labels.text.stroke", stylers: [{ color: "#242f3e" }] },
@@ -779,10 +766,10 @@
         { featureType: "poi.park", elementType: "labels.text.fill", stylers: [{ color: "#6b9a76" }] },
         { featureType: "road", elementType: "geometry", stylers: [{ color: "#111720" }] },
         { featureType: "road", elementType: "geometry.stroke", stylers: [{ color: "#212a37" }] },
-        { featureType: "road.labels.text.fill", stylers: [{ color: "#9ca5b3" }] },
+        { featureType: "road", elementType: "labels.text.fill", stylers: [{ color: "#9ca5b3" }] }, 
         { featureType: "road.highway", elementType: "geometry", stylers: [{ color: "#746855" }] },
         { featureType: "road.highway", elementType: "geometry.stroke", stylers: [{ color: "#1f2835" }] },
-        { featureType: "road.highway.labels.text.fill", stylers: [{ color: "#f3d19c" }] },
+        { featureType: "road.highway", elementType: "labels.text.fill", stylers: [{ color: "#f3d19c" }] }, 
         { featureType: "transit", elementType: "geometry", stylers: [{ color: "#2f3948" }] },
         { featureType: "transit.station", elementType: "labels.text.fill", stylers: [{ color: "#d59563" }] },
         { featureType: "water", elementType: "geometry", stylers: [{ color: "#17263c" }] },
@@ -793,27 +780,14 @@
     function toggleMapStyle() {
         if(!map) return;
         isSatelliteMode = !isSatelliteMode;
+        let btnMapStyle = document.getElementById('btnMapStyle');
         if(isSatelliteMode) {
             map.setMapTypeId('hybrid');
-            document.getElementById('btnMapStyle').innerHTML = '<i class="fas fa-layer-group text-xl"></i>';
+            if(btnMapStyle) btnMapStyle.innerHTML = '<i class="fas fa-layer-group text-xl"></i>';
         } else {
             map.setMapTypeId('roadmap');
             map.setOptions({ styles: darkMapStyle });
-            document.getElementById('btnMapStyle').innerHTML = '<i class="fas fa-satellite text-xl"></i>';
-        }
-    }
-
-    // 🌟 ระบบคุมตำแหน่งปุ่มแผนที่ ไม่ให้ทับซ้อนกัน
-    function updateMapControlsPosition(page, status = "") {
-        const controls = document.getElementById('mapControls');
-        if (!controls) return;
-        
-        controls.classList.remove('top-[76px]', 'top-[170px]');
-        
-        if (page === 2 || page === 3) {
-            controls.classList.add('top-[170px]'); // หลบแถบค้นหา
-        } else {
-            controls.classList.add('top-[76px]'); // ชิดด้านบน
+            if(btnMapStyle) btnMapStyle.innerHTML = '<i class="fas fa-satellite text-xl"></i>';
         }
     }
 
@@ -847,8 +821,10 @@
             map.setZoom(16);
             if(currentStep === 'Tracking') {
                 isTrackingMode = true; 
-                document.getElementById('btnCrosshair').classList.replace('text-gray-500', 'text-green-400');
-                document.getElementById('btnOverview').classList.replace('text-green-400', 'text-gray-500');
+                let btnCrosshair = document.getElementById('btnCrosshair');
+                let btnOverview = document.getElementById('btnOverview');
+                if(btnCrosshair) btnCrosshair.classList.replace('text-gray-500', 'text-green-400');
+                if(btnOverview) btnOverview.classList.replace('text-green-400', 'text-gray-500');
                 
                 const panel = document.getElementById('trackingPanel');
                 if(panel && !panel.classList.contains('panel-collapsed')) {
@@ -865,8 +841,10 @@
         if (map && currentRouteBounds) {
             isTrackingMode = false; 
             map.fitBounds(currentRouteBounds, { top: 80, right: 50, bottom: 350, left: 50 });
-            document.getElementById('btnCrosshair').classList.replace('text-green-400', 'text-gray-500');
-            document.getElementById('btnOverview').classList.replace('text-gray-500', 'text-green-400');
+            let btnCrosshair = document.getElementById('btnCrosshair');
+            let btnOverview = document.getElementById('btnOverview');
+            if(btnCrosshair) btnCrosshair.classList.replace('text-green-400', 'text-gray-500');
+            if(btnOverview) btnOverview.classList.replace('text-gray-500', 'text-green-400');
         } else {
             centerToFocus();
         }
@@ -928,7 +906,8 @@
       map.addListener('dragstart', () => {
          if (currentStep === 'Tracking') {
              isTrackingMode = false;
-             document.getElementById('btnCrosshair').classList.replace('text-green-400', 'text-gray-500');
+             let btnCrosshair = document.getElementById('btnCrosshair');
+             if(btnCrosshair) btnCrosshair.classList.replace('text-green-400', 'text-gray-500');
          }
       });
 
@@ -984,14 +963,12 @@
                   hasInteractedPick = true;
                   markerPick.setPosition(place.geometry.location);
                   bookData.pName = finalAddr;
-                  let el = document.getElementById('pickupSearch');
-                  if(el) { el.value = finalAddr; el.dataset.oldValue = finalAddr; }
+                  let el = document.getElementById('pickupSearch'); if(el) { el.value = finalAddr; el.dataset.oldValue = finalAddr; }
                 } else if (currentStep === 3) {
                   hasInteractedDrop = true;
                   markerDrop.setPosition(place.geometry.location);
                   bookData.dName = finalAddr;
-                  let el = document.getElementById('dropoffSearch');
-                  if(el) { el.value = finalAddr; el.dataset.oldValue = finalAddr; }
+                  let el = document.getElementById('dropoffSearch'); if(el) { el.value = finalAddr; el.dataset.oldValue = finalAddr; }
                 }
             }
           });
@@ -1002,7 +979,8 @@
     function mockLoginForBrowser() {
         lineUserId = "U" + Math.random().toString(36).substr(2, 9);
         lineName = "ลูกค้าทดสอบ (Browser)";
-        document.getElementById('userName').innerText = lineName;
+        let uName = document.getElementById('userName');
+        if(uName) uName.innerText = lineName;
         initApp();
     }
 
@@ -1011,8 +989,12 @@
           if(liff.isLoggedIn()){
             liff.getProfile().then(p => {
               lineUserId = p.userId; lineName = p.displayName;
-              document.getElementById('userName').innerText = lineName;
-              if(p.pictureUrl) document.getElementById('userPic').src = p.pictureUrl; 
+              let uName = document.getElementById('userName');
+              if(uName) uName.innerText = lineName;
+              if(p.pictureUrl) {
+                  let uPic = document.getElementById('userPic');
+                  if(uPic) uPic.src = p.pictureUrl; 
+              }
               initApp();
             }).catch(err => { mockLoginForBrowser(); });
           } else { liff.login(); }
@@ -1037,15 +1019,23 @@
           let btn = document.getElementById('btnStart');
           
           if(d.status === "ออนไลน์") {
-            ds.innerHTML = `<i class="fas fa-check-circle text-green-500 mr-1"></i> ออนไลน์`; 
-            ds.className = "text-xl font-black text-green-400 relative z-10 flex items-center justify-center";
-            btn.disabled = false; btn.classList.remove('opacity-50', 'cursor-not-allowed');
-            btn.innerHTML = `เริ่มต้นเรียกรถ <i class="fas fa-arrow-right ml-2"></i>`;
+            if(ds) {
+                ds.innerHTML = `<i class="fas fa-check-circle text-green-500 mr-1"></i> ออนไลน์`; 
+                ds.className = "text-xl font-black text-green-400 relative z-10 flex items-center justify-center";
+            }
+            if(btn) {
+                btn.disabled = false; btn.classList.remove('opacity-50', 'cursor-not-allowed');
+                btn.innerHTML = `เริ่มต้นเรียกรถ <i class="fas fa-arrow-right ml-2"></i>`;
+            }
           } else {
-            ds.innerHTML = `<i class="fas fa-times-circle text-red-400 mr-1"></i> ออฟไลน์`; 
-            ds.className = "text-xl font-black text-red-400 relative z-10 flex items-center justify-center";
-            btn.disabled = true; btn.classList.add('opacity-50', 'cursor-not-allowed');
-            btn.innerHTML = `<i class="fas fa-lock mr-2"></i> คนขับปิดรับงานชั่วคราว`;
+            if(ds) {
+                ds.innerHTML = `<i class="fas fa-times-circle text-red-400 mr-1"></i> ออฟไลน์`; 
+                ds.className = "text-xl font-black text-red-400 relative z-10 flex items-center justify-center";
+            }
+            if(btn) {
+                btn.disabled = true; btn.classList.add('opacity-50', 'cursor-not-allowed');
+                btn.innerHTML = `<i class="fas fa-lock mr-2"></i> คนขับปิดรับงานชั่วคราว`;
+            }
           }
           
           if(currentStep === 'Tracking' && markerDriver) {
@@ -1079,51 +1069,57 @@
           const el = document.getElementById('page' + p);
           if (el) el.classList.add('hidden');
       });
-      document.getElementById('page' + page).classList.remove('hidden');
+      const cPage = document.getElementById('page' + page);
+      if(cPage) cPage.classList.remove('hidden');
       
       requestWakeLock();
 
       if (page === 2) {
           document.body.classList.remove('theme-dropoff');
-          document.getElementById('topSearchPick').classList.remove('hidden');
-          document.getElementById('topSearchDrop').classList.add('hidden');
-          document.getElementById('topStatusTracking').classList.add('hidden');
+          document.getElementById('topSearchPick')?.classList.remove('hidden');
+          document.getElementById('topSearchDrop')?.classList.add('hidden');
+          document.getElementById('topStatusTracking')?.classList.add('hidden');
       } else if (page === 3) {
           document.body.classList.add('theme-dropoff');
-          document.getElementById('topSearchPick').classList.add('hidden');
-          document.getElementById('topSearchDrop').classList.remove('hidden');
-          document.getElementById('topStatusTracking').classList.add('hidden');
+          document.getElementById('topSearchPick')?.classList.add('hidden');
+          document.getElementById('topSearchDrop')?.classList.remove('hidden');
+          document.getElementById('topStatusTracking')?.classList.add('hidden');
       } else if (page === 'Tracking') {
           document.body.classList.remove('theme-dropoff');
-          document.getElementById('topSearchPick').classList.add('hidden');
-          document.getElementById('topSearchDrop').classList.add('hidden');
-          // topStatusTracking ควบคุมโดย JS ข้างล่าง
+          document.getElementById('topSearchPick')?.classList.add('hidden');
+          document.getElementById('topSearchDrop')?.classList.add('hidden');
+          // topStatusTracking ควบคุมโดย handleTracking
+          let nt = document.getElementById('navTitle');
+          if(nt) nt.innerText = "สถานะการเดินทาง";
       } else {
           document.body.classList.remove('theme-dropoff');
-          document.getElementById('topSearchPick').classList.add('hidden');
-          document.getElementById('topSearchDrop').classList.add('hidden');
-          document.getElementById('topStatusTracking').classList.add('hidden');
+          document.getElementById('topSearchPick')?.classList.add('hidden');
+          document.getElementById('topSearchDrop')?.classList.add('hidden');
+          document.getElementById('topStatusTracking')?.classList.add('hidden');
       }
 
       if(page !== 1) {
-        document.getElementById('navBar').classList.remove('hidden');
-        document.getElementById('map').classList.remove('hidden');
-        document.getElementById('mapControls').classList.remove('hidden'); 
+        document.getElementById('navBar')?.classList.remove('hidden');
+        document.getElementById('map')?.classList.remove('hidden');
+        document.getElementById('mapControls')?.classList.remove('hidden'); 
         if (typeof google !== 'undefined' && typeof google.maps !== 'undefined' && map) {
           google.maps.event.trigger(map, 'resize');
         }
       } else {
-          document.getElementById('navBar').classList.add('hidden');
-          document.getElementById('mapControls').classList.add('hidden');
+          document.getElementById('navBar')?.classList.add('hidden');
+          document.getElementById('mapControls')?.classList.add('hidden');
       }
 
       if (page === 2 || page === 3) {
           if (polylineRoute) { polylineRoute.setMap(null); polylineRoute = null; }
           if (markerDriver) markerDriver.setMap(null); 
-          document.getElementById('btnOverview').classList.add('hidden');
-          document.getElementById('btnEmergency').classList.add('hidden'); 
-          document.getElementById('btnCrosshair').classList.replace('text-gray-500', 'text-green-400');
-          document.getElementById('btnCrosshair').classList.remove('hidden'); 
+          document.getElementById('btnOverview')?.classList.add('hidden');
+          document.getElementById('btnEmergency')?.classList.add('hidden'); 
+          let cx = document.getElementById('btnCrosshair');
+          if(cx) {
+              cx.classList.replace('text-gray-500', 'text-green-400');
+              cx.classList.remove('hidden'); 
+          }
       }
 
       if(page === 2) {
@@ -1136,8 +1132,8 @@
           
           updateAddressBox(false);
           if (!hasInteractedPick) {
-              const el = document.getElementById('pickupSearch');
-              if(el) el.value = '';
+              let ps = document.getElementById('pickupSearch');
+              if(ps) ps.value = '';
           }
           
           setupSearch('pickupSearch', markerPick);
@@ -1154,33 +1150,31 @@
           
           updateAddressBox(false);
           if (!hasInteractedDrop) {
-              const el = document.getElementById('dropoffSearch');
-              if(el) el.value = '';
+              let ds = document.getElementById('dropoffSearch');
+              if(ds) ds.value = '';
           }
 
           setupSearch('dropoffSearch', markerDrop);
         }
       }
       else if(page === 4) {
-        document.getElementById('btnOverview').classList.remove('hidden');
-        document.getElementById('btnEmergency').classList.add('hidden');
-        document.getElementById('btnCrosshair').classList.add('hidden'); 
+        document.getElementById('btnOverview')?.classList.remove('hidden');
+        document.getElementById('btnEmergency')?.classList.add('hidden');
+        document.getElementById('btnCrosshair')?.classList.add('hidden'); 
 
         if (markerPick && markerDrop && map) { 
             markerPick.setMap(map); markerDrop.setMap(map); 
             map.setOptions({ padding: { top: 70, bottom: getDynamicBottomPadding(), left: 0, right: 0 } });
         }
         
-        document.getElementById('promoInput').value = '';
+        let pInput = document.getElementById('promoInput');
+        if(pInput) pInput.value = '';
         bookData.promoCode = ''; bookData.discount = 0;
-        document.getElementById('discountTag').classList.add('hidden');
-        document.getElementById('sumPriceOld').classList.add('hidden');
+        document.getElementById('discountTag')?.classList.add('hidden');
+        document.getElementById('sumPriceOld')?.classList.add('hidden');
 
         calculatePrice();
       }
-
-      // อัปเดตตำแหน่งปุ่มควบคุม
-      updateMapControlsPosition(page, bookData.status);
     }
     
     function goBack() { 
@@ -1479,71 +1473,65 @@
     function handleTracking() {
       if(currentStep !== 'Tracking') {
           showPage('Tracking');
-          const btnOverview = document.getElementById('btnOverview');
-          const btnCrosshair = document.getElementById('btnCrosshair');
-          if(btnOverview) btnOverview.classList.remove('hidden'); 
-          if(btnCrosshair) btnCrosshair.classList.remove('hidden'); 
+          document.getElementById('btnOverview')?.classList.remove('hidden'); 
+          document.getElementById('btnCrosshair')?.classList.remove('hidden'); 
       }
       
-      const mapControls = document.getElementById('mapControls');
-      if(mapControls) mapControls.classList.remove('hidden');
+      document.getElementById('mapControls')?.classList.remove('hidden');
 
       const topStatusBox = document.getElementById('topStatusTracking');
-      const bottomStatusBox = document.getElementById('unifiedStatusBox');
+      const bottomStatusBox = document.getElementById('bottomStatusBox');
       const driverBox = document.getElementById('driverInfoBox');
       const actionButtonsBox = document.getElementById('actionButtonsBox');
       
-      const statusTop = document.getElementById('trackStatusFloat');
-      const priceTop = document.getElementById('trackPriceFloat');
-      const etaTop = document.getElementById('trackEtaDisplayFloat');
-      const promoTop = document.getElementById('trackPromoTextFloat');
+      const statusEl = document.getElementById('trackStatusFloat');
+      const priceEl = document.getElementById('trackPriceFloat');
+      const promoEl = document.getElementById('trackPromoTextFloat');
+      const etaEl = document.getElementById('trackEtaDisplayFloat');
       
-      const statusBottom = document.getElementById('unifiedStatusText');
-      const priceBottom = document.getElementById('unifiedPriceText');
-      const labelBottom = document.getElementById('unifiedStatusLabel');
+      const statusBottom = document.getElementById('trackStatusBottom');
+      const priceBottom = document.getElementById('trackPriceBottom');
 
       if(topStatusBox) topStatusBox.classList.add('hidden');
       if(bottomStatusBox) bottomStatusBox.classList.add('hidden');
       if(driverBox) driverBox.classList.add('hidden');
       if(actionButtonsBox) actionButtonsBox.classList.add('hidden');
 
-      if(statusTop) statusTop.innerText = bookData.status;
-      if(priceTop) priceTop.innerText = "฿" + bookData.price;
+      if(statusEl) statusEl.innerText = bookData.status; 
+      if(priceEl) priceEl.innerText = "฿" + bookData.price;
       if(statusBottom) statusBottom.innerText = bookData.status;
       if(priceBottom) priceBottom.innerText = "฿" + bookData.price;
 
-      if(bookData.promoCode && promoTop) {
-          promoTop.innerText = `ใช้โค้ดลด ฿${bookData.discount}`; 
-          promoTop.classList.remove('hidden');
-      } else if(promoTop) {
-          promoTop.classList.add('hidden');
+      if(bookData.promoCode && promoEl) {
+          promoEl.innerText = `ใช้โค้ดลด ฿${bookData.discount}`; 
+          promoEl.classList.remove('hidden');
+      } else if(promoEl) {
+          promoEl.classList.add('hidden');
       }
 
-      // 🌟 ย้ายสถานะรอคนขับมารวมในกล่องล่าง
       if(bookData.status === "รอผู้ขับขี่ตอบรับ" || bookData.status.includes("ยกเลิก")) {
+          // 🌟 ย้ายสถานะรอตอบรับไปอยู่ด้านล่าง
           if(bottomStatusBox) bottomStatusBox.classList.remove('hidden');
           
           if(statusBottom) {
               if (bookData.status.includes("ยกเลิก")) {
-                  if(labelBottom) labelBottom.innerHTML = '<i class="fas fa-times-circle text-red-500"></i> STATUS';
-                  statusBottom.className = "font-black text-[15px] leading-tight text-red-500 truncate";
+                  statusBottom.className = "font-black text-[15px] leading-tight text-red-500";
               } else {
-                  if(labelBottom) labelBottom.innerHTML = '<i class="fas fa-spinner fa-spin"></i> STATUS';
-                  statusBottom.className = "font-black text-[15px] leading-tight text-white truncate";
+                  statusBottom.className = "font-black text-[15px] leading-tight text-white";
               }
           }
       } else {
-          // ถ้าคนขับรับงานแล้ว แถบสถานะเด้งไปอยู่ข้างบน
+          // 🌟 โชว์สถานะด้านบน ถ้าคนขับรับงานแล้ว
           if(topStatusBox) topStatusBox.classList.remove('hidden');
           if(bookData.driverPin && driverBox) driverBox.classList.remove('hidden');
           
-          if(statusTop) {
+          if(statusEl) {
               if (bookData.status.includes("กำลังเดินทางไปหา") || bookData.status.includes("รับงานแล้ว") || bookData.status.includes("มาถึงจุดรับ")) {
-                  statusTop.className = "font-black text-[15px] leading-tight text-green-400";
+                  statusEl.className = "font-black text-[15px] leading-tight text-green-400";
               } else if (bookData.status.includes("ออกเดินทาง") || bookData.status.includes("ไปยังจุดส่ง")) {
-                  statusTop.className = "font-black text-[15px] leading-tight text-blue-400";
+                  statusEl.className = "font-black text-[15px] leading-tight text-blue-400";
               } else {
-                  statusTop.className = "font-black text-[15px] leading-tight text-white";
+                  statusEl.className = "font-black text-[15px] leading-tight text-white";
               }
           }
       }
@@ -1603,6 +1591,7 @@
       const btnCall = document.getElementById('btnCall');
       const btnCancel = document.getElementById('btnCancel');
 
+      // 🌟 ควบคุมปุ่มต่างๆ อย่างปลอดภัย 
       if (bookData.status === "รอผู้ขับขี่ตอบรับ") {
           if(btnEmergency) btnEmergency.classList.add('hidden');
           if(actionButtonsBox) { actionButtonsBox.classList.remove('hidden'); actionButtonsBox.classList.add('flex'); }
@@ -1621,7 +1610,7 @@
       } 
       else if (bookData.status.includes("ออกเดินทาง") || bookData.status.includes("ไปยังจุดส่ง")) {
           if(btnEmergency) btnEmergency.classList.remove('hidden'); 
-          // 🌟 ซ่อนปุ่ม แชท/โทร/ยกเลิก เพราะขึ้นรถแล้ว
+          // 🌟 ซ่อนปุ่มแชท/โทร/ยกเลิก เมื่อขึ้นรถแล้ว
           if(actionButtonsBox) { actionButtonsBox.classList.add('hidden'); actionButtonsBox.classList.remove('flex'); } 
       } 
       else {
@@ -1661,13 +1650,11 @@
       let isStatusChanged = (currentRouteStatus !== bookData.status);
       currentRouteStatus = bookData.status;
 
-      let etaElTop = document.getElementById('trackEtaDisplayFloat');
-      let etaElBottom = document.getElementById('unifiedEtaText');
+      let etaEl = document.getElementById('trackEtaDisplayFloat');
 
       if (bookData.status === "รอผู้ขับขี่ตอบรับ" || bookData.status.includes("ยกเลิก")) {
           if(markerDriver) markerDriver.setMap(null); 
-          if(etaElTop) etaElTop.classList.add('hidden'); 
-          if(etaElBottom) etaElBottom.classList.add('hidden'); 
+          if(etaEl) etaEl.classList.add('hidden'); 
 
           let origin = {lat: bookData.pLat, lng: bookData.pLng};
           let dest = {lat: bookData.dLat, lng: bookData.dLng};
@@ -1685,7 +1672,6 @@
                   if(markerPick) { markerPick.setPosition(origin); markerPick.setMap(map); }
                   if(markerDrop) { markerDrop.setPosition(dest); markerDrop.setMap(map); }
                   
-                  // ไม่ extend bounds เพราะต้องการโชว์แค่ Pick - Drop
                   currentRouteBounds = res.routes[0].bounds;
 
                   if(isStatusChanged && map) {
@@ -1701,19 +1687,17 @@
       let origin, dest;
       let isGoingToPickup = false;
 
-      // 🌟 แผนที่โชว์เฉพาะสิ่งที่กำลังไปหา (ถ้ามารับ = โชว์รถกับจุดรับ)
       if(bookData.status.includes("รับงาน") || bookData.status.includes("มาถึงจุดรับ") || bookData.status.includes("กำลังเดินทางไปหา")) {
         origin = markerDriver ? markerDriver.getPosition() : {lat: driverData.lat, lng: driverData.lng}; 
         dest = {lat: bookData.pLat, lng: bookData.pLng};
         if(markerPick) { markerPick.setPosition(dest); markerPick.setMap(map); }
-        if(markerDrop) markerDrop.setMap(null); // ซ่อนจุดส่งไปก่อน
+        if(markerDrop) markerDrop.setMap(null); 
         isGoingToPickup = true;
       } else {
-        // 🌟 พอออกเดินทาง โชว์รถกับจุดส่ง
         origin = markerDriver ? markerDriver.getPosition() : {lat: driverData.lat, lng: driverData.lng}; 
         dest = {lat: bookData.dLat, lng: bookData.dLng};
         if(markerDrop) { markerDrop.setPosition(dest); markerDrop.setMap(map); }
-        if(markerPick) markerPick.setMap(null); // ซ่อนจุดรับ
+        if(markerPick) markerPick.setMap(null); 
       }
 
       directionsService.route({origin: origin, destination: dest, travelMode: 'DRIVING'}, (res, stat) => {
@@ -1726,7 +1710,6 @@
               map: map
           });
           
-          // 🌟 ให้ Bounds โฟกัสตาม Route ปัจจุบันเท่านั้น (ไม่ดึงจุดที่ซ่อนมาเกี่ยว)
           currentRouteBounds = res.routes[0].bounds;
           
           const leg = res.routes[0].legs[0];
@@ -1737,13 +1720,11 @@
           const etaHours = etaDate.getHours().toString().padStart(2, '0');
           const etaMinutes = etaDate.getMinutes().toString().padStart(2, '0');
 
-          let etaText = `${leg.distance.text} • ${leg.duration.text} • ถึง ${etaHours}:${etaMinutes} น.`;
-
           if(isGoingToPickup) {
-              if(etaElTop) {
-                  etaElTop.innerText = etaText;
-                  etaElTop.className = "text-[11px] text-blue-300 font-bold mt-0.5 block";
-                  etaElTop.classList.remove('hidden');
+              if(etaEl) {
+                  etaEl.innerText = `${leg.distance.text} • ${leg.duration.text} • ถึง ${etaHours}:${etaMinutes} น.`;
+                  etaEl.className = "text-[11px] text-blue-300 font-bold mt-0.5 block";
+                  etaEl.classList.remove('hidden');
               }
               
               if (distMeters <= 2000) {
@@ -1758,10 +1739,10 @@
               }
 
           } else {
-              if(etaElTop) {
-                  etaElTop.innerText = etaText;
-                  etaElTop.className = "text-[11px] text-blue-300 font-bold mt-0.5 block";
-                  etaElTop.classList.remove('hidden');
+              if(etaEl) {
+                  etaEl.innerText = `${leg.distance.text} • ${leg.duration.text} • ถึง ${etaHours}:${etaMinutes} น.`;
+                  etaEl.className = "text-[11px] text-blue-300 font-bold mt-0.5 block";
+                  etaEl.classList.remove('hidden');
               }
 
               if (distMeters <= 1000) {
