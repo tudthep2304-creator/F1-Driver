@@ -14,13 +14,13 @@
     body { font-family: 'Kanit', sans-serif; background-color: #111827; color: #f3f4f6; }
     .map-container { position: fixed; inset: 0; width: 100vw; height: 100vh; z-index: 0; background: #1f2937; }
     
-    /* 🌟 เปลี่ยน UI Panel ให้เป็น Glass สีดำอ่อนๆ */
+    /* 🌟 UI Panel กระจกดำใส */
     .ui-panel { 
         position: fixed; 
         bottom: 0; 
         left: 0; 
         right: 0; 
-        background: rgba(17, 24, 39, 0.65); /* ดำนิดหน่อยโปร่งแสง */
+        background: rgba(17, 24, 39, 0.65); 
         backdrop-filter: blur(16px);
         -webkit-backdrop-filter: blur(16px);
         border-top: 1px solid rgba(255,255,255,0.1);
@@ -35,7 +35,7 @@
         overflow-y: auto;
     }
 
-    /* 🌟 คลาสเสริมสำหรับทำ Glass Box ทั่วแอป */
+    /* 🌟 คลาสเสริมสำหรับกล่อง Glass Box ภายใน */
     .glass-box {
         background: rgba(17, 24, 39, 0.5);
         backdrop-filter: blur(12px);
@@ -54,7 +54,6 @@
 
     .full-page { position: fixed; inset: 0; z-index: 30; background: #111827; flex-direction: column; }
     
-    /* 🌟 รายการค้นหาเป็นแบบ Glass */
     .pac-container { 
         z-index: 100000 !important; 
         font-family: 'Kanit' !important; 
@@ -89,14 +88,17 @@
 </head>
 <body class="h-screen w-screen m-0 overflow-hidden">
 
+  <!-- แผนที่พื้นหลัง -->
   <div id="map" class="map-container hidden"></div>
 
+  <!-- Navbar -->
   <div id="navBar" class="hidden fixed top-0 w-full h-16 glass-box !border-x-0 !border-t-0 !rounded-none flex items-center justify-between px-4 z-20 text-white shadow-md pointer-events-auto">
     <button onclick="goBack()" class="p-2 text-2xl active:opacity-50 hover:text-green-400 transition"><i class="fas fa-chevron-left"></i></button>
     <h1 id="navTitle" class="text-lg font-bold text-white tracking-wide">F1 Driver</h1>
     <button onclick="goHome()" class="p-2 text-xl active:opacity-50 hover:text-green-400 transition"><i class="fas fa-home"></i></button>
   </div>
 
+  <!-- แถบค้นหาจุดรับ (ไอคอนหมุดสีเขียว) -->
   <div id="topSearchPick" class="hidden fixed top-[76px] left-4 right-[70px] z-40 pointer-events-auto transition-transform duration-300">
       <div class="relative w-full glass-box !border-green-500/60 rounded-2xl overflow-visible shadow-lg">
           <div class="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none text-green-500 z-10">
@@ -106,6 +108,7 @@
       </div>
   </div>
 
+  <!-- แถบค้นหาจุดหมาย (ไอคอนหมุดสีแดง) -->
   <div id="topSearchDrop" class="hidden fixed top-[76px] left-4 right-[70px] z-40 pointer-events-auto transition-transform duration-300">
       <div class="relative w-full glass-box !border-red-500/60 rounded-2xl overflow-visible shadow-lg">
           <div class="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none text-red-500 z-10">
@@ -115,6 +118,7 @@
       </div>
   </div>
 
+  <!-- กล่องสถานะการเดินทาง ลอยด้านบน (แสดงตอนคนขับรับงานแล้ว) -->
   <div id="topStatusTracking" class="hidden fixed top-[76px] left-4 right-[70px] z-40 pointer-events-auto transition-transform duration-300">
       <div class="relative w-full glass-box rounded-2xl py-2.5 px-4 shadow-lg">
           <div class="flex justify-between items-center">
@@ -130,8 +134,10 @@
       </div>
   </div>
 
+  <!-- ปุ่มคุมแผนที่ (ย้ายหลบช่องค้นหาไปชิดบน) -->
   <div id="mapControls" class="hidden fixed top-[76px] right-4 z-30 flex-col gap-3 pointer-events-auto">
       <button onclick="toggleMapStyle()" id="btnMapStyle" class="glass-box w-12 h-12 flex items-center justify-center rounded-full hover:bg-white/10 transition" title="สลับโหมดแผนที่">
+          <!-- โหมดเริ่มต้นคือดาวเทียม ดังนั้นไอคอนนี้คือสลับเป็นแผนที่ปกติ -->
           <i class="fas fa-layer-group text-[18px] text-gray-200"></i>
       </button>
       <button onclick="centerToFocus()" id="btnCrosshair" class="glass-box w-12 h-12 flex items-center justify-center rounded-full hover:bg-white/10 transition">
@@ -145,6 +151,7 @@
       </button>
   </div>
 
+  <!-- หน้าที่ 1: หน้าต้อนรับ -->
   <div id="page1" class="full-page flex">
     <div class="glass-box !border-x-0 !border-t-0 !border-b-green-500/30 !rounded-none p-6 text-center shadow-lg">
         <h1 class="text-2xl font-black tracking-wider flex justify-center items-center gap-2 text-green-400">
@@ -171,6 +178,7 @@
     </div>
   </div>
 
+  <!-- หน้าที่ 2: เลือกจุดรับ -->
   <div id="page2" class="hidden">
     <div class="ui-panel border-t-[3px] border-green-500/50 h-auto pb-6 pt-5">
       <div class="flex justify-between items-center mb-4">
@@ -215,6 +223,7 @@
     </div>
   </div>
 
+  <!-- หน้าที่ 3: เลือกจุดส่ง -->
   <div id="page3" class="hidden">
     <div class="ui-panel border-t-[3px] border-red-500/50 h-auto pb-6 pt-5">
       <div class="flex justify-between items-center mb-4">
@@ -242,7 +251,7 @@
           
           <div class="flex shrink-0 glass-box rounded-full overflow-hidden items-center p-0">
               <button onclick="handleSavedPlace('favorite')" class="px-3 py-1.5 flex items-center gap-1.5 hover:bg-white/10 transition">
-                  <i class="fas fa-heart text-pink-400 text-xs"></i>
+                  <i class="fas fa-heart text-pink-500 text-xs"></i>
                   <span class="label-favorite text-xs font-bold text-gray-200">โปรด</span>
               </button>
               <div class="w-[1px] h-4 bg-white/20"></div>
@@ -259,9 +268,11 @@
     </div>
   </div>
 
+  <!-- หน้าที่ 4: สรุปและยืนยันการเดินทาง -->
   <div id="page4" class="hidden">
     <div class="ui-panel border-t-[3px] border-blue-500/50 h-auto pb-6 pt-5">
       
+      <!-- หัวข้อหน้าสรุป -->
       <div class="flex justify-between items-center mb-3">
         <div>
             <p class="text-[10px] font-black text-blue-400 mb-0.5 tracking-widest"><i class="fas fa-circle"></i> STEP 3</p>
@@ -269,6 +280,7 @@
         </div>
       </div>
       
+      <!-- กล่องสถานที่ (ใช้ไอคอนหมุด) -->
       <div class="glass-box py-2.5 px-3.5 rounded-xl relative mb-3">
           <div class="absolute left-[1.5rem] top-6 bottom-6 w-0.5 border-l-[1.5px] border-dashed border-gray-500/50 z-0"></div>
           <div class="flex items-center gap-3 mb-2.5 relative z-10">
@@ -305,6 +317,7 @@
 
       <form onsubmit="event.preventDefault(); submitBooking();" class="flex gap-2 w-full mt-1 relative">
           <div class="relative flex-[1.2]">
+              <!-- ไอคอนโทรศัพท์สีเขียว -->
               <div class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none z-20">
                   <i class="fas fa-phone-alt text-[15px] text-green-500"></i>
               </div>
@@ -322,6 +335,7 @@
     </div>
   </div>
 
+  <!-- หน้าต่างติดตามสถานะคนขับ (Tracking Panel) -->
   <div id="pageTracking" class="hidden">
     <div id="trackingPanel" class="ui-panel border-t-[3px] border-gray-500/50 h-auto pb-5 pt-3"> 
       
@@ -329,6 +343,7 @@
           <div class="w-12 h-1.5 bg-white/20 rounded-full"></div>
       </div>
       
+      <!-- 🌟 กล่องสถานะรอตอบรับ (โชว์เมื่อรอคนขับ และซ่อนกล่องข้อมูลคนขับ) -->
       <div id="bottomStatusBox" class="mb-3 glass-box py-3 px-4 rounded-xl flex justify-between items-center">
           <div>
               <p class="text-[10px] font-black text-gray-400 mb-0.5 tracking-widest"><i class="fas fa-spinner fa-spin"></i> STATUS</p>
@@ -337,6 +352,7 @@
           <span class="glass-box px-3 py-1.5 rounded-xl font-black text-green-400 text-sm inline-block" id="trackPriceBottom">฿0</span>
       </div>
 
+      <!-- แถว 1: กล่องสถานที่ Dark Glass + ปุ่มยกเลิกเดี่ยวๆ -->
       <div class="flex gap-2 mb-3">
           <div id="trackAddressBox" class="flex-1 glass-box py-2.5 px-3.5 rounded-xl relative transition-all duration-300">
               <div class="absolute left-[1.5rem] top-6 bottom-6 w-0.5 border-l-[1.5px] border-dashed border-gray-500/50 z-0"></div>
@@ -349,13 +365,16 @@
                   <p class="text-[13px] text-gray-200 font-medium flex-1 truncate" id="trackDrop">...</p>
               </div>
           </div>
+          <!-- ปุ่มยกเลิกเดี่ยวๆ ตรงที่อยู่ -->
           <button id="btnCancelStandalone" onclick="openCancelModal()" class="w-[70px] shrink-0 glass-box !border-red-500/30 text-red-400 rounded-xl flex flex-col items-center justify-center gap-1.5 hover:bg-white/10 transition">
               <i class="fas fa-times text-lg"></i> 
               <span class="text-[11px] font-bold">ยกเลิก</span>
           </button>
       </div>
 
+      <!-- 🌟 แถว 2: ข้อมูลคนขับ + แชท/โทร (จะถูกโชว์เมื่อคนขับรับงานแล้วเท่านั้น) -->
       <div id="driverRowLayout" class="hidden flex gap-2 mb-1">
+          <!-- ข้อมูลคนขับ -->
           <div class="flex-1 glass-box p-2.5 rounded-xl flex items-center gap-3">
               <div class="w-10 h-10 glass-box !border-gray-500/50 rounded-full flex items-center justify-center text-green-400 text-xl shrink-0 z-10"><i class="fas fa-user-tie"></i></div>
               <div class="flex flex-col w-full z-10">
@@ -370,6 +389,7 @@
               </div>
           </div>
           
+          <!-- ปุ่ม แชท / โทร (ซ่อนอัตโนมัติในตอนออกเดินทางแล้ว) -->
           <div class="w-[70px] shrink-0 flex flex-col gap-2" id="contactButtonsBox">
               <button onclick="openLineOA()" class="flex-1 glass-box rounded-lg font-bold text-xs hover:bg-white/10 transition flex items-center justify-center gap-1.5">
                   <i class="fab fa-line text-[18px] text-[#06C755] leading-none"></i> <span class="text-gray-300">แชท</span>
@@ -383,6 +403,7 @@
     </div>
   </div>
 
+  <!-- ป๊อปอัปทั้งหมด (Glassmorphism) -->
   <div id="promoModal" class="hidden fixed inset-0 z-[140] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 pointer-events-auto transition-all">
       <div class="bg-gray-900/80 backdrop-blur-xl border border-gray-700 rounded-3xl p-6 w-full max-w-sm text-center shadow-2xl">
           <div class="w-14 h-14 glass-box rounded-full flex items-center justify-center mx-auto mb-4 text-2xl z-10 relative">
@@ -442,24 +463,24 @@
 
   <div id="cancelModal" class="hidden fixed inset-0 z-[100] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 pointer-events-auto transition-all">
       <div class="bg-gray-900/80 backdrop-blur-xl border border-gray-700 rounded-3xl p-6 w-full max-w-sm text-center shadow-2xl">
-          <div class="w-16 h-16 glass-box rounded-full flex items-center justify-center mx-auto mb-4 text-3xl z-10 relative">
-              <i class="fas fa-question-circle text-gray-300"></i>
+          <div class="w-16 h-16 glass-box !border-red-500/30 text-red-400 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl z-10 relative">
+              <i class="fas fa-question-circle"></i>
           </div>
           <h3 class="text-xl font-black text-white mb-2 relative z-10">ยืนยันยกเลิกการเรียกรถ?</h3>
           <p class="text-sm text-gray-400 mb-6 relative z-10">หากยกเลิกแล้ว งานนี้จะถูกลบทิ้ง และคุณจะต้องทำการเรียกรถใหม่อีกครั้ง</p>
           <div class="flex gap-3 relative z-10">
               <button onclick="closeCancelModal()" class="flex-1 py-3.5 glass-box text-gray-300 font-bold rounded-xl hover:bg-white/10 transition">กลับไปรอรถ</button>
-              <button onclick="confirmCancelBooking()" class="flex-1 py-3.5 bg-red-900/60 border border-red-500/50 text-red-300 font-bold rounded-xl hover:bg-red-800/80 transition w-full">ยืนยันยกเลิก</button>
+              <button onclick="confirmCancelBooking()" class="flex-1 py-3.5 bg-red-900/60 border border-red-600/50 text-red-400 font-bold rounded-xl hover:bg-red-800/80 transition w-full">ยืนยันยกเลิก</button>
           </div>
       </div>
   </div>
 
   <div id="alertModal" class="hidden fixed inset-0 z-[9999] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 pointer-events-auto transition-all">
       <div class="bg-gray-900/80 backdrop-blur-xl border border-gray-700 rounded-3xl p-6 w-full max-w-sm text-center shadow-2xl transform transition-all">
-          <div id="alertIcon" class="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl z-10 relative"></div>
+          <div id="alertIcon" class="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl glass-box z-10 relative"></div>
           <h3 id="alertTitle" class="text-xl font-black text-white mb-2 relative z-10">...</h3>
           <p id="alertMessage" class="text-sm text-gray-400 mb-6 whitespace-pre-line relative z-10">...</p>
-          <button onclick="closeAlertModal()" class="w-full py-3.5 bg-green-600/80 border border-green-500/50 text-white font-bold rounded-xl shadow-lg hover:bg-green-500 transition relative z-10">ตกลง</button>
+          <button onclick="closeAlertModal()" class="w-full py-4 bg-green-600/80 border border-green-500/50 text-white font-bold rounded-xl shadow-lg hover:bg-green-500 transition relative z-10">ตกลง</button>
       </div>
   </div>
 
@@ -491,9 +512,9 @@
     let currentRouteStatus = ""; 
 
     let currentRouteBounds = null;
-    let isTrackingMode = false; // บังคับเป็นโหมด Overview เสมอตามคำขอ
+    let isTrackingMode = false; // ปล่อยให้แผนที่เป็นมุมกว้าง (Overview) เสมอ
     
-    // 🌟 เริ่มต้นด้วยดาวเทียม
+    // 🌟 เริ่มต้นเป็นดาวเทียม ให้เปลี่ยนได้
     let isSatelliteMode = true; 
     
     let lastNotifiedStatus = "";
@@ -578,14 +599,14 @@
         const iconDiv = document.getElementById('confirmActionIcon');
         const btn = document.getElementById('confirmActionButton');
 
-        iconDiv.className = "w-16 h-16 glass-box rounded-full flex items-center justify-center mx-auto mb-4 text-3xl z-10 relative";
+        iconDiv.className = "w-16 h-16 glass-box rounded-full flex items-center justify-center mx-auto mb-4 text-3xl shadow-inner z-10 relative";
         btn.className = "flex-1 py-3.5 text-white font-bold rounded-xl shadow-md transition border";
 
         if (theme === 'green') {
-            iconDiv.innerHTML = '<i class="fas fa-map-marked-alt text-green-400"></i>';
+            iconDiv.innerHTML = '<i class="fas fa-map-marked-alt text-green-500"></i>';
             btn.classList.add('bg-green-600/80', 'hover:bg-green-500', 'border-green-500/50');
         } else if (theme === 'red') {
-            iconDiv.innerHTML = '<i class="fas fa-map-marked-alt text-red-400"></i>';
+            iconDiv.innerHTML = '<i class="fas fa-map-marked-alt text-red-500"></i>';
             btn.classList.add('bg-red-600/80', 'hover:bg-red-500', 'border-red-500/50');
         } else {
             iconDiv.innerHTML = '<i class="fas fa-map-marked-alt text-blue-400"></i>';
@@ -778,7 +799,7 @@
         
         const iconDiv = document.getElementById('alertIcon');
         iconDiv.innerHTML = iconHtml;
-        iconDiv.className = `w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl shadow-inner z-10 relative ${iconBg} ${iconColor}`;
+        iconDiv.className = `w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl shadow-inner z-10 relative border ${iconBg} ${iconColor}`;
         document.getElementById('alertModal').classList.remove('hidden');
         window.alertCloseCallback = typeof callback === 'function' ? callback : null;
     }
@@ -788,7 +809,7 @@
         if (window.alertCloseCallback) window.alertCloseCallback();
     }
 
-    // 🌟 ดาร์กโหมดดั้งเดิมที่แก้ไขบั๊กใหม่หมดแล้ว
+    // 🌟 ดาร์กโหมดของแผนที่ Google Maps (แก้บั๊กเรียบร้อย)
     const darkMapStyle = [
         { elementType: "geometry", stylers: [{ color: "#242f3e" }] },
         { elementType: "labels.text.stroke", stylers: [{ color: "#242f3e" }] },
@@ -821,11 +842,11 @@
         isSatelliteMode = !isSatelliteMode;
         if(isSatelliteMode) {
             map.setMapTypeId('hybrid');
-            document.getElementById('btnMapStyle').innerHTML = '<i class="fas fa-layer-group text-xl"></i>';
+            document.getElementById('btnMapStyle').innerHTML = '<i class="fas fa-layer-group text-[18px] text-gray-200"></i>';
         } else {
             map.setMapTypeId('roadmap');
             map.setOptions({ styles: darkMapStyle });
-            document.getElementById('btnMapStyle').innerHTML = '<i class="fas fa-satellite text-xl"></i>';
+            document.getElementById('btnMapStyle').innerHTML = '<i class="fas fa-satellite text-[18px] text-gray-200"></i>';
         }
     }
 
@@ -1111,7 +1132,7 @@
           document.body.classList.remove('theme-dropoff');
           document.getElementById('topSearchPick').classList.add('hidden');
           document.getElementById('topSearchDrop').classList.add('hidden');
-          // topStatusTracking โดนคุมโดย JS ข้างล่าง
+          // topStatusTracking ควบคุมโดย JS ข้างล่าง
       } else {
           document.body.classList.remove('theme-dropoff');
           document.getElementById('topSearchPick').classList.add('hidden');
@@ -1467,6 +1488,7 @@
       });
     }
 
+    // 🌟 แก้ไขฟังก์ชันให้ทำงานถูกต้อง ไม่ Error 100%
     function handleTracking() {
       if(currentStep !== 'Tracking') {
           showPage('Tracking');
@@ -1476,13 +1498,13 @@
       
       document.getElementById('mapControls').classList.remove('hidden');
 
-      // 🌟 ดึง Element ที่ต้องใช้ทั้งหมดมาให้ครบ
       const topStatusBox = document.getElementById('topStatusTracking');
       const bottomStatusBox = document.getElementById('bottomStatusBox');
       const driverBox = document.getElementById('driverRowLayout');
-      const actionButtonsBox = document.getElementById('actionButtonsBox');
+      const contactBtns = document.getElementById('contactButtonsBox');
       const btnCancelStandalone = document.getElementById('btnCancelStandalone');
       const trackAddressBox = document.getElementById('trackAddressBox');
+      const btnEmergency = document.getElementById('btnEmergency');
       
       const etaEl = document.getElementById('trackEtaDisplayFloat');
       const statusTop = document.getElementById('trackStatusFloat');
@@ -1491,48 +1513,47 @@
       const statusBottom = document.getElementById('trackStatusBottom');
       const priceBottom = document.getElementById('trackPriceBottom');
 
-      // รีเซ็ตการแสดงผลก่อนเริ่มจัดเลย์เอาต์
+      // รีเซ็ตการแสดงผลก่อน
       topStatusBox.classList.add('hidden');
       bottomStatusBox.classList.add('hidden');
       driverBox.classList.add('hidden');
-      actionButtonsBox.classList.add('hidden');
+      contactBtns.classList.add('hidden');
       btnCancelStandalone.classList.add('hidden');
       trackAddressBox.classList.remove('flex-1');
       trackAddressBox.classList.add('w-full');
+      btnEmergency.classList.add('hidden');
 
-      // 🌟 ตรวจสอบสถานะและเรียง Layout ตามที่คุณสั่ง
+      // 🌟 ควบคุมการซ่อน/โชว์
       if(bookData.status === "รอผู้ขับขี่ตอบรับ") {
-          // แถว 1: สถานะรอ แถว 2: ที่อยู่ + ปุ่มยกเลิก
           bottomStatusBox.classList.remove('hidden');
           trackAddressBox.classList.remove('w-full');
           trackAddressBox.classList.add('flex-1');
           btnCancelStandalone.classList.remove('hidden');
           
           statusBottom.innerText = bookData.status;
-          statusBottom.className = "font-black text-[15px] leading-tight text-white";
+          statusBottom.className = "font-black text-[15px] leading-tight text-white drop-shadow-md";
           priceBottom.innerText = "฿" + bookData.price;
       } else if (bookData.status.includes("ยกเลิก")) {
-          // กรณียกเลิก
           bottomStatusBox.classList.remove('hidden');
           
           statusBottom.innerText = bookData.status;
-          statusBottom.className = "font-black text-[15px] leading-tight text-red-500";
+          statusBottom.className = "font-black text-[15px] leading-tight text-red-500 drop-shadow-md";
           priceBottom.innerText = "฿" + bookData.price;
       } else {
-          // โชว์แถบสถานะลอยด้านบน
+          // โชว์แถบสถานะด้านบน
           topStatusBox.classList.remove('hidden');
+          
+          // โชว์ข้อมูลคนขับ
+          if(bookData.driverPin) driverBox.classList.remove('hidden');
+
           statusTop.innerText = bookData.status;
           priceTop.innerText = "฿" + bookData.price;
           
-          if(bookData.driverPin) driverBox.classList.remove('hidden');
-          
           if (bookData.status.includes("กำลังเดินทางไปหา") || bookData.status.includes("รับงานแล้ว") || bookData.status.includes("มาถึงจุดรับ")) {
-              statusTop.className = "font-black text-[15px] leading-tight text-green-400";
+              statusTop.className = "font-black text-[15px] leading-tight text-green-400 drop-shadow-md";
               
-              // 🌟 โชว์ แชท/โทร เพราะคนขับกำลังมารับ
-              actionButtonsBox.classList.remove('hidden');
-              
-              // เอาปุ่มยกเลิกมาคู่กับที่อยู่ด้วย
+              // 🌟 โชว์ปุ่มแชท/โทร และยกเลิก เพราะยังไม่ขึ้นรถ
+              contactBtns.classList.remove('hidden');
               trackAddressBox.classList.remove('w-full');
               trackAddressBox.classList.add('flex-1');
               btnCancelStandalone.classList.remove('hidden');
@@ -1540,21 +1561,18 @@
               if(bookData.driverPhone) document.getElementById('confirmCallBtn').href = "tel:" + bookData.driverPhone;
 
           } else if (bookData.status.includes("ออกเดินทาง") || bookData.status.includes("ไปยังจุดส่ง")) {
-              statusTop.className = "font-black text-[15px] leading-tight text-blue-400";
-              // 🌟 ซ่อนปุ่ม แชท/โทร/ยกเลิก ทั้งหมด เพราะขึ้นรถแล้ว!
-              actionButtonsBox.classList.add('hidden'); 
-              btnCancelStandalone.classList.add('hidden');
-              trackAddressBox.classList.remove('flex-1');
-              trackAddressBox.classList.add('w-full');
+              statusTop.className = "font-black text-[15px] leading-tight text-blue-400 drop-shadow-md";
+              // 🌟 ขึ้นรถแล้ว ซ่อนแชท โทร ยกเลิก โชว์แค่ปุ่มฉุกเฉิน
+              btnEmergency.classList.remove('hidden');
           } else {
-              statusTop.className = "font-black text-[15px] leading-tight text-white";
+              statusTop.className = "font-black text-[15px] leading-tight text-white drop-shadow-md";
           }
       }
 
       document.getElementById('trackPick').innerText = bookData.pName;
       document.getElementById('trackDrop').innerText = bookData.dName;
 
-      // 🌟 ดึงข้อมูลคนขับ (ถ้ามีและไม่ใช่สถานะรอ)
+      // 🌟 ดึงข้อมูลคนขับ 
       if(bookData.driverPin && bookData.status !== "รอผู้ขับขี่ตอบรับ" && !bookData.status.includes("ยกเลิก")) {
           db.ref('drivers_profile/' + bookData.driverPin).once('value', snap => {
               if(snap.exists()) {
@@ -1607,6 +1625,10 @@
       
       if(bookData.status.includes("ยกเลิก") && !window.hasShownCancel) {
         window.hasShownCancel = true;
+        btnCancelStandalone.classList.add('hidden'); // ซ่อนปุ่มถ้ายกเลิกแล้ว
+        trackAddressBox.classList.remove('flex-1');
+        trackAddressBox.classList.add('w-full');
+
         showAlert('แจ้งเตือน', 'ขออภัยในความไม่สะดวกครับ งานนี้ถูกยกเลิก รบกวนคุณลูกค้ากดยืนยันเพื่อเรียกรถใหม่อีกครั้งนะครับ', 'error', () => {
             window.isCompleting = true;
             db.ref('bookings/' + lineUserId).remove().then(() => {
