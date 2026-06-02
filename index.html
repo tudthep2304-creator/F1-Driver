@@ -41,11 +41,30 @@
 
     .full-page { position: fixed; inset: 0; z-index: 30; background: #111827; flex-direction: column; }
     
-    .pac-container { z-index: 100000 !important; font-family: 'Kanit' !important; border-radius: 12px !important; border: 1px solid #374151 !important; background-color: #1f2937 !important; box-shadow: 0 10px 15px rgba(0,0,0,0.5) !important; margin-top: 5px !important; }
-    .pac-item { padding: 10px 14px; border-top: 1px solid #374151; cursor: pointer; color: #d1d5db; font-size: 13px; }
+    .pac-container { 
+        z-index: 100000 !important; 
+        font-family: 'Kanit' !important; 
+        border-radius: 0 0 16px 16px !important; 
+        border: 1px solid #374151 !important; 
+        border-top: none !important;
+        background-color: #1f2937 !important; 
+        box-shadow: 0 15px 30px rgba(0,0,0,0.8) !important; 
+        margin-top: -10px !important; 
+        max-height: 40vh !important; 
+        overflow-y: auto !important; 
+        -webkit-overflow-scrolling: touch;
+    }
+    .pac-container::-webkit-scrollbar { width: 6px; }
+    .pac-container::-webkit-scrollbar-thumb { background-color: #4b5563; border-radius: 10px; }
+    
+    .pac-item { padding: 14px 16px; border-top: 1px solid #374151; cursor: pointer; color: #d1d5db; font-size: 14px; }
     .pac-item:first-child { border-top: none; }
+    
     .pac-item-query { color: #10b981; font-weight: bold; } 
     .pac-item .pac-icon { filter: invert(70%) sepia(50%) saturate(400%) hue-rotate(80deg); }
+
+    body.theme-dropoff .pac-container .pac-item-query { color: #ef4444 !important; }
+    body.theme-dropoff .pac-container .pac-icon { filter: invert(34%) sepia(98%) saturate(7128%) hue-rotate(349deg) brightness(102%) contrast(105%) !important; }
 
     .hide-scrollbar::-webkit-scrollbar { display: none; }
     .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
@@ -53,19 +72,26 @@
 </head>
 <body class="h-screen w-screen m-0 overflow-hidden">
 
-  <!-- แผนที่พื้นหลัง -->
   <div id="map" class="map-container hidden"></div>
 
-  <!-- Navbar -->
   <div id="navBar" class="hidden fixed top-0 w-full h-16 bg-gray-900 border-b border-gray-800 flex items-center justify-between px-4 z-20 text-white shadow-md pointer-events-auto">
     <button onclick="goBack()" class="p-2 text-2xl active:opacity-50 hover:text-green-400 transition"><i class="fas fa-chevron-left"></i></button>
-    <h1 id="navTitle" class="text-lg font-bold text-white">F1 Driver</h1>
+
+    <div class="flex justify-center items-center gap-2 flex-1 mx-2">
+      <div class="flex flex-col items-center">
+          <h2 class="font-black text-green-400 text-sm leading-tight" id="trackStatusNavBar">สถานะ: รอ...</h2>
+          <p class="text-xs text-blue-400 font-bold hidden" id="trackEtaDisplayNavBar">ถึง: 14:30 น.</p>
+      </div>
+      <div class="flex items-center gap-1">
+          <span class="font-black text-white text-base" id="trackPriceNavBar">฿181</span>
+          <p id="trackPromoTextNavBar" class="text-[10px] text-green-400 font-bold hidden">โค้ดลด ฿100</p>
+      </div>
+    </div>
     <button onclick="goHome()" class="p-2 text-xl active:opacity-50 hover:text-green-400 transition"><i class="fas fa-home"></i></button>
   </div>
 
-  <!-- แถบค้นหาลอยด้านบน จุดรับ (ธีมเขียว) -->
   <div id="topSearchPick" class="hidden fixed top-[76px] left-4 right-4 z-40 pointer-events-auto transition-transform duration-300">
-      <div class="relative w-full shadow-xl rounded-full bg-gray-900 border-2 border-green-500 overflow-visible">
+      <div class="relative w-full shadow-[0_10px_20px_rgba(34,197,94,0.2)] rounded-2xl bg-gray-900 border-2 border-green-500 overflow-visible">
           <div class="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none text-green-500">
               <i class="fas fa-map-marker-alt text-lg"></i>
           </div>
@@ -73,9 +99,8 @@
       </div>
   </div>
 
-  <!-- แถบค้นหาลอยด้านบน จุดหมาย (ธีมแดง) -->
   <div id="topSearchDrop" class="hidden fixed top-[76px] left-4 right-4 z-40 pointer-events-auto transition-transform duration-300">
-      <div class="relative w-full shadow-xl rounded-full bg-gray-900 border-2 border-red-500 overflow-visible">
+      <div class="relative w-full shadow-[0_10px_20px_rgba(239,68,68,0.2)] rounded-2xl bg-gray-900 border-2 border-red-500 overflow-visible">
           <div class="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none text-red-500">
               <i class="fas fa-map-pin text-lg"></i>
           </div>
@@ -83,7 +108,6 @@
       </div>
   </div>
 
-  <!-- ปุ่มคุมแผนที่ (ขยับลงให้พ้นแถบค้นหา) -->
   <div id="mapControls" class="hidden fixed top-[160px] right-4 z-30 flex-col gap-3 pointer-events-auto">
       <button onclick="toggleMapStyle()" id="btnMapStyle" class="bg-gray-800 w-12 h-12 flex items-center justify-center rounded-full shadow-lg text-gray-400 border border-gray-600 active:bg-gray-700 transition" title="สลับโหมดแผนที่">
           <i class="fas fa-layer-group text-xl"></i>
@@ -91,7 +115,7 @@
       <button onclick="centerToFocus()" id="btnCrosshair" class="bg-gray-800 w-12 h-12 flex items-center justify-center rounded-full shadow-lg text-gray-300 border border-gray-600 active:bg-gray-700 transition">
           <i class="fas fa-crosshairs text-xl"></i>
       </button>
-      <button onclick="fitRouteBounds()" id="btnOverview" class="hidden bg-gray-800 w-12 h-12 flex items-center justify-center rounded-full shadow-lg text-gray-300 border border-gray-600 active:bg-gray-700 transition">
+      <button onclick="fitRouteBounds()" id="btnOverview" class="hidden bg-gray-800 w-12 h-12 flex items-center justify-center rounded-full shadow-lg text-gray-500 border border-green-500/30 active:bg-gray-700 transition">
           <i class="fas fa-route text-xl"></i>
       </button>
       <button onclick="openEmergencyModal()" id="btnEmergency" class="hidden bg-red-900/80 w-12 h-12 flex items-center justify-center rounded-full shadow-[0_0_15px_rgba(239,68,68,0.5)] text-red-400 border border-red-500/50 active:bg-red-800 transition mt-2">
@@ -99,7 +123,6 @@
       </button>
   </div>
 
-  <!-- หน้าที่ 1: หน้าต้อนรับ -->
   <div id="page1" class="full-page flex">
     <div class="bg-gray-900 border-b border-green-500/30 text-green-400 p-6 text-center shadow-lg">
         <h1 class="text-2xl font-black tracking-wider flex justify-center items-center gap-2">
@@ -108,7 +131,7 @@
     </div>
     <div class="p-6 space-y-6 flex-1 flex flex-col justify-center">
       <div class="text-center">
-        <img id="userPic" class="w-24 h-24 rounded-full mx-auto mb-4 border-4 border-green-500 object-cover shadow-[0_0_15px_rgba(34,197,94,0.3)]" src="https://img.icons8.com/bubbles/100/user.png" alt="Profile">
+        <img id="userPic" class="w-24 h-24 rounded-full mx-auto mb-4 border-4 border-green-500 object-cover shadow-[0_0_15px_rgba(34,197,94,0.3)] bg-gray-800" src="https://img.icons8.com/bubbles/150/user.png" alt="Profile">
         <h2 class="text-xl font-bold text-white" id="userName">กำลังเชื่อมต่อ LINE...</h2>
       </div>
       
@@ -126,7 +149,6 @@
     </div>
   </div>
 
-  <!-- หน้าที่ 2: เลือกจุดรับ (แผงล่างธีมเขียว) -->
   <div id="page2" class="hidden">
     <div class="ui-panel border-t-[4px] border-green-500 h-auto pb-8 pt-5">
       <div class="flex justify-between items-center mb-4">
@@ -171,7 +193,6 @@
     </div>
   </div>
 
-  <!-- หน้าที่ 3: เลือกจุดส่ง (แผงล่างธีมแดง) -->
   <div id="page3" class="hidden">
     <div class="ui-panel border-t-[4px] border-red-500 h-auto pb-8 pt-5">
       <div class="flex justify-between items-center mb-4">
@@ -216,7 +237,6 @@
     </div>
   </div>
 
-  <!-- หน้าที่ 4: สรุปและยืนยันการเดินทาง -->
   <div id="page4" class="hidden">
     <div class="ui-panel border-t-[4px] border-blue-500 h-auto pb-6 pt-5">
       
@@ -273,38 +293,11 @@
     </div>
   </div>
 
-  <!-- หน้าต่างติดตามสถานะคนขับ (Tracking) -->
   <div id="pageTracking" class="hidden">
-    <div id="trackingPanel" class="ui-panel border-t-[4px] border-green-500 h-auto pb-6 pt-5">
-      
-      <!-- [1] เส้นขีดตรงกลางอันแรกสุดและจุดจับสำหรับลากแผงขึ้นลง -->
-      <div class="w-full flex justify-center pb-2 pt-1 cursor-pointer" onclick="toggleTrackingPanel()">
+    <div id="trackingPanel" class="ui-panel border-t-[4px] border-green-500 h-auto pb-4 pt-4"> <div class="w-full flex justify-center pb-2 pt-1 cursor-pointer" onclick="toggleTrackingPanel()">
           <div class="w-12 h-1.5 bg-gray-600 rounded-full"></div>
       </div>
 
-      <!-- 🌟 [ย้ายมานี่] แถบสถานะ ราคา และปุ่มยกเลิก -->
-      <div class="flex justify-between items-center mb-3">
-          <div class="flex items-center gap-2">
-              <span class="bg-gray-800 border border-green-500/30 px-3 py-1 rounded-xl font-black text-green-400 text-base shrink-0 inline-block" id="trackPrice">฿0</span>
-              <p id="trackPromoText" class="text-[10px] text-green-400 bg-green-900/30 border border-green-500/20 px-1 rounded font-bold hidden"></p>
-              <button onclick="closeTrackingPanel()" class="w-8 h-8 flex items-center justify-center rounded-full bg-gray-800 border border-gray-700 text-red-400 active:bg-gray-700">
-                  <i class="fas fa-times text-sm"></i>
-              </button>
-          </div>
-          <div class="text-right">
-              <h2 class="font-black text-green-400 text-lg leading-tight" id="trackStatus">รอผู้ขับขี่ตอบรับ...</h2>
-          </div>
-      </div>
-      
-      <!-- เส้นขีดคั่นตรงกลาง -->
-      <div class="border-b border-gray-700 mb-3"></div>
-
-      <!-- ข้อความ ETA - [แก้ไข: เพิ่มเวลาถึงโดยประมาณ] -->
-      <div class="flex justify-start mb-3">
-          <p class="text-xs text-blue-400 font-bold mt-0.5" id="trackEtaDisplay">คนขับอยู่ห่าง: -- กม. • อีก -- นาที</p>
-      </div>
-      
-      <!-- 🌟 [ย้ายมานี่] กล่องสถานที่จุดรับ-จุดส่ง ย้ายมาไว้ตรงกลาง -->
       <div class="mb-4 bg-gray-900/50 p-3.5 rounded-2xl border border-gray-700 relative">
           <div class="absolute left-[1.45rem] top-7 bottom-7 w-0.5 border-l-2 border-dashed border-gray-600"></div>
           <div class="flex items-start gap-3 mb-4 relative z-10">
@@ -317,7 +310,6 @@
           </div>
       </div>
 
-      <!-- 🌟 ข้อมูลคนขับ ย้ายมาไว้ด้านล่าง -->
       <div id="driverInfoBox" class="hidden mb-4 bg-gray-800/80 border border-green-500/30 p-3 rounded-xl flex justify-between items-start">
           <div class="flex items-center gap-3 w-full">
               <div class="w-12 h-12 bg-gray-700 rounded-full flex items-center justify-center text-green-400 text-2xl border border-gray-600 shrink-0"><i class="fas fa-user-tie"></i></div>
@@ -334,7 +326,6 @@
           </div>
       </div>
 
-      <!-- ปุ่ม Action -->
       <div id="actionButtonsBox" class="hidden gap-2 mb-1 shrink-0 w-full flex-row">
           
           <button id="btnChat" onclick="openLineOA()" class="flex-1 w-full bg-gray-800 text-gray-300 py-3 rounded-xl font-bold border border-gray-700 text-sm shadow-sm hover:bg-gray-700 transition flex justify-center items-center gap-1.5"><i class="fab fa-line text-[20px] text-[#06C755] leading-none"></i> แชท</button>
@@ -532,10 +523,28 @@
     });
 
     let currentConfirmCallback = null;
-    function openConfirmActionModal(title, message, callback) {
+    function openConfirmActionModal(title, message, callback, theme = 'blue') {
         document.getElementById('confirmActionTitle').innerText = title;
         document.getElementById('confirmActionMessage').innerText = message;
         currentConfirmCallback = callback;
+        
+        const iconDiv = document.getElementById('confirmActionIcon');
+        const btn = document.getElementById('confirmActionButton');
+
+        iconDiv.className = "w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl border";
+        btn.className = "flex-1 py-3 text-white font-bold rounded-xl shadow-md transition";
+
+        if (theme === 'green') {
+            iconDiv.classList.add('bg-green-900/30', 'text-green-500', 'border-green-500/30');
+            btn.classList.add('bg-green-600', 'hover:bg-green-700');
+        } else if (theme === 'red') {
+            iconDiv.classList.add('bg-red-900/30', 'text-red-500', 'border-red-500/30');
+            btn.classList.add('bg-red-600', 'hover:bg-red-700');
+        } else {
+            iconDiv.classList.add('bg-blue-900/30', 'text-blue-500', 'border-blue-500/30');
+            btn.classList.add('bg-blue-600', 'hover:bg-blue-700');
+        }
+
         document.getElementById('confirmActionModal').classList.remove('hidden');
     }
     function closeConfirmActionModal() {
@@ -604,12 +613,13 @@
             return;
         }
 
+        let theme = (currentStep === 2) ? 'green' : 'red';
         openConfirmActionModal(`ตั้งค่า ${typeName}?`, `คุณต้องการบันทึกพิกัดปัจจุบันเป็น "${typeName}" ใช่หรือไม่?\n\n${currentName}`, () => {
             localStorage.setItem('saved_' + type, JSON.stringify({name: currentName, lat: currentLat, lng: currentLng}));
             showAlert('บันทึกสำเร็จ', `อัปเดตพิกัด "${typeName}" เรียบร้อยแล้ว!`, 'success');
             renderSavedPlacesUI(); 
             updateSavedMarkers(); 
-        });
+        }, theme);
     }
 
     function renderSavedPlacesUI() {
@@ -690,7 +700,6 @@
         }
     }
 
-    // ฟังก์ชันจัดการแผงควบคุม Tracking - [แก้ไข: เพิ่มฟังก์ชัน open/close]
     function toggleTrackingPanel() {
         const panel = document.getElementById('trackingPanel');
         panel.classList.toggle('panel-collapsed');
@@ -700,23 +709,6 @@
             } else {
                 map.setOptions({ padding: { top: 80, bottom: 350, left: 0, right: 0 } });
             }
-        }
-    }
-    
-    function closeTrackingPanel() {
-        // [แก้ไข: ปิดแผงตามคำขอ] - ปุ่ม X ควรทำการพับแผง (collapsing)
-        const panel = document.getElementById('trackingPanel');
-        panel.classList.add('panel-collapsed');
-        if (map) {
-            map.setOptions({ padding: { top: 80, bottom: 120, left: 0, right: 0 } });
-        }
-    }
-    
-    function openTrackingPanel() {
-        const panel = document.getElementById('trackingPanel');
-        panel.classList.remove('panel-collapsed');
-        if (map) {
-            map.setOptions({ padding: { top: 80, bottom: 350, left: 0, right: 0 } });
         }
     }
 
@@ -765,10 +757,10 @@
         { featureType: "poi.park", elementType: "labels.text.fill", stylers: [{ color: "#6b9a76" }] },
         { featureType: "road", elementType: "geometry", stylers: [{ color: "#111720" }] },
         { featureType: "road", elementType: "geometry.stroke", stylers: [{ color: "#212a37" }] },
-        { featureType: "road", elementType: "labels.text.fill", stylers: [{ color: "#9ca5b3" }] },
+        { featureType: "road.labels.text.fill", stylers: [{ color: "#9ca5b3" }] },
         { featureType: "road.highway", elementType: "geometry", stylers: [{ color: "#746855" }] },
         { featureType: "road.highway", elementType: "geometry.stroke", stylers: [{ color: "#1f2835" }] },
-        { featureType: "road.highway", elementType: "labels.text.fill", stylers: [{ color: "#f3d19c" }] },
+        { featureType: "road.highway.labels.text.fill", stylers: [{ color: "#f3d19c" }] },
         { featureType: "transit", elementType: "geometry", stylers: [{ color: "#2f3948" }] },
         { featureType: "transit.station", elementType: "labels.text.fill", stylers: [{ color: "#d59563" }] },
         { featureType: "water", elementType: "geometry", stylers: [{ color: "#17263c" }] },
@@ -940,7 +932,7 @@
          updateAddressBox(true); 
       });
 
-      // ปักหมุดโดยตรง - [แก้ไข: นำป๊อปอัปยืนยันออก]
+      // 🌟 ยกเลิกป๊อปอัปยืนยันเมื่อจิ้มบนแผนที่โดยตรง 
       map.addListener('click', (event) => {
         if (event.placeId && placesService) {
           event.stop(); 
@@ -1046,10 +1038,37 @@
 
     function showPage(page) {
       currentStep = page;
-      [1,2,3,4,'Tracking'].forEach(p => document.getElementById('page'+p).classList.add('hidden'));
+      [1,2,3,4,'Tracking'].forEach(p => {
+          const el = document.getElementById('page' + p);
+          if (el) el.classList.add('hidden');
+      });
       document.getElementById('page' + page).classList.remove('hidden');
       
       requestWakeLock();
+
+      // 🌟 สลับการแสดงผลกล่องค้นหาด้านบน และแถบสถานะใหม่
+      const newStatusEl = document.getElementById('navBar').querySelector('.flex-1');
+      if (page === 2) {
+          document.body.classList.remove('theme-dropoff');
+          document.getElementById('topSearchPick').classList.remove('hidden');
+          document.getElementById('topSearchDrop').classList.add('hidden');
+          if (newStatusEl) newStatusEl.classList.add('hidden'); // ซ่อนแถบสถานะใหม่
+      } else if (page === 3) {
+          document.body.classList.add('theme-dropoff');
+          document.getElementById('topSearchPick').classList.add('hidden');
+          document.getElementById('topSearchDrop').classList.remove('hidden');
+          if (newStatusEl) newStatusEl.classList.add('hidden'); // ซ่อนแถบสถานะใหม่
+      } else if (page === 'Tracking') {
+          document.body.classList.remove('theme-dropoff');
+          document.getElementById('topSearchPick').classList.add('hidden');
+          document.getElementById('topSearchDrop').classList.add('hidden');
+          if (newStatusEl) newStatusEl.classList.remove('hidden'); // แสดงแถบสถานะใหม่
+      } else {
+          document.body.classList.remove('theme-dropoff');
+          document.getElementById('topSearchPick').classList.add('hidden');
+          document.getElementById('topSearchDrop').classList.add('hidden');
+          if (newStatusEl) newStatusEl.classList.add('hidden'); // ซ่อนแถบสถานะใหม่
+      }
 
       if(page !== 1) {
         document.getElementById('navBar').classList.remove('hidden');
@@ -1074,9 +1093,7 @@
       }
 
       if(page === 2) {
-        document.getElementById('navTitle').innerText = "จุดให้รถไปรับ";
-        document.getElementById('topSearchPick').classList.remove('hidden');
-        document.getElementById('topSearchDrop').classList.add('hidden');
+        // document.getElementById('navTitle').innerText = "จุดให้รถไปรับ";
         if (markerDrop && markerPick && map) {
           markerDrop.setMap(null); markerPick.setMap(map); 
           map.setOptions({ padding: { top: 140, bottom: getDynamicBottomPadding(), left: 0, right: 0 } }); 
@@ -1091,9 +1108,7 @@
         }
       } 
       else if(page === 3) {
-        document.getElementById('navTitle').innerText = "จุดหมายปลายทาง";
-        document.getElementById('topSearchPick').classList.add('hidden');
-        document.getElementById('topSearchDrop').classList.remove('hidden');
+        // document.getElementById('navTitle').innerText = "จุดหมายปลายทาง";
         if (markerPick && markerDrop && map) {
           markerPick.setMap(map); markerDrop.setMap(map);
           map.setOptions({ padding: { top: 140, bottom: getDynamicBottomPadding(), left: 0, right: 0 } }); 
@@ -1109,9 +1124,7 @@
         }
       }
       else if(page === 4) {
-        document.getElementById('navTitle').innerText = "สรุปการเดินทาง";
-        document.getElementById('topSearchPick').classList.add('hidden');
-        document.getElementById('topSearchDrop').classList.add('hidden');
+        // document.getElementById('navTitle').innerText = "สรุปการเดินทาง";
         document.getElementById('btnOverview').classList.remove('hidden');
         document.getElementById('btnEmergency').classList.add('hidden');
         document.getElementById('btnCrosshair').classList.add('hidden'); 
@@ -1193,7 +1206,7 @@
       const input = document.getElementById(inputId);
       if (typeof google === 'undefined' || typeof google.maps === 'undefined' || typeof google.maps.places === 'undefined') return;
       
-      chiangRaiBounds = new google.maps.LatLngBounds(
+      const chiangRaiBounds = new google.maps.LatLngBounds(
         new google.maps.LatLng(18.91, 99.16),
         new google.maps.LatLng(20.46, 100.56)
       );
@@ -1202,6 +1215,7 @@
         bounds: chiangRaiBounds, strictBounds: true, componentRestrictions: {country: 'th'}
       });
 
+      // 🌟 พอกดเข้าช่องค้นหา จะลบข้อความออกให้พิมพ์ใหม่ พอกดออก ถ้าช่องว่างจะดึงค่าเก่ามาใส่ทันที
       input.addEventListener('focus', function() { 
           if(this.value.trim() !== '') this.dataset.oldValue = this.value; 
           this.value = ''; 
@@ -1209,11 +1223,13 @@
 
       input.addEventListener('blur', function() { 
           setTimeout(() => {
-              this.value = this.dataset.oldValue || ''; 
+              if(this.value.trim() === '') {
+                  this.value = this.dataset.oldValue || ''; 
+              }
           }, 150);
       });
 
-      // ยืนยันสถานที่จากลิสต์ - [แก้ไข: นำป๊อปอัปยืนยันออก]
+      // 🌟 นำการแสดงป๊อปอัปยืนยันออก เมื่อค้นหาแล้วกดจากลิสต์ ให้เลือกทันทีเลย
       auto.addListener('place_changed', () => {
         const place = auto.getPlace();
         if(place.geometry && map) {
@@ -1411,26 +1427,51 @@
     function handleTracking() {
       if(currentStep !== 'Tracking') {
           showPage('Tracking');
-          document.getElementById('topSearchPick').classList.add('hidden');
-          document.getElementById('topSearchDrop').classList.add('hidden');
           document.getElementById('btnOverview').classList.remove('hidden'); 
           document.getElementById('btnCrosshair').classList.remove('hidden'); 
       }
       
-      document.getElementById('navTitle').innerText = "สถานะการเดินทาง";
+      // document.getElementById('navTitle').innerText = "สถานะการเดินทาง";
       document.getElementById('mapControls').classList.remove('hidden');
 
-      let statusEl = document.getElementById('trackStatus');
-      
-      statusEl.innerText = bookData.status;
-      document.getElementById('trackPrice').innerText = "฿" + bookData.price;
+      // *** อัปเดต ID องค์ประกอบในแถบสถานะใหม่ ***
+      const statusElNavBar = document.getElementById('trackStatusNavBar');
+      const priceElNavBar = document.getElementById('trackPriceNavBar');
+      const promoElNavBar = document.getElementById('trackPromoTextNavBar');
+      const etaElNavBar = document.getElementById('trackEtaDisplayNavBar');
+
+      // *** อัปเดตข้อความและซ่อน/แสดง ***
+      statusElNavBar.innerText = "สถานะ: " + bookData.status; // ปรับข้อความสถานะ
+      priceElNavBar.innerText = "฿" + bookData.price;
       
       if(bookData.promoCode) {
-          let promoText = document.getElementById('trackPromoText');
-          promoText.innerText = `ใช้โค้ดลด ฿${bookData.discount}`;
-          promoText.classList.remove('hidden');
+          promoElNavBar.innerText = `โค้ดลด ฿${bookData.discount}`; // ปรับข้อความโปรโมชั่น
+          promoElNavBar.classList.remove('hidden');
+      } else {
+          promoElNavBar.classList.add('hidden');
       }
 
+      // ตรวจสอบสถานะเพื่อแสดง ETA และปรับสไตล์
+      if(bookData.status === "รอผู้ขับขี่ตอบรับ") {
+          statusElNavBar.className = "font-black text-gray-500 text-sm leading-tight";
+          etaElNavBar.classList.add('hidden');
+      } else if (bookData.status.includes("ยกเลิก")) {
+          statusElNavBar.className = "font-black text-red-500 text-sm leading-tight"; 
+          etaElNavBar.classList.add('hidden');
+      } else if (bookData.status.includes("กำลังเดินทางไปหา") || bookData.status.includes("รับงานแล้ว")) {
+          statusElNavBar.className = "font-black text-green-400 text-sm leading-tight";
+          etaElNavBar.classList.add('hidden'); // ซ่อน ETA ในสถานะนี้
+      } else if (bookData.status.includes("ออกเดินทาง") || bookData.status.includes("ไปยังจุดส่ง")) {
+          statusElNavBar.className = "font-black text-blue-400 text-sm leading-tight";
+          // คำนวณ ETA จริง (logic เพิ่มเติม) และแสดง
+          // etaElNavBar.innerText = "ถึง: 14:30 น.";
+          etaElNavBar.classList.remove('hidden');
+      } else {
+          statusElNavBar.className = "font-black text-white text-sm leading-tight";
+          etaElNavBar.classList.add('hidden');
+      }
+
+      // ดึงข้อมูลสถานที่และคนขับ
       document.getElementById('trackPick').innerText = bookData.pName;
       document.getElementById('trackDrop').innerText = bookData.dName;
 
@@ -1452,6 +1493,7 @@
           document.getElementById('driverInfoBox').classList.add('hidden');
       }
 
+      // ตรวจสอบการแจ้งเตือนเสียง
       if (lastNotifiedStatus !== bookData.status) {
           if ((bookData.status.includes("กำลังเดินทางไปหา") || bookData.status.includes("รับงานแล้ว")) && !window.hasSpokenAccept) {
               speakText("คนขับตอบรับแล้ว");
@@ -1476,16 +1518,7 @@
           lastNotifiedStatus = bookData.status;
       }
 
-      if(bookData.status === "รอผู้ขับขี่ตอบรับ") {
-          statusEl.className = "font-black text-gray-500 text-lg leading-tight";
-      } else if (bookData.status.includes("ยกเลิก")) {
-          statusEl.className = "font-black text-red-500 text-lg leading-tight"; 
-      } else if (bookData.status.includes("กำลังเดินทางไปหา") || bookData.status.includes("รับงานแล้ว")) {
-          statusEl.className = "font-black text-green-400 text-lg leading-tight";
-      } else {
-          statusEl.className = "font-black text-blue-400 text-lg leading-tight";
-      }
-
+      // จัดการปุ่ม Action
       const btnEmergency = document.getElementById('btnEmergency');
       const actionBox = document.getElementById('actionButtonsBox');
       const btnChat = document.getElementById('btnChat');
@@ -1516,6 +1549,7 @@
           actionBox.classList.add('hidden'); actionBox.classList.remove('flex');
       }
 
+      // ตรวจสอบสถานะจบงานหรือยกเลิก
       if(bookData.status.includes("ถึงที่หมาย") && !window.hasShownFinish) {
         window.hasShownFinish = true;
         let finalMessage = `จุดรับ: ${bookData.pName}\nจุดส่ง: ${bookData.dName}\nระยะทาง: ${bookData.distance || 0} กม. | ราคา: ${bookData.price} บาท\n\nขอบคุณที่ใช้บริการ F1 Driver ครับ!`;
@@ -1548,11 +1582,11 @@
       let isStatusChanged = (currentRouteStatus !== bookData.status);
       currentRouteStatus = bookData.status;
 
-      let etaEl = document.getElementById('trackEtaDisplay');
+      let etaElNavBar = document.getElementById('trackEtaDisplayNavBar');
 
       if (bookData.status === "รอผู้ขับขี่ตอบรับ" || bookData.status.includes("ยกเลิก")) {
           if(markerDriver) markerDriver.setMap(null); 
-          etaEl.classList.add('hidden'); 
+          etaElNavBar.classList.add('hidden'); 
 
           let origin = {lat: bookData.pLat, lng: bookData.pLng};
           let dest = {lat: bookData.dLat, lng: bookData.dLng};
@@ -1609,26 +1643,10 @@
           
           currentRouteBounds = res.routes[0].bounds;
           const leg = res.routes[0].legs[0];
-          etaEl.classList.remove('hidden');
           
           let distMeters = leg.distance.value; 
 
-          // ตรรกะ ETA - [แก้ไข: เพิ่มเวลาถึงโดยประมาณ]
-          let currentTime = new Date();
-          let durationSeconds = leg.duration.value;
-          let etaTime = new Date(currentTime.getTime() + durationSeconds * 1000);
-          
-          let formatETA = (date) => {
-              let hours = date.getHours();
-              let minutes = date.getMinutes();
-              if (minutes < 10) minutes = '0' + minutes;
-              return `ถึงเวลาประมาณ ${hours}:${minutes} น.`;
-          };
-
-          let etaString = formatETA(etaTime);
-
           if(isGoingToPickup) {
-              // แจ้งเตือนระยะทาง/เสียง
               if (distMeters <= 2000) {
                   if (!window.hasSpokenArrivePick && window.hasSpokenAccept) {
                       speakText("คนขับใกล้ถึงแล้ว");
@@ -1640,10 +1658,16 @@
                   }
               }
 
-              etaEl.innerText = `คนขับอยู่ห่าง: ${leg.distance.text} • อีก ${leg.duration.text} • ${etaString}`;
-              etaEl.className = "text-xs text-blue-400 font-bold mt-0.5 inline-block";
           } else {
-              // แจ้งเตือนระยะทาง/เสียง
+              // คำนวณเวลาที่จะถึง
+              const now = new Date();
+              const etaDate = new Date(now.getTime() + leg.duration.value * 1000);
+              const etaHours = etaDate.getHours().toString().padStart(2, '0');
+              const etaMinutes = etaDate.getMinutes().toString().padStart(2, '0');
+              
+              etaElNavBar.innerText = `ถึง: ${etaHours}:${etaMinutes} น.`; // อัปเดต ETA
+              etaElNavBar.classList.remove('hidden');
+
               if (distMeters <= 1000) {
                   if (!window.hasSpokenArriveDrop && bookData.status !== "รอผู้ขับขี่ตอบรับ") {
                       speakText("ใกล้ถึงจุดหมายแล้ว");
@@ -1654,9 +1678,6 @@
                       window.hasNotifiedLineDrop = true;
                   }
               }
-
-              etaEl.innerText = `ระยะทางไปส่ง: ${leg.distance.text} • อีก ${leg.duration.text} • ${etaString}`;
-              etaEl.className = "text-xs text-blue-400 font-bold mt-0.5 inline-block";
           }
 
           if(isStatusChanged && map) {
