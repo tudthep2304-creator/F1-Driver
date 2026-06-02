@@ -20,7 +20,7 @@
         bottom: 0; 
         left: 0; 
         right: 0; 
-        background: rgba(17, 24, 39, 0.85); /* สีดำ-เทาเข้มแบบโปร่งแสง */
+        background: rgba(17, 24, 39, 0.85); 
         backdrop-filter: blur(24px); 
         -webkit-backdrop-filter: blur(24px);
         border-top: 1px solid rgba(255, 255, 255, 0.1);
@@ -90,8 +90,8 @@
     <button onclick="goHome()" class="p-2 text-xl active:opacity-50 hover:text-green-400 transition"><i class="fas fa-home drop-shadow-md"></i></button>
   </div>
 
-  <!-- แถบค้นหาลอยด้านบน จุดรับ (ธีมเขียว-ดำ) -->
-  <div id="topSearchPick" class="hidden fixed top-[76px] left-4 right-4 z-40 pointer-events-auto transition-transform duration-300">
+  <!-- 🌟 แถบค้นหาลอยด้านบน เว้นขวาไว้ให้ปุ่มคุมแผนที่ -->
+  <div id="topSearchPick" class="hidden fixed top-[76px] left-4 right-[70px] z-40 pointer-events-auto transition-transform duration-300">
       <div class="relative w-full shadow-2xl rounded-2xl bg-gray-900/80 backdrop-blur-2xl border border-green-500 overflow-visible">
           <div class="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none text-green-500 z-10">
               <i class="fas fa-map-marker-alt text-lg drop-shadow-md"></i>
@@ -100,8 +100,7 @@
       </div>
   </div>
 
-  <!-- แถบค้นหาลอยด้านบน จุดหมาย (ธีมแดง-ดำ) -->
-  <div id="topSearchDrop" class="hidden fixed top-[76px] left-4 right-4 z-40 pointer-events-auto transition-transform duration-300">
+  <div id="topSearchDrop" class="hidden fixed top-[76px] left-4 right-[70px] z-40 pointer-events-auto transition-transform duration-300">
       <div class="relative w-full shadow-2xl rounded-2xl bg-gray-900/80 backdrop-blur-2xl border border-red-500 overflow-visible">
           <div class="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none text-red-500 z-10">
               <i class="fas fa-map-pin text-lg drop-shadow-md"></i>
@@ -111,7 +110,7 @@
   </div>
 
   <!-- กล่องสถานะการเดินทาง (กระจกดำใส) -->
-  <div id="topStatusTracking" class="hidden fixed top-[76px] left-4 right-4 z-40 pointer-events-auto transition-transform duration-300">
+  <div id="topStatusTracking" class="hidden fixed top-[76px] left-4 right-[70px] z-40 pointer-events-auto transition-transform duration-300">
       <div class="relative w-full shadow-[0_10px_20px_rgba(0,0,0,0.5)] rounded-2xl bg-gray-900/80 backdrop-blur-2xl border border-gray-700 py-3 px-4">
           <div class="flex justify-between items-center">
               <div class="flex-1 pr-2">
@@ -126,10 +125,11 @@
       </div>
   </div>
 
-  <!-- ปุ่มคุมแผนที่ -->
-  <div id="mapControls" class="hidden fixed top-[145px] right-4 z-30 flex-col gap-3 pointer-events-auto">
+  <!-- 🌟 ขยับปุ่มคุมแผนที่ขึ้นมาด้านบน -->
+  <div id="mapControls" class="hidden fixed top-[85px] right-4 z-30 flex-col gap-3 pointer-events-auto">
       <button onclick="toggleMapStyle()" id="btnMapStyle" class="bg-gray-900/80 backdrop-blur-xl w-12 h-12 flex items-center justify-center rounded-full shadow-lg text-gray-300 border border-gray-700 active:bg-gray-800 transition" title="สลับโหมดแผนที่">
-          <i class="fas fa-layer-group text-xl drop-shadow-md opacity-100"></i>
+          <!-- โหมดเริ่มต้นคือ Dark Mode ดังนั้นไอคอนจะเป็นดาวเทียม -->
+          <i class="fas fa-satellite text-xl drop-shadow-md opacity-100"></i>
       </button>
       <button onclick="centerToFocus()" id="btnCrosshair" class="bg-gray-900/80 backdrop-blur-xl w-12 h-12 flex items-center justify-center rounded-full shadow-lg text-gray-300 border border-gray-700 active:bg-gray-800 transition">
           <i class="fas fa-crosshairs text-xl drop-shadow-md opacity-100"></i>
@@ -261,7 +261,7 @@
 
   <!-- หน้าที่ 4: สรุปและยืนยันการเดินทาง -->
   <div id="page4" class="hidden">
-    <div class="ui-panel border-t-2 border-gray-600 h-auto pb-6 pt-5">
+    <div class="ui-panel border-t-[3px] border-blue-500/80 h-auto pb-6 pt-5">
       
       <!-- กล่องสถานที่ (กระจกดำใส) -->
       <div class="bg-gray-800/60 backdrop-blur-md py-3 px-4 rounded-2xl border border-gray-700 relative mb-3 mt-1 shadow-inner">
@@ -298,17 +298,18 @@
           </button>
       </div>
 
+      <!-- 🌟 แก้ไขช่องใส่เบอร์โทรให้สีตรงเป๊ะเหมือนช่องอื่นๆ -->
       <form onsubmit="event.preventDefault(); submitBooking();" class="flex gap-2 w-full mt-1 relative">
           <div class="relative flex-[1.2]">
               <div class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none z-20">
-                  <i class="fas fa-phone-alt text-[16px] text-green-500 drop-shadow-md opacity-100 filter-none"></i>
+                  <i class="fas fa-phone-alt text-[16px] text-gray-400 drop-shadow-md opacity-100 filter-none"></i>
               </div>
               <input type="tel" id="userPhone" name="tel" autocomplete="tel" inputmode="tel" 
                      oninput="formatPhone(this)" 
                      onfocus="this.dataset.oldValue = this.value; this.value = '';" 
                      onblur="if(this.value.trim() === '') this.value = this.dataset.oldValue || '';" 
                      placeholder="เบอร์ติดต่อ" 
-                     class="w-full py-4 pl-10 pr-3 bg-gray-900/60 backdrop-blur-md border border-gray-700 focus:border-green-500 focus:bg-gray-800/80 text-white placeholder-gray-400 rounded-2xl text-sm font-bold outline-none transition-colors relative z-0 shadow-inner">
+                     class="w-full py-4 pl-10 pr-3 bg-gray-800/60 backdrop-blur-md border border-gray-700 focus:border-green-500 focus:bg-gray-700/80 text-white placeholder-gray-400 rounded-2xl text-[14px] font-bold outline-none transition-colors relative z-0 shadow-inner">
           </div>
           <button type="submit" class="flex-1 bg-green-600/90 backdrop-blur-xl text-white py-4 rounded-2xl font-bold text-sm shadow-[0_0_20px_rgba(34,197,94,0.3)] hover:bg-green-500 active:scale-[0.98] transition border border-green-500/50 flex justify-center items-center gap-1.5 whitespace-nowrap drop-shadow-md z-10">
               ยืนยันเรียกรถ <i class="fas fa-car-side opacity-100 drop-shadow-md"></i>
@@ -338,7 +339,7 @@
           </div>
       </div>
 
-      <!-- ข้อมูลคนขับ กระจกดำใส -->
+      <!-- ข้อมูลคนขับ กระจกดำใส (จะซ่อนไว้ก่อนถ้ารอคนขับ) -->
       <div id="driverInfoBox" class="hidden mb-3 bg-gray-800/60 backdrop-blur-md border border-gray-700 p-3 rounded-2xl flex justify-between items-center shadow-inner">
           <div class="flex items-center gap-3 w-full">
               <div class="w-12 h-12 bg-gray-900/80 rounded-full flex items-center justify-center text-green-400 text-2xl border border-gray-700 shrink-0 shadow-inner z-10"><i class="fas fa-user-tie drop-shadow-md opacity-100 filter-none"></i></div>
@@ -373,7 +374,7 @@
     </div>
   </div>
 
-  <!-- 🌟 ป๊อปอัปทั้งหมดเป็นแบบกระจกดำใส (Dark Glass) -->
+  <!-- ป๊อปอัปทั้งหมดเป็นแบบกระจกดำใส (Dark Glass) -->
   <div id="promoModal" class="hidden fixed inset-0 z-[140] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 pointer-events-auto transition-all">
       <div class="bg-gray-900/80 backdrop-blur-2xl border border-gray-700 rounded-3xl p-6 w-full max-w-sm text-center shadow-[0_20px_50px_rgba(0,0,0,0.8)]">
           <div class="w-16 h-16 bg-gray-800/80 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl shadow-inner border border-gray-700 z-10 relative">
@@ -404,8 +405,8 @@
   </div>
 
   <div id="callConfirmModal" class="hidden fixed inset-0 z-[130] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 pointer-events-auto transition-all">
-      <div class="bg-gray-900/80 backdrop-blur-2xl border border-gray-700 rounded-3xl p-6 w-full max-w-sm text-center shadow-2xl">
-          <div class="w-16 h-16 bg-green-900/40 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl shadow-inner border border-green-500/50 z-10 relative">
+      <div class="bg-gray-900/80 backdrop-blur-2xl border border-gray-700 rounded-3xl p-6 w-full max-w-sm text-center shadow-[0_20px_50px_rgba(34,197,94,0.2)]">
+          <div class="w-16 h-16 bg-green-900/40 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl shadow-inner border border-green-500/30 z-10 relative">
               <i class="fas fa-phone-volume text-green-400 drop-shadow-md opacity-100 filter-none"></i>
           </div>
           <h3 class="text-xl font-black text-white mb-2 drop-shadow-md relative z-10">โทรหาคนขับ?</h3>
@@ -417,8 +418,22 @@
       </div>
   </div>
 
+  <div id="emergencyModal" class="hidden fixed inset-0 z-[120] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 pointer-events-auto transition-all">
+      <div class="bg-gray-900/80 backdrop-blur-2xl border border-gray-700 rounded-3xl p-6 w-full max-w-sm text-center shadow-[0_20px_50px_rgba(239,68,68,0.2)]">
+          <div class="w-16 h-16 bg-red-900/30 text-red-400 border border-red-500/30 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl shadow-inner z-10 relative">
+              <i class="fas fa-exclamation-triangle text-red-400 drop-shadow-md opacity-100 filter-none"></i>
+          </div>
+          <h3 class="text-xl font-black text-white mb-2 drop-shadow-md relative z-10">แจ้งเหตุฉุกเฉิน?</h3>
+          <p class="text-sm text-gray-400 mb-6 leading-relaxed drop-shadow-md relative z-10">คุณต้องการโทรออกไปยังสายด่วนตำรวจ (191) เพื่อแจ้งเหตุฉุกเฉินใช่หรือไม่?</p>
+          <div class="flex gap-3 relative z-10">
+              <button onclick="closeEmergencyModal()" class="flex-1 py-3.5 bg-gray-800/80 border border-gray-700 text-gray-300 font-bold rounded-xl hover:bg-gray-700 transition shadow-inner backdrop-blur-md">ยกเลิก</button>
+              <a href="tel:191" onclick="closeEmergencyModal()" class="flex-1 py-3.5 bg-red-600/80 border border-red-500/50 text-white font-bold rounded-xl shadow-[0_0_15px_rgba(239,68,68,0.3)] hover:bg-red-500 transition flex items-center justify-center gap-2 backdrop-blur-xl"><i class="fas fa-phone-alt drop-shadow-md opacity-100 filter-none"></i> โทร 191</a>
+          </div>
+      </div>
+  </div>
+
   <div id="cancelModal" class="hidden fixed inset-0 z-[100] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 pointer-events-auto transition-all">
-      <div class="bg-gray-900/80 backdrop-blur-2xl border border-gray-700 rounded-3xl p-6 w-full max-w-sm text-center shadow-2xl">
+      <div class="bg-gray-900/80 backdrop-blur-2xl border border-gray-700 rounded-3xl p-6 w-full max-w-sm text-center shadow-[0_20px_50px_rgba(0,0,0,0.8)]">
           <div class="w-16 h-16 bg-gray-800/80 text-gray-400 border border-gray-700 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl shadow-inner z-10 relative">
               <i class="fas fa-question-circle drop-shadow-md opacity-100 filter-none"></i>
           </div>
@@ -432,7 +447,7 @@
   </div>
 
   <div id="alertModal" class="hidden fixed inset-0 z-[9999] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 pointer-events-auto transition-all">
-      <div class="bg-gray-900/90 backdrop-blur-2xl border border-gray-700 rounded-3xl p-6 w-full max-w-sm text-center shadow-[0_20px_50px_rgba(0,0,0,0.8)] transform transition-all">
+      <div class="bg-gray-900/80 backdrop-blur-2xl border border-gray-700 rounded-3xl p-6 w-full max-w-sm text-center shadow-[0_20px_50px_rgba(0,0,0,0.8)] transform transition-all">
           <div id="alertIcon" class="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl shadow-inner border border-gray-700 z-10 relative"></div>
           <h3 id="alertTitle" class="text-xl font-black text-white mb-2 drop-shadow-md relative z-10">...</h3>
           <p id="alertMessage" class="text-sm text-gray-400 mb-6 whitespace-pre-line leading-relaxed drop-shadow-md relative z-10">...</p>
@@ -468,8 +483,10 @@
     let currentRouteStatus = ""; 
 
     let currentRouteBounds = null;
-    let isTrackingMode = false; // ปิด Auto-Pan (โหมด Overview ตลอดเวลา)
-    let isSatelliteMode = true; 
+    let isTrackingMode = false; // บังคับให้เป็นโหมดมุมกว้างเสมอ
+    
+    // 🌟 เปลี่ยนค่าตั้งต้นให้เป็นแผนที่ดาร์กโหมดทันที ไม่เป็นดาวเทียมแล้ว
+    let isSatelliteMode = false; 
     
     let lastNotifiedStatus = "";
     let hasInteractedPick = false;
@@ -744,11 +761,11 @@
         
         let iconHtml = ''; let iconBg = ''; let iconColor = '';
         if (type === 'error') {
-            iconHtml = '<i class="fas fa-times text-red-400 drop-shadow-md opacity-100 filter-none"></i>'; iconBg = 'bg-gray-800/80 border-gray-700'; iconColor = '';
+            iconHtml = '<i class="fas fa-times text-red-400 drop-shadow-[0_0_8px_rgba(239,68,68,0.6)] opacity-100 filter-none"></i>'; iconBg = 'bg-gray-800/80 border-gray-700'; iconColor = '';
         } else if (type === 'success') {
-            iconHtml = '<i class="fas fa-check text-green-400 drop-shadow-md opacity-100 filter-none"></i>'; iconBg = 'bg-gray-800/80 border-gray-700'; iconColor = '';
+            iconHtml = '<i class="fas fa-check text-green-400 drop-shadow-[0_0_8px_rgba(34,197,94,0.6)] opacity-100 filter-none"></i>'; iconBg = 'bg-gray-800/80 border-gray-700'; iconColor = '';
         } else {
-            iconHtml = '<i class="fas fa-info text-blue-400 drop-shadow-md opacity-100 filter-none"></i>'; iconBg = 'bg-gray-800/80 border-gray-700'; iconColor = '';
+            iconHtml = '<i class="fas fa-info text-blue-400 drop-shadow-[0_0_8px_rgba(59,130,246,0.6)] opacity-100 filter-none"></i>'; iconBg = 'bg-gray-800/80 border-gray-700'; iconColor = '';
         }
         
         const iconDiv = document.getElementById('alertIcon');
@@ -763,7 +780,7 @@
         if (window.alertCloseCallback) window.alertCloseCallback();
     }
 
-    // 🌟 ดาร์กโหมดแบบเดิมตามที่คุณต้องการ
+    // 🌟 ดาร์กโหมดดั้งเดิมที่สวยที่สุดของ Google Maps
     const darkMapStyle = [
         { elementType: "geometry", stylers: [{ color: "#242f3e" }] },
         { elementType: "labels.text.stroke", stylers: [{ color: "#242f3e" }] },
@@ -905,10 +922,12 @@
       if (typeof google === 'undefined' || typeof google.maps === 'undefined') return;
       if (map) return; 
       
+      // 🌟 บังคับเริ่มต้นเป็น Roadmap พร้อมยัดสไตล์ Dark Mode ทันที ไม่ใช้ Satellite
       map = new google.maps.Map(document.getElementById('map'), { 
         zoom: 16, 
         center: {lat: driverData.lat, lng: driverData.lng}, 
-        mapTypeId: 'hybrid', 
+        mapTypeId: 'roadmap', 
+        styles: darkMapStyle,
         disableDefaultUI: true, 
         gestureHandling: 'greedy',
         zoomControl: false,
@@ -958,7 +977,6 @@
          updateAddressBox(true); 
       });
 
-      // ยกเลิกป๊อปอัปยืนยันเมื่อจิ้มบนแผนที่โดยตรง 
       map.addListener('click', (event) => {
         if (event.placeId && placesService) {
           event.stop(); 
@@ -1098,7 +1116,6 @@
         document.getElementById('navBar').classList.remove('hidden');
         document.getElementById('map').classList.remove('hidden');
         document.getElementById('mapControls').classList.remove('hidden'); 
-        initMap(); 
         if (typeof google !== 'undefined' && typeof google.maps !== 'undefined' && map) {
           google.maps.event.trigger(map, 'resize');
         }
@@ -1119,7 +1136,7 @@
       if(page === 2) {
         if (markerDrop && markerPick && map) {
           markerDrop.setMap(null); markerPick.setMap(map); 
-          map.setOptions({ padding: { top: 140, bottom: getDynamicBottomPadding(), left: 0, right: 0 } }); 
+          map.setOptions({ padding: { top: 160, bottom: getDynamicBottomPadding(), left: 0, right: 0 } }); 
           
           if(bookData.pLat !== 0) { map.panTo({lat: bookData.pLat, lng: bookData.pLng}); } 
           else { map.panTo({lat: driverData.lat, lng: driverData.lng}); }
@@ -1133,7 +1150,7 @@
       else if(page === 3) {
         if (markerPick && markerDrop && map) {
           markerPick.setMap(map); markerDrop.setMap(map);
-          map.setOptions({ padding: { top: 140, bottom: getDynamicBottomPadding(), left: 0, right: 0 } }); 
+          map.setOptions({ padding: { top: 160, bottom: getDynamicBottomPadding(), left: 0, right: 0 } }); 
 
           if(bookData.dLat !== 0 && bookData.dLng !== 0) { markerDrop.setPosition({lat: bookData.dLat, lng: bookData.dLng}); } 
           else { markerDrop.setPosition(markerPick.getPosition()); }
@@ -1467,17 +1484,17 @@
           promoEl.classList.add('hidden');
       }
 
-      // 🌟 ซ่อนข้อมูลคนขับเมื่อสถานะคือ "รอผู้ขับขี่ตอบรับ" หรือ "ยกเลิก"
+      // 🌟 ซ่อนข้อมูลคนขับเมื่อกำลังรอ 
       const driverBox = document.getElementById('driverInfoBox');
       
       if(bookData.status === "รอผู้ขับขี่ตอบรับ") {
           statusEl.className = "font-black text-gray-300 text-[15px] leading-tight drop-shadow-md";
           etaEl.classList.add('hidden');
-          driverBox.classList.add('hidden'); // ซ่อนแน่ๆ
+          driverBox.classList.add('hidden');
       } else if (bookData.status.includes("ยกเลิก")) {
           statusEl.className = "font-black text-red-500 text-[15px] leading-tight drop-shadow-md"; 
           etaEl.classList.add('hidden');
-          driverBox.classList.add('hidden'); // ซ่อนแน่ๆ
+          driverBox.classList.add('hidden');
       } else if (bookData.status.includes("กำลังเดินทางไปหา") || bookData.status.includes("รับงานแล้ว")) {
           statusEl.className = "font-black text-green-400 text-[15px] leading-tight drop-shadow-md";
           if(bookData.driverPin) driverBox.classList.remove('hidden');
@@ -1675,7 +1692,7 @@
 
           if(isGoingToPickup) {
               etaEl.innerText = `${leg.distance.text} • ${leg.duration.text} • ถึง ${etaHours}:${etaMinutes} น.`;
-              etaEl.className = "text-[11px] text-blue-300 font-bold mt-0.5 block drop-shadow-md";
+              etaEl.className = "text-[11px] text-blue-300 font-bold mt-1 block drop-shadow-md";
               etaEl.classList.remove('hidden');
               
               if (distMeters <= 2000) {
@@ -1691,7 +1708,7 @@
 
           } else {
               etaEl.innerText = `${leg.distance.text} • ${leg.duration.text} • ถึง ${etaHours}:${etaMinutes} น.`;
-              etaEl.className = "text-[11px] text-blue-300 font-bold mt-0.5 block drop-shadow-md";
+              etaEl.className = "text-[11px] text-blue-300 font-bold mt-1 block drop-shadow-md";
               etaEl.classList.remove('hidden');
 
               if (distMeters <= 1000) {
@@ -1706,11 +1723,17 @@
               }
           }
 
-          // 🌟 ให้แผนที่ทำ FitBounds เสมอ ไม่หนีไปซูมแค่ที่รถแล้วครับ
+          // 🌟 ให้แผนที่ทำ FitBounds เสมอเมื่อไม่ได้ปรับเป้าหมาย เพื่อโชว์ Overview
           if(isStatusChanged && map) {
               setTimeout(()=>{ fitRouteBounds(); }, 200);
           } else if (!isTrackingMode && map) {
               fitRouteBounds();
+          } else if (isTrackingMode && map && markerDriver) {
+              const panel = document.getElementById('trackingPanel');
+              const isCollapsed = panel && panel.classList.contains('panel-collapsed');
+              const bottomPad = isCollapsed ? 120 : getDynamicBottomPadding();
+              map.setOptions({ padding: { top: 160, bottom: bottomPad, left: 0, right: 0 } });
+              map.panTo(markerDriver.getPosition());
           }
         }
       });
