@@ -14,15 +14,15 @@
     body { font-family: 'Kanit', sans-serif; background-color: #111827; color: #f3f4f6; }
     .map-container { position: fixed; inset: 0; width: 100vw; height: 100vh; z-index: 0; background: #1f2937; }
     
-    /* 🌟 UI Panel (กระจกดำใสขอบสว่าง) */
+    /* 🌟 UI Panel หลัก กระจกดำใส */
     .ui-panel { 
         position: fixed; 
         bottom: 0; 
         left: 0; 
         right: 0; 
-        background: rgba(17, 24, 39, 0.75); 
-        backdrop-filter: blur(20px); 
-        -webkit-backdrop-filter: blur(20px);
+        background: rgba(17, 24, 39, 0.85); 
+        backdrop-filter: blur(24px); 
+        -webkit-backdrop-filter: blur(24px);
         border-top: 1px solid rgba(255, 255, 255, 0.15);
         border-top-left-radius: 30px; 
         border-top-right-radius: 30px; 
@@ -45,13 +45,13 @@
 
     .full-page { position: fixed; inset: 0; z-index: 30; background: #111827; flex-direction: column; }
     
-    /* 🌟 คลาสเสริมสำหรับกล่อง Dark Glass ภายใน */
+    /* 🌟 คลาสเสริมสำหรับกล่อง Dark Glass ภายใน (ตามรูป 2,3,4,8) */
     .glass-box {
-        background: rgba(17, 24, 39, 0.65);
+        background: rgba(30, 41, 59, 0.7);
         backdrop-filter: blur(16px);
         -webkit-backdrop-filter: blur(16px);
         border: 1px solid rgba(255, 255, 255, 0.12);
-        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.6);
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.4);
     }
 
     .pac-container { 
@@ -60,7 +60,7 @@
         border-radius: 0 0 16px 16px !important; 
         border: 1px solid rgba(255,255,255,0.15) !important; 
         border-top: none !important;
-        background-color: rgba(17, 24, 39, 0.9) !important; 
+        background-color: rgba(17, 24, 39, 0.95) !important; 
         backdrop-filter: blur(24px) !important;
         -webkit-backdrop-filter: blur(24px) !important;
         box-shadow: 0 15px 40px rgba(0,0,0,0.8) !important; 
@@ -72,12 +72,12 @@
     .pac-container::-webkit-scrollbar { width: 6px; }
     .pac-container::-webkit-scrollbar-thumb { background-color: rgba(255,255,255,0.2); border-radius: 10px; }
     
-    .pac-item { padding: 14px 16px; border-top: 1px solid rgba(255,255,255,0.05) !important; cursor: pointer; color: #d1d5db; font-size: 14px; background-color: transparent !important; transition: background 0.2s; }
+    .pac-item { padding: 14px 16px; border-top: 1px solid rgba(255,255,255,0.08) !important; cursor: pointer; color: #cbd5e1; font-size: 14px; background-color: transparent !important; transition: background 0.2s; }
     .pac-item:hover { background-color: rgba(255,255,255,0.05) !important; }
     .pac-item:first-child { border-top: none !important; }
     
     .pac-item-query { color: #22c55e !important; font-weight: bold; } 
-    .pac-item .pac-icon { filter: invert(70%) sepia(50%) saturate(400%) hue-rotate(80deg); opacity: 0.8; }
+    .pac-item .pac-icon { filter: invert(70%) sepia(50%) saturate(400%) hue-rotate(80deg); opacity: 0.9; }
 
     body.theme-dropoff .pac-container .pac-item-query { color: #ef4444 !important; }
     body.theme-dropoff .pac-container .pac-icon { filter: invert(34%) sepia(98%) saturate(7128%) hue-rotate(349deg) brightness(102%) contrast(105%) !important; }
@@ -88,14 +88,17 @@
 </head>
 <body class="h-screen w-screen m-0 overflow-hidden">
 
+  <!-- แผนที่พื้นหลัง -->
   <div id="map" class="map-container hidden"></div>
 
+  <!-- Navbar -->
   <div id="navBar" class="hidden fixed top-0 w-full h-16 bg-gray-900/80 backdrop-blur-2xl border-b border-gray-700 flex items-center justify-between px-4 z-20 text-white shadow-md pointer-events-auto">
     <button onclick="goBack()" class="p-2 text-2xl active:opacity-50 hover:text-green-500 transition"><i class="fas fa-chevron-left drop-shadow-md"></i></button>
     <h1 id="navTitle" class="text-lg font-black text-white tracking-wide drop-shadow-md">F1 Driver</h1>
     <button onclick="goHome()" class="p-2 text-xl active:opacity-50 hover:text-green-500 transition"><i class="fas fa-home drop-shadow-md"></i></button>
   </div>
 
+  <!-- แถบค้นหาลอยด้านบน จุดรับ -->
   <div id="topSearchPick" class="hidden fixed top-[76px] left-4 right-[70px] z-40 pointer-events-auto transition-transform duration-300">
       <div class="relative w-full glass-box !border-green-500 overflow-visible rounded-2xl">
           <div class="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none text-green-500 z-10">
@@ -105,6 +108,7 @@
       </div>
   </div>
 
+  <!-- แถบค้นหาลอยด้านบน จุดหมาย -->
   <div id="topSearchDrop" class="hidden fixed top-[76px] left-4 right-[70px] z-40 pointer-events-auto transition-transform duration-300">
       <div class="relative w-full glass-box !border-red-500 overflow-visible rounded-2xl">
           <div class="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none text-red-500 z-10">
@@ -114,34 +118,38 @@
       </div>
   </div>
 
+  <!-- กล่องสถานะการเดินทาง ลอยด้านบน (จะโชว์เมื่อคนขับรับงานแล้วเท่านั้น) -->
   <div id="topStatusTracking" class="hidden fixed top-[76px] left-4 right-[70px] z-40 pointer-events-auto transition-transform duration-300">
       <div class="relative w-full glass-box rounded-2xl py-3 px-4">
           <div class="flex justify-between items-center">
               <div class="flex-1 pr-2">
-                  <h2 class="font-black text-[15px] leading-tight text-gray-200 drop-shadow-md" id="trackStatusFloat">รอผู้ขับขี่ตอบรับ...</h2>
-                  <p class="text-[11px] font-bold mt-1 text-blue-400 hidden drop-shadow-md" id="trackEtaDisplayFloat">ระยะทาง -- กม. • -- นาที • ถึง --:-- น.</p>
+                  <h2 class="font-black text-[15px] leading-tight text-white drop-shadow-md" id="trackStatusTop">รับงานแล้ว...</h2>
+                  <p class="text-[11px] font-bold mt-1 text-blue-400 hidden drop-shadow-md" id="trackEtaTop">ระยะทาง -- กม. • -- นาที • ถึง --:-- น.</p>
               </div>
               <div class="text-right shrink-0">
-                  <span class="bg-gray-800/80 border border-gray-600 px-3 py-1.5 rounded-xl font-black text-green-500 text-sm inline-block backdrop-blur-md drop-shadow-md" id="trackPriceFloat">฿0</span>
+                  <span class="bg-gray-800/80 border border-gray-600 px-3 py-1.5 rounded-xl font-black text-green-400 text-sm inline-block shadow-sm" id="trackPriceTop">฿0</span>
               </div>
           </div>
       </div>
   </div>
 
-  <div id="mapControls" class="hidden fixed top-[76px] right-4 z-30 flex-col gap-3 pointer-events-auto">
-      <button onclick="toggleMapStyle()" id="btnMapStyle" class="glass-box w-12 h-12 flex items-center justify-center rounded-full active:bg-gray-800 transition" title="สลับโหมดแผนที่">
-          <i class="fas fa-satellite text-xl drop-shadow-md opacity-100 text-gray-300"></i>
+  <!-- ปุ่มคุมแผนที่ (ขยับขึ้นชิดด้านบน) -->
+  <div id="mapControls" class="hidden fixed top-[80px] right-4 z-30 flex-col gap-3 pointer-events-auto">
+      <button onclick="toggleMapStyle()" id="btnMapStyle" class="glass-box w-12 h-12 flex items-center justify-center rounded-full active:bg-gray-700 transition" title="สลับโหมดแผนที่">
+          <!-- เริ่มต้นเป็นดาวเทียม ให้ไอคอนสื่อถึงการเปลี่ยนไปโหมดแผนที่ -->
+          <i class="fas fa-layer-group text-[18px] text-gray-200 drop-shadow-md"></i>
       </button>
-      <button onclick="centerToFocus()" id="btnCrosshair" class="glass-box w-12 h-12 flex items-center justify-center rounded-full active:bg-gray-800 transition">
-          <i class="fas fa-crosshairs text-xl drop-shadow-md opacity-100 text-gray-300"></i>
+      <button onclick="centerToFocus()" id="btnCrosshair" class="glass-box w-12 h-12 flex items-center justify-center rounded-full active:bg-gray-700 transition">
+          <i class="fas fa-crosshairs text-[18px] text-gray-200 drop-shadow-md"></i>
       </button>
-      <button onclick="fitRouteBounds()" id="btnOverview" class="hidden glass-box w-12 h-12 flex items-center justify-center rounded-full active:bg-gray-800 transition">
-          <i class="fas fa-route text-xl drop-shadow-md opacity-100 text-gray-300"></i>
+      <button onclick="fitRouteBounds()" id="btnOverview" class="hidden glass-box w-12 h-12 flex items-center justify-center rounded-full active:bg-gray-700 transition">
+          <i class="fas fa-route text-[18px] text-gray-200 drop-shadow-md"></i>
       </button>
   </div>
 
+  <!-- หน้าที่ 1: หน้าต้อนรับ -->
   <div id="page1" class="full-page flex">
-    <div class="bg-gray-900/80 backdrop-blur-2xl border-b border-green-500/30 text-green-500 p-6 text-center shadow-lg">
+    <div class="bg-gray-900/80 backdrop-blur-2xl border-b border-green-500/30 text-green-400 p-6 text-center shadow-lg">
         <h1 class="text-2xl font-black tracking-wider flex justify-center items-center gap-2 drop-shadow-md">
             <i class="fas fa-car-side opacity-100"></i> F1 DRIVER
         </h1>
@@ -160,22 +168,23 @@
         </div>
       </div>
 
-      <button id="btnStart" onclick="showPage(2)" class="w-full bg-green-500/90 backdrop-blur-xl text-white py-3.5 rounded-xl font-bold text-lg shadow-[0_0_20px_rgba(34,197,94,0.4)] opacity-50 cursor-not-allowed transition hover:bg-green-600 active:scale-95 border border-green-400/50" disabled>
+      <button id="btnStart" onclick="showPage(2)" class="w-full bg-green-600/90 backdrop-blur-xl text-white py-4 rounded-xl font-bold text-lg shadow-[0_0_20px_rgba(34,197,94,0.4)] opacity-50 cursor-not-allowed transition hover:bg-green-500 active:scale-95 border border-green-400/50" disabled>
           เริ่มต้นเรียกรถ <i class="fas fa-arrow-right ml-2 drop-shadow-md"></i>
       </button>
     </div>
   </div>
 
+  <!-- หน้าที่ 2: เลือกจุดรับ -->
   <div id="page2" class="hidden">
-    <div class="ui-panel border-t-2 border-green-500 h-auto pb-8 pt-5">
+    <div class="ui-panel border-t-2 border-green-500/50 h-auto pb-8 pt-5">
       <div class="flex justify-between items-center mb-4">
         <div>
             <p class="text-[10px] font-black text-green-500 mb-0.5 tracking-widest drop-shadow-md"><i class="fas fa-circle opacity-100"></i> STEP 1</p>
             <p class="text-lg font-black text-white drop-shadow-md">จุดให้รถไปรับ</p>
         </div>
         <div class="flex gap-2">
-            <button onclick="alertMultiStop()" class="text-[11px] font-bold glass-box px-3 py-2 rounded-xl text-gray-300 hover:text-white transition flex items-center gap-1.5"><i class="fas fa-plus drop-shadow-md"></i> จุดแวะ</button>
-            <button onclick="useCurrentLocation()" class="text-[11px] font-bold glass-box !border-green-500/50 text-green-500 px-3 py-2 rounded-xl hover:bg-white/10 transition flex items-center gap-1.5"><i class="fas fa-crosshairs drop-shadow-md"></i> ปัจจุบัน</button>
+            <button onclick="alertMultiStop()" class="text-[11px] font-bold glass-box text-gray-300 px-3 py-2 rounded-xl hover:bg-white/10 transition flex items-center gap-1.5"><i class="fas fa-plus drop-shadow-md opacity-100"></i> จุดแวะ</button>
+            <button onclick="useCurrentLocation()" class="text-[11px] font-bold glass-box !border-green-500/50 text-green-400 px-3 py-2 rounded-xl hover:bg-white/10 transition flex items-center gap-1.5"><i class="fas fa-crosshairs drop-shadow-md opacity-100"></i> ปัจจุบัน</button>
         </div>
       </div>
       
@@ -206,12 +215,13 @@
           <div id="recentPlacesPick" class="flex gap-2 shrink-0 items-center"></div>
       </div>
       
-      <button onclick="confirmPickup()" class="w-full bg-green-500/90 backdrop-blur-xl text-white py-3.5 rounded-xl font-bold mt-2 text-[15px] shadow-[0_0_20px_rgba(34,197,94,0.3)] hover:bg-green-600 active:scale-[0.98] transition border border-green-400/50 drop-shadow-md">ยืนยันจุดรับรถ</button>
+      <button onclick="confirmPickup()" class="w-full bg-green-600/90 backdrop-blur-xl text-white py-3.5 rounded-xl font-bold mt-2 text-[15px] shadow-[0_0_20px_rgba(34,197,94,0.3)] hover:bg-green-500 active:scale-[0.98] transition border border-green-500/50 drop-shadow-md">ยืนยันจุดรับรถ</button>
     </div>
   </div>
 
+  <!-- หน้าที่ 3: เลือกจุดส่ง -->
   <div id="page3" class="hidden">
-    <div class="ui-panel border-t-2 border-red-500 h-auto pb-8 pt-5">
+    <div class="ui-panel border-t-2 border-red-500/50 h-auto pb-8 pt-5">
       <div class="flex justify-between items-center mb-4">
         <div>
             <p class="text-[10px] font-black text-red-500 mb-0.5 tracking-widest drop-shadow-md"><i class="fas fa-circle opacity-100"></i> STEP 2</p>
@@ -219,7 +229,7 @@
         </div>
         <div class="flex gap-2">
             <button onclick="alertMultiStop()" class="text-[11px] font-bold glass-box text-gray-300 px-3 py-2 rounded-xl hover:bg-white/10 transition flex items-center gap-1.5"><i class="fas fa-plus drop-shadow-md opacity-100"></i> จุดแวะ</button>
-            <button onclick="useCurrentLocation()" class="text-[11px] font-bold glass-box !border-red-500/50 text-red-500 px-3 py-2 rounded-xl hover:bg-white/10 transition flex items-center gap-1.5"><i class="fas fa-crosshairs drop-shadow-md opacity-100"></i> ปัจจุบัน</button>
+            <button onclick="useCurrentLocation()" class="text-[11px] font-bold glass-box !border-red-500/50 text-red-400 px-3 py-2 rounded-xl hover:bg-white/10 transition flex items-center gap-1.5"><i class="fas fa-crosshairs drop-shadow-md opacity-100"></i> ปัจจุบัน</button>
         </div>
       </div>
       
@@ -250,22 +260,25 @@
           <div id="recentPlacesDrop" class="flex gap-2 shrink-0 items-center"></div>
       </div>
 
-      <button onclick="confirmDropoff()" class="w-full bg-red-500/90 backdrop-blur-xl text-white py-3.5 rounded-xl font-bold mt-2 text-[15px] shadow-[0_0_20px_rgba(239,68,68,0.3)] hover:bg-red-600 active:scale-[0.98] transition border border-red-400/50 drop-shadow-md">ยืนยันจุดหมาย</button>
+      <button onclick="confirmDropoff()" class="w-full bg-red-600/90 backdrop-blur-xl text-white py-3.5 rounded-xl font-bold mt-2 text-[15px] shadow-[0_0_20px_rgba(239,68,68,0.3)] hover:bg-red-500 active:scale-[0.98] transition border border-red-500/50 drop-shadow-md">ยืนยันจุดหมาย</button>
     </div>
   </div>
 
+  <!-- หน้าที่ 4: สรุปและยืนยันการเดินทาง -->
   <div id="page4" class="hidden">
-    <div class="ui-panel border-t-2 border-blue-500 h-auto pb-6 pt-5">
+    <div class="ui-panel border-t-2 border-blue-500/80 h-auto pb-6 pt-5">
       
+      <!-- หัวข้อเพิ่มตามคำขอ -->
       <div class="flex justify-between items-center mb-3">
         <div>
-            <p class="text-[10px] font-black text-blue-500 mb-0.5 tracking-widest drop-shadow-md"><i class="fas fa-circle opacity-100"></i> STEP 3</p>
-            <p class="text-lg font-black text-white drop-shadow-md">สรุปข้อมูลการเดินทาง</p>
+            <p class="text-[10px] font-black text-blue-400 mb-0.5 tracking-widest drop-shadow-md"><i class="fas fa-circle opacity-100"></i> STEP 3</p>
+            <p class="text-lg font-black text-white drop-shadow-md">สรุปข้อมูลก่อนยืนยัน</p>
         </div>
       </div>
       
+      <!-- กล่องสถานที่ Glass -->
       <div class="glass-box py-3 px-4 rounded-2xl relative mb-3">
-          <div class="absolute left-[1.55rem] top-6 bottom-6 w-0.5 border-l-[1.5px] border-dashed border-gray-400/50 z-0"></div>
+          <div class="absolute left-[1.55rem] top-6 bottom-6 w-0.5 border-l-[1.5px] border-dashed border-gray-500/50 z-0"></div>
           <div class="flex items-center gap-3 mb-3 relative z-10">
               <div><i class="fas fa-map-marker-alt text-[15px] text-green-500 drop-shadow-[0_0_5px_rgba(34,197,94,0.6)] opacity-100"></i></div>
               <p class="text-[13.5px] text-gray-200 font-medium flex-1 leading-tight drop-shadow-md" id="sumPick">...</p>
@@ -277,22 +290,22 @@
       </div>
 
       <div class="flex gap-2 mb-4">
+          <!-- กล่องราคา Glass -->
           <div class="flex-1 flex justify-between items-center glass-box p-4 rounded-2xl">
             <div>
               <p class="text-[11px] text-gray-400 font-bold mb-0.5 drop-shadow-md">ระยะทาง / เวลา</p>
               <p class="font-black text-blue-400 text-sm drop-shadow-md"><span id="sumDist">0</span> กม. • <span id="sumWait">0</span> นาที</p>
             </div>
-            
             <div class="text-right">
-              <p class="text-[10px] text-gray-400 font-bold mb-0.5 drop-shadow-md">ราคาเหมาจ่าย <span id="discountTag" class="hidden text-green-500 bg-green-900/50 border border-green-500/40 px-1.5 py-0.5 rounded-md ml-1"></span></p>
+              <p class="text-[10px] text-gray-400 font-bold mb-0.5 drop-shadow-md">ราคาเหมาจ่าย <span id="discountTag" class="hidden text-green-400 bg-green-900/50 border border-green-500/40 px-1.5 py-0.5 rounded-md ml-1"></span></p>
               <div class="flex items-end justify-end gap-1.5">
                   <p id="sumPriceOld" class="hidden text-xs text-gray-500 line-through font-bold pb-0.5"></p>
-                  <p class="font-black text-2xl text-green-500 leading-none drop-shadow-[0_0_10px_rgba(34,197,94,0.3)]">฿<span id="sumPrice">0</span></p>
+                  <p class="font-black text-2xl text-green-400 leading-none drop-shadow-[0_0_10px_rgba(34,197,94,0.3)]">฿<span id="sumPrice">0</span></p>
               </div>
             </div>
           </div>
 
-          <button onclick="openPromoModal()" class="shrink-0 w-[4.5rem] glass-box text-green-500 rounded-2xl text-[11px] font-bold hover:bg-white/10 transition flex flex-col items-center justify-center gap-1">
+          <button onclick="openPromoModal()" class="shrink-0 w-[4.5rem] glass-box text-green-400 rounded-2xl text-[11px] font-bold hover:bg-white/10 transition flex flex-col items-center justify-center gap-1">
               <i class="fas fa-ticket-alt text-xl drop-shadow-md opacity-100 filter-none"></i>
               <span class="drop-shadow-md">ใช้โค้ด</span>
           </button>
@@ -300,56 +313,63 @@
 
       <form onsubmit="event.preventDefault(); submitBooking();" class="flex gap-2 w-full mt-1 relative">
           <div class="relative flex-[1.2]">
+              <!-- 🌟 ไอคอนโทรศัพท์สีเขียวชัดเจน -->
               <div class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none z-20">
-                  <i class="fas fa-phone-alt text-[16px] text-green-500 drop-shadow-md opacity-100 filter-none"></i>
+                  <i class="fas fa-phone-alt text-[16px] text-gray-400 drop-shadow-md opacity-100 filter-none"></i>
               </div>
               <input type="tel" id="userPhone" name="tel" autocomplete="tel" inputmode="tel" 
                      oninput="formatPhone(this)" 
                      onfocus="this.dataset.oldValue = this.value; this.value = '';" 
                      onblur="if(this.value.trim() === '') this.value = this.dataset.oldValue || '';" 
                      placeholder="เบอร์ติดต่อ" 
-                     class="w-full py-3.5 pl-10 pr-3 glass-box focus:border-green-500 text-white placeholder-gray-400 rounded-2xl text-[14px] font-bold outline-none transition-colors relative z-0">
+                     class="w-full py-4 pl-10 pr-3 glass-box focus:border-green-500 text-white placeholder-gray-400 rounded-2xl text-[14px] font-bold outline-none transition-colors relative z-0">
           </div>
-          <button type="submit" class="flex-1 bg-green-500/90 backdrop-blur-xl text-white py-3.5 rounded-2xl font-bold text-sm shadow-[0_0_20px_rgba(34,197,94,0.3)] hover:bg-green-600 active:scale-[0.98] transition border border-green-400/50 flex justify-center items-center gap-1.5 whitespace-nowrap drop-shadow-md z-10">
+          <button type="submit" class="flex-1 bg-green-600/90 backdrop-blur-xl text-white py-4 rounded-2xl font-bold text-sm shadow-[0_0_20px_rgba(34,197,94,0.3)] hover:bg-green-500 active:scale-[0.98] transition border border-green-500/50 flex justify-center items-center gap-1.5 whitespace-nowrap drop-shadow-md z-10">
               ยืนยันเรียกรถ <i class="fas fa-car-side opacity-100 drop-shadow-md"></i>
           </button>
       </form>
     </div>
   </div>
 
+  <!-- หน้าต่างติดตามสถานะคนขับ (Tracking Panel) -->
   <div id="pageTracking" class="hidden">
-    <div id="trackingPanel" class="ui-panel border-t-2 border-gray-500 h-auto pb-5 pt-3"> 
+    <div id="trackingPanel" class="ui-panel border-t-[3px] border-gray-600 h-auto pb-5 pt-3"> 
       
       <div class="w-full flex justify-center pb-3 cursor-pointer" onclick="toggleTrackingPanel()">
           <div class="w-12 h-1.5 bg-gray-500/80 rounded-full shadow-inner"></div>
       </div>
       
-      <div id="waitingStatusBox" class="mb-3 glass-box py-3 px-4 rounded-2xl flex justify-between items-center">
-          <h2 class="font-black text-[15px] leading-tight text-white drop-shadow-md" id="trackStatusBottom">กำลังค้นหาคนขับ...</h2>
-          <span class="bg-gray-900/80 border border-gray-600 px-3 py-1.5 rounded-xl font-black text-green-500 text-sm inline-block drop-shadow-md" id="trackPriceBottom">฿0</span>
+      <!-- 🌟 กล่องสถานะรอตอบรับ (โชว์เมื่อรอคนขับ และซ่อนกล่องข้อมูลคนขับ) -->
+      <div id="bottomStatusBox" class="mb-3 glass-box py-3 px-4 rounded-2xl flex justify-between items-center">
+          <h2 class="font-black text-[15px] leading-tight text-white drop-shadow-md" id="trackStatusBottom">รอผู้ขับขี่ตอบรับ...</h2>
+          <span class="bg-gray-800/80 border border-gray-600 px-3 py-1.5 rounded-xl font-black text-green-400 text-sm inline-block shadow-sm" id="trackPriceBottom">฿0</span>
       </div>
 
+      <!-- 🌟 แถว 1: กล่องสถานที่ Dark Glass + ปุ่มยกเลิกเดี่ยวๆ -->
       <div class="flex gap-2 mb-3">
-          <div id="trackAddressBox" class="flex-1 glass-box py-3 px-4 rounded-2xl relative transition-all duration-300">
+          <div id="trackAddressBox" class="w-full glass-box py-3 px-4 rounded-2xl relative transition-all duration-300">
               <div class="absolute left-[1.55rem] top-6 bottom-6 w-0.5 border-l-[1.5px] border-dashed border-gray-500/50 z-0"></div>
               <div class="flex items-center gap-3 mb-3 relative z-10">
                   <div><i class="fas fa-map-marker-alt text-[15px] text-green-500 drop-shadow-[0_0_5px_rgba(34,197,94,0.6)] opacity-100"></i></div>
-                  <p class="text-[13px] text-gray-200 font-medium flex-1 truncate drop-shadow-md" id="trackPick">...</p>
+                  <p class="text-[13px] text-gray-200 font-medium flex-1 leading-tight drop-shadow-md" id="trackPick">...</p>
               </div>
               <div class="flex items-center gap-3 relative z-10">
                   <div><i class="fas fa-map-marker-alt text-[15px] text-red-500 drop-shadow-[0_0_5px_rgba(239,68,68,0.6)] opacity-100"></i></div>
-                  <p class="text-[13px] text-gray-200 font-medium flex-1 truncate drop-shadow-md" id="trackDrop">...</p>
+                  <p class="text-[13px] text-gray-200 font-medium flex-1 leading-tight drop-shadow-md" id="trackDrop">...</p>
               </div>
           </div>
-          <button id="btnCancelStandalone" onclick="openCancelModal()" class="w-[75px] shrink-0 glass-box border-red-500/40 text-red-500 rounded-2xl flex flex-col items-center justify-center gap-1.5 hover:bg-white/10 transition">
+          <!-- ปุ่มยกเลิกเดี่ยวๆ ตรงที่อยู่ -->
+          <button id="btnCancelStandalone" onclick="openCancelModal()" class="hidden w-[75px] shrink-0 glass-box !border-red-500/40 text-red-400 rounded-2xl flex flex-col items-center justify-center gap-1.5 hover:bg-white/10 transition">
               <i class="fas fa-times text-[18px] drop-shadow-md opacity-100 filter-none"></i> 
               <span class="text-[11px] font-bold drop-shadow-md">ยกเลิก</span>
           </button>
       </div>
 
-      <div id="driverRowLayout" class="hidden flex gap-2 mb-1">
+      <!-- 🌟 แถว 2: ข้อมูลคนขับ + แชท/โทร (ซ่อนไว้ก่อนถ้ารอคนขับ) -->
+      <div id="actionButtonsBox" class="hidden flex gap-2 mb-1">
+          <!-- ข้อมูลคนขับ -->
           <div class="flex-1 glass-box p-3 rounded-2xl flex items-center gap-3 transition-all duration-300">
-              <div class="w-11 h-11 bg-gray-900/80 rounded-full flex items-center justify-center text-green-500 text-xl border border-gray-600 shrink-0 shadow-inner z-10">
+              <div class="w-11 h-11 bg-gray-900/80 rounded-full flex items-center justify-center text-green-400 text-xl border border-gray-600 shrink-0 shadow-inner z-10">
                   <i class="fas fa-user-tie drop-shadow-md opacity-100 filter-none"></i>
               </div>
               <div class="flex flex-col w-full z-10">
@@ -357,19 +377,20 @@
                   <p class="text-[12px] text-gray-400 font-medium drop-shadow-md" id="trackDriverCar">-</p>
                   <div class="flex justify-between items-center w-full mt-1">
                       <p class="text-[12px] text-gray-300 font-medium drop-shadow-md" id="trackDriverName">-</p>
-                      <div class="text-[9px] font-bold text-green-500 bg-green-900/40 px-2 py-0.5 rounded border border-green-500/30 shadow-sm opacity-100">
-                          <i class="fas fa-shield-alt"></i> ยืนยัน
+                      <div class="text-[9px] font-bold text-green-400 bg-green-900/40 px-2 py-0.5 rounded border border-green-500/30 shadow-sm opacity-100">
+                          <i class="fas fa-shield-alt"></i> ยืนยันแล้ว
                       </div>
                   </div>
               </div>
           </div>
           
-          <div class="w-[75px] shrink-0 flex flex-col gap-2" id="contactButtonsBox">
-              <button id="btnChat" onclick="openLineOA()" class="flex-1 glass-box rounded-xl font-bold text-[11px] hover:bg-white/10 transition flex items-center justify-center gap-1.5 shadow-sm border-green-500/20">
-                  <i class="fab fa-line text-[16px] text-[#06C755] drop-shadow-md opacity-100 filter-none"></i> <span class="text-gray-200 drop-shadow-md">แชท</span>
+          <!-- ปุ่ม แชท / โทร แนวตั้ง -->
+          <div class="w-[75px] shrink-0 flex flex-col gap-2" id="contactButtonsGroup">
+              <button onclick="openLineOA()" class="flex-1 glass-box rounded-xl font-bold text-xs hover:bg-white/10 transition flex items-center justify-center gap-1.5 shadow-sm !border-gray-600">
+                  <i class="fab fa-line text-[20px] text-[#06C755] leading-none drop-shadow-md opacity-100 filter-none"></i> <span class="text-gray-300 drop-shadow-md">แชท</span>
               </button>
-              <button id="btnCall" onclick="openCallConfirmModal()" class="flex-1 glass-box rounded-xl font-bold text-[11px] hover:bg-white/10 transition flex items-center justify-center gap-1.5 shadow-sm border-green-500/20">
-                  <i class="fas fa-phone-alt text-[12px] text-green-500 drop-shadow-md opacity-100 filter-none"></i> <span class="text-gray-200 drop-shadow-md">โทร</span>
+              <button onclick="openCallConfirmModal()" class="flex-1 bg-green-900/40 backdrop-blur-xl text-green-400 rounded-xl font-bold border border-green-600/50 text-xs shadow-md hover:bg-green-800/60 transition flex items-center justify-center gap-1.5">
+                  <i class="fas fa-phone-alt text-[14px] drop-shadow-md opacity-100 filter-none"></i> <span class="drop-shadow-md">โทร</span>
               </button>
           </div>
       </div>
@@ -377,17 +398,18 @@
     </div>
   </div>
 
+  <!-- ป๊อปอัปทั้งหมดเป็นแบบกระจกดำใส (Dark Glass) -->
   <div id="promoModal" class="hidden fixed inset-0 z-[140] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 pointer-events-auto transition-all">
       <div class="bg-gray-900/80 backdrop-blur-2xl border border-gray-600 rounded-3xl p-6 w-full max-w-sm text-center shadow-[0_20px_50px_rgba(0,0,0,0.8)]">
           <div class="w-16 h-16 bg-gray-800/80 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl shadow-inner border border-gray-600 z-10 relative">
-              <i class="fas fa-ticket-alt text-green-500 drop-shadow-md opacity-100 filter-none"></i>
+              <i class="fas fa-ticket-alt text-green-400 drop-shadow-md opacity-100 filter-none"></i>
           </div>
           <h3 class="text-xl font-black text-white mb-1 drop-shadow-md relative z-10">โค้ดส่วนลด</h3>
           <p class="text-[13px] text-gray-400 mb-5 leading-relaxed drop-shadow-md relative z-10">กรุณากรอกรหัสโปรโมชั่นเพื่อรับส่วนลด</p>
-          <input type="text" id="promoInput" placeholder="ใส่รหัสโค้ดที่นี่" class="w-full p-4 mb-5 glass-box focus:border-green-500 text-white rounded-2xl text-center font-black uppercase outline-none transition placeholder-gray-500 text-sm relative z-10">
+          <input type="text" id="promoInput" placeholder="ใส่รหัสโค้ดที่นี่" class="w-full p-4 mb-5 glass-box focus:border-green-500 text-white rounded-2xl text-center font-black uppercase outline-none transition placeholder-gray-500 text-sm shadow-inner relative z-10">
           <div class="flex gap-3 relative z-10">
-              <button onclick="closePromoModal()" class="flex-[0.8] py-3.5 glass-box text-gray-300 font-bold rounded-xl hover:bg-gray-700 transition text-sm">ปิด</button>
-              <button onclick="applyPromoCode()" class="flex-1 py-3.5 bg-green-500/80 text-white font-bold rounded-xl shadow-[0_0_15px_rgba(34,197,94,0.3)] hover:bg-green-600 transition text-sm border border-green-500/50 backdrop-blur-xl">ยืนยัน</button>
+              <button onclick="closePromoModal()" class="flex-[0.8] py-3.5 glass-box text-gray-300 font-bold rounded-xl hover:bg-white/10 transition text-sm">ปิด</button>
+              <button onclick="applyPromoCode()" class="flex-1 py-3.5 bg-green-600/80 text-white font-bold rounded-xl shadow-[0_0_15px_rgba(34,197,94,0.3)] hover:bg-green-500 transition text-sm border border-green-500/50 backdrop-blur-xl">ยืนยัน</button>
           </div>
       </div>
   </div>
@@ -400,7 +422,7 @@
           <h3 id="confirmActionTitle" class="text-xl font-black text-white mb-2 drop-shadow-md relative z-10">...</h3>
           <p id="confirmActionMessage" class="text-sm text-gray-400 mb-6 leading-relaxed drop-shadow-md relative z-10">...</p>
           <div class="flex gap-3 relative z-10">
-              <button onclick="closeConfirmActionModal()" class="flex-1 py-3.5 glass-box text-gray-300 font-bold rounded-xl hover:bg-gray-700 transition">ยกเลิก</button>
+              <button onclick="closeConfirmActionModal()" class="flex-1 py-3.5 glass-box text-gray-300 font-bold rounded-xl hover:bg-white/10 transition">ยกเลิก</button>
               <button id="confirmActionButton" onclick="submitConfirmAction()" class="flex-1 py-3.5 bg-blue-600/80 border border-blue-500/50 text-white font-bold rounded-xl shadow-[0_0_15px_rgba(59,130,246,0.3)] hover:bg-blue-500 transition backdrop-blur-xl">ตกลง</button>
           </div>
       </div>
@@ -408,27 +430,27 @@
 
   <div id="callConfirmModal" class="hidden fixed inset-0 z-[130] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 pointer-events-auto transition-all">
       <div class="bg-gray-900/80 backdrop-blur-2xl border border-gray-600 rounded-3xl p-6 w-full max-w-sm text-center shadow-[0_20px_50px_rgba(34,197,94,0.2)]">
-          <div class="w-16 h-16 glass-box !border-green-500/50 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl z-10 relative">
-              <i class="fas fa-phone-volume text-green-500 drop-shadow-md opacity-100 filter-none"></i>
+          <div class="w-16 h-16 bg-green-900/40 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl shadow-inner border border-green-500/50 z-10 relative">
+              <i class="fas fa-phone-volume text-green-400 drop-shadow-md opacity-100 filter-none"></i>
           </div>
           <h3 class="text-xl font-black text-white mb-2 drop-shadow-md relative z-10">โทรหาคนขับ?</h3>
           <p class="text-sm text-gray-400 mb-6 leading-relaxed drop-shadow-md relative z-10">คุณต้องการโทรหาคนขับผ่านเบอร์โทรศัพท์มือถือ ใช่หรือไม่?</p>
           <div class="flex gap-3 relative z-10">
-              <button onclick="closeCallConfirmModal()" class="flex-1 py-3.5 glass-box text-gray-300 font-bold rounded-xl hover:bg-gray-700 transition">ยกเลิก</button>
-              <a id="confirmCallBtn" href="#" onclick="closeCallConfirmModal()" class="flex-1 py-3.5 bg-green-500/80 border border-green-500/50 text-white font-bold rounded-xl shadow-[0_0_15px_rgba(34,197,94,0.3)] hover:bg-green-600 transition flex items-center justify-center gap-2 backdrop-blur-xl"><i class="fas fa-phone-alt drop-shadow-md opacity-100 filter-none"></i> โทรเลย</a>
+              <button onclick="closeCallConfirmModal()" class="flex-1 py-3.5 glass-box text-gray-300 font-bold rounded-xl hover:bg-white/10 transition">ยกเลิก</button>
+              <a id="confirmCallBtn" href="#" onclick="closeCallConfirmModal()" class="flex-1 py-3.5 bg-green-600/80 border border-green-500/50 text-white font-bold rounded-xl shadow-[0_0_15px_rgba(34,197,94,0.3)] hover:bg-green-500 transition flex items-center justify-center gap-2 backdrop-blur-xl"><i class="fas fa-phone-alt drop-shadow-md opacity-100 filter-none"></i> โทรเลย</a>
           </div>
       </div>
   </div>
 
   <div id="emergencyModal" class="hidden fixed inset-0 z-[120] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 pointer-events-auto transition-all">
       <div class="bg-gray-900/80 backdrop-blur-2xl border border-gray-600 rounded-3xl p-6 w-full max-w-sm text-center shadow-[0_20px_50px_rgba(239,68,68,0.2)]">
-          <div class="w-16 h-16 glass-box !border-red-500/50 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl z-10 relative">
-              <i class="fas fa-exclamation-triangle text-red-500 drop-shadow-md opacity-100 filter-none"></i>
+          <div class="w-16 h-16 bg-red-900/30 text-red-400 border border-red-500/30 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl shadow-inner z-10 relative">
+              <i class="fas fa-exclamation-triangle text-red-400 drop-shadow-md opacity-100 filter-none"></i>
           </div>
           <h3 class="text-xl font-black text-white mb-2 drop-shadow-md relative z-10">แจ้งเหตุฉุกเฉิน?</h3>
           <p class="text-sm text-gray-400 mb-6 leading-relaxed drop-shadow-md relative z-10">คุณต้องการโทรออกไปยังสายด่วนตำรวจ (191) เพื่อแจ้งเหตุฉุกเฉินใช่หรือไม่?</p>
           <div class="flex gap-3 relative z-10">
-              <button onclick="closeEmergencyModal()" class="flex-1 py-3.5 glass-box text-gray-300 font-bold rounded-xl hover:bg-gray-700 transition">ยกเลิก</button>
+              <button onclick="closeEmergencyModal()" class="flex-1 py-3.5 glass-box text-gray-300 font-bold rounded-xl hover:bg-white/10 transition">ยกเลิก</button>
               <a href="tel:191" onclick="closeEmergencyModal()" class="flex-1 py-3.5 bg-red-600/80 border border-red-500/50 text-white font-bold rounded-xl shadow-[0_0_15px_rgba(239,68,68,0.3)] hover:bg-red-500 transition flex items-center justify-center gap-2 backdrop-blur-xl"><i class="fas fa-phone-alt drop-shadow-md opacity-100 filter-none"></i> โทร 191</a>
           </div>
       </div>
@@ -436,24 +458,24 @@
 
   <div id="cancelModal" class="hidden fixed inset-0 z-[100] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 pointer-events-auto transition-all">
       <div class="bg-gray-900/80 backdrop-blur-2xl border border-gray-600 rounded-3xl p-6 w-full max-w-sm text-center shadow-[0_20px_50px_rgba(0,0,0,0.8)]">
-          <div class="w-16 h-16 glass-box !border-red-500/30 text-red-400 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl z-10 relative">
+          <div class="w-16 h-16 glass-box !border-red-500/30 text-red-400 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl shadow-inner z-10 relative">
               <i class="fas fa-question-circle drop-shadow-md opacity-100 filter-none"></i>
           </div>
           <h3 class="text-xl font-black text-white mb-2 drop-shadow-md relative z-10">ยืนยันยกเลิกการเรียกรถ?</h3>
           <p class="text-sm text-gray-400 mb-6 leading-relaxed drop-shadow-md relative z-10">หากยกเลิกแล้ว งานนี้จะถูกลบทิ้ง และคุณจะต้องทำการเรียกรถใหม่อีกครั้ง</p>
           <div class="flex gap-3 relative z-10">
-              <button onclick="closeCancelModal()" class="flex-1 py-3.5 glass-box text-gray-300 font-bold rounded-xl hover:bg-gray-700 transition">กลับไปรอรถ</button>
-              <button onclick="confirmCancelBooking()" class="flex-1 py-3.5 bg-red-600/80 border border-red-500/50 text-white font-bold rounded-xl hover:bg-red-500 transition w-full shadow-inner backdrop-blur-xl">ยืนยันยกเลิก</button>
+              <button onclick="closeCancelModal()" class="flex-1 py-3.5 glass-box text-gray-300 font-bold rounded-xl hover:bg-white/10 transition">กลับไปรอรถ</button>
+              <button onclick="confirmCancelBooking()" class="flex-1 py-3.5 bg-red-900/60 border border-red-600/50 text-red-400 font-bold rounded-xl hover:bg-red-800/80 transition w-full shadow-inner backdrop-blur-xl">ยืนยันยกเลิก</button>
           </div>
       </div>
   </div>
 
   <div id="alertModal" class="hidden fixed inset-0 z-[9999] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 pointer-events-auto transition-all">
       <div class="bg-gray-900/90 backdrop-blur-2xl border border-gray-600 rounded-3xl p-6 w-full max-w-sm text-center shadow-[0_20px_50px_rgba(0,0,0,0.8)] transform transition-all">
-          <div id="alertIcon" class="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl shadow-inner border border-gray-700 z-10 relative"></div>
+          <div id="alertIcon" class="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl shadow-inner border border-gray-600 z-10 relative"></div>
           <h3 id="alertTitle" class="text-xl font-black text-white mb-2 drop-shadow-md relative z-10">...</h3>
           <p id="alertMessage" class="text-sm text-gray-400 mb-6 whitespace-pre-line leading-relaxed drop-shadow-md relative z-10">...</p>
-          <button onclick="closeAlertModal()" class="w-full py-4 bg-green-500/80 border border-green-500/50 text-white font-bold rounded-xl shadow-[0_0_15px_rgba(34,197,94,0.3)] hover:bg-green-600 transition backdrop-blur-xl relative z-10">ตกลง</button>
+          <button onclick="closeAlertModal()" class="w-full py-4 bg-green-600/80 border border-green-500/50 text-white font-bold rounded-xl shadow-[0_0_15px_rgba(34,197,94,0.3)] hover:bg-green-500 transition backdrop-blur-xl relative z-10">ตกลง</button>
       </div>
   </div>
 
@@ -487,7 +509,7 @@
     let currentRouteBounds = null;
     let isTrackingMode = false; // บังคับเป็นโหมด Overview
     
-    // 🌟 เริ่มต้นเป็นดาวเทียม ให้เปลี่ยนได้
+    // 🌟 เริ่มต้นเป็นโหมดดาวเทียม (Satellite) ตามคำขอ
     let isSatelliteMode = true; 
     
     let lastNotifiedStatus = "";
@@ -576,11 +598,11 @@
         btn.className = "flex-1 py-3.5 text-white font-bold rounded-xl shadow-md transition backdrop-blur-xl border";
 
         if (theme === 'green') {
-            iconDiv.innerHTML = '<i class="fas fa-map-marked-alt text-green-500 drop-shadow-md opacity-100 filter-none"></i>';
-            btn.classList.add('bg-green-500/80', 'hover:bg-green-600', 'border-green-500/50', 'shadow-[0_0_15px_rgba(34,197,94,0.3)]');
+            iconDiv.innerHTML = '<i class="fas fa-map-marked-alt text-green-400 drop-shadow-md opacity-100 filter-none"></i>';
+            btn.classList.add('bg-green-600/80', 'hover:bg-green-500', 'border-green-500/50', 'shadow-[0_0_15px_rgba(34,197,94,0.3)]');
         } else if (theme === 'red') {
-            iconDiv.innerHTML = '<i class="fas fa-map-marked-alt text-red-500 drop-shadow-md opacity-100 filter-none"></i>';
-            btn.classList.add('bg-red-500/80', 'hover:bg-red-600', 'border-red-500/50', 'shadow-[0_0_15px_rgba(239,68,68,0.3)]');
+            iconDiv.innerHTML = '<i class="fas fa-map-marked-alt text-red-400 drop-shadow-md opacity-100 filter-none"></i>';
+            btn.classList.add('bg-red-600/80', 'hover:bg-red-500', 'border-red-500/50', 'shadow-[0_0_15px_rgba(239,68,68,0.3)]');
         } else {
             iconDiv.innerHTML = '<i class="fas fa-map-marked-alt text-blue-400 drop-shadow-md opacity-100 filter-none"></i>';
             btn.classList.add('bg-blue-600/80', 'hover:bg-blue-500', 'border-blue-500/50', 'shadow-[0_0_15px_rgba(59,130,246,0.3)]');
@@ -763,16 +785,16 @@
         
         let iconHtml = ''; let iconBg = ''; let iconColor = '';
         if (type === 'error') {
-            iconHtml = '<i class="fas fa-times text-red-500 drop-shadow-[0_0_8px_rgba(239,68,68,0.6)] opacity-100 filter-none"></i>'; iconBg = 'glass-box !border-red-500/30'; iconColor = 'text-red-400';
+            iconHtml = '<i class="fas fa-times text-red-400 drop-shadow-[0_0_8px_rgba(239,68,68,0.6)] opacity-100 filter-none"></i>'; iconBg = 'glass-box !border-red-500/30'; iconColor = 'text-red-400';
         } else if (type === 'success') {
-            iconHtml = '<i class="fas fa-check text-green-500 drop-shadow-[0_0_8px_rgba(34,197,94,0.6)] opacity-100 filter-none"></i>'; iconBg = 'glass-box !border-green-500/30'; iconColor = 'text-green-400';
+            iconHtml = '<i class="fas fa-check text-green-400 drop-shadow-[0_0_8px_rgba(34,197,94,0.6)] opacity-100 filter-none"></i>'; iconBg = 'glass-box !border-green-500/30'; iconColor = 'text-green-400';
         } else {
             iconHtml = '<i class="fas fa-info text-blue-400 drop-shadow-[0_0_8px_rgba(59,130,246,0.6)] opacity-100 filter-none"></i>'; iconBg = 'glass-box !border-blue-500/30'; iconColor = 'text-blue-400';
         }
         
         const iconDiv = document.getElementById('alertIcon');
         iconDiv.innerHTML = iconHtml;
-        iconDiv.className = `w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl shadow-inner z-10 relative ${iconBg} ${iconColor}`;
+        iconDiv.className = `w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl shadow-inner z-10 relative border ${iconBg} ${iconColor}`;
         document.getElementById('alertModal').classList.remove('hidden');
         window.alertCloseCallback = typeof callback === 'function' ? callback : null;
     }
@@ -782,7 +804,7 @@
         if (window.alertCloseCallback) window.alertCloseCallback();
     }
 
-    // 🌟 โค้ด Dark Mode ที่สมบูรณ์
+    // 🌟 ดาร์กโหมดดั้งเดิมที่แก้ไขบั๊กใหม่หมดแล้ว
     const darkMapStyle = [
         { elementType: "geometry", stylers: [{ color: "#242f3e" }] },
         { elementType: "labels.text.stroke", stylers: [{ color: "#242f3e" }] },
@@ -815,11 +837,11 @@
         isSatelliteMode = !isSatelliteMode;
         if(isSatelliteMode) {
             map.setMapTypeId('hybrid');
-            document.getElementById('btnMapStyle').innerHTML = '<i class="fas fa-layer-group text-xl drop-shadow-md opacity-100"></i>';
+            document.getElementById('btnMapStyle').innerHTML = '<i class="fas fa-layer-group text-xl drop-shadow-md opacity-100 text-gray-300"></i>';
         } else {
             map.setMapTypeId('roadmap');
             map.setOptions({ styles: darkMapStyle });
-            document.getElementById('btnMapStyle').innerHTML = '<i class="fas fa-satellite text-xl drop-shadow-md opacity-100"></i>';
+            document.getElementById('btnMapStyle').innerHTML = '<i class="fas fa-satellite text-xl drop-shadow-md opacity-100 text-gray-300"></i>';
         }
     }
 
@@ -853,8 +875,8 @@
             map.setZoom(16);
             if(currentStep === 'Tracking') {
                 isTrackingMode = true; 
-                document.getElementById('btnCrosshair').classList.replace('text-gray-300', 'text-green-500');
-                document.getElementById('btnOverview').classList.replace('text-green-500', 'text-gray-300');
+                document.getElementById('btnCrosshair').classList.replace('text-gray-300', 'text-green-400');
+                document.getElementById('btnOverview').classList.replace('text-green-400', 'text-gray-300');
                 
                 const panel = document.getElementById('trackingPanel');
                 if(panel && !panel.classList.contains('panel-collapsed')) {
@@ -874,8 +896,8 @@
             const isCollapsed = panel && panel.classList.contains('panel-collapsed');
             const bottomPad = isCollapsed ? 80 : getDynamicBottomPadding();
             map.fitBounds(currentRouteBounds, { top: 160, right: 50, bottom: bottomPad + 20, left: 50 });
-            document.getElementById('btnCrosshair').classList.replace('text-green-500', 'text-gray-300');
-            document.getElementById('btnOverview').classList.replace('text-gray-300', 'text-green-500');
+            document.getElementById('btnCrosshair').classList.replace('text-green-400', 'text-gray-300');
+            document.getElementById('btnOverview').classList.replace('text-gray-300', 'text-green-400');
         } else {
             centerToFocus();
         }
@@ -924,7 +946,7 @@
       if (typeof google === 'undefined' || typeof google.maps === 'undefined') return;
       if (map) return; 
       
-      // 🌟 แผนที่เริ่มต้นเป็นดาวเทียม ให้เปลี่ยนได้
+      // 🌟 แผนที่เริ่มต้นเป็นดาวเทียม (hybrid) ทันที
       map = new google.maps.Map(document.getElementById('map'), { 
         zoom: 16, 
         center: {lat: driverData.lat, lng: driverData.lng}, 
@@ -938,7 +960,7 @@
       map.addListener('dragstart', () => {
          if (currentStep === 'Tracking') {
              isTrackingMode = false;
-             document.getElementById('btnCrosshair').classList.replace('text-green-500', 'text-gray-300');
+             document.getElementById('btnCrosshair').classList.replace('text-green-400', 'text-gray-300');
          }
       });
 
@@ -1105,7 +1127,7 @@
           document.body.classList.remove('theme-dropoff');
           document.getElementById('topSearchPick').classList.add('hidden');
           document.getElementById('topSearchDrop').classList.add('hidden');
-          // topStatusTracking โดนคุมโดย JS ข้างล่าง
+          // topStatusTracking ควบคุมด้วยฟังก์ชัน handleTracking
       } else {
           document.body.classList.remove('theme-dropoff');
           document.getElementById('topSearchPick').classList.add('hidden');
@@ -1130,7 +1152,7 @@
           if (markerDriver) markerDriver.setMap(null); 
           document.getElementById('btnOverview').classList.add('hidden');
           document.getElementById('btnEmergency').classList.add('hidden'); 
-          document.getElementById('btnCrosshair').classList.replace('text-gray-500', 'text-green-400');
+          document.getElementById('btnCrosshair').classList.replace('text-gray-300', 'text-green-400');
           document.getElementById('btnCrosshair').classList.remove('hidden'); 
       }
 
@@ -1470,52 +1492,70 @@
       
       document.getElementById('mapControls').classList.remove('hidden');
 
+      // 🌟 ดึง Element ทั้งหมดให้ถูกต้อง ไม่ให้ค้างแบบรอบที่แล้วครับ
       const topStatusBox = document.getElementById('topStatusTracking');
-      const bottomStatusBox = document.getElementById('waitingStatusBox');
-      const driverBox = document.getElementById('driverRowLayout');
+      const bottomStatusBox = document.getElementById('bottomStatusBox');
+      const driverBox = document.getElementById('driverInfoBox');
       
-      const etaEl = document.getElementById('trackEtaDisplayFloat');
-      const statusEl = document.getElementById('trackStatusFloat');
-      const priceEl = document.getElementById('trackPriceFloat');
+      const etaEl = document.getElementById('trackEtaTop');
+      const statusTop = document.getElementById('trackStatusTop');
+      const priceTop = document.getElementById('trackPriceTop');
+      
+      const statusBottom = document.getElementById('trackStatusBottom');
+      const priceBottom = document.getElementById('trackPriceBottom');
 
-      // 🌟 ควบคุมการแสดงกล่อง "รอคนขับ" (ด้านล่าง) และ "รับงานแล้ว" (ด้านบน)
+      const btnCancelStandalone = document.getElementById('btnCancelStandalone');
+      const actionButtonsBox = document.getElementById('actionButtonsBox');
+      const trackAddressBox = document.getElementById('trackAddressBox');
+
+      // รีเซ็ตการแสดงผลก่อน
+      topStatusBox.classList.add('hidden');
+      bottomStatusBox.classList.add('hidden');
+      driverBox.classList.add('hidden');
+      btnCancelStandalone.classList.add('hidden');
+      actionButtonsBox.classList.add('hidden');
+
+      // 🌟 ควบคุมการซ่อน/โชว์ และสีสถานะตามคำขอ
       if(bookData.status === "รอผู้ขับขี่ตอบรับ") {
-          topStatusBox.classList.add('hidden');
           bottomStatusBox.classList.remove('hidden');
-          driverBox.classList.add('hidden'); // ซ่อนข้อมูลคนขับแน่นอน
+          btnCancelStandalone.classList.remove('hidden');
           
-          document.getElementById('waitStatusText').innerText = bookData.status;
-          document.getElementById('waitPriceText').innerText = "฿" + bookData.price;
+          statusBottom.innerText = bookData.status;
+          statusBottom.className = "font-black text-[15px] leading-tight text-gray-300 drop-shadow-md";
+          priceBottom.innerText = "฿" + bookData.price;
           
-          document.getElementById('trackAddressBox').classList.remove('flex-1');
-          document.getElementById('trackAddressBox').classList.add('w-full');
       } else if (bookData.status.includes("ยกเลิก")) {
-          topStatusBox.classList.add('hidden');
           bottomStatusBox.classList.remove('hidden');
-          driverBox.classList.add('hidden'); 
+          btnCancelStandalone.classList.remove('hidden');
           
-          document.getElementById('waitStatusText').innerText = bookData.status;
-          document.getElementById('waitStatusText').className = "text-red-500 font-bold text-[15px] drop-shadow-md";
-          document.getElementById('waitPriceText').innerText = "฿" + bookData.price;
+          statusBottom.innerText = bookData.status;
+          statusBottom.className = "font-black text-[15px] leading-tight text-red-500 drop-shadow-md";
+          priceBottom.innerText = "฿" + bookData.price;
           
-          document.getElementById('trackAddressBox').classList.remove('flex-1');
-          document.getElementById('trackAddressBox').classList.add('w-full');
       } else {
           // โชว์แถบสถานะด้านบน
           topStatusBox.classList.remove('hidden');
-          bottomStatusBox.classList.add('hidden');
           
+          // โชว์ข้อมูลคนขับ
           if(bookData.driverPin) driverBox.classList.remove('hidden');
 
-          statusEl.innerText = bookData.status;
-          priceEl.innerText = "฿" + bookData.price;
+          statusTop.innerText = bookData.status;
+          priceTop.innerText = "฿" + bookData.price;
           
           if (bookData.status.includes("กำลังเดินทางไปหา") || bookData.status.includes("รับงานแล้ว")) {
-              statusEl.className = "font-black text-[15px] leading-tight text-green-500 drop-shadow-md";
+              statusTop.className = "font-black text-[15px] leading-tight text-green-400 drop-shadow-md";
+              
+              // 🌟 โชว์ปุ่มแชท/โทร เพราะยังไม่ขึ้นรถ
+              actionButtonsBox.classList.remove('hidden');
+              if(bookData.driverPhone) document.getElementById('confirmCallBtn').href = "tel:" + bookData.driverPhone;
+
           } else if (bookData.status.includes("ออกเดินทาง") || bookData.status.includes("ไปยังจุดส่ง")) {
-              statusEl.className = "font-black text-[15px] leading-tight text-blue-400 drop-shadow-md";
+              statusTop.className = "font-black text-[15px] leading-tight text-blue-400 drop-shadow-md";
+              // 🌟 ซ่อนปุ่มแชท/โทร เพราะขึ้นรถแล้ว
+              actionButtonsBox.classList.add('hidden'); 
           } else {
-              statusEl.className = "font-black text-[15px] leading-tight text-white drop-shadow-md";
+              statusTop.className = "font-black text-[15px] leading-tight text-white drop-shadow-md";
+              actionButtonsBox.classList.add('hidden');
           }
       }
 
@@ -1562,31 +1602,6 @@
           lastNotifiedStatus = bookData.status;
       }
 
-      // 🌟 ควบคุมปุ่มยกเลิก/แชท/โทร
-      const btnCancel = document.getElementById('btnCancelStandalone');
-      const contactBtns = document.getElementById('contactButtonsBox');
-      const addressBox = document.getElementById('trackAddressBox');
-
-      if (bookData.status === "รอผู้ขับขี่ตอบรับ") {
-          btnCancel.classList.remove('hidden'); 
-          contactBtns.classList.add('hidden');
-          addressBox.classList.remove('w-full');
-          addressBox.classList.add('flex-1');
-      } 
-      else if (bookData.status.includes("กำลังเดินทางไปหา") || bookData.status.includes("มาถึงจุดรับ") || bookData.status.includes("รับงานแล้ว")) {
-          btnCancel.classList.remove('hidden'); 
-          contactBtns.classList.remove('hidden'); 
-          addressBox.classList.remove('w-full');
-          addressBox.classList.add('flex-1');
-      } 
-      else if (bookData.status.includes("ออกเดินทาง") || bookData.status.includes("ไปยังจุดส่ง") || bookData.status.includes("ถึงที่หมาย")) {
-          // ซ่อนปุ่มทั้งหมด เพราะขึ้นรถแล้ว
-          btnCancel.classList.add('hidden'); 
-          contactBtns.classList.add('hidden'); 
-          addressBox.classList.remove('flex-1');
-          addressBox.classList.add('w-full'); // ขยายกล่องที่อยู่ให้เต็ม
-      }
-
       if(bookData.status.includes("ถึงที่หมาย") && !window.hasShownFinish) {
         window.hasShownFinish = true;
         let finalMessage = `จุดรับ: ${bookData.pName}\nจุดส่ง: ${bookData.dName}\nระยะทาง: ${bookData.distance || 0} กม. | ราคา: ${bookData.price} บาท\n\nขอบคุณที่ใช้บริการ F1 Driver ครับ!`;
@@ -1600,9 +1615,7 @@
       
       if(bookData.status.includes("ยกเลิก") && !window.hasShownCancel) {
         window.hasShownCancel = true;
-        btnCancel.classList.add('hidden'); 
-        addressBox.classList.remove('flex-1');
-        addressBox.classList.add('w-full');
+        btnCancelStandalone.classList.add('hidden'); // ซ่อนปุ่มถ้ายกเลิกแล้ว
 
         showAlert('แจ้งเตือน', 'ขออภัยในความไม่สะดวกครับ งานนี้ถูกยกเลิก รบกวนคุณลูกค้ากดยืนยันเพื่อเรียกรถใหม่อีกครั้งนะครับ', 'error', () => {
             window.isCompleting = true;
@@ -1623,7 +1636,7 @@
       let isStatusChanged = (currentRouteStatus !== bookData.status);
       currentRouteStatus = bookData.status;
 
-      let etaEl = document.getElementById('trackEtaDisplayFloat');
+      let etaEl = document.getElementById('trackEtaTop');
 
       if (bookData.status === "รอผู้ขับขี่ตอบรับ" || bookData.status.includes("ยกเลิก")) {
           if(markerDriver) markerDriver.setMap(null); 
@@ -1735,7 +1748,7 @@
               }
           }
 
-          // 🌟 บังคับมุมกว้างเสมอ
+          // 🌟 ให้แผนที่ทำ FitBounds เสมอเมื่อไม่ได้ปรับเป้าหมาย 
           if(isStatusChanged && map) {
               setTimeout(()=>{ fitRouteBounds(); }, 200);
           } else if (!isTrackingMode && map) {
@@ -1743,7 +1756,7 @@
           } else if (isTrackingMode && map && markerDriver) {
               const panel = document.getElementById('trackingPanel');
               const isCollapsed = panel && panel.classList.contains('panel-collapsed');
-              const bottomPad = isCollapsed ? 120 : getDynamicBottomPadding();
+              const bottomPad = isCollapsed ? 80 : getDynamicBottomPadding();
               map.setOptions({ padding: { top: 160, bottom: bottomPad, left: 0, right: 0 } });
               map.panTo(markerDriver.getPosition());
           }
