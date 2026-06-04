@@ -371,12 +371,9 @@
 
       <div id="actionButtonsBox" class="hidden gap-2 mb-1 shrink-0 w-full flex-row">
           <button id="btnChat" onclick="openLineOA()" class="flex-1 w-full bg-gray-800 text-gray-300 py-3 rounded-xl font-bold border border-gray-700 text-sm shadow-sm hover:bg-gray-700 transition flex justify-center items-center gap-1.5"><i class="fab fa-line text-[20px] text-[#06C755] leading-none"></i> แชท</button>
-          
           <button id="btnCall" onclick="openCallConfirmModal()" class="flex-1 w-full bg-green-600 text-white py-3 rounded-xl font-bold text-sm shadow-sm hover:bg-green-700 transition flex justify-center items-center gap-1.5"><i class="fas fa-phone-alt"></i> โทร</button>
-
           <button id="btnCancel" onclick="openCancelModal()" class="flex-1 w-full bg-red-900/40 text-red-400 py-3 rounded-xl font-bold border border-red-500/30 text-sm hover:bg-red-900/60 transition flex justify-center items-center gap-1.5"><i class="fas fa-times"></i> ยกเลิก</button>
       </div>
-
     </div>
   </div>
 
@@ -442,7 +439,7 @@
           <h3 class="text-xl font-bold mb-2" id="rcTitle">คนขับขอเปลี่ยนเส้นทาง</h3>
           <p class="text-sm text-gray-300 mb-2 leading-relaxed" id="rcAddress">...</p>
           <div class="bg-gray-900 rounded-xl p-3 mb-6 border border-gray-700 inline-block shadow-inner">
-              <p class="text-[10px] text-gray-400 font-bold">ราคาใหม่ประมาณการ</p>
+              <p class="text-[10px] text-gray-400 font-bold">ราคาประเมินใหม่</p>
               <p class="text-lg font-black text-green-400" id="rcPrice">฿0</p>
           </div>
           <div class="flex gap-3">
@@ -569,8 +566,8 @@
     let hasInteractedDrop = false;
     let wakeLock = null;
 
-    let myBlockedDrivers = {}; // ประวัติการบล็อก
-    let loadedHistoryJobs = {}; // เก็บประวัติการเดินทาง
+    let myBlockedDrivers = {}; 
+    let loadedHistoryJobs = {}; 
     let selectedHistoryJobId = null;
 
     function getDynamicBottomPadding() {
@@ -592,7 +589,7 @@
     
     window.hasNotifiedLinePick = false;
     window.hasNotifiedLineDrop = false;
-    window.isShowingRouteChange = false; // ป้องกันป๊อปอัพเด้งซ้ำ
+    window.isShowingRouteChange = false; 
 
     function resetTrackingFlags() {
         window.hasSpokenAccept = false;
@@ -852,33 +849,6 @@
         showAlert("เพิ่มจุดแวะ", "กรุณาแจ้งคนขับเพื่อเพิ่มจุดแวะหรือแก้ไขจุดหมาย คนขับสามารถส่งคำขอแก้ไขมาให้คุณยืนยันได้ครับ", "info");
     }
 
-    function showAlert(title, message, type = 'info', callback = null) {
-        document.getElementById('alertTitle').innerText = title;
-        document.getElementById('alertMessage').innerText = message;
-        
-        let iconHtml = ''; let iconBg = ''; let iconColor = '';
-        if (type === 'error') {
-            iconHtml = '<i class="fas fa-times"></i>'; iconBg = 'bg-red-900/30 border border-red-500/30'; iconColor = 'text-red-500';
-        } else if (type === 'success') {
-            iconHtml = '<i class="fas fa-check"></i>'; iconBg = 'bg-green-900/30 border border-green-500/30'; iconColor = 'text-green-500';
-        } else {
-            iconHtml = '<i class="fas fa-info"></i>'; iconBg = 'bg-blue-900/30 border border-blue-500/30'; iconColor = 'text-blue-500';
-        }
-        
-        const iconDiv = document.getElementById('alertIcon');
-        if(iconDiv) {
-            iconDiv.innerHTML = iconHtml;
-            iconDiv.className = `w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl ${iconBg} ${iconColor}`;
-        }
-        document.getElementById('alertModal').classList.remove('hidden');
-        window.alertCloseCallback = typeof callback === 'function' ? callback : null;
-    }
-
-    function closeAlertModal() {
-        document.getElementById('alertModal').classList.add('hidden');
-        if (window.alertCloseCallback) window.alertCloseCallback();
-    }
-
     const darkMapStyle = [
         { elementType: "geometry", stylers: [{ color: "#242f3e" }] },
         { elementType: "labels.text.stroke", stylers: [{ color: "#242f3e" }] },
@@ -951,14 +921,13 @@
     function openEmergencyModal() { document.getElementById('emergencyModal').classList.remove('hidden'); }
     function closeEmergencyModal() { document.getElementById('emergencyModal').classList.add('hidden'); }
 
-    // 🌟 ฟังก์ชันเล็งเป้าแผนที่ และกดชื่อซูมแผนที่
     function focusLocation(lat, lng, type) {
         if (currentMapFocus === type) {
             fitRouteBounds();
             currentMapFocus = null;
         } else {
             map.panTo({lat: lat, lng: lng});
-            map.setZoom(18); // ซูมใกล้เห็นซอยชัดๆ
+            map.setZoom(18); 
             isTrackingMode = false;
             currentMapFocus = type;
             let btnC = document.getElementById('btnCrosshair');
@@ -1001,7 +970,10 @@
         if (map && currentRouteBounds) {
             isTrackingMode = false; 
             currentMapFocus = null;
-            map.fitBounds(currentRouteBounds, { top: 80, right: 50, bottom: 350, left: 50 });
+            // 🌟 ปรับ Overview ให้ซูมเฉพาะจุดที่จะไป ไม่ซูมจนสุดถ้าไม่จำเป็น
+            let bottomPad = (currentStep === 'Tracking') ? 350 : getDynamicBottomPadding() + 20;
+            map.fitBounds(currentRouteBounds, { top: 120, right: 50, bottom: bottomPad, left: 50 });
+            
             let bC = document.getElementById('btnCrosshair');
             let bO = document.getElementById('btnOverview');
             if(bC) bC.classList.replace('text-green-400', 'text-gray-500');
@@ -1062,14 +1034,6 @@
         gestureHandling: 'greedy',
         zoomControl: false,
         padding: { top: 70, bottom: getDynamicBottomPadding(), left: 0, right: 0 } 
-      });
-
-      map.addListener('dragstart', () => {
-         if (currentStep === 'Tracking') {
-             isTrackingMode = false;
-             let btnCrosshair = document.getElementById('btnCrosshair');
-             if(btnCrosshair) btnCrosshair.classList.replace('text-green-400', 'text-gray-500');
-         }
       });
 
       directionsService = new google.maps.DirectionsService();
@@ -1170,15 +1134,9 @@
     }
 
     window.isCompleting = false;
-    let myBlockedDrivers = {};
     
     function initApp() {
       requestWakeLock();
-      
-      // โหลดข้อมูลคนขับที่ถูกผู้โดยสารคนนี้บล็อกไว้
-      db.ref('passenger_blocks/' + lineUserId).on('value', snap => {
-          myBlockedDrivers = snap.val() || {};
-      });
 
       db.ref('driver').on('value', snap => {
         const d = snap.val();
@@ -1218,18 +1176,6 @@
       db.ref('bookings/' + lineUserId).on('value', snap => {
         const b = snap.val();
         if(b) { 
-            // ระบบตรวจสอบ Blocklist หากคนขับที่ถูกบล็อกพยายามกดรับงาน ให้เด้งออกทันที
-            if(b.driverPin && b.status === "รับงานแล้ว") {
-                if(myBlockedDrivers[b.driverPin] || myBlockedDrivers[b.driverPhone]) {
-                    db.ref('bookings/' + lineUserId).update({
-                        driverPin: null,
-                        driverPhone: null,
-                        status: "รอผู้ขับขี่ตอบรับ"
-                    });
-                    return; // ไม่ต้องทำอะไรต่อ
-                }
-            }
-            
             bookData = b; 
             handleTracking(); 
         } 
@@ -1512,7 +1458,6 @@
         } 
     }
 
-    // 🌟 ระบบคำนวณราคาแบบประเมิน
     function calculatePrice() {
       if(!directionsService || !map) return;
       const sPick = document.getElementById('sumPick');
@@ -1661,6 +1606,76 @@
       });
     }
 
+    function showRouteChangeModal(req) {
+        let typeStr = req.type === 'waypoint' ? 'เพิ่มจุดแวะไปที่' : 'เปลี่ยนจุดหมายไปที่';
+        document.getElementById('rcTitle').innerText = `คนขับขอ${typeStr}`;
+        document.getElementById('rcAddress').innerText = req.name;
+
+        let origin = new google.maps.LatLng(bookData.pLat, bookData.pLng);
+        let dest = req.type === 'destination' ? new google.maps.LatLng(req.lat, req.lng) : new google.maps.LatLng(bookData.dLat, bookData.dLng);
+        let waypts = [];
+        
+        if (req.type === 'waypoint') {
+            if (bookData.waypoints) waypts = bookData.waypoints.map(w => ({location: new google.maps.LatLng(w.lat, w.lng), stopover: true}));
+            waypts.push({location: new google.maps.LatLng(req.lat, req.lng), stopover: true});
+        }
+
+        directionsService.route({origin: origin, destination: dest, waypoints: waypts, travelMode: 'DRIVING'}, (res, stat) => {
+            if (stat === 'OK') {
+                let distMeters = 0;
+                res.routes[0].legs.forEach(leg => distMeters += leg.distance.value);
+                let distKm = distMeters / 1000;
+                
+                let baseFare = parseInt(pricingConfig.base) || 0;
+                let kmRate = parseInt(pricingConfig.km) || 0;
+                let calcPrice = Math.ceil(baseFare + (distKm * kmRate));
+                let minPrice = Math.floor(calcPrice / 10) * 10;
+                if(minPrice < baseFare) minPrice = baseFare;
+                let maxPrice = minPrice + 20;
+
+                window.tempNewPrice = minPrice;
+                window.tempNewMaxPrice = maxPrice;
+                window.tempNewDist = distKm.toFixed(1);
+                
+                document.getElementById('rcPrice').innerText = `~฿${minPrice} - ${maxPrice}`;
+                document.getElementById('routeChangeModal').classList.remove('hidden');
+            }
+        });
+    }
+
+    function acceptRouteChange() {
+        let req = bookData.routeChangeRequest;
+        let updates = {
+            price: window.tempNewPrice,
+            originalPrice: window.tempNewPrice,
+            priceEstimate: `~฿${window.tempNewPrice} - ${window.tempNewMaxPrice}`,
+            distance: window.tempNewDist,
+            routeChangeRequest: null
+        };
+
+        if (req.type === 'destination') {
+            updates.dLat = req.lat;
+            updates.dLng = req.lng;
+            updates.dName = req.name;
+        } else {
+            let wp = bookData.waypoints || [];
+            wp.push({lat: req.lat, lng: req.lng, name: req.name});
+            updates.waypoints = wp;
+        }
+
+        db.ref('bookings/' + lineUserId).update(updates).then(() => {
+            document.getElementById('routeChangeModal').classList.add('hidden');
+            window.isShowingRouteChange = false;
+        });
+    }
+
+    function rejectRouteChange() {
+        db.ref('bookings/' + lineUserId + '/routeChangeRequest').remove().then(() => {
+            document.getElementById('routeChangeModal').classList.add('hidden');
+            window.isShowingRouteChange = false;
+        });
+    }
+
     function handleTracking() {
       if(currentStep !== 'Tracking') {
           showPage('Tracking');
@@ -1691,7 +1706,6 @@
 
       if(bottomStatusBox) bottomStatusBox.classList.remove('hidden');
 
-      // ตรวจสอบการขอเปลี่ยนเส้นทางจากคนขับ
       if (bookData.routeChangeRequest && bookData.routeChangeRequest.status === 'pending' && !window.isShowingRouteChange) {
           window.isShowingRouteChange = true;
           showRouteChangeModal(bookData.routeChangeRequest);
@@ -1857,77 +1871,6 @@
       updateMapControlsPosition('Tracking');
     }
 
-    // 🌟 ระบบ Popup ให้ลูกค้ายืนยันขอเปลี่ยนเส้นทาง / เพิ่มจุดแวะ
-    function showRouteChangeModal(req) {
-        let typeStr = req.type === 'waypoint' ? 'เพิ่มจุดแวะ' : 'เปลี่ยนจุดหมาย';
-        document.getElementById('rcTitle').innerText = `คนขับขอ${typeStr}`;
-        document.getElementById('rcAddress').innerText = req.name;
-
-        let origin = new google.maps.LatLng(bookData.pLat, bookData.pLng);
-        let dest = req.type === 'destination' ? new google.maps.LatLng(req.lat, req.lng) : new google.maps.LatLng(bookData.dLat, bookData.dLng);
-        let waypts = [];
-        
-        if (req.type === 'waypoint') {
-            if (bookData.waypoints) waypts = bookData.waypoints.map(w => ({location: new google.maps.LatLng(w.lat, w.lng), stopover: true}));
-            waypts.push({location: new google.maps.LatLng(req.lat, req.lng), stopover: true});
-        }
-
-        directionsService.route({origin: origin, destination: dest, waypoints: waypts, travelMode: 'DRIVING'}, (res, stat) => {
-            if (stat === 'OK') {
-                let distMeters = 0;
-                res.routes[0].legs.forEach(leg => distMeters += leg.distance.value);
-                let distKm = distMeters / 1000;
-                
-                let baseFare = parseInt(pricingConfig.base) || 0;
-                let kmRate = parseInt(pricingConfig.km) || 0;
-                let calcPrice = Math.ceil(baseFare + (distKm * kmRate));
-                let minPrice = Math.floor(calcPrice / 10) * 10;
-                if(minPrice < baseFare) minPrice = baseFare;
-                let maxPrice = minPrice + 20;
-
-                window.tempNewPrice = minPrice;
-                window.tempNewMaxPrice = maxPrice;
-                window.tempNewDist = distKm.toFixed(1);
-                
-                document.getElementById('rcPrice').innerText = `~฿${minPrice} - ${maxPrice}`;
-                document.getElementById('routeChangeModal').classList.remove('hidden');
-            }
-        });
-    }
-
-    function acceptRouteChange() {
-        let req = bookData.routeChangeRequest;
-        let updates = {
-            price: window.tempNewPrice,
-            originalPrice: window.tempNewPrice,
-            priceEstimate: `~฿${window.tempNewPrice} - ${window.tempNewMaxPrice}`,
-            distance: window.tempNewDist,
-            routeChangeRequest: null
-        };
-
-        if (req.type === 'destination') {
-            updates.dLat = req.lat;
-            updates.dLng = req.lng;
-            updates.dName = req.name;
-        } else {
-            let wp = bookData.waypoints || [];
-            wp.push({lat: req.lat, lng: req.lng, name: req.name});
-            updates.waypoints = wp;
-        }
-
-        db.ref('bookings/' + lineUserId).update(updates).then(() => {
-            document.getElementById('routeChangeModal').classList.add('hidden');
-            window.isShowingRouteChange = false;
-        });
-    }
-
-    function rejectRouteChange() {
-        db.ref('bookings/' + lineUserId + '/routeChangeRequest').remove().then(() => {
-            document.getElementById('routeChangeModal').classList.add('hidden');
-            window.isShowingRouteChange = false;
-        });
-    }
-
     function updateRealtimeMap() {
       if(!directionsService || !bookData.status || !map) return;
 
@@ -2007,9 +1950,17 @@
               map: map
           });
           
-          currentRouteBounds = res.routes[0].bounds;
-          if(isGoingToPickup && markerPick) currentRouteBounds.extend(markerPick.getPosition());
-          if(!isGoingToPickup && markerDrop) currentRouteBounds.extend(markerDrop.getPosition());
+          // 🌟 ปรับปรุงการ Overview ให้คลุมแค่รถกับเป้าหมายถัดไปเท่านั้น
+          currentRouteBounds = new google.maps.LatLngBounds();
+          currentRouteBounds.extend(origin);
+          
+          if(isGoingToPickup) {
+              currentRouteBounds.extend(dest); // ซูมคลุมรถ -> จุดรับ
+          } else {
+              // ซูมคลุมรถ -> จุดแวะถัดไป (ถ้ามี) หรือ จุดส่ง
+              let nextDest = waypts.length > 0 ? waypts[0].location : dest;
+              currentRouteBounds.extend(nextDest);
+          }
 
           let totalMins = 0; let totalDistText = res.routes[0].legs[0].distance.text;
           res.routes[0].legs.forEach(leg => totalMins += leg.duration.value);
@@ -2075,7 +2026,6 @@
       });
     }
 
-    // ================= ระบบดูประวัติ และ บล็อกคนขับ สำหรับผู้โดยสาร =================
     function openPassengerHistory() {
         document.getElementById('historyModal').classList.remove('hidden');
         renderPassengerHistory();
@@ -2107,7 +2057,6 @@
                     day: '2-digit', month: 'short', year: 'numeric', 
                     hour: '2-digit', minute: '2-digit' 
                 });
-                // เก็บลง cache เพื่อเปิดดูรายละเอียด
                 loadedHistoryJobs[job.id] = d;
 
                 html += `<div onclick="openPassengerHistoryDetail('${job.id}')" class="bg-gray-800 border border-gray-700 p-4 rounded-2xl shadow-sm cursor-pointer hover:bg-gray-700 transition">
@@ -2141,7 +2090,6 @@
         document.getElementById('histDetPick').innerText = job.pName;
         document.getElementById('histDetDrop').innerText = job.dName;
 
-        // ดึงชื่อคนขับจาก profile
         if(job.driverPin) {
             db.ref('drivers_profile/' + job.driverPin).once('value', snap => {
                 if(snap.exists()){
