@@ -1170,7 +1170,6 @@
     }
 
     window.isCompleting = false;
-    let myBlockedDrivers = {};
     
     function initApp() {
       requestWakeLock();
@@ -2185,6 +2184,7 @@
         }, "red");
     }
 
+    window.initMap = initMap;
   </script>
   <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDsZ_tbFhH6fUXRz3I6C-tMshNwwrSevd4&libraries=places&callback=initMap" async defer></script>
 </body>
