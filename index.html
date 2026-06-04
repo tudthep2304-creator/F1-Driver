@@ -34,10 +34,13 @@
         background-color: #111827 !important; box-shadow: 0 15px 30px rgba(0,0,0,0.8) !important; 
         margin-top: -10px !important; max-height: 40vh !important; overflow-y: auto !important; 
     }
-    .pac-item { padding: 14px 16px; border-top: 1px solid #374151; cursor: pointer; color: #d1d5db; font-size: 14px; }
+    .pac-item { padding: 10px 14px; border-top: 1px solid #374151; cursor: pointer; color: #d1d5db; font-size: 13px; }
     .pac-item:first-child { border-top: none; }
     .pac-item-query { color: #10b981; font-weight: bold; } 
     .pac-icon { filter: invert(70%) sepia(50%) saturate(400%) hue-rotate(80deg); }
+
+    body.theme-dropoff .pac-container .pac-item-query { color: #ef4444 !important; }
+    body.theme-dropoff .pac-container .pac-icon { filter: invert(34%) sepia(98%) saturate(7128%) hue-rotate(349deg) brightness(102%) contrast(105%) !important; }
 
     .hide-scrollbar::-webkit-scrollbar { display: none; }
     .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
@@ -52,13 +55,15 @@
 
   <div id="map" class="map-container hidden"></div>
 
-  <div id="centerPinOverlay" class="hidden fixed top-0 left-0 right-0 bottom-[200px] z-[25] pointer-events-none flex flex-col items-center justify-center transition-opacity" style="transform: translateY(-20px);">
-      <div id="centerPinWrapper" class="transition-transform duration-200">
-          <svg id="centerPinSvg" width="40" height="40" viewBox="-2 -2 40 40" class="drop-shadow-xl" style="margin-left: -20px; margin-top: -40px;">
-              <path d="M18,0 C10,0 4,6 4,14 C4,24 18,36 18,36 C18,36 32,24 32,14 C32,6 26,0 18,0 Z M18,20 C14.686,20 12,17.314 12,14 C12,10.686 14.686,8 18,8 C21.314,8 24,10.686 24,14 C24,17.314 21.314,20 18,20 Z" fill="#22c55e" stroke="#ffffff" stroke-width="2"/>
-          </svg>
+  <div id="centerPinOverlay" class="hidden fixed left-0 right-0 z-[25] pointer-events-none flex flex-col items-center justify-center transition-opacity" style="top: 140px; bottom: 200px;">
+      <div class="relative flex flex-col items-center justify-center" style="transform: translateY(-50%);">
+          <div id="centerPinWrapper" class="transition-transform duration-200 z-10">
+              <svg id="centerPinSvg" width="36" height="36" viewBox="-2 -2 40 40" class="drop-shadow-xl">
+                  <path d="M18,0 C10,0 4,6 4,14 C4,24 18,36 18,36 C18,36 32,24 32,14 C32,6 26,0 18,0 Z M18,20 C14.686,20 12,17.314 12,14 C12,10.686 14.686,8 18,8 C21.314,8 24,10.686 24,14 C24,17.314 21.314,20 18,20 Z" fill="#22c55e" stroke="#ffffff" stroke-width="2"/>
+              </svg>
+          </div>
+          <div id="centerPinShadow" class="w-4 h-1.5 bg-black/40 rounded-full blur-[1px] transition-all duration-200 absolute -bottom-1"></div>
       </div>
-      <div id="centerPinShadow" class="w-4 h-1.5 bg-black/40 rounded-full blur-[1px] transition-all duration-200 mt-0.5"></div>
   </div>
 
   <div id="navBar" class="hidden fixed top-0 w-full h-16 bg-gray-900 border-b border-gray-800 flex items-center justify-between px-4 z-20 text-white shadow-md pointer-events-auto">
@@ -117,18 +122,18 @@
           <div class="flex shrink-0 bg-[#2a303c] border border-[#3b4252] rounded-full overflow-hidden shadow-sm items-center">
               <button onclick="handleSavedPlace('home')" class="px-2.5 py-1 flex items-center gap-1.5 hover:bg-[#343b4a] transition"><i class="fas fa-home text-blue-400 text-[10px]"></i><span class="label-home text-[11px] font-bold text-gray-200">บ้าน</span></button>
               <div class="w-[1px] h-3 bg-[#3b4252]"></div>
-              <button onclick="editSavedPlace('home', event)" class="px-2 py-1 text-gray-400 hover:text-white hover:bg-[#343b4a] transition flex items-center"><i class="fas fa-cog text-[10px]"></i></button>
+              <button onclick="editSavedPlace('home', event)" class="px-2 py-1 text-gray-400 hover:text-white hover:bg-[#343b4a] transition flex items-center" title="ตั้งค่าพิกัด"><i class="fas fa-cog text-[10px]"></i></button>
           </div>
           <div class="flex shrink-0 bg-[#2a303c] border border-[#3b4252] rounded-full overflow-hidden shadow-sm items-center">
               <button onclick="handleSavedPlace('favorite')" class="px-2.5 py-1 flex items-center gap-1.5 hover:bg-[#343b4a] transition"><i class="fas fa-heart text-pink-500 text-[10px]"></i><span class="label-favorite text-[11px] font-bold text-gray-200">โปรด</span></button>
               <div class="w-[1px] h-3 bg-[#3b4252]"></div>
-              <button onclick="editSavedPlace('favorite', event)" class="px-2 py-1 text-gray-400 hover:text-white hover:bg-[#343b4a] transition flex items-center"><i class="fas fa-cog text-[10px]"></i></button>
+              <button onclick="editSavedPlace('favorite', event)" class="px-2 py-1 text-gray-400 hover:text-white hover:bg-[#343b4a] transition flex items-center" title="ตั้งค่าพิกัด"><i class="fas fa-cog text-[10px]"></i></button>
           </div>
           <div class="w-[1px] h-4 bg-gray-600 shrink-0 mx-0.5"></div>
           <div id="recentPlacesPick" class="flex gap-2 shrink-0 items-center"></div>
       </div>
       
-      <div id="pickupWaypointsList" class="flex flex-col gap-1.5 mb-1 max-h-[120px] overflow-y-auto hide-scrollbar"></div>
+      <div id="pickupWaypointsList" class="flex flex-col gap-1 mb-1 max-h-[110px] overflow-y-auto hide-scrollbar"></div>
 
       <div class="flex gap-2 mt-2">
           <button onclick="addWaypointFromCenter('pick')" class="flex-[1] bg-gray-800 border border-green-500/50 text-green-400 py-3 rounded-xl font-bold text-[14px] shadow-sm hover:bg-gray-700 transition flex justify-center items-center gap-1.5">
@@ -151,18 +156,18 @@
           <div class="flex shrink-0 bg-[#2a303c] border border-[#3b4252] rounded-full overflow-hidden shadow-sm items-center">
               <button onclick="handleSavedPlace('home')" class="px-2.5 py-1 flex items-center gap-1.5 hover:bg-[#343b4a] transition"><i class="fas fa-home text-blue-400 text-[10px]"></i><span class="label-home text-[11px] font-bold text-gray-200">บ้าน</span></button>
               <div class="w-[1px] h-3 bg-[#3b4252]"></div>
-              <button onclick="editSavedPlace('home', event)" class="px-2 py-1 text-gray-400 hover:text-white hover:bg-[#343b4a] transition flex items-center"><i class="fas fa-cog text-[10px]"></i></button>
+              <button onclick="editSavedPlace('home', event)" class="px-2 py-1 text-gray-400 hover:text-white hover:bg-[#343b4a] transition flex items-center" title="ตั้งค่าพิกัด"><i class="fas fa-cog text-[10px]"></i></button>
           </div>
           <div class="flex shrink-0 bg-[#2a303c] border border-[#3b4252] rounded-full overflow-hidden shadow-sm items-center">
               <button onclick="handleSavedPlace('favorite')" class="px-2.5 py-1 flex items-center gap-1.5 hover:bg-[#343b4a] transition"><i class="fas fa-heart text-pink-500 text-[10px]"></i><span class="label-favorite text-[11px] font-bold text-gray-200">โปรด</span></button>
               <div class="w-[1px] h-3 bg-[#3b4252]"></div>
-              <button onclick="editSavedPlace('favorite', event)" class="px-2 py-1 text-gray-400 hover:text-white hover:bg-[#343b4a] transition flex items-center"><i class="fas fa-cog text-[10px]"></i></button>
+              <button onclick="editSavedPlace('favorite', event)" class="px-2 py-1 text-gray-400 hover:text-white hover:bg-[#343b4a] transition flex items-center" title="ตั้งค่าพิกัด"><i class="fas fa-cog text-[10px]"></i></button>
           </div>
           <div class="w-[1px] h-4 bg-gray-600 shrink-0 mx-0.5"></div>
           <div id="recentPlacesDrop" class="flex gap-2 shrink-0 items-center"></div>
       </div>
 
-      <div id="dropoffWaypointsList" class="flex flex-col gap-1.5 mb-1 max-h-[120px] overflow-y-auto hide-scrollbar"></div>
+      <div id="dropoffWaypointsList" class="flex flex-col gap-1 mb-1 max-h-[110px] overflow-y-auto hide-scrollbar"></div>
 
       <div class="flex gap-2 mt-2">
           <button onclick="addWaypointFromCenter('drop')" class="flex-[1] bg-gray-800 border border-red-500/50 text-red-400 py-3 rounded-xl font-bold text-[14px] shadow-sm hover:bg-gray-700 transition flex justify-center items-center gap-1.5">
@@ -183,7 +188,7 @@
       </div>
       <div class="border-b border-gray-700 mb-2 w-full opacity-50"></div>
       
-      <div class="bg-gray-800 py-2 px-3 rounded-xl border border-gray-700 relative mb-2 shadow-sm max-h-[140px] overflow-y-auto hide-scrollbar">
+      <div class="bg-gray-800 py-2 px-3 rounded-xl border border-gray-700 relative mb-2 shadow-sm max-h-[120px] overflow-y-auto hide-scrollbar">
           <div class="absolute left-[1.4rem] top-5 bottom-5 w-0.5 border-l-[1.5px] border-dashed border-gray-600"></div>
           <div id="sumWaypointsContainer" class="flex flex-col gap-1.5 py-1"></div>
       </div>
@@ -237,7 +242,7 @@
 
       <div class="border-b border-gray-700 mb-2 w-full opacity-50"></div>
       
-      <div id="trackAddressBox" class="mb-3 bg-gray-800 py-2 px-3 rounded-xl border border-gray-700 relative shadow-sm transition-all duration-300 w-full max-h-[130px] overflow-y-auto hide-scrollbar">
+      <div id="trackAddressBox" class="mb-3 bg-gray-800 py-2 px-3 rounded-xl border border-gray-700 relative shadow-sm transition-all duration-300 w-full max-h-[120px] overflow-y-auto hide-scrollbar">
           <div class="absolute left-[1.3rem] top-5 bottom-5 w-0.5 border-l-[1.5px] border-dashed border-gray-600"></div>
           <div id="trackWaypointsContainer" class="flex flex-col gap-1.5 py-1"></div>
       </div>
@@ -390,11 +395,36 @@
           <div id="alertIcon" class="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl"></div>
           <h3 id="alertTitle" class="text-xl font-black text-white mb-2">...</h3>
           <p id="alertMessage" class="text-sm text-gray-400 mb-6 whitespace-pre-line leading-relaxed">...</p>
-          <button onclick="closeAlertModal()" class="w-full py-3 bg-green-600 text-white font-bold rounded-xl shadow-md hover:bg-green-700 transition">ตกลง</button>
+          <button onclick="closeAlertModal()" class="w-full py-3.5 bg-green-600 text-white font-bold rounded-xl shadow-md hover:bg-green-700 transition">ตกลง</button>
       </div>
   </div>
 
   <script>
+    // ประกาศฟังก์ชัน setupSearch ก่อน เพื่อให้แน่ใจว่าโหลดทัน initMap
+    function setupSearch(inputId) {
+      const input = document.getElementById(inputId); if(!input) return;
+      if (typeof google === 'undefined' || !google.maps.places) return;
+      const chiangRaiBounds = new google.maps.LatLngBounds(new google.maps.LatLng(18.91, 99.16), new google.maps.LatLng(20.46, 100.56));
+      const auto = new google.maps.places.Autocomplete(input, { bounds: chiangRaiBounds, strictBounds: true, componentRestrictions: {country: 'th'} });
+
+      input.addEventListener('focus', function() { if(this.value.trim() !== '') this.dataset.oldValue = this.value; this.value = ''; });
+      input.addEventListener('blur', function() { setTimeout(() => { if(this.value.trim() === '') this.value = this.dataset.oldValue || ''; }, 150); });
+
+      auto.addListener('place_changed', () => {
+        const place = auto.getPlace();
+        if(place.geometry && map) {
+          input.blur(); map.panTo(place.geometry.location); map.setZoom(17);
+          let finalAddr = place.name;
+          if (place.formatted_address) {
+              let cleanAddr = place.formatted_address.replace(/,?\s*ประเทศไทย/g, '').replace(/Unnamed Road,?\s*/g, '').trim();
+              if(!cleanAddr.includes(place.name)) finalAddr += " (" + cleanAddr + ")";
+          }
+          input.dataset.oldValue = finalAddr; input.value = finalAddr;
+          updateAddressBox(false); // เรียกอัปเดตชื่อเมื่อหมุดเลื่อนไปจุดที่ค้นหา
+        }
+      });
+    }
+
     const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwwdopAPESHRrHEYTSa-CzFMbh0JX9WHUa37PMEJmxDkah7ui67cVtOn68cnM-2DtmR/exec"; 
     const MY_LIFF_ID = "2010188449-b9Yq1R2L";
     const LINE_OA_URL = "https://line.me/R/ti/p/%40805zvmii";
@@ -434,7 +464,13 @@
     let selectedHistoryJobId = null;
     let myBlockedDrivers = {};
 
-    function getDynamicBottomPadding() { return 70 + (window.innerHeight * 0.4); }
+    function getDynamicBottomPadding() {
+        let panel = document.getElementById('page4Panel');
+        if (currentStep === 4 && panel && panel.classList.contains('panel-collapsed-page4')) {
+            return 120;
+        }
+        return 70 + (window.innerHeight * 0.4); 
+    }
 
     let pricingConfig = { base: 50, km: 10, pick: 5 }; 
     db.ref('config/pricing').on('value', snap => { if(snap.exists()) pricingConfig = snap.val(); });
@@ -514,9 +550,8 @@
         let currentName = ""; let currentLat = 0; let currentLng = 0;
         let pos = map.getCenter();
         
-        currentName = "พิกัดที่เลือกบนแผนที่"; // Fallback name
-        currentLat = pos.lat();
-        currentLng = pos.lng();
+        currentName = "พิกัดที่เลือกบนแผนที่"; // Fallback
+        currentLat = pos.lat(); currentLng = pos.lng();
         
         let theme = (currentStep === 2) ? 'green' : 'red';
         openConfirmActionModal(`ตั้งค่า ${typeName}?`, `คุณต้องการบันทึกพิกัดกลางจอขณะนี้เป็น "${typeName}" ใช่หรือไม่?`, () => {
@@ -559,7 +594,7 @@
     }
 
     function useRecentPlace(name, lat, lng) {
-        let pos = {lat: lat, lng: lng}; if(map) map.panTo(pos); map.setZoom(17);
+        if(map) { map.panTo({lat: lat, lng: lng}); map.setZoom(17); }
     }
 
     function togglePage4Panel() {
@@ -620,14 +655,12 @@
     function openLineOA() { if (typeof liff !== 'undefined' && liff.isInClient()) { liff.openWindow({ url: LINE_OA_URL, external: true }); } else { window.open(LINE_OA_URL, '_blank'); } }
 
     function focusLocation(lat, lng) {
-        if(map) { map.panTo({lat: lat, lng: lng}); map.setZoom(18); }
+        if(map) { map.panTo({lat: lat, lng: lng}); map.setZoom(17); }
     }
 
     function centerToFocus() {
-        if(!map) return;
-        let pos;
+        if(!map) return; let pos;
         if(currentStep === 'Tracking' && markerDriver) pos = markerDriver.getPosition();
-        
         if(pos) {
             map.panTo(pos); map.setZoom(17);
             if(currentStep === 'Tracking') {
@@ -707,9 +740,7 @@
           zIndex: 9999
       });
 
-      // จัดการค้นหาในกล่อง Search ให้มันเลื่อนแผนที่ไป (แล้วให้ลูกค้ายืนยันเอง)
-      setupSearch('pickupSearch');
-      setupSearch('dropoffSearch');
+      setupSearch('pickupSearch'); setupSearch('dropoffSearch');
       
       const wpInput = document.getElementById('waypointSearchInput');
       if (wpInput) {
@@ -733,7 +764,6 @@
     function setupSearch(inputId) {
       const input = document.getElementById(inputId); if(!input) return;
       if (typeof google === 'undefined' || !google.maps.places) return;
-      
       const chiangRaiBounds = new google.maps.LatLngBounds(new google.maps.LatLng(18.91, 99.16), new google.maps.LatLng(20.46, 100.56));
       const auto = new google.maps.places.Autocomplete(input, { bounds: chiangRaiBounds, strictBounds: true, componentRestrictions: {country: 'th'} });
 
@@ -743,7 +773,7 @@
       auto.addListener('place_changed', () => {
         const place = auto.getPlace();
         if(place.geometry && map) {
-          input.blur(); map.panTo(place.geometry.location); 
+          input.blur(); map.panTo(place.geometry.location); map.setZoom(17); 
           let finalAddr = place.name;
           if (place.formatted_address) {
               let cleanAddr = place.formatted_address.replace(/,?\s*ประเทศไทย/g, '').replace(/Unnamed Road,?\s*/g, '').trim();
@@ -876,7 +906,6 @@
             if (wp.type === 'pick') { colorClass = 'bg-green-500 text-white'; colorHex = '#22c55e'; }
             if (wp.type === 'drop') { colorClass = 'bg-red-500 text-white'; colorHex = '#ef4444'; }
 
-            // อัปเดต Marker เก่าโดยไม่หล่นใหม่
             if (wp.marker) {
                 wp.marker.setIcon(createNumberedMarkerIcon(num.toString(), colorHex));
                 wp.marker.setLabel({text: num.toString(), color: (wp.type==='pick'||wp.type==='drop') ? 'white' : 'black', fontWeight: 'bold'});
@@ -924,12 +953,25 @@
       if (page === 2) {
           document.body.classList.remove('theme-dropoff');
           if(topSearchPick) topSearchPick.classList.remove('hidden'); if(topSearchDrop) topSearchDrop.classList.add('hidden');
-          if(pinOverlay) { pinOverlay.classList.remove('hidden'); document.getElementById('centerPinSvg').innerHTML = '<path d="M18,0 C10,0 4,6 4,14 C4,24 18,36 18,36 C18,36 32,24 32,14 C32,6 26,0 18,0 Z M18,20 C14.686,20 12,17.314 12,14 C12,10.686 14.686,8 18,8 C21.314,8 24,10.686 24,14 C24,17.314 21.314,20 18,20 Z" fill="#22c55e" stroke="#ffffff" stroke-width="2"/>'; }
+          if(pinOverlay) { 
+              pinOverlay.classList.remove('hidden'); 
+              document.getElementById('centerPinSvg').innerHTML = '<path d="M18,0 C10,0 4,6 4,14 C4,24 18,36 18,36 C18,36 32,24 32,14 C32,6 26,0 18,0 Z M18,20 C14.686,20 12,17.314 12,14 C12,10.686 14.686,8 18,8 C21.314,8 24,10.686 24,14 C24,17.314 21.314,20 18,20 Z" fill="#22c55e" stroke="#ffffff" stroke-width="2"/>'; 
+              
+              // ซิงค์ตำแหน่ง CSS ให้ตรงกับ Padding
+              let dynamicBottom = getDynamicBottomPadding();
+              pinOverlay.style.top = '140px'; pinOverlay.style.bottom = dynamicBottom + 'px';
+          }
           renderWaypointsUI();
       } else if (page === 3) {
           document.body.classList.add('theme-dropoff');
           if(topSearchPick) topSearchPick.classList.add('hidden'); if(topSearchDrop) topSearchDrop.classList.remove('hidden');
-          if(pinOverlay) { pinOverlay.classList.remove('hidden'); document.getElementById('centerPinSvg').innerHTML = '<path d="M18,0 C10,0 4,6 4,14 C4,24 18,36 18,36 C18,36 32,24 32,14 C32,6 26,0 18,0 Z M18,20 C14.686,20 12,17.314 12,14 C12,10.686 14.686,8 18,8 C21.314,8 24,10.686 24,14 C24,17.314 21.314,20 18,20 Z" fill="#ef4444" stroke="#ffffff" stroke-width="2"/>'; }
+          if(pinOverlay) { 
+              pinOverlay.classList.remove('hidden'); 
+              document.getElementById('centerPinSvg').innerHTML = '<path d="M18,0 C10,0 4,6 4,14 C4,24 18,36 18,36 C18,36 32,24 32,14 C32,6 26,0 18,0 Z M18,20 C14.686,20 12,17.314 12,14 C12,10.686 14.686,8 18,8 C21.314,8 24,10.686 24,14 C24,17.314 21.314,20 18,20 Z" fill="#ef4444" stroke="#ffffff" stroke-width="2"/>'; 
+              
+              let dynamicBottom = getDynamicBottomPadding();
+              pinOverlay.style.top = '140px'; pinOverlay.style.bottom = dynamicBottom + 'px';
+          }
           renderWaypointsUI();
       } else {
           document.body.classList.remove('theme-dropoff');
@@ -1016,6 +1058,15 @@
                 }
             }
         });
+    }
+
+    function useCurrentLocation() {
+      if(navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(p => {
+            let pos = {lat: p.coords.latitude, lng: p.coords.longitude}; if(map) map.panTo(pos);
+            updateAddressBox(true);
+          }, () => { showAlert('ผิดพลาด', 'ไม่สามารถดึงตำแหน่งปัจจุบันได้ กรุณาเปิด GPS', 'error'); }, { enableHighAccuracy: true });
+      }
     }
 
     function confirmPickup() { 
@@ -1113,10 +1164,7 @@
           bookData.userId = lineUserId; bookData.name = lineName; bookData.phone = tel;
           bookData.status = "รอผู้ขับขี่ตอบรับ"; bookData.timestamp = firebase.database.ServerValue.TIMESTAMP; 
           
-          // ทำเครื่องหมายให้ชัดเจนว่าอันไหนเป็นจุดรับหรือจุดส่ง
           localWaypoints.forEach((w, i) => { if(i === 0) w.type = 'pick'; else if(i === localWaypoints.length - 1) w.type = 'drop'; });
-          
-          // ลบ Object ของ marker ออกก่อนเซฟลง Database เพื่อป้องกัน Firebase Error
           let dbWaypoints = localWaypoints.map(w => ({ lat: w.lat, lng: w.lng, name: w.name, type: w.type }));
           bookData.waypoints = dbWaypoints;
           
@@ -1147,7 +1195,6 @@
       if(driverBox) driverBox.classList.add('hidden'); if(actionButtonsBox) actionButtonsBox.classList.add('hidden');
       if(statusBottom) statusBottom.innerText = bookData.status;
 
-      // จัดการการแสดงราคาตามสถานะ (ล็อกเป็นราคาคงที่เมื่อคนขับรับงานแล้ว)
       if(bookData.status === "รอผู้ขับขี่ตอบรับ") {
           if(priceLabelBottom) priceLabelBottom.innerText = "ราคาประเมิน"; if(priceBottom) priceBottom.innerText = bookData.priceEstimate || "~฿" + bookData.price;
       } else {
@@ -1176,7 +1223,6 @@
           }
       }
 
-      // ดึงเส้นทางมาวาดใน Tracking โดยใช้ฟังก์ชัน renderWaypointsUI แบบไม่ยุ่งกับ Array Local ตรงๆ ถ้ารีโหลดมาใหม่
       if(localWaypoints.length === 0 && bookData.waypoints) {
           localWaypoints = bookData.waypoints.map(w => ({ lat: w.lat, lng: w.lng, name: w.name, type: w.type }));
       }
