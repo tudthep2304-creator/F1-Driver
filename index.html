@@ -58,11 +58,10 @@
 
   <div id="map" class="map-container hidden"></div>
 
-  <!-- เป้าเล็งกลางจอ (Center Pin) แบบคำนวณพิกัด Pixel-Perfect กับ Google Maps -->
-  <div id="centerPinOverlay" class="hidden fixed left-0 right-0 z-[25] pointer-events-none transition-opacity duration-300">
-      <div class="absolute" style="top: 50%; left: 50%;">
-          <div id="centerPinWrapper" class="absolute transition-transform duration-200 z-10" style="bottom: 0px; left: -19px; width: 38px; height: 52px;">
-              <svg id="centerPinSvg" width="38" height="52" viewBox="-19 -52 38 52" style="filter: drop-shadow(0px 4px 4px rgba(0,0,0,0.3));">
+  <div id="centerPinOverlay" class="hidden fixed left-0 right-0 z-[25] pointer-events-none flex items-center justify-center">
+      <div class="relative w-0 h-0 flex items-center justify-center">
+          <div id="centerPinWrapper" class="absolute flex flex-col justify-end items-center transition-transform duration-200 z-10" style="bottom: 0px; left: -22px; width: 44px; height: 60px;">
+              <svg id="centerPinSvg" width="100%" height="100%" viewBox="-20 -54 40 54" style="filter: drop-shadow(0px 4px 4px rgba(0,0,0,0.3));">
                   <path d="M 0,0 C -12,-16 -18,-22 -18,-32 A 18,18 0 1,1 18,-32 C 18,-22 12,-16 0,0 Z" fill="#22c55e" stroke="#ffffff" stroke-width="2"/>
                   <circle cx="0" cy="-32" r="8" fill="#ffffff"/>
               </svg>
@@ -97,7 +96,6 @@
       <button onclick="openEmergencyModal()" id="btnEmergency" class="hidden bg-red-900/80 w-11 h-11 flex items-center justify-center rounded-full shadow-[0_0_15px_rgba(239,68,68,0.5)] text-red-400 border border-red-500/50 active:bg-red-800 transition mt-2"><i class="fas fa-shield-alt text-lg"></i></button>
   </div>
 
-  <!-- หน้า 1: เริ่มต้น -->
   <div id="page1" class="full-page flex">
     <div class="bg-gray-900 border-b border-green-500/30 text-green-400 p-6 text-center shadow-lg"><h1 class="text-2xl font-black tracking-wider flex justify-center items-center gap-2"><i class="fas fa-car-side"></i> F1 DRIVER</h1></div>
     <div class="p-6 space-y-6 flex-1 flex flex-col justify-center">
@@ -117,7 +115,6 @@
     </div>
   </div>
 
-  <!-- หน้า 2: เลือกจุดรับ -->
   <div id="page2" class="hidden">
     <div class="ui-panel border-t-[4px] border-green-500 h-auto pb-6 pt-4">
       <div class="flex justify-between items-center mb-2">
@@ -153,7 +150,6 @@
     </div>
   </div>
 
-  <!-- หน้า 3: เลือกจุดส่ง -->
   <div id="page3" class="hidden">
     <div class="ui-panel border-t-[4px] border-red-500 h-auto pb-6 pt-4">
       <div class="flex justify-between items-center mb-2">
@@ -197,8 +193,8 @@
       </div>
       <div class="border-b border-gray-700 mb-2 w-full opacity-50"></div>
       
-      <div class="bg-gray-800 py-2 px-3 rounded-xl border border-gray-700 relative mb-2 shadow-sm max-h-[105px] overflow-y-auto slim-scroll">
-          <div class="absolute left-[1.4rem] top-4 bottom-4 w-0.5 border-l-[1.5px] border-dashed border-gray-600"></div>
+      <div class="bg-gray-800 py-2 px-3 rounded-xl border border-gray-700 relative mb-2 shadow-sm max-h-[140px] overflow-y-auto slim-scroll">
+          <div class="absolute left-[1.4rem] top-5 bottom-5 w-0.5 border-l-[1.5px] border-dashed border-gray-600"></div>
           <div id="sumWaypointsContainer" class="flex flex-col gap-1.5 py-1"></div>
       </div>
 
@@ -251,8 +247,8 @@
 
       <div class="border-b border-gray-700 mb-2 w-full opacity-50"></div>
       
-      <div id="trackAddressBox" class="mb-3 bg-gray-800 py-2 px-3 rounded-xl border border-gray-700 relative shadow-sm transition-all duration-300 w-full max-h-[105px] overflow-y-auto slim-scroll">
-          <div class="absolute left-[1.3rem] top-4 bottom-4 w-0.5 border-l-[1.5px] border-dashed border-gray-600"></div>
+      <div id="trackAddressBox" class="mb-3 bg-gray-800 py-2 px-3 rounded-xl border border-gray-700 relative shadow-sm transition-all duration-300 w-full max-h-[130px] overflow-y-auto slim-scroll">
+          <div class="absolute left-[1.3rem] top-5 bottom-5 w-0.5 border-l-[1.5px] border-dashed border-gray-600"></div>
           <div id="trackWaypointsContainer" class="flex flex-col gap-1.5 py-1"></div>
       </div>
 
@@ -432,6 +428,7 @@
     let localWaypoints = []; 
     let waypointMapMarkers = []; 
     let focusedWaypointIndex = -1; 
+    let uiObserver = null; // เพิ่ม ResizeObserver สำหรับ UI Panel
 
     let lineUserId = "", lineName = "";
     let driverData = { lat: 19.910479, lng: 99.840576, status: "ออฟไลน์" };
@@ -451,15 +448,13 @@
     let myBlockedDrivers = {};
 
     function getDynamicBottomPadding() {
-        if(!document.getElementById('page4Panel')) return 0;
-        
         let pBottom = 0;
         if (currentStep === 4) {
             const panel = document.getElementById('page4Panel');
-            pBottom = (panel && panel.classList.contains('panel-collapsed-page4')) ? 120 : panel.offsetHeight;
+            pBottom = (panel && panel.classList.contains('panel-collapsed-page4')) ? 120 : (panel ? panel.offsetHeight : 0);
         } else if (currentStep === 'Tracking') {
             const panel = document.getElementById('trackingPanel');
-            pBottom = (panel && panel.classList.contains('panel-collapsed')) ? 120 : panel.offsetHeight;
+            pBottom = (panel && panel.classList.contains('panel-collapsed')) ? 120 : (panel ? panel.offsetHeight : 0);
         } else if (currentStep === 2) {
             const panel = document.querySelector('#page2 .ui-panel');
             pBottom = panel ? panel.offsetHeight : 0;
@@ -467,7 +462,7 @@
             const panel = document.querySelector('#page3 .ui-panel');
             pBottom = panel ? panel.offsetHeight : 0;
         }
-        return pBottom + 20;
+        return pBottom;
     }
 
     function updateMapPadding() {
@@ -479,6 +474,7 @@
         
         let overlay = document.getElementById('centerPinOverlay');
         if(overlay && (currentStep === 2 || currentStep === 3)) {
+            // เซ็ตกรอบ CenterPinOverlay ให้เท่ากับกรอบแผนที่ที่ถูก Padding
             overlay.style.top = pTop + 'px';
             overlay.style.bottom = pBottom + 'px';
         }
@@ -517,6 +513,14 @@
         let savedPhone = localStorage.getItem('passengerPhone');
         if(savedPhone) { let pInp = document.getElementById('userPhone'); if(pInp) pInp.value = savedPhone; }
         renderSavedPlacesUI(); renderRecentPlaces();
+
+        // 🌟 เพิ่ม ResizeObserver เข้าไปเพื่อคอยปรับ Padding ตามขนาดกล่อง UI อัตโนมัติ
+        uiObserver = new ResizeObserver(() => {
+            if(map) updateMapPadding();
+        });
+        document.querySelectorAll('.ui-panel').forEach(panel => {
+            uiObserver.observe(panel);
+        });
     });
 
     let currentConfirmCallback = null;
@@ -598,7 +602,6 @@
 
     windowContext.useRecentPlace = function(name, lat, lng) {
         if(map) { 
-            updateMapPadding();
             map.panTo({lat: lat, lng: lng}); 
             map.setZoom(17); 
         }
@@ -607,13 +610,11 @@
     windowContext.togglePage4Panel = function() {
         const panel = document.getElementById('page4Panel'); if(!panel) return;
         panel.classList.toggle('panel-collapsed-page4');
-        updateMapPadding();
     }
 
     windowContext.toggleTrackingPanel = function() {
         const panel = document.getElementById('trackingPanel'); if(!panel) return;
         panel.classList.toggle('panel-collapsed');
-        updateMapPadding();
     }
 
     function showAlert(title, message, type = 'info', callback = null) {
@@ -676,8 +677,10 @@
             fitAllWaypoints();
         } else {
             focusedWaypointIndex = index;
-            updateMapPadding();
-            map.panTo({lat: lat, lng: lng}); map.setZoom(17);
+            map.panTo({lat: lat, lng: lng}); map.setZoom(18);
+            
+            // ดันแผนที่ลงเพื่อให้หมุดลอยขึ้นเหนือกล่อง 150px
+            setTimeout(() => { map.panBy(0, -150); }, 50);
         }
         renderWaypointsUI();
     };
@@ -685,12 +688,12 @@
     function centerToFocus() {
         if(!map) return;
         if(currentStep === 'Tracking' && markerDriver && markerDriver.getMap()) {
-            updateMapPadding();
             map.panTo(markerDriver.getPosition()); map.setZoom(17);
+            setTimeout(() => { map.panBy(0, -150); }, 50);
             
             isTrackingMode = true; 
             const panel = document.getElementById('trackingPanel');
-            if(panel && !panel.classList.contains('panel-collapsed')) { panel.classList.add('panel-collapsed'); updateMapPadding(); }
+            if(panel && !panel.classList.contains('panel-collapsed')) { panel.classList.add('panel-collapsed'); }
             return;
         }
         useCurrentLocation();
@@ -702,34 +705,33 @@
         isTrackingMode = false;
         
         if (localWaypoints.length === 1) {
-            updateMapPadding();
             map.panTo({lat: localWaypoints[0].lat, lng: localWaypoints[0].lng}); map.setZoom(16);
+            setTimeout(() => { map.panBy(0, -150); }, 50);
         } else {
             let bounds = new google.maps.LatLngBounds();
             localWaypoints.forEach(wp => bounds.extend({lat: wp.lat, lng: wp.lng}));
-            let pb = getDynamicBottomPadding();
-            map.fitBounds(bounds, { top: 140, right: 50, bottom: pb + 50, left: 50 });
+            map.fitBounds(bounds, { top: 140, right: 50, bottom: 50, left: 50 });
         }
         renderWaypointsUI();
     };
 
     function fitRouteBounds() {
         if (map && currentRouteBounds) {
-            isTrackingMode = false; 
-            let pb = getDynamicBottomPadding();
-            map.fitBounds(currentRouteBounds, { top: 80, right: 50, bottom: pb, left: 50 });
+            isTrackingMode = false; map.fitBounds(currentRouteBounds, { top: 80, right: 50, bottom: 50, left: 50 });
         } else { centerToFocus(); }
     }
 
+    // สร้างไอคอนหมุดแบบสเกล 1.2 เพื่อให้เท่ากับขนาดของ UI เป๊ะๆ
     function createNumberedMarkerIcon(text, colorHex) {
         return {
             path: "M 0,0 C -12,-16 -18,-22 -18,-32 A 18,18 0 1,1 18,-32 C 18,-22 12,-16 0,0 Z M -8,-32 A 8,8 0 1,0 8,-32 A 8,8 0 1,0 -8,-32 Z",
-            fillColor: colorHex, fillOpacity: 1, strokeWeight: 2, strokeColor: '#ffffff', scale: 1.1,
-            labelOrigin: typeof google !== 'undefined' && google.maps ? new google.maps.Point(0, -15) : null,
+            fillColor: colorHex, fillOpacity: 1, strokeWeight: 2, strokeColor: '#ffffff', scale: 1.2,
+            labelOrigin: typeof google !== 'undefined' && google.maps ? new google.maps.Point(0, -32) : null,
             anchor: typeof google !== 'undefined' && google.maps ? new google.maps.Point(0, 0) : null
         };
     }
 
+    // ฟังก์ชันค้นหาสถานที่ แบบแยกชัดเจน
     windowContext.initSearchBox = function(inputId, isPick) {
       const input = document.getElementById(inputId); if(!input) return;
       if (typeof google === 'undefined' || !google.maps.places) return;
@@ -743,9 +745,7 @@
       auto.addListener('place_changed', () => {
         const place = auto.getPlace();
         if(place.geometry && map) {
-          input.blur(); 
-          updateMapPadding();
-          map.panTo(place.geometry.location); map.setZoom(17); 
+          input.blur(); map.panTo(place.geometry.location); map.setZoom(17); 
           let finalAddr = place.name;
           if (place.formatted_address) {
               let cleanAddr = place.formatted_address.replace(/,?\s*ประเทศไทย/g, '').replace(/Unnamed Road,?\s*/g, '').trim();
@@ -779,13 +779,13 @@
          }
       });
 
+      // ดักการกดบนสถานที่ (POI) และซูมไปหา (ไม่โชว์กล่องข้อความสีขาว)
       map.addListener('click', (event) => {
         if (event.placeId) {
-          event.stop();
+          event.stop(); // สำคัญมาก! ป้องกัน InfoWindow สีขาว
           if (placesService && (currentStep === 2 || currentStep === 3)) {
             placesService.getDetails({ placeId: event.placeId, fields: ['name', 'geometry', 'formatted_address'] }, (place, status) => {
               if (status === 'OK' && place.geometry) {
-                  updateMapPadding();
                   map.panTo(place.geometry.location); map.setZoom(17);
               }
             });
@@ -804,6 +804,7 @@
           zIndex: 9999
       });
 
+      // จัดการค้นหา
       initSearchBox('pickupSearch', true);
       initSearchBox('dropoffSearch', false);
       
@@ -960,8 +961,8 @@
 
         localWaypoints.forEach((wp, index) => {
             let num = wp.type === 'pick' ? pCount++ : dCount++;
-            let colorClass = 'bg-green-500 text-white';
-            let colorHex = '#22c55e';
+            let colorClass = wp.type === 'pick' ? 'bg-green-500 text-white' : 'bg-red-500 text-white';
+            let colorHex = wp.type === 'pick' ? '#22c55e' : '#ef4444';
             let isFocused = (focusedWaypointIndex === index);
 
             if (wp.type === 'drop') { colorClass = 'bg-red-500 text-white'; colorHex = '#ef4444'; }
@@ -978,7 +979,7 @@
             let itemHtml = `<div class="flex items-center gap-2.5 py-1.5 px-2.5 rounded-lg border relative z-10 shadow-sm mb-1.5 cursor-pointer hover:bg-gray-700 transition ${bgItem}" onclick="focusLocationToggle(${wp.lat}, ${wp.lng}, ${index})">
                 <div class="w-[20px] h-[20px] ${colorClass} rounded-full flex items-center justify-center text-[10px] font-bold shrink-0 shadow-inner">${num}</div>
                 <p class="text-[11px] ${textItem} truncate font-medium flex-1 leading-tight">${wp.name}</p>
-                <button onclick="event.stopPropagation(); removeWaypoint(${index})" class="text-red-400 hover:text-red-300 text-[12px] px-2 shrink-0 transition active:scale-90"><i class="fas fa-times"></i></button>
+                <button onclick="event.stopPropagation(); removeWaypoint(${index})" class="text-red-400 hover:text-red-300 text-[13px] px-2 shrink-0 transition active:scale-90"><i class="fas fa-times"></i></button>
             </div>`;
             
             let sumItemHtml = `<div class="flex items-center gap-2.5 relative z-10 py-0.5 cursor-pointer hover:bg-gray-800 rounded transition px-1" onclick="focusLocationToggle(${wp.lat}, ${wp.lng}, ${index})">
@@ -1176,7 +1177,7 @@
           const sDist = document.getElementById('sumDist'); const sWait = document.getElementById('sumWait'); const sPrice = document.getElementById('sumPrice');
           if(sDist) sDist.innerText = bookData.distance; if(sWait) sWait.innerText = bookData.duration; if(sPrice) sPrice.innerText = bookData.priceEstimate;
 
-          setTimeout(() => { if(map) { let pb = getDynamicBottomPadding(); map.fitBounds(currentRouteBounds, { top: 120, right: 50, bottom: pb, left: 50 }); } }, 200);
+          setTimeout(() => { if(map) { map.fitBounds(currentRouteBounds); } }, 200);
         }
       });
     }
@@ -1351,7 +1352,7 @@
       updateRealtimeMap(); updateMapControlsPosition('Tracking');
     }
 
-    windowContext.calculateNewRoutePriceForTracking = function(newLat, newLng, newName) {
+    function calculateNewRoutePriceForTracking(newLat, newLng, newName) {
         if (localWaypoints.length === 0) return;
         let origin = new google.maps.LatLng(localWaypoints[0].lat, localWaypoints[0].lng);
         let dest = new google.maps.LatLng(localWaypoints[localWaypoints.length - 1].lat, localWaypoints[localWaypoints.length - 1].lng);
