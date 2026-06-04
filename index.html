@@ -58,14 +58,14 @@
 
   <div id="map" class="map-container hidden"></div>
 
-  <div id="centerPinOverlay" class="hidden fixed pointer-events-none z-[25] transition-opacity duration-300">
-      <div id="centerPinPositioner" class="absolute w-full h-full flex flex-col items-center justify-center">
-           <div class="relative w-0 h-0">
-               <svg id="centerPinSvg" class="absolute bottom-0 transition-transform duration-200" style="left: -15px;" width="30" height="42" viewBox="-15 -42 30 42">
-                   <path d="M 0,0 C -10,-14 -15,-20 -15,-28 A 15,15 0 1,1 15,-28 C 15,-20 10,-14 0,0 Z" fill="#22c55e" stroke="#ffffff" stroke-width="2" filter="drop-shadow(0px 2px 2px rgba(0,0,0,0.4))"/>
-                   <circle cx="0" cy="-28" r="6" fill="#ffffff"/>
-               </svg>
-           </div>
+  <div id="centerPinOverlay" class="hidden fixed left-0 right-0 z-[25] pointer-events-none transition-opacity duration-300">
+      <div class="absolute" style="top: 50%; left: 50%;">
+          <div id="centerPinWrapper" class="absolute transition-transform duration-200 z-10" style="bottom: 0px; left: -19px; width: 38px; height: 52px;">
+              <svg id="centerPinSvg" width="38" height="52" viewBox="-19 -52 38 52" style="filter: drop-shadow(0px 4px 4px rgba(0,0,0,0.3));">
+                  <path d="M 0,0 C -12,-16 -18,-22 -18,-32 A 18,18 0 1,1 18,-32 C 18,-22 12,-16 0,0 Z" fill="#22c55e" stroke="#ffffff" stroke-width="2"/>
+                  <circle cx="0" cy="-32" r="8" fill="#ffffff"/>
+              </svg>
+          </div>
       </div>
   </div>
 
@@ -448,7 +448,6 @@
 
     function getDynamicBottomPadding() {
         if(!document.getElementById('page4Panel')) return 0;
-        
         let pBottom = 0;
         if (currentStep === 4) {
             const panel = document.getElementById('page4Panel');
@@ -472,13 +471,6 @@
         let pBottom = getDynamicBottomPadding();
 
         map.setOptions({ padding: { top: pTop, bottom: pBottom, left: 0, right: 0 } });
-        
-        let overlay = document.getElementById('centerPinOverlay');
-        if(overlay && (currentStep === 2 || currentStep === 3)) {
-            // ซิงค์ Padding ให้กับ CSS Box ตรงกลางเป๊ะๆ
-            overlay.style.top = pTop + 'px';
-            overlay.style.bottom = pBottom + 'px';
-        }
     }
 
     let pricingConfig = { base: 50, km: 10, pick: 5 }; 
@@ -677,7 +669,7 @@
             map.panTo({lat: lat, lng: lng}); map.setZoom(17);
             
             // ดันแผนที่ลงเพื่อให้หมุดลอยขึ้นเหนือกล่อง (แก้หมุดบัง)
-            setTimeout(() => { map.panBy(0, -120); }, 50);
+            setTimeout(() => { map.panBy(0, -150); }, 50);
         }
         renderWaypointsUI();
     };
@@ -687,7 +679,7 @@
         if(currentStep === 'Tracking' && markerDriver && markerDriver.getMap()) {
             updateMapPadding();
             map.panTo(markerDriver.getPosition()); map.setZoom(17);
-            setTimeout(() => { map.panBy(0, -120); }, 50);
+            setTimeout(() => { map.panBy(0, -150); }, 50);
             
             isTrackingMode = true; 
             const panel = document.getElementById('trackingPanel');
@@ -705,12 +697,12 @@
         if (localWaypoints.length === 1) {
             updateMapPadding();
             map.panTo({lat: localWaypoints[0].lat, lng: localWaypoints[0].lng}); map.setZoom(16);
-            setTimeout(() => { map.panBy(0, -120); }, 50);
+            setTimeout(() => { map.panBy(0, -150); }, 50);
         } else {
             let bounds = new google.maps.LatLngBounds();
             localWaypoints.forEach(wp => bounds.extend({lat: wp.lat, lng: wp.lng}));
             let pb = getDynamicBottomPadding();
-            map.fitBounds(bounds, { top: 140, right: 50, bottom: pb, left: 50 });
+            map.fitBounds(bounds, { top: 140, right: 50, bottom: pb + 50, left: 50 });
         }
         renderWaypointsUI();
     };
@@ -732,7 +724,7 @@
         };
     }
 
-    // ฟังก์ชันค้นหาสถานที่ แบบแยกชัดเจน ป้องกัน Error ซ้ำ
+    // ฟังก์ชันค้นหาสถานที่ แบบแยกชัดเจน
     windowContext.initSearchBox = function(inputId, isPick) {
       const input = document.getElementById(inputId); if(!input) return;
       if (typeof google === 'undefined' || !google.maps.places) return;
@@ -771,14 +763,10 @@
 
       map.addListener('dragstart', () => {
          if (currentStep === 'Tracking') { isTrackingMode = false; }
-         if (currentStep === 2 || currentStep === 3) {
-             document.getElementById('centerPinWrapper').style.transform = 'translateY(-12px)';
-         }
       });
       
       map.addListener('idle', () => {
          if (currentStep === 2 || currentStep === 3) {
-             document.getElementById('centerPinWrapper').style.transform = 'translateY(0px)';
              updateAddressBox(true); 
          }
       });
@@ -889,13 +877,11 @@
     }
 
     function addWaypointFromLocation(lat, lng, name, type) {
-        let num = type === 'pick' ? localWaypoints.filter(w=>w.type==='pick').length + 1 : localWaypoints.filter(w=>w.type==='drop').length + 1;
         let color = type === 'pick' ? '#22c55e' : '#ef4444';
         
         let marker = new google.maps.Marker({
             position: {lat: lat, lng: lng}, map: map,
-            icon: createNumberedMarkerIcon(num.toString(), color),
-            label: {text: num.toString(), color: 'white', fontWeight: 'bold'},
+            icon: createNumberedMarkerIcon(" ", color), // ไม่โชว์เลขตอนหล่นครั้งแรก เพื่อให้คำนวณใหม่ใน render
             animation: google.maps.Animation.DROP, zIndex: 4
         });
         localWaypoints.push({ lat, lng, name: name, type, marker });
@@ -1029,7 +1015,7 @@
           if(topSearchPick) topSearchPick.classList.remove('hidden'); if(topSearchDrop) topSearchDrop.classList.add('hidden');
           if(pinOverlay && pinSvg) { 
               pinOverlay.classList.remove('hidden'); 
-              pinSvg.innerHTML = '<path d="M18,0 C10,0 4,6 4,14 C4,24 18,36 18,36 C18,36 32,24 32,14 C32,6 26,0 18,0 Z M18,20 C14.686,20 12,17.314 12,14 C12,10.686 14.686,8 18,8 C21.314,8 24,10.686 24,14 C24,17.314 21.314,20 18,20 Z" fill="#22c55e" stroke="#ffffff" stroke-width="2"/>'; 
+              pinSvg.innerHTML = '<path d="M 0,0 C -12,-16 -18,-22 -18,-32 A 18,18 0 1,1 18,-32 C 18,-22 12,-16 0,0 Z" fill="#22c55e" stroke="#ffffff" stroke-width="2"/><circle cx="0" cy="-32" r="8" fill="#ffffff"/>'; 
           }
           renderWaypointsUI();
       } else if (page === 3) {
@@ -1037,7 +1023,7 @@
           if(topSearchPick) topSearchPick.classList.add('hidden'); if(topSearchDrop) topSearchDrop.classList.remove('hidden');
           if(pinOverlay && pinSvg) { 
               pinOverlay.classList.remove('hidden'); 
-              pinSvg.innerHTML = '<path d="M18,0 C10,0 4,6 4,14 C4,24 18,36 18,36 C18,36 32,24 32,14 C32,6 26,0 18,0 Z M18,20 C14.686,20 12,17.314 12,14 C12,10.686 14.686,8 18,8 C21.314,8 24,10.686 24,14 C24,17.314 21.314,20 18,20 Z" fill="#ef4444" stroke="#ffffff" stroke-width="2"/>'; 
+              pinSvg.innerHTML = '<path d="M 0,0 C -12,-16 -18,-22 -18,-32 A 18,18 0 1,1 18,-32 C 18,-22 12,-16 0,0 Z" fill="#ef4444" stroke="#ffffff" stroke-width="2"/><circle cx="0" cy="-32" r="8" fill="#ffffff"/>'; 
           }
           renderWaypointsUI();
       } else {
