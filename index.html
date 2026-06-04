@@ -55,14 +55,15 @@
 
   <div id="map" class="map-container hidden"></div>
 
-  <div id="centerPinOverlay" class="hidden fixed left-0 right-0 z-[25] pointer-events-none transition-opacity duration-300">
-      <div class="absolute w-0 h-0" style="top: 50%; left: 50%;">
+  <!-- เป้าเล็งตรงกลางจอ ซิงค์ Padding กับแผนที่ให้ตรง 100% แบบ Pixel Perfect -->
+  <div id="centerPinOverlay" class="hidden fixed left-0 right-0 z-[25] pointer-events-none flex items-center justify-center box-border transition-opacity duration-300">
+      <div class="relative w-0 h-0 flex items-center justify-center">
           <div id="centerPinWrapper" class="absolute transition-transform duration-200 z-10" style="bottom: 0px; left: -18px; width: 36px; height: 36px;">
-              <svg id="centerPinSvg" width="36" height="36" viewBox="0 0 36 36" class="drop-shadow-xl">
+              <svg id="centerPinSvg" width="36" height="36" viewBox="-2 -2 40 40" class="drop-shadow-xl">
                   <path d="M18,0 C10,0 4,6 4,14 C4,24 18,36 18,36 C18,36 32,24 32,14 C32,6 26,0 18,0 Z M18,20 C14.686,20 12,17.314 12,14 C12,10.686 14.686,8 18,8 C21.314,8 24,10.686 24,14 C24,17.314 21.314,20 18,20 Z" fill="#22c55e" stroke="#ffffff" stroke-width="2"/>
               </svg>
           </div>
-          <div id="centerPinShadow" class="absolute bg-black/40 rounded-full blur-[1px] transition-all duration-200" style="top: -2px; left: -6px; w-3; h-1.5;"></div>
+          <div id="centerPinShadow" class="absolute w-5 h-1.5 bg-black/50 rounded-full blur-[1px] transition-all duration-200" style="bottom: -3px; left: -10px;"></div>
       </div>
   </div>
 
@@ -402,6 +403,7 @@
   </div>
 
   <script>
+    const windowContext = window;
     const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwwdopAPESHRrHEYTSa-CzFMbh0JX9WHUa37PMEJmxDkah7ui67cVtOn68cnM-2DtmR/exec"; 
     const MY_LIFF_ID = "2010188449-b9Yq1R2L";
     const LINE_OA_URL = "https://line.me/R/ti/p/%40805zvmii";
@@ -432,7 +434,7 @@
 
     let currentRouteBounds = null;
     let isTrackingMode = true;
-    let isSatelliteMode = true; 
+    let isSatelliteMode = true; // โหมดดาวเทียมเริ่มต้น
     
     let lastNotifiedStatus = "";
     let wakeLock = null;
@@ -441,26 +443,35 @@
     let selectedHistoryJobId = null;
     let myBlockedDrivers = {};
 
+    function getDynamicBottomPadding() {
+        if(!document.getElementById('page4Panel')) return 0;
+        
+        let pBottom = 0;
+        if (currentStep === 4) {
+            const panel = document.getElementById('page4Panel');
+            pBottom = (panel && panel.classList.contains('panel-collapsed-page4')) ? 120 : panel.offsetHeight;
+        } else if (currentStep === 'Tracking') {
+            const panel = document.getElementById('trackingPanel');
+            pBottom = (panel && panel.classList.contains('panel-collapsed')) ? 120 : panel.offsetHeight;
+        } else if (currentStep === 2) {
+            const panel = document.querySelector('#page2 .ui-panel');
+            pBottom = panel ? panel.offsetHeight : 0;
+        } else if (currentStep === 3) {
+            const panel = document.querySelector('#page3 .ui-panel');
+            pBottom = panel ? panel.offsetHeight : 0;
+        }
+        return pBottom;
+    }
+
     function updateMapPadding() {
         if(!map) return;
         let pTop = (currentStep === 2 || currentStep === 3) ? 140 : 70;
-        let pBottom = 0;
-        
-        if (currentStep === 4) {
-            const panel = document.getElementById('page4Panel');
-            pBottom = (panel && panel.classList.contains('panel-collapsed-page4')) ? 120 : (70 + window.innerHeight * 0.4);
-        } else if (currentStep === 'Tracking') {
-            const panel = document.getElementById('trackingPanel');
-            pBottom = (panel && panel.classList.contains('panel-collapsed')) ? 120 : 350;
-        } else if (currentStep === 2 || currentStep === 3) {
-            pBottom = 70 + window.innerHeight * 0.4;
-        }
+        let pBottom = getDynamicBottomPadding();
 
         map.setOptions({ padding: { top: pTop, bottom: pBottom, left: 0, right: 0 } });
         
         let overlay = document.getElementById('centerPinOverlay');
         if(overlay && (currentStep === 2 || currentStep === 3)) {
-            // ซิงค์ Padding ให้กับ CSS Box ตรงกลางเป๊ะๆ
             overlay.style.top = pTop + 'px';
             overlay.style.bottom = pBottom + 'px';
         }
@@ -469,16 +480,16 @@
     let pricingConfig = { base: 50, km: 10, pick: 5 }; 
     db.ref('config/pricing').on('value', snap => { if(snap.exists()) pricingConfig = snap.val(); });
 
-    window.hasSpokenAccept = false; window.hasSpokenArrivePick = false; window.hasSpokenAtPickup = false;
-    window.hasSpokenDepart = false; window.hasSpokenArriveDrop = false; window.hasSpokenFinish = false;
-    window.hasSpokenCancel = false; window.hasNotifiedLinePick = false; window.hasNotifiedLineDrop = false;
-    window.isShowingRouteChange = false; 
+    windowContext.hasSpokenAccept = false; windowContext.hasSpokenArrivePick = false; windowContext.hasSpokenAtPickup = false;
+    windowContext.hasSpokenDepart = false; windowContext.hasSpokenArriveDrop = false; windowContext.hasSpokenFinish = false;
+    windowContext.hasSpokenCancel = false; windowContext.hasNotifiedLinePick = false; windowContext.hasNotifiedLineDrop = false;
+    windowContext.isShowingRouteChange = false; 
 
     function resetTrackingFlags() {
-        window.hasSpokenAccept = false; window.hasSpokenArrivePick = false; window.hasSpokenAtPickup = false;
-        window.hasSpokenDepart = false; window.hasSpokenArriveDrop = false; window.hasSpokenFinish = false;
-        window.hasSpokenCancel = false; window.hasShownFinish = false; window.hasShownCancel = false;
-        window.hasNotifiedLinePick = false; window.hasNotifiedLineDrop = false; window.isShowingRouteChange = false;
+        windowContext.hasSpokenAccept = false; windowContext.hasSpokenArrivePick = false; windowContext.hasSpokenAtPickup = false;
+        windowContext.hasSpokenDepart = false; windowContext.hasSpokenArriveDrop = false; windowContext.hasSpokenFinish = false;
+        windowContext.hasSpokenCancel = false; windowContext.hasShownFinish = false; windowContext.hasShownCancel = false;
+        windowContext.hasNotifiedLinePick = false; windowContext.hasNotifiedLineDrop = false; windowContext.isShowingRouteChange = false;
         lastNotifiedStatus = "";
     }
 
@@ -502,7 +513,7 @@
     });
 
     let currentConfirmCallback = null;
-    function openConfirmActionModal(title, message, callback, theme = 'blue') {
+    windowContext.openConfirmActionModal = function(title, message, callback, theme = 'blue') {
         document.getElementById('confirmActionTitle').innerText = title;
         document.getElementById('confirmActionMessage').innerHTML = message;
         currentConfirmCallback = callback;
@@ -515,30 +526,30 @@
         else { iconDiv.classList.add('bg-blue-900/30', 'text-blue-500', 'border-blue-500/30'); btn.classList.add('bg-blue-600', 'hover:bg-blue-700'); }
         document.getElementById('confirmActionModal').classList.remove('hidden');
     }
-    function closeConfirmActionModal() { document.getElementById('confirmActionModal').classList.add('hidden'); currentConfirmCallback = null; }
-    function submitConfirmAction() { if(currentConfirmCallback) currentConfirmCallback(); closeConfirmActionModal(); }
+    windowContext.closeConfirmActionModal = function() { document.getElementById('confirmActionModal').classList.add('hidden'); currentConfirmCallback = null; }
+    windowContext.submitConfirmAction = function() { if(currentConfirmCallback) currentConfirmCallback(); closeConfirmActionModal(); }
 
-    function openCallConfirmModal() { document.getElementById('callConfirmModal').classList.remove('hidden'); }
-    function closeCallConfirmModal() { document.getElementById('callConfirmModal').classList.add('hidden'); }
-    function openCancelModal() { document.getElementById('cancelModal').classList.remove('hidden'); }
-    function closeCancelModal() { document.getElementById('cancelModal').classList.add('hidden'); }
-    function openPromoModal() { document.getElementById('promoModal').classList.remove('hidden'); }
-    function closePromoModal() { document.getElementById('promoModal').classList.add('hidden'); }
+    windowContext.openCallConfirmModal = function() { document.getElementById('callConfirmModal').classList.remove('hidden'); }
+    windowContext.closeCallConfirmModal = function() { document.getElementById('callConfirmModal').classList.add('hidden'); }
+    windowContext.openCancelModal = function() { document.getElementById('cancelModal').classList.remove('hidden'); }
+    windowContext.closeCancelModal = function() { document.getElementById('cancelModal').classList.add('hidden'); }
+    windowContext.openPromoModal = function() { document.getElementById('promoModal').classList.remove('hidden'); }
+    windowContext.closePromoModal = function() { document.getElementById('promoModal').classList.add('hidden'); }
 
-    function confirmCancelBooking() {
-        document.getElementById('cancelModal').classList.add('hidden'); window.isCompleting = true;
+    windowContext.confirmCancelBooking = function() {
+        document.getElementById('cancelModal').classList.add('hidden'); windowContext.isCompleting = true;
         db.ref('bookings/' + lineUserId).remove().then(() => {
             if(APPS_SCRIPT_URL) fetch(`${APPS_SCRIPT_URL}?action=notify&type=cancel&name=${lineName}`, {mode:'no-cors'});
-            showAlert('ยกเลิกสำเร็จ', 'ระบบได้ทำการยกเลิกการเรียกรถเรียบร้อยแล้ว', 'success', () => { resetTrackingFlags(); window.isCompleting = false; showPage(4); });
+            showAlert('ยกเลิกสำเร็จ', 'ระบบได้ทำการยกเลิกการเรียกรถเรียบร้อยแล้ว', 'success', () => { resetTrackingFlags(); windowContext.isCompleting = false; showPage(4); });
         });
     }
 
-    function handleSavedPlace(type) {
+    windowContext.handleSavedPlace = function(type) {
         let saved = localStorage.getItem('saved_' + type); let typeName = type === 'home' ? 'บ้าน' : 'รายการโปรด';
         if (saved) { let p = JSON.parse(saved); useRecentPlace(p.name, p.lat, p.lng); } 
         else { saveCurrentAsPlace(type, typeName); }
     }
-    function editSavedPlace(type, event) { event.stopPropagation(); let typeName = type === 'home' ? 'บ้าน' : 'รายการโปรด'; saveCurrentAsPlace(type, typeName); }
+    windowContext.editSavedPlace = function(type, event) { event.stopPropagation(); let typeName = type === 'home' ? 'บ้าน' : 'รายการโปรด'; saveCurrentAsPlace(type, typeName); }
 
     function saveCurrentAsPlace(type, typeName) {
         let pos = map.getCenter();
@@ -578,17 +589,17 @@
         if(pickEl) pickEl.innerHTML = html; if(dropEl) dropEl.innerHTML = html;
     }
 
-    function useRecentPlace(name, lat, lng) {
+    windowContext.useRecentPlace = function(name, lat, lng) {
         if(map) { map.panTo({lat: lat, lng: lng}); map.setZoom(17); }
     }
 
-    function togglePage4Panel() {
+    windowContext.togglePage4Panel = function() {
         const panel = document.getElementById('page4Panel'); if(!panel) return;
         panel.classList.toggle('panel-collapsed-page4');
         updateMapPadding();
     }
 
-    function toggleTrackingPanel() {
+    windowContext.toggleTrackingPanel = function() {
         const panel = document.getElementById('trackingPanel'); if(!panel) return;
         panel.classList.toggle('panel-collapsed');
         updateMapPadding();
@@ -604,9 +615,9 @@
         const iconDiv = document.getElementById('alertIcon');
         if(iconDiv) { iconDiv.innerHTML = iconHtml; iconDiv.className = `w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl ${iconBg} ${iconColor}`; }
         document.getElementById('alertModal').classList.remove('hidden');
-        window.alertCloseCallback = typeof callback === 'function' ? callback : null;
+        windowContext.alertCloseCallback = typeof callback === 'function' ? callback : null;
     }
-    function closeAlertModal() { document.getElementById('alertModal').classList.add('hidden'); if (window.alertCloseCallback) window.alertCloseCallback(); }
+    windowContext.closeAlertModal = function() { document.getElementById('alertModal').classList.add('hidden'); if (windowContext.alertCloseCallback) windowContext.alertCloseCallback(); }
 
     const darkMapStyle = [
         { elementType: "geometry", stylers: [{ color: "#242f3e" }] }, { elementType: "labels.text.stroke", stylers: [{ color: "#242f3e" }] },
@@ -623,7 +634,7 @@
         { featureType: "water", elementType: "labels.text.fill", stylers: [{ color: "#515c6d" }] }, { featureType: "water", elementType: "labels.text.stroke", stylers: [{ color: "#17263c" }] }
     ];
 
-    function toggleMapStyle() {
+    windowContext.toggleMapStyle = function() {
         if(!map) return; isSatelliteMode = !isSatelliteMode;
         let btnMapStyle = document.getElementById('btnMapStyle');
         if(isSatelliteMode) { map.setMapTypeId('hybrid'); if(btnMapStyle) btnMapStyle.innerHTML = '<i class="fas fa-layer-group text-lg"></i>'; } 
@@ -636,10 +647,10 @@
         if (page === 2 || page === 3) controls.classList.add('top-[140px]'); else controls.classList.add('top-[76px]');
     }
 
-    function formatPhone(input) { let val = input.value.replace(/\D/g, ''); if (val.startsWith('66')) val = '0' + val.substring(2); if (val.length > 10) val = val.substring(0, 10); input.value = val; }
-    function openLineOA() { if (typeof liff !== 'undefined' && liff.isInClient()) { liff.openWindow({ url: LINE_OA_URL, external: true }); } else { window.open(LINE_OA_URL, '_blank'); } }
+    windowContext.formatPhone = function(input) { let val = input.value.replace(/\D/g, ''); if (val.startsWith('66')) val = '0' + val.substring(2); if (val.length > 10) val = val.substring(0, 10); input.value = val; }
+    windowContext.openLineOA = function() { if (typeof liff !== 'undefined' && liff.isInClient()) { liff.openWindow({ url: LINE_OA_URL, external: true }); } else { window.open(LINE_OA_URL, '_blank'); } }
 
-    window.handleCrosshairClick = function() {
+    windowContext.handleCrosshairClick = function() {
         if (currentStep === 2 || currentStep === 3) {
             useCurrentLocation();
         } else {
@@ -647,7 +658,7 @@
         }
     };
 
-    function focusLocation(lat, lng) {
+    windowContext.focusLocation = function(lat, lng) {
         if(map) { map.panTo({lat: lat, lng: lng}); map.setZoom(18); }
     }
 
@@ -664,7 +675,7 @@
         useCurrentLocation();
     }
 
-    window.fitAllWaypoints = function() {
+    windowContext.fitAllWaypoints = function() {
         if (!map || localWaypoints.length === 0) return;
         isTrackingMode = false;
         if (localWaypoints.length === 1) {
@@ -692,8 +703,7 @@
         };
     }
 
-    // ฟังก์ชันค้นหาสถานที่ แบบแยกชัดเจน
-    window.initSearchBox = function(inputId, isPick) {
+    windowContext.initSearchBox = function(inputId, isPick) {
       const input = document.getElementById(inputId); if(!input) return;
       if (typeof google === 'undefined' || !google.maps.places) return;
       
@@ -713,13 +723,12 @@
               if(!cleanAddr.includes(place.name)) finalAddr += " (" + cleanAddr + ")";
           }
           input.dataset.oldValue = finalAddr; input.value = finalAddr;
-          // เพิ่มลงหมุดทันที
           addWaypointFromLocation(place.geometry.location.lat(), place.geometry.location.lng(), finalAddr, isPick ? 'pick' : 'drop');
         }
       });
     };
 
-    function initMap() {
+    windowContext.initMap = function() {
       if (typeof google === 'undefined' || typeof google.maps === 'undefined') return;
       if (map) return; 
       
@@ -776,7 +785,7 @@
               }
           });
       }
-    }
+    };
 
     function mockLoginForBrowser() {
         lineUserId = "U" + Math.random().toString(36).substr(2, 9); lineName = "ลูกค้าทดสอบ (Browser)";
@@ -797,7 +806,7 @@
         }).catch(e => { mockLoginForBrowser(); });
     } else { mockLoginForBrowser(); }
 
-    window.isCompleting = false;
+    windowContext.isCompleting = false;
     
     function initApp() {
       requestWakeLock();
@@ -827,15 +836,15 @@
             }
             bookData = b; localWaypoints = b.waypoints || []; handleTracking(); 
         } 
-        else if (currentStep === 'Tracking' && !window.isCompleting) {
-            window.isCompleting = true;
-            showAlert('แจ้งเตือน', 'ขออภัยในความไม่สะดวกครับ งานนี้ถูกยกเลิก รบกวนคุณลูกค้ากดยืนยันเพื่อเรียกรถใหม่อีกครั้งนะครับ', 'info', () => { resetTrackingFlags(); window.isCompleting = false; showPage(4); });
+        else if (currentStep === 'Tracking' && !windowContext.isCompleting) {
+            windowContext.isCompleting = true;
+            showAlert('แจ้งเตือน', 'ขออภัยในความไม่สะดวกครับ งานนี้ถูกยกเลิก รบกวนคุณลูกค้ากดยืนยันเพื่อเรียกรถใหม่อีกครั้งนะครับ', 'info', () => { resetTrackingFlags(); windowContext.isCompleting = false; showPage(4); });
         }
       });
     }
 
     function addWaypointFromLocation(lat, lng, name, type) {
-        let num = localWaypoints.length + 1;
+        let num = type === 'pick' ? localWaypoints.filter(w=>w.type==='pick').length + 1 : localWaypoints.filter(w=>w.type==='drop').length + 1;
         let color = type === 'pick' ? '#22c55e' : '#ef4444';
         
         let marker = new google.maps.Marker({
@@ -848,7 +857,7 @@
         renderWaypointsUI();
     }
 
-    function addWaypointFromCenter(type) {
+    windowContext.addWaypointFromCenter = function(type) {
         if(!map || !geocoder) return;
         let pos = map.getCenter(); let lat = pos.lat(); let lng = pos.lng();
         let listId = type === 'pick' ? 'pickupWaypointsList' : 'dropoffWaypointsList';
@@ -907,20 +916,24 @@
             }
         }
 
+        let pCount = 1; let dCount = 1;
+
         localWaypoints.forEach((wp, index) => {
-            let num = index + 1;
+            let num = wp.type === 'pick' ? pCount++ : dCount++;
             let colorClass = wp.type === 'pick' ? 'bg-green-500 text-white' : 'bg-red-500 text-white';
             let colorHex = wp.type === 'pick' ? '#22c55e' : '#ef4444';
 
+            if (wp.type === 'waypoint') { colorClass = 'bg-yellow-500 text-black'; colorHex = '#eab308'; }
+
             if (wp.marker) {
                 wp.marker.setIcon(createNumberedMarkerIcon(num.toString(), colorHex));
-                wp.marker.setLabel({text: num.toString(), color: 'white', fontWeight: 'bold'});
+                wp.marker.setLabel({text: num.toString(), color: (wp.type==='waypoint') ? 'black' : 'white', fontWeight: 'bold'});
             }
 
-            let itemHtml = `<div class="flex items-center gap-2.5 bg-gray-800 py-1.5 px-2.5 rounded-lg border border-gray-700 relative z-10 shadow-sm mb-1.5 cursor-pointer hover:bg-gray-700 transition" onclick="focusLocation(${wp.lat}, ${wp.lng})">
-                <div class="w-[20px] h-[20px] ${colorClass} rounded-full flex items-center justify-center text-[10px] font-bold shrink-0 shadow-inner">${num}</div>
-                <p class="text-[11px] text-gray-200 truncate font-medium flex-1 leading-tight">${wp.name}</p>
-                <button onclick="event.stopPropagation(); removeWaypoint(${index})" class="text-red-400 hover:text-red-300 text-[12px] px-2 shrink-0 transition active:scale-90"><i class="fas fa-times"></i></button>
+            let itemHtml = `<div class="flex items-center gap-2.5 bg-gray-800 py-1.5 px-2.5 rounded-xl border border-gray-700 relative z-10 shadow-sm mb-1.5 cursor-pointer hover:bg-gray-700 transition" onclick="focusLocation(${wp.lat}, ${wp.lng})">
+                <div class="w-[22px] h-[22px] ${colorClass} rounded-full flex items-center justify-center text-[11px] font-bold shrink-0 shadow-inner">${num}</div>
+                <p class="text-[12px] text-gray-200 truncate font-medium flex-1 leading-tight">${wp.name}</p>
+                <button onclick="event.stopPropagation(); removeWaypoint(${index})" class="text-red-400 hover:text-red-300 text-[13px] px-2 shrink-0 transition active:scale-90"><i class="fas fa-times"></i></button>
             </div>`;
             
             let sumItemHtml = `<div class="flex items-center gap-2.5 relative z-10 py-0.5 cursor-pointer hover:bg-gray-800 rounded transition px-1" onclick="focusLocation(${wp.lat}, ${wp.lng})">
@@ -938,16 +951,16 @@
         let trackContainer = document.getElementById('trackWaypointsContainer'); if(trackContainer) trackContainer.innerHTML = sumHtml;
     }
 
-    function removeWaypoint(index) {
+    windowContext.removeWaypoint = function(index) {
         if(localWaypoints[index].marker) localWaypoints[index].marker.setMap(null);
         localWaypoints.splice(index, 1); renderWaypointsUI();
         if(currentStep === 4) { bookData.waypoints = localWaypoints; calculatePrice(); }
     }
 
-    function openWaypointSearchModal() { document.getElementById('waypointSearchModal').classList.remove('hidden'); let input = document.getElementById('waypointSearchInput'); input.value = ''; input.focus(); }
-    function closeWaypointSearchModal() { document.getElementById('waypointSearchModal').classList.add('hidden'); }
+    windowContext.openWaypointSearchModal = function() { document.getElementById('waypointSearchModal').classList.remove('hidden'); let input = document.getElementById('waypointSearchInput'); input.value = ''; input.focus(); }
+    windowContext.closeWaypointSearchModal = function() { document.getElementById('waypointSearchModal').classList.add('hidden'); }
 
-    window.showPage = function(page) {
+    windowContext.showPage = function(page) {
       currentStep = page;
       [1,2,3,4,'Tracking'].forEach(p => { const el = document.getElementById('page' + p); if (el) el.classList.add('hidden'); });
       const targetPage = document.getElementById('page' + page); if(targetPage) targetPage.classList.remove('hidden');
@@ -989,8 +1002,8 @@
       if (page === 2 || page === 3) {
           if (polylineRoute) { polylineRoute.setMap(null); polylineRoute = null; }
           if (markerDriver) markerDriver.setMap(null); 
-          const bEmer = document.getElementById('btnEmergency'); 
-          if(bEmer) bEmer.classList.add('hidden'); 
+          const bEmer = document.getElementById('btnEmergency'); const bCross = document.getElementById('btnCrosshair');
+          if(bEmer) bEmer.classList.add('hidden'); if(bCross) { bCross.classList.replace('text-gray-500', 'text-blue-400'); bCross.classList.remove('hidden'); }
       }
 
       if(page === 2) {
@@ -1006,8 +1019,8 @@
         }
       }
       else if(page === 4) {
-        const bEmer = document.getElementById('btnEmergency');
-        if(bEmer) bEmer.classList.add('hidden'); 
+        const bEmer = document.getElementById('btnEmergency'); const bCross = document.getElementById('btnCrosshair');
+        if(bEmer) bEmer.classList.add('hidden'); if(bCross) bCross.classList.add('hidden'); 
 
         let pI = document.getElementById('promoInput'); if(pI) pI.value = '';
         bookData.promoCode = ''; bookData.discount = 0;
@@ -1021,8 +1034,8 @@
       updateMapControlsPosition(page);
     };
     
-    function goBack() { if(currentStep === 2) showPage(1); if(currentStep === 3) showPage(2); if(currentStep === 4) showPage(3); }
-    function goHome() { window.location.reload(); }
+    windowContext.goBack = function() { if(currentStep === 2) showPage(1); if(currentStep === 3) showPage(2); if(currentStep === 4) showPage(3); }
+    windowContext.goHome = function() { window.location.reload(); }
 
     function updateAddressBox(isInteraction = false) {
       if(!map || !geocoder) return;
@@ -1055,7 +1068,7 @@
         });
     }
 
-    function useCurrentLocation() {
+    windowContext.useCurrentLocation = function() {
       if(navigator.geolocation) {
           navigator.geolocation.getCurrentPosition(p => {
             let pos = {lat: p.coords.latitude, lng: p.coords.longitude}; if(map) { map.panTo(pos); map.setZoom(18); }
@@ -1064,11 +1077,11 @@
       }
     }
 
-    function confirmPickup() { 
+    windowContext.confirmPickup = function() { 
         let picks = localWaypoints.filter(w => w.type === 'pick');
         if(picks.length > 0) { showPage(3); } 
     }
-    function confirmDropoff() { 
+    windowContext.confirmDropoff = function() { 
         let drops = localWaypoints.filter(w => w.type === 'drop');
         if(drops.length > 0) {
             bookData.pLat = localWaypoints[0].lat; bookData.pLng = localWaypoints[0].lng; bookData.pName = localWaypoints[0].name;
@@ -1115,7 +1128,7 @@
       });
     }
 
-    function applyPromoCode() {
+    windowContext.applyPromoCode = function() {
         let codeInput = document.getElementById('promoInput'); if(!codeInput) return;
         let val = codeInput.value.trim().toUpperCase();
         if(!val) { showAlert('ข้อผิดพลาด', 'กรุณากรอกโค้ดส่วนลดก่อนครับ', 'error'); return; }
@@ -1145,7 +1158,7 @@
         });
     }
 
-    function submitBooking() {
+    windowContext.submitBooking = function() {
       if ('speechSynthesis' in window) { let unlockMsg = new SpeechSynthesisUtterance(''); window.speechSynthesis.speak(unlockMsg); }
 
       let telInput = document.getElementById('userPhone'); if(!telInput) return;
@@ -1239,11 +1252,11 @@
       }
 
       if (lastNotifiedStatus !== bookData.status) {
-          if ((bookData.status.includes("กำลังเดินทางไปหา") || bookData.status.includes("รับงานแล้ว")) && !window.hasSpokenAccept) { speakText("คนขับตอบรับแล้ว ราคาค่าโดยสารได้ถูกกำหนดแล้ว"); window.hasSpokenAccept = true; } 
-          else if (bookData.status.includes("มาถึงจุดรับ") && !window.hasSpokenAtPickup) { speakText("คนขับมาถึงแล้ว"); window.hasSpokenAtPickup = true; }
-          else if ((bookData.status.includes("ออกเดินทาง") || bookData.status.includes("ไปยังจุดส่ง")) && !window.hasSpokenDepart) { speakText("กำลังออกเดินทางไปยังจุดหมาย"); window.hasSpokenDepart = true; }
-          else if (bookData.status.includes("ถึงที่หมาย") && !window.hasSpokenFinish) { speakText("ถึงจุดหมายแล้ว ขอบคุณที่ใช้บริการ"); window.hasSpokenFinish = true; } 
-          else if (bookData.status.includes("ยกเลิก") && !window.hasSpokenCancel) { speakText("งานถูกยกเลิก"); window.hasSpokenCancel = true; }
+          if ((bookData.status.includes("กำลังเดินทางไปหา") || bookData.status.includes("รับงานแล้ว")) && !windowContext.hasSpokenAccept) { speakText("คนขับตอบรับแล้ว ราคาค่าโดยสารได้ถูกกำหนดแล้ว"); windowContext.hasSpokenAccept = true; } 
+          else if (bookData.status.includes("มาถึงจุดรับ") && !windowContext.hasSpokenAtPickup) { speakText("คนขับมาถึงแล้ว"); windowContext.hasSpokenAtPickup = true; }
+          else if ((bookData.status.includes("ออกเดินทาง") || bookData.status.includes("ไปยังจุดส่ง")) && !windowContext.hasSpokenDepart) { speakText("กำลังออกเดินทางไปยังจุดหมาย"); windowContext.hasSpokenDepart = true; }
+          else if (bookData.status.includes("ถึงที่หมาย") && !windowContext.hasSpokenFinish) { speakText("ถึงจุดหมายแล้ว ขอบคุณที่ใช้บริการ"); windowContext.hasSpokenFinish = true; } 
+          else if (bookData.status.includes("ยกเลิก") && !windowContext.hasSpokenCancel) { speakText("งานถูกยกเลิก"); windowContext.hasSpokenCancel = true; }
           lastNotifiedStatus = bookData.status;
       }
 
@@ -1271,15 +1284,15 @@
           if(tAddressBox) { tAddressBox.classList.remove('flex-1'); tAddressBox.classList.add('w-full'); }
       }
 
-      if(bookData.status.includes("ถึงที่หมาย") && !window.hasShownFinish) {
-        window.hasShownFinish = true;
+      if(bookData.status.includes("ถึงที่หมาย") && !windowContext.hasShownFinish) {
+        windowContext.hasShownFinish = true;
         let finalMessage = `จุดรับ: ${bookData.pName}\nจุดส่ง: ${bookData.dName}\nระยะทาง: ${bookData.distance || 0} กม. | ราคา: ${bookData.price} บาท\n\nขอบคุณที่ใช้บริการ F1 Driver ครับ!`;
-        showAlert('ถึงที่หมายเรียบร้อย!', finalMessage, 'success', () => { window.isCompleting = true; db.ref('bookings/' + lineUserId).remove().then(() => { window.location.reload(); }); });
+        showAlert('ถึงที่หมายเรียบร้อย!', finalMessage, 'success', () => { windowContext.isCompleting = true; db.ref('bookings/' + lineUserId).remove().then(() => { window.location.reload(); }); });
       }
       
-      if(bookData.status.includes("ยกเลิก") && !window.hasShownCancel) {
-        window.hasShownCancel = true;
-        showAlert('แจ้งเตือน', 'ขออภัยในความไม่สะดวกครับ งานนี้ถูกยกเลิก รบกวนคุณลูกค้ากดยืนยันเพื่อเรียกรถใหม่อีกครั้งนะครับ', 'error', () => { window.isCompleting = true; db.ref('bookings/' + lineUserId).remove().then(() => { resetTrackingFlags(); window.isCompleting = false; showPage(4); }); });
+      if(bookData.status.includes("ยกเลิก") && !windowContext.hasShownCancel) {
+        windowContext.hasShownCancel = true;
+        showAlert('แจ้งเตือน', 'ขออภัยในความไม่สะดวกครับ งานนี้ถูกยกเลิก รบกวนคุณลูกค้ากดยืนยันเพื่อเรียกรถใหม่อีกครั้งนะครับ', 'error', () => { windowContext.isCompleting = true; db.ref('bookings/' + lineUserId).remove().then(() => { resetTrackingFlags(); windowContext.isCompleting = false; showPage(4); }); });
       }
 
       updateRealtimeMap(); updateMapControlsPosition('Tracking');
@@ -1300,7 +1313,7 @@
                 let calcPrice = Math.ceil(baseFare + (distKm * kmRate)); let minPrice = Math.floor(calcPrice / 10) * 10; if(minPrice < baseFare) minPrice = baseFare;
                 let finalPrice = Math.max(0, minPrice - (bookData.discount || 0));
 
-                window.tempNewPrice = finalPrice; window.tempNewDist = distKm.toFixed(1); window.tempNewWp = {lat: newLat, lng: newLng, name: newName, type: 'drop'};
+                windowContext.tempNewPrice = finalPrice; windowContext.tempNewDist = distKm.toFixed(1); windowContext.tempNewWp = {lat: newLat, lng: newLng, name: newName, type: 'waypoint'};
                 
                 document.getElementById('rcTitle').innerText = `ยืนยันเพิ่มจุดแวะ`; document.getElementById('rcAddress').innerText = newName; document.getElementById('rcPrice').innerText = `฿${finalPrice}`;
                 document.getElementById('routeChangeModal').classList.remove('hidden');
@@ -1308,23 +1321,23 @@
         });
     }
 
-    function acceptRouteChange() {
-        if(window.tempNewWp) { 
-            localWaypoints.splice(localWaypoints.length - 1, 0, window.tempNewWp);
+    windowContext.acceptRouteChange = function() {
+        if(windowContext.tempNewWp) { 
+            localWaypoints.splice(localWaypoints.length - 1, 0, windowContext.tempNewWp);
             let dbWaypoints = localWaypoints.map(w => ({ lat: w.lat, lng: w.lng, name: w.name, type: w.type }));
-            let updates = { price: window.tempNewPrice, originalPrice: window.tempNewPrice + (bookData.discount || 0), priceEstimate: `฿${window.tempNewPrice}`, distance: window.tempNewDist, waypoints: dbWaypoints };
-            db.ref('bookings/' + lineUserId).update(updates).then(() => { document.getElementById('routeChangeModal').classList.add('hidden'); showAlert("สำเร็จ", "เพิ่มจุดแวะและอัปเดตราคาใหม่เรียบร้อยแล้ว คนขับจะเห็นเส้นทางใหม่ทันที", "success"); window.tempNewWp = null; });
+            let updates = { price: windowContext.tempNewPrice, originalPrice: windowContext.tempNewPrice + (bookData.discount || 0), priceEstimate: `฿${windowContext.tempNewPrice}`, distance: windowContext.tempNewDist, waypoints: dbWaypoints };
+            db.ref('bookings/' + lineUserId).update(updates).then(() => { document.getElementById('routeChangeModal').classList.add('hidden'); showAlert("สำเร็จ", "เพิ่มจุดแวะและอัปเดตราคาใหม่เรียบร้อยแล้ว คนขับจะเห็นเส้นทางใหม่ทันที", "success"); windowContext.tempNewWp = null; });
         } else { 
             let req = bookData.routeChangeRequest;
-            let updates = { price: window.tempNewPrice, originalPrice: window.tempNewPrice, priceEstimate: `฿${window.tempNewPrice}`, distance: window.tempNewDist, routeChangeRequest: null };
+            let updates = { price: windowContext.tempNewPrice, originalPrice: windowContext.tempNewPrice, priceEstimate: `฿${windowContext.tempNewPrice}`, distance: windowContext.tempNewDist, routeChangeRequest: null };
             if (req.type === 'destination') { updates.dLat = req.lat; updates.dLng = req.lng; updates.dName = req.name; } 
-            else { localWaypoints.splice(localWaypoints.length - 1, 0, {lat: req.lat, lng: req.lng, name: req.name, type: 'drop'}); updates.waypoints = localWaypoints.map(w => ({ lat: w.lat, lng: w.lng, name: w.name, type: w.type })); }
+            else { localWaypoints.splice(localWaypoints.length - 1, 0, {lat: req.lat, lng: req.lng, name: req.name, type: 'waypoint'}); updates.waypoints = localWaypoints.map(w => ({ lat: w.lat, lng: w.lng, name: w.name, type: w.type })); }
             db.ref('bookings/' + lineUserId).update(updates).then(() => { document.getElementById('routeChangeModal').classList.add('hidden'); window.isShowingRouteChange = false; });
         }
     }
 
-    function rejectRouteChange() {
-        if(window.tempNewWp) { window.tempNewWp = null; document.getElementById('routeChangeModal').classList.add('hidden'); } 
+    windowContext.rejectRouteChange = function() {
+        if(windowContext.tempNewWp) { windowContext.tempNewWp = null; document.getElementById('routeChangeModal').classList.add('hidden'); } 
         else { db.ref('bookings/' + lineUserId + '/routeChangeRequest').remove().then(() => { document.getElementById('routeChangeModal').classList.add('hidden'); window.isShowingRouteChange = false; }); }
     }
 
@@ -1384,14 +1397,14 @@
           if(isGoingToPickup) {
               if(etaElBottom) { etaElBottom.innerText = etaText; etaElBottom.className = "text-[11px] text-blue-300 font-bold mt-0.5 block truncate"; etaElBottom.classList.remove('hidden'); }
               if (distMeters <= 2000) {
-                  if (!window.hasSpokenArrivePick && window.hasSpokenAccept) { speakText("คนขับใกล้ถึงแล้ว"); window.hasSpokenArrivePick = true; }
-                  if (!window.hasNotifiedLinePick && APPS_SCRIPT_URL) { fetch(`${APPS_SCRIPT_URL}?action=notify&type=driver_arriving&name=${lineName}&dist=${distMeters}`, {mode: 'no-cors'}); window.hasNotifiedLinePick = true; }
+                  if (!windowContext.hasSpokenArrivePick && windowContext.hasSpokenAccept) { speakText("คนขับใกล้ถึงแล้ว"); windowContext.hasSpokenArrivePick = true; }
+                  if (!windowContext.hasNotifiedLinePick && APPS_SCRIPT_URL) { fetch(`${APPS_SCRIPT_URL}?action=notify&type=driver_arriving&name=${lineName}&dist=${distMeters}`, {mode: 'no-cors'}); windowContext.hasNotifiedLinePick = true; }
               }
           } else {
               if(etaElBottom) { etaElBottom.innerText = etaText; etaElBottom.className = "text-[11px] text-blue-300 font-bold mt-0.5 block truncate"; etaElBottom.classList.remove('hidden'); }
               if (distMeters <= 1000) {
-                  if (!window.hasSpokenArriveDrop && bookData.status !== "รอผู้ขับขี่ตอบรับ") { speakText("ใกล้ถึงจุดหมายแล้ว"); window.hasSpokenArriveDrop = true; }
-                  if (!window.hasNotifiedLineDrop && APPS_SCRIPT_URL) { fetch(`${APPS_SCRIPT_URL}?action=notify&type=near_dropoff&name=${lineName}&dist=${distMeters}`, {mode: 'no-cors'}); window.hasNotifiedLineDrop = true; }
+                  if (!windowContext.hasSpokenArriveDrop && bookData.status !== "รอผู้ขับขี่ตอบรับ") { speakText("ใกล้ถึงจุดหมายแล้ว"); windowContext.hasSpokenArriveDrop = true; }
+                  if (!windowContext.hasNotifiedLineDrop && APPS_SCRIPT_URL) { fetch(`${APPS_SCRIPT_URL}?action=notify&type=near_dropoff&name=${lineName}&dist=${distMeters}`, {mode: 'no-cors'}); windowContext.hasNotifiedLineDrop = true; }
               }
           }
 
@@ -1407,8 +1420,8 @@
       redrawAllMarkers();
     }
 
-    function openPassengerHistory() { document.getElementById('historyModal').classList.remove('hidden'); renderPassengerHistory(); }
-    function closePassengerHistory() { document.getElementById('historyModal').classList.add('hidden'); }
+    windowContext.openPassengerHistory = function() { document.getElementById('historyModal').classList.remove('hidden'); renderPassengerHistory(); }
+    windowContext.closePassengerHistory = function() { document.getElementById('historyModal').classList.add('hidden'); }
     function renderPassengerHistory() {
         let container = document.getElementById('historyListContainer');
         db.ref('completed_jobs').orderByChild('userId').equalTo(lineUserId).once('value', snap => {
@@ -1421,14 +1434,14 @@
             }); html += '</div>'; container.innerHTML = html;
         });
     }
-    function openPassengerHistoryDetail(jobId) {
+    windowContext.openPassengerHistoryDetail = function(jobId) {
         let job = loadedHistoryJobs[jobId]; if(!job) return; selectedHistoryJobId = jobId;
         document.getElementById('histDetDate').innerText = "วันที่ " + new Date(job.completedAt || job.timestamp).toLocaleString('th-TH'); document.getElementById('histDetPrice').innerText = "฿" + job.price; document.getElementById('histDetPick').innerText = job.pName; document.getElementById('histDetDrop').innerText = job.dName;
         if(job.driverPin) { db.ref('drivers_profile/' + job.driverPin).once('value', snap => { if(snap.exists()){ document.getElementById('histDetDriver').innerText = `คนขับ: ${snap.val().name || '-'} (${snap.val().plate || '-'})`; } else document.getElementById('histDetDriver').innerText = `คนขับ: ไม่ทราบชื่อ`; }); } else document.getElementById('histDetDriver').innerText = `คนขับ: ไม่ทราบชื่อ`;
         document.getElementById('historyDetailModal').classList.remove('hidden');
     }
-    function closeHistoryDetail() { document.getElementById('historyDetailModal').classList.add('hidden'); selectedHistoryJobId = null; }
-    function blockCurrentHistoryDriver() {
+    windowContext.closeHistoryDetail = function() { document.getElementById('historyDetailModal').classList.add('hidden'); selectedHistoryJobId = null; }
+    windowContext.blockCurrentHistoryDriver = function() {
         let job = loadedHistoryJobs[selectedHistoryJobId]; if(!job || !job.driverPin) { showAlert("ผิดพลาด", "ไม่สามารถบล็อกได้ เนื่องจากไม่พบข้อมูลคนขับสำหรับงานนี้", "error"); return; }
         openConfirmActionModal("บล็อกคนขับ?", "หากยืนยัน คุณจะไม่ถูกจับคู่กับคนขับคนนี้อีกต่อไป คุณสามารถจัดการรายการบล็อกได้ในภายหลัง", () => {
             let updates = {}; updates[job.driverPin] = { driverPin: job.driverPin, timestamp: firebase.database.ServerValue.TIMESTAMP }; if(job.driverPhone) updates[job.driverPhone] = { driverPhone: job.driverPhone, timestamp: firebase.database.ServerValue.TIMESTAMP };
@@ -1436,7 +1449,7 @@
         }, "red");
     }
 
-    window.initMap = initMap;
+    windowContext.initMap = initMap;
   </script>
   <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDsZ_tbFhH6fUXRz3I6C-tMshNwwrSevd4&libraries=places&callback=initMap" async defer></script>
 </body>
