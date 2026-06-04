@@ -55,11 +55,15 @@
 
   <div id="map" class="map-container hidden"></div>
 
+  <!-- เป้าเล็งตรงกลางจอ ปรับขนาดให้เท่ากับหมุด (44px) -->
   <div id="centerPinOverlay" class="hidden fixed left-0 right-0 z-[25] pointer-events-none transition-opacity duration-300">
-      <div class="absolute inset-0 flex items-center justify-center">
-          <svg id="centerPinSvg" width="36" height="36" viewBox="-2 -2 40 40" style="margin-top: -36px;">
-              <path d="M18,0 C10,0 4,6 4,14 C4,24 18,36 18,36 C18,36 32,24 32,14 C32,6 26,0 18,0 Z M18,20 C14.686,20 12,17.314 12,14 C12,10.686 14.686,8 18,8 C21.314,8 24,10.686 24,14 C24,17.314 21.314,20 18,20 Z" fill="#22c55e" stroke="#ffffff" stroke-width="2"/>
-          </svg>
+      <div class="absolute w-0 h-0" style="top: 50%; left: 50%;">
+          <div id="centerPinWrapper" class="absolute transition-transform duration-200 z-10" style="bottom: 0px; left: -22px; width: 44px; height: 44px;">
+              <svg id="centerPinSvg" width="44" height="44" viewBox="-2 -2 40 40" class="drop-shadow-xl">
+                  <path d="M18,0 C10,0 4,6 4,14 C4,24 18,36 18,36 C18,36 32,24 32,14 C32,6 26,0 18,0 Z M18,20 C14.686,20 12,17.314 12,14 C12,10.686 14.686,8 18,8 C21.314,8 24,10.686 24,14 C24,17.314 21.314,20 18,20 Z" fill="#22c55e" stroke="#ffffff" stroke-width="2"/>
+              </svg>
+          </div>
+          <div id="centerPinShadow" class="absolute bg-black/40 rounded-full blur-[1px] transition-all duration-200" style="bottom: -4px; left: -10px; width: 20px; height: 8px;"></div>
       </div>
   </div>
 
@@ -90,6 +94,7 @@
       <button onclick="openEmergencyModal()" id="btnEmergency" class="hidden bg-red-900/80 w-11 h-11 flex items-center justify-center rounded-full shadow-[0_0_15px_rgba(239,68,68,0.5)] text-red-400 border border-red-500/50 active:bg-red-800 transition mt-2"><i class="fas fa-shield-alt text-lg"></i></button>
   </div>
 
+  <!-- หน้า 1: เริ่มต้น -->
   <div id="page1" class="full-page flex">
     <div class="bg-gray-900 border-b border-green-500/30 text-green-400 p-6 text-center shadow-lg"><h1 class="text-2xl font-black tracking-wider flex justify-center items-center gap-2"><i class="fas fa-car-side"></i> F1 DRIVER</h1></div>
     <div class="p-6 space-y-6 flex-1 flex flex-col justify-center">
@@ -109,6 +114,7 @@
     </div>
   </div>
 
+  <!-- หน้า 2: เลือกจุดรับ -->
   <div id="page2" class="hidden">
     <div class="ui-panel border-t-[4px] border-green-500 h-auto pb-6 pt-4">
       <div class="flex justify-between items-center mb-2">
@@ -144,6 +150,7 @@
     </div>
   </div>
 
+  <!-- หน้า 3: เลือกจุดส่ง -->
   <div id="page3" class="hidden">
     <div class="ui-panel border-t-[4px] border-red-500 h-auto pb-6 pt-4">
       <div class="flex justify-between items-center mb-2">
@@ -179,6 +186,7 @@
     </div>
   </div>
 
+  <!-- หน้า 4: สรุปก่อนเรียกรถ -->
   <div id="page4" class="hidden">
     <div id="page4Panel" class="ui-panel border-t-[4px] border-blue-500 h-auto pb-6 pt-3 transition-transform duration-300">
       <div class="w-full flex justify-center pb-3 cursor-pointer" onclick="togglePage4Panel()"><div class="w-12 h-1.5 bg-gray-600 rounded-full"></div></div>
@@ -421,7 +429,7 @@
 
     let localWaypoints = []; 
     let waypointMapMarkers = []; 
-    let focusedWaypointIndex = -1; // สำหรับตรวจสอบว่ากำลังโฟกัสหมุดไหน
+    let focusedWaypointIndex = -1;
 
     let lineUserId = "", lineName = "";
     let driverData = { lat: 19.910479, lng: 99.840576, status: "ออฟไลน์" };
@@ -431,7 +439,7 @@
 
     let currentRouteBounds = null;
     let isTrackingMode = true;
-    let isSatelliteMode = true; // โหมดดาวเทียมเริ่มต้น
+    let isSatelliteMode = true; 
     
     let lastNotifiedStatus = "";
     let wakeLock = null;
@@ -456,7 +464,7 @@
             const panel = document.querySelector('#page3 .ui-panel');
             pBottom = panel ? panel.offsetHeight : 0;
         }
-        return pBottom;
+        return pBottom + 40; // เพิ่มระยะเผื่อให้จุดศูนย์กลางขยับขึ้นอีกนิด
     }
 
     function updateMapPadding() {
@@ -466,7 +474,6 @@
 
         map.setOptions({ padding: { top: pTop, bottom: pBottom, left: 0, right: 0 } });
         
-        // ขยับเป้าเล็งตาม Padding
         let overlay = document.getElementById('centerPinOverlay');
         if(overlay && (currentStep === 2 || currentStep === 3)) {
             overlay.style.top = pTop + 'px';
@@ -593,13 +600,13 @@
     windowContext.togglePage4Panel = function() {
         const panel = document.getElementById('page4Panel'); if(!panel) return;
         panel.classList.toggle('panel-collapsed-page4');
-        updateMapPadding();
+        setTimeout(() => { updateMapPadding(); }, 50);
     }
 
     windowContext.toggleTrackingPanel = function() {
         const panel = document.getElementById('trackingPanel'); if(!panel) return;
         panel.classList.toggle('panel-collapsed');
-        updateMapPadding();
+        setTimeout(() => { updateMapPadding(); }, 50);
     }
 
     function showAlert(title, message, type = 'info', callback = null) {
@@ -648,14 +655,9 @@
     windowContext.openLineOA = function() { if (typeof liff !== 'undefined' && liff.isInClient()) { liff.openWindow({ url: LINE_OA_URL, external: true }); } else { window.open(LINE_OA_URL, '_blank'); } }
 
     windowContext.handleCrosshairClick = function() {
-        if (currentStep === 2 || currentStep === 3) {
-            useCurrentLocation();
-        } else {
-            centerToFocus();
-        }
+        useCurrentLocation();
     };
 
-    // ฟังก์ชัน Zoom สลับ Overview (Toggle)
     windowContext.focusLocationToggle = function(lat, lng, index) {
         if(!map) return;
         if (focusedWaypointIndex === index) {
@@ -668,21 +670,9 @@
         renderWaypointsUI();
     };
 
-    function centerToFocus() {
-        if(!map) return;
-        if(currentStep === 'Tracking' && markerDriver && markerDriver.getMap()) {
-            map.panTo(markerDriver.getPosition()); map.setZoom(17);
-            isTrackingMode = true; 
-            const panel = document.getElementById('trackingPanel');
-            if(panel && !panel.classList.contains('panel-collapsed')) { panel.classList.add('panel-collapsed'); updateMapPadding(); }
-            return;
-        }
-        useCurrentLocation();
-    }
-
     windowContext.fitAllWaypoints = function() {
         if (!map || localWaypoints.length === 0) return;
-        focusedWaypointIndex = -1; // รีเซ็ตสถานะโฟกัส
+        focusedWaypointIndex = -1;
         isTrackingMode = false;
         if (localWaypoints.length === 1) {
             map.panTo({lat: localWaypoints[0].lat, lng: localWaypoints[0].lng}); map.setZoom(16);
@@ -698,7 +688,7 @@
     function fitRouteBounds() {
         if (map && currentRouteBounds) {
             isTrackingMode = false; map.fitBounds(currentRouteBounds, { top: 80, right: 50, bottom: 350, left: 50 });
-        } else { centerToFocus(); }
+        } else { useCurrentLocation(); }
     }
 
     function createNumberedMarkerIcon(text, colorHex) {
@@ -710,7 +700,6 @@
         };
     }
 
-    // ฟังก์ชันค้นหาสถานที่ (แค่เล็ง ยังไม่ใส่หมุดลง Array)
     windowContext.initSearchBox = function(inputId, isPick) {
       const input = document.getElementById(inputId); if(!input) return;
       if (typeof google === 'undefined' || !google.maps.places) return;
@@ -741,7 +730,8 @@
       
       map = new google.maps.Map(document.getElementById('map'), { 
         zoom: 16, center: {lat: driverData.lat, lng: driverData.lng}, mapTypeId: 'hybrid', 
-        disableDefaultUI: true, gestureHandling: 'greedy', zoomControl: false
+        disableDefaultUI: true, gestureHandling: 'greedy', zoomControl: false,
+        clickableIcons: false
       });
 
       map.addListener('dragstart', () => {
@@ -755,13 +745,15 @@
       });
 
       map.addListener('click', (event) => {
-        if (event.placeId && placesService && (currentStep === 2 || currentStep === 3)) {
-          event.stop(); 
-          placesService.getDetails({ placeId: event.placeId, fields: ['name', 'geometry', 'formatted_address'] }, (place, status) => {
-            if (status === 'OK' && place.geometry) {
-                map.panTo(place.geometry.location); map.setZoom(17);
+        if (event.placeId) {
+            event.stop(); 
+            if (placesService && (currentStep === 2 || currentStep === 3)) {
+                placesService.getDetails({ placeId: event.placeId, fields: ['name', 'geometry', 'formatted_address'] }, (place, status) => {
+                    if (status === 'OK' && place.geometry) {
+                        map.panTo(place.geometry.location); map.setZoom(17);
+                    }
+                });
             }
-          });
         }
       });
 
@@ -855,7 +847,7 @@
     }
 
     function addWaypointFromLocation(lat, lng, name, type) {
-        let num = localWaypoints.length + 1;
+        let num = type === 'pick' ? localWaypoints.filter(w=>w.type==='pick').length + 1 : localWaypoints.filter(w=>w.type==='drop').length + 1;
         let color = type === 'pick' ? '#22c55e' : '#ef4444';
         
         let marker = new google.maps.Marker({
@@ -928,18 +920,17 @@
             }
         }
 
-        localWaypoints.forEach((wp, index) => {
-            let num = index + 1;
-            let colorClass = 'bg-green-500 text-white';
-            let colorHex = '#22c55e';
-            let isFocused = (focusedWaypointIndex === index);
+        let pCount = 1; let dCount = 1;
 
-            if (wp.type === 'drop') { colorClass = 'bg-red-500 text-white'; colorHex = '#ef4444'; }
-            if (wp.type === 'waypoint') { colorClass = 'bg-yellow-500 text-black'; colorHex = '#eab308'; }
+        localWaypoints.forEach((wp, index) => {
+            let num = wp.type === 'pick' ? pCount++ : dCount++;
+            let colorClass = wp.type === 'pick' ? 'bg-green-500 text-white' : 'bg-red-500 text-white';
+            let colorHex = wp.type === 'pick' ? '#22c55e' : '#ef4444';
+            let isFocused = (focusedWaypointIndex === index);
 
             if (wp.marker) {
                 wp.marker.setIcon(createNumberedMarkerIcon(num.toString(), colorHex));
-                wp.marker.setLabel({text: num.toString(), color: (wp.type==='waypoint') ? 'black' : 'white', fontWeight: 'bold'});
+                wp.marker.setLabel({text: num.toString(), color: 'white', fontWeight: 'bold'});
             }
 
             let bgItem = isFocused ? 'bg-gray-700 border-blue-500/50' : 'bg-gray-800 border-gray-700';
@@ -964,6 +955,8 @@
         let dropContainer = document.getElementById('dropoffWaypointsList'); if(dropContainer) dropContainer.innerHTML = dropHtml;
         let sumContainer = document.getElementById('sumWaypointsContainer'); if(sumContainer) sumContainer.innerHTML = sumHtml;
         let trackContainer = document.getElementById('trackWaypointsContainer'); if(trackContainer) trackContainer.innerHTML = sumHtml;
+        
+        setTimeout(() => { updateMapPadding(); }, 50);
     }
 
     windowContext.removeWaypoint = function(index) {
@@ -979,7 +972,7 @@
 
     windowContext.showPage = function(page) {
       currentStep = page;
-      focusedWaypointIndex = -1; // รีเซ็ตโฟกัส
+      focusedWaypointIndex = -1; 
       [1,2,3,4,'Tracking'].forEach(p => { const el = document.getElementById('page' + p); if (el) el.classList.add('hidden'); });
       const targetPage = document.getElementById('page' + page); if(targetPage) targetPage.classList.remove('hidden');
       requestWakeLock();
@@ -1467,7 +1460,7 @@
         }, "red");
     }
 
-    window.initMap = initMap;
+    windowContext.initMap = initMap;
   </script>
   <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDsZ_tbFhH6fUXRz3I6C-tMshNwwrSevd4&libraries=places&callback=initMap" async defer></script>
 </body>
