@@ -36,13 +36,8 @@
         padding-top: 12px;
     }
     
-    .panel-collapsed {
-        transform: translateY(calc(100% - 110px)) !important;
-    }
-    
-    .panel-collapsed-page4 {
-        transform: translateY(calc(100% - 110px)) !important;
-    }
+    .panel-collapsed { transform: translateY(calc(100% - 110px)) !important; }
+    .panel-collapsed-page4 { transform: translateY(calc(100% - 110px)) !important; }
 
     .full-page { position: fixed; inset: 0; z-index: 30; background: #111827; flex-direction: column; }
     
@@ -61,10 +56,8 @@
     }
     .pac-container::-webkit-scrollbar { width: 6px; }
     .pac-container::-webkit-scrollbar-thumb { background-color: #4b5563; border-radius: 10px; }
-    
     .pac-item { padding: 14px 16px; border-top: 1px solid #374151; cursor: pointer; color: #d1d5db; font-size: 14px; }
     .pac-item:first-child { border-top: none; }
-    
     .pac-item-query { color: #10b981; font-weight: bold; } 
     .pac-item .pac-icon { filter: invert(70%) sepia(50%) saturate(400%) hue-rotate(80deg); }
 
@@ -74,18 +67,22 @@
     .hide-scrollbar::-webkit-scrollbar { display: none; }
     .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
-    @keyframes loading-scan {
-        0% { transform: translateX(-100%); }
-        100% { transform: translateX(300%); }
-    }
-    .animate-loading-scan {
-        animation: loading-scan 1.5s infinite ease-in-out;
-    }
+    @keyframes loading-scan { 0% { transform: translateX(-100%); } 100% { transform: translateX(300%); } }
+    .animate-loading-scan { animation: loading-scan 1.5s infinite ease-in-out; }
   </style>
 </head>
 <body class="h-screen w-screen m-0 overflow-hidden">
 
   <div id="map" class="map-container hidden"></div>
+
+  <div id="centerPinOverlay" class="hidden fixed top-0 left-0 right-0 bottom-[180px] z-[25] pointer-events-none flex flex-col items-center justify-center transition-opacity" style="transform: translateY(-20px);">
+      <div id="centerPinWrapper" class="transition-transform duration-200">
+          <svg id="centerPinSvg" width="44" height="44" viewBox="-2 -2 40 40" class="drop-shadow-xl" style="margin-left: -22px; margin-top: -40px;">
+              <path d="M18,0 C10,0 4,6 4,14 C4,24 18,36 18,36 C18,36 32,24 32,14 C32,6 26,0 18,0 Z M18,20 C14.686,20 12,17.314 12,14 C12,10.686 14.686,8 18,8 C21.314,8 24,10.686 24,14 C24,17.314 21.314,20 18,20 Z" fill="#22c55e" stroke="#ffffff" stroke-width="2"/>
+          </svg>
+      </div>
+      <div id="centerPinShadow" class="w-4 h-1.5 bg-black/40 rounded-full blur-[1px] transition-all duration-200 mt-0.5"></div>
+  </div>
 
   <div id="navBar" class="hidden fixed top-0 w-full h-16 bg-gray-900 border-b border-gray-800 flex items-center justify-between px-4 z-20 text-white shadow-md pointer-events-auto">
     <button onclick="goBack()" class="p-2 text-2xl active:opacity-50 hover:text-green-400 transition"><i class="fas fa-chevron-left"></i></button>
@@ -98,7 +95,7 @@
           <div class="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none z-10">
               <i class="fas fa-circle text-[10px] text-green-500 border border-white rounded-full"></i>
           </div>
-          <input type="text" id="pickupSearch" class="w-full py-4 pl-11 pr-4 bg-transparent outline-none font-bold text-[13.5px] text-green-50 truncate placeholder-gray-400" placeholder="ค้นหาจุดรับ (เลือกจากรายการ)...">
+          <input type="text" id="pickupSearch" class="w-full py-4 pl-11 pr-4 bg-transparent outline-none font-bold text-[13.5px] text-green-50 truncate placeholder-gray-400" placeholder="ค้นหาจุดรับ (เลื่อนแผนที่หรือพิมพ์)...">
       </div>
   </div>
 
@@ -107,7 +104,7 @@
           <div class="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none z-10">
               <i class="fas fa-circle text-[10px] text-red-500 border border-white rounded-full"></i>
           </div>
-          <input type="text" id="dropoffSearch" class="w-full py-4 pl-11 pr-4 bg-transparent outline-none font-bold text-[13.5px] text-red-50 truncate placeholder-gray-400" placeholder="ค้นหาจุดหมาย (เลือกจากรายการ)...">
+          <input type="text" id="dropoffSearch" class="w-full py-4 pl-11 pr-4 bg-transparent outline-none font-bold text-[13.5px] text-red-50 truncate placeholder-gray-400" placeholder="ค้นหาจุดหมาย (เลื่อนแผนที่หรือพิมพ์)...">
       </div>
   </div>
 
@@ -128,9 +125,7 @@
 
   <div id="page1" class="full-page flex">
     <div class="bg-gray-900 border-b border-green-500/30 text-green-400 p-6 text-center shadow-lg">
-        <h1 class="text-2xl font-black tracking-wider flex justify-center items-center gap-2">
-            <i class="fas fa-car-side"></i> F1 DRIVER
-        </h1>
+        <h1 class="text-2xl font-black tracking-wider flex justify-center items-center gap-2"><i class="fas fa-car-side"></i> F1 DRIVER</h1>
     </div>
     <div class="p-6 space-y-6 flex-1 flex flex-col justify-center">
       <div class="text-center">
@@ -162,44 +157,41 @@
       <div class="flex justify-between items-center mb-4">
         <div>
             <p class="text-[10px] font-black text-green-500 mb-0.5 tracking-widest"><i class="fas fa-circle"></i> STEP 1</p>
-            <p class="text-lg font-black text-white">จุดให้รถไปรับ</p>
+            <p class="text-lg font-black text-white">เลื่อนหมุดเพื่อเลือกจุดรับ</p>
         </div>
-        <div class="flex gap-2">
-            <button onclick="openWaypointModal('pick')" class="text-[11px] font-bold bg-yellow-600/30 border border-yellow-500/30 text-yellow-400 px-3 py-2 rounded-xl hover:bg-yellow-600/50 transition shadow-sm flex items-center gap-1.5"><i class="fas fa-plus"></i> จุดแวะรับ</button>
-            <button onclick="useCurrentLocation()" class="text-[11px] font-bold bg-green-900/30 border border-green-500/30 text-green-400 px-3 py-2 rounded-xl hover:bg-green-800/50 transition shadow-sm flex items-center gap-1.5"><i class="fas fa-crosshairs"></i> ปัจจุบัน</button>
-        </div>
+        <button onclick="useCurrentLocation()" class="text-[11px] font-bold bg-green-900/30 border border-green-500/30 text-green-400 px-3 py-2 rounded-xl hover:bg-green-800/50 transition shadow-sm flex items-center gap-1.5"><i class="fas fa-crosshairs"></i> พิกัดปัจจุบัน</button>
       </div>
       
       <div class="flex gap-2 overflow-x-auto pb-2 hide-scrollbar mb-2 items-center w-full">
           <div class="flex shrink-0 bg-[#2a303c] border border-[#3b4252] rounded-full overflow-hidden shadow-sm items-center">
               <button onclick="handleSavedPlace('home')" class="px-3 py-1.5 flex items-center gap-1.5 hover:bg-[#343b4a] transition">
-                  <i class="fas fa-home text-blue-400 text-xs"></i>
-                  <span class="label-home text-xs font-bold text-gray-200">บ้าน</span>
+                  <i class="fas fa-home text-blue-400 text-xs"></i><span class="label-home text-xs font-bold text-gray-200">บ้าน</span>
               </button>
               <div class="w-[1px] h-4 bg-[#3b4252]"></div>
-              <button onclick="editSavedPlace('home', event)" class="px-2.5 py-1.5 text-gray-400 hover:text-white hover:bg-[#343b4a] transition flex items-center" title="ตั้งค่าพิกัด">
-                  <i class="fas fa-cog text-[11px]"></i>
-              </button>
+              <button onclick="editSavedPlace('home', event)" class="px-2.5 py-1.5 text-gray-400 hover:text-white hover:bg-[#343b4a] transition flex items-center" title="ตั้งค่าพิกัด"><i class="fas fa-cog text-[11px]"></i></button>
           </div>
           
           <div class="flex shrink-0 bg-[#2a303c] border border-[#3b4252] rounded-full overflow-hidden shadow-sm items-center">
               <button onclick="handleSavedPlace('favorite')" class="px-3 py-1.5 flex items-center gap-1.5 hover:bg-[#343b4a] transition">
-                  <i class="fas fa-heart text-pink-500 text-xs"></i>
-                  <span class="label-favorite text-xs font-bold text-gray-200">โปรด</span>
+                  <i class="fas fa-heart text-pink-500 text-xs"></i><span class="label-favorite text-xs font-bold text-gray-200">โปรด</span>
               </button>
               <div class="w-[1px] h-4 bg-[#3b4252]"></div>
-              <button onclick="editSavedPlace('favorite', event)" class="px-2.5 py-1.5 text-gray-400 hover:text-white hover:bg-[#343b4a] transition flex items-center" title="ตั้งค่าพิกัด">
-                  <i class="fas fa-cog text-[11px]"></i>
-              </button>
+              <button onclick="editSavedPlace('favorite', event)" class="px-2.5 py-1.5 text-gray-400 hover:text-white hover:bg-[#343b4a] transition flex items-center" title="ตั้งค่าพิกัด"><i class="fas fa-cog text-[11px]"></i></button>
           </div>
-
           <div class="w-[1px] h-5 bg-gray-600 shrink-0 mx-0.5"></div>
           <div id="recentPlacesPick" class="flex gap-2 shrink-0 items-center"></div>
       </div>
       
-      <div id="pickupWaypointsList" class="flex flex-col gap-2 mb-2"></div>
+      <div id="pickupWaypointsList" class="flex flex-col gap-2 mb-2 max-h-[150px] overflow-y-auto hide-scrollbar"></div>
 
-      <button onclick="confirmPickup()" class="w-full bg-green-600 text-white py-4 rounded-xl font-bold mt-2 text-[15px] shadow-[0_0_20px_rgba(34,197,94,0.3)] hover:bg-green-700 active:scale-[0.98] transition">ยืนยันจุดรับรถ</button>
+      <div class="flex gap-2 mt-2">
+          <button onclick="addWaypointFromCenter('pick')" class="flex-[1] bg-yellow-900/30 border border-yellow-500/50 text-yellow-400 py-3.5 rounded-xl font-bold text-[14px] shadow-sm hover:bg-yellow-800/50 transition flex justify-center items-center gap-1.5">
+              <i class="fas fa-plus"></i> จุดแวะรับ
+          </button>
+          <button onclick="confirmPickup()" class="flex-[2] bg-green-600 text-white py-3.5 rounded-xl font-bold text-[15px] shadow-[0_0_20px_rgba(34,197,94,0.3)] hover:bg-green-700 active:scale-[0.98] transition flex justify-center items-center gap-1.5">
+              ต่อไป <i class="fas fa-arrow-right"></i>
+          </button>
+      </div>
     </div>
   </div>
 
@@ -208,74 +200,56 @@
       <div class="flex justify-between items-center mb-4">
         <div>
             <p class="text-[10px] font-black text-red-500 mb-0.5 tracking-widest"><i class="fas fa-circle"></i> STEP 2</p>
-            <p class="text-lg font-black text-white">จุดหมายปลายทาง</p>
+            <p class="text-lg font-black text-white">เลื่อนหมุดเพื่อเลือกจุดส่ง</p>
         </div>
-        <div class="flex gap-2">
-            <button onclick="openWaypointModal('drop')" class="text-[11px] font-bold bg-yellow-600/30 border border-yellow-500/30 text-yellow-400 px-3 py-2 rounded-xl hover:bg-yellow-600/50 transition shadow-sm flex items-center gap-1.5"><i class="fas fa-plus"></i> จุดแวะส่ง</button>
-            <button onclick="useCurrentLocation()" class="text-[11px] font-bold bg-red-900/30 border border-red-500/30 text-red-400 px-3 py-2 rounded-xl hover:bg-red-800/50 transition shadow-sm flex items-center gap-1.5"><i class="fas fa-crosshairs"></i> ปัจจุบัน</button>
-        </div>
+        <button onclick="useCurrentLocation()" class="text-[11px] font-bold bg-red-900/30 border border-red-500/30 text-red-400 px-3 py-2 rounded-xl hover:bg-red-800/50 transition shadow-sm flex items-center gap-1.5"><i class="fas fa-crosshairs"></i> พิกัดปัจจุบัน</button>
       </div>
       
       <div class="flex gap-2 overflow-x-auto pb-2 hide-scrollbar mb-2 items-center w-full">
           <div class="flex shrink-0 bg-[#2a303c] border border-[#3b4252] rounded-full overflow-hidden shadow-sm items-center">
               <button onclick="handleSavedPlace('home')" class="px-3 py-1.5 flex items-center gap-1.5 hover:bg-[#343b4a] transition">
-                  <i class="fas fa-home text-blue-400 text-xs"></i>
-                  <span class="label-home text-xs font-bold text-gray-200">บ้าน</span>
+                  <i class="fas fa-home text-blue-400 text-xs"></i><span class="label-home text-xs font-bold text-gray-200">บ้าน</span>
               </button>
               <div class="w-[1px] h-4 bg-[#3b4252]"></div>
-              <button onclick="editSavedPlace('home', event)" class="px-2.5 py-1.5 text-gray-400 hover:text-white hover:bg-[#343b4a] transition flex items-center" title="ตั้งค่าพิกัด">
-                  <i class="fas fa-cog text-[11px]"></i>
-              </button>
+              <button onclick="editSavedPlace('home', event)" class="px-2.5 py-1.5 text-gray-400 hover:text-white hover:bg-[#343b4a] transition flex items-center" title="ตั้งค่าพิกัด"><i class="fas fa-cog text-[11px]"></i></button>
           </div>
           
           <div class="flex shrink-0 bg-[#2a303c] border border-[#3b4252] rounded-full overflow-hidden shadow-sm items-center">
               <button onclick="handleSavedPlace('favorite')" class="px-3 py-1.5 flex items-center gap-1.5 hover:bg-[#343b4a] transition">
-                  <i class="fas fa-heart text-pink-500 text-xs"></i>
-                  <span class="label-favorite text-xs font-bold text-gray-200">โปรด</span>
+                  <i class="fas fa-heart text-pink-500 text-xs"></i><span class="label-favorite text-xs font-bold text-gray-200">โปรด</span>
               </button>
               <div class="w-[1px] h-4 bg-[#3b4252]"></div>
-              <button onclick="editSavedPlace('favorite', event)" class="px-2.5 py-1.5 text-gray-400 hover:text-white hover:bg-[#343b4a] transition flex items-center" title="ตั้งค่าพิกัด">
-                  <i class="fas fa-cog text-[11px]"></i>
-              </button>
+              <button onclick="editSavedPlace('favorite', event)" class="px-2.5 py-1.5 text-gray-400 hover:text-white hover:bg-[#343b4a] transition flex items-center" title="ตั้งค่าพิกัด"><i class="fas fa-cog text-[11px]"></i></button>
           </div>
-
           <div class="w-[1px] h-5 bg-gray-600 shrink-0 mx-0.5"></div>
           <div id="recentPlacesDrop" class="flex gap-2 shrink-0 items-center"></div>
       </div>
 
-      <div id="dropoffWaypointsList" class="flex flex-col gap-2 mb-2"></div>
+      <div id="dropoffWaypointsList" class="flex flex-col gap-2 mb-2 max-h-[150px] overflow-y-auto hide-scrollbar"></div>
 
-      <button onclick="confirmDropoff()" class="w-full bg-red-600 text-white py-4 rounded-xl font-bold mt-2 text-[15px] shadow-[0_0_20px_rgba(239,68,68,0.3)] hover:bg-red-700 active:scale-[0.98] transition">ยืนยันจุดหมาย</button>
+      <div class="flex gap-2 mt-2">
+          <button onclick="addWaypointFromCenter('drop')" class="flex-[1] bg-yellow-900/30 border border-yellow-500/50 text-yellow-400 py-3.5 rounded-xl font-bold text-[14px] shadow-sm hover:bg-yellow-800/50 transition flex justify-center items-center gap-1.5">
+              <i class="fas fa-plus"></i> จุดแวะส่ง
+          </button>
+          <button onclick="confirmDropoff()" class="flex-[2] bg-red-600 text-white py-3.5 rounded-xl font-bold text-[15px] shadow-[0_0_20px_rgba(239,68,68,0.3)] hover:bg-red-700 active:scale-[0.98] transition flex justify-center items-center gap-1.5">
+              ยืนยันจุดหมาย <i class="fas fa-check-circle"></i>
+          </button>
+      </div>
     </div>
   </div>
 
   <div id="page4" class="hidden">
     <div id="page4Panel" class="ui-panel border-t-[4px] border-blue-500 h-auto pb-6 pt-3 transition-transform duration-300">
-      
-      <div class="w-full flex justify-center pb-3 cursor-pointer" onclick="togglePage4Panel()">
-          <div class="w-12 h-1.5 bg-gray-600 rounded-full"></div>
-      </div>
-
+      <div class="w-full flex justify-center pb-3 cursor-pointer" onclick="togglePage4Panel()"><div class="w-12 h-1.5 bg-gray-600 rounded-full"></div></div>
       <div class="flex justify-between items-center mb-3">
-        <div>
-            <p class="text-[10px] font-black text-blue-500 mb-0.5 tracking-widest"><i class="fas fa-circle"></i> STEP 3</p>
-            <p class="text-lg font-black text-white">สรุปข้อมูลก่อนยืนยัน</p>
-        </div>
+        <div><p class="text-[10px] font-black text-blue-500 mb-0.5 tracking-widest"><i class="fas fa-circle"></i> STEP 3</p><p class="text-lg font-black text-white">สรุปข้อมูลก่อนยืนยัน</p></div>
       </div>
-
       <div class="border-b border-gray-700 mb-3 w-full opacity-50"></div>
       
-      <div class="bg-gray-800 py-2.5 px-3.5 rounded-xl border border-gray-700 relative mb-2 shadow-sm">
+      <div class="bg-gray-800 py-2.5 px-3.5 rounded-xl border border-gray-700 relative mb-2 shadow-sm max-h-[150px] overflow-y-auto hide-scrollbar">
           <div class="absolute left-[1.4rem] top-6 bottom-6 w-0.5 border-l-[1.5px] border-dashed border-gray-600"></div>
-          <div class="flex items-center gap-3 mb-2.5 relative z-10">
-              <div><i class="fas fa-circle text-[10px] text-green-500 border border-gray-800 rounded-full"></i></div>
-              <p class="text-[13px] text-gray-200 truncate font-medium flex-1 leading-tight cursor-pointer hover:text-green-300 transition" id="sumPick">...</p>
-          </div>
-          <div id="sumWaypointsContainer" class="flex flex-col gap-2.5 mb-2.5"></div>
-          <div class="flex items-center gap-3 relative z-10">
-              <div><i class="fas fa-circle text-[10px] text-red-500 border border-gray-800 rounded-full"></i></div>
-              <p class="text-[13px] text-gray-200 truncate font-medium flex-1 leading-tight cursor-pointer hover:text-red-300 transition" id="sumDrop">...</p>
-          </div>
+          
+          <div id="sumWaypointsContainer" class="flex flex-col gap-2.5 py-1"></div>
       </div>
 
       <div class="flex gap-2 mb-2">
@@ -284,7 +258,6 @@
               <p class="text-[11px] text-gray-400 font-bold mb-0.5">ระยะทาง / เวลา</p>
               <p class="font-black text-blue-400 text-sm"><span id="sumDist">0</span> กม. • <span id="sumWait">0</span> นาที</p>
             </div>
-            
             <div class="text-right">
               <p class="text-[10px] text-gray-400 font-bold mb-0.5">ราคาประเมิน <span id="discountTag" class="hidden text-green-400 bg-green-900/50 border border-green-500/30 px-1 rounded"></span></p>
               <div class="flex items-end justify-end gap-1.5">
@@ -295,25 +268,17 @@
           </div>
 
           <button onclick="openPromoModal()" class="shrink-0 w-[4.5rem] bg-gray-800 border border-gray-700 text-green-400 rounded-xl text-[11px] font-bold hover:bg-gray-700 transition flex flex-col items-center justify-center gap-1 shadow-sm">
-              <i class="fas fa-ticket-alt text-lg"></i>
-              <span>ใช้โค้ด</span>
+              <i class="fas fa-ticket-alt text-lg"></i><span>ใช้โค้ด</span>
           </button>
       </div>
 
       <form onsubmit="event.preventDefault(); submitBooking();" class="flex gap-2 w-full mt-1">
           <div class="relative flex-[1.2]">
-              <div class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-green-500">
-                  <i class="fas fa-phone-alt text-[15px]"></i>
-              </div>
-              <input type="tel" id="userPhone" name="tel" autocomplete="tel" inputmode="tel" 
-                     oninput="formatPhone(this)" 
-                     onfocus="this.dataset.oldValue = this.value; this.value = '';" 
-                     onblur="if(this.value.trim() === '') this.value = this.dataset.oldValue || '';" 
-                     placeholder="เบอร์ติดต่อ" 
-                     class="w-full py-3.5 pl-10 pr-2 bg-gray-800 border border-gray-700 focus:border-green-500 focus:bg-gray-900 text-white placeholder-gray-500 rounded-xl text-[14px] font-bold outline-none transition-colors">
+              <div class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-green-500"><i class="fas fa-phone-alt text-[15px]"></i></div>
+              <input type="tel" id="userPhone" name="tel" autocomplete="tel" inputmode="tel" oninput="formatPhone(this)" onfocus="this.dataset.oldValue = this.value; this.value = '';" onblur="if(this.value.trim() === '') this.value = this.dataset.oldValue || '';" placeholder="เบอร์ติดต่อ" class="w-full py-3.5 pl-10 pr-2 bg-gray-800 border border-gray-700 focus:border-green-500 focus:bg-gray-900 text-white placeholder-gray-500 rounded-xl text-[14px] font-bold outline-none transition-colors">
           </div>
           <button type="submit" class="flex-1 bg-green-600 text-white py-3.5 rounded-xl font-bold text-sm shadow-[0_0_15px_rgba(34,197,94,0.3)] hover:bg-green-700 active:scale-[0.98] transition flex justify-center items-center gap-1.5 whitespace-nowrap">
-              ยืนยันเรียกรถ <i class="fas fa-car-side"></i>
+              เรียกรถ <i class="fas fa-car-side"></i>
           </button>
       </form>
     </div>
@@ -322,42 +287,26 @@
   <div id="pageTracking" class="hidden">
     <div id="trackingPanel" class="ui-panel border-t-[4px] border-gray-600 h-auto pb-5 pt-3 transition-transform duration-300"> 
       
-      <div class="w-full flex justify-center pb-3 cursor-pointer" onclick="toggleTrackingPanel()">
-          <div class="w-12 h-1.5 bg-gray-600 rounded-full"></div>
-      </div>
+      <div class="w-full flex justify-center pb-3 cursor-pointer" onclick="toggleTrackingPanel()"><div class="w-12 h-1.5 bg-gray-600 rounded-full"></div></div>
       
       <div id="unifiedStatusBox" class="mb-3 flex justify-between items-center w-full relative overflow-hidden pb-1">
           <div class="min-w-0 flex-1 pr-2">
-              <p class="text-[10px] font-black text-gray-400 mb-0.5 tracking-widest flex items-center gap-1.5" id="unifiedStatusLabel">
-                  <i class="fas fa-spinner fa-spin text-blue-500 text-[12px]"></i> STATUS
-              </p>
+              <p class="text-[10px] font-black text-gray-400 mb-0.5 tracking-widest flex items-center gap-1.5" id="unifiedStatusLabel"><i class="fas fa-spinner fa-spin text-blue-500 text-[12px]"></i> STATUS</p>
               <h2 class="font-black text-[15px] leading-tight text-white truncate" id="unifiedStatusText">กำลังค้นหาคนขับ...</h2>
               <p class="text-[11px] font-bold mt-0.5 text-blue-400 hidden truncate" id="unifiedEtaText">ระยะทาง -- กม. • -- นาที • ถึง --:-- น.</p>
           </div>
           <div class="text-right shrink-0 flex flex-col items-end">
               <p class="text-[10px] text-gray-400 font-bold mb-0.5" id="priceLabelTracking">ราคาประเมิน</p>
               <span class="bg-gray-900 border border-gray-600 px-3 py-1.5 rounded-xl font-black text-green-400 text-sm inline-block shadow-inner" id="unifiedPriceText">~฿0</span>
-              <p id="trackPromoText" class="text-[9px] text-green-400 font-bold mt-1 hidden text-center">ใช้โค้ดลด</p>
           </div>
-          
-          <div id="searchProgressBar" class="absolute bottom-0 left-0 w-full h-[2px] bg-gray-700/50 hidden">
-              <div class="h-full bg-blue-500 w-1/3 rounded-full animate-loading-scan"></div>
-          </div>
+          <div id="searchProgressBar" class="absolute bottom-0 left-0 w-full h-[2px] bg-gray-700/50 hidden"><div class="h-full bg-blue-500 w-1/3 rounded-full animate-loading-scan"></div></div>
       </div>
 
       <div class="border-b border-gray-700 mb-3 w-full opacity-50"></div>
       
-      <div id="trackAddressBox" class="mb-3 bg-gray-800 py-2.5 px-3.5 rounded-xl border border-gray-700 relative shadow-sm transition-all duration-300 w-full">
+      <div id="trackAddressBox" class="mb-3 bg-gray-800 py-2.5 px-3.5 rounded-xl border border-gray-700 relative shadow-sm transition-all duration-300 w-full max-h-[150px] overflow-y-auto hide-scrollbar">
           <div class="absolute left-[1.4rem] top-6 bottom-6 w-0.5 border-l-[1.5px] border-dashed border-gray-600"></div>
-          <div class="flex items-center gap-3 mb-2.5 relative z-10">
-              <div><i class="fas fa-circle text-[10px] text-green-500 border border-gray-800 rounded-full"></i></div>
-              <p class="text-[13px] text-gray-200 truncate font-medium flex-1 leading-tight min-w-0" id="trackPick">...</p>
-          </div>
-          <div id="trackWaypointsContainer" class="flex flex-col gap-2.5 mb-2.5"></div>
-          <div class="flex items-center gap-3 relative z-10">
-              <div><i class="fas fa-circle text-[10px] text-red-500 border border-gray-800 rounded-full"></i></div>
-              <p class="text-[13px] text-gray-200 truncate font-medium flex-1 leading-tight min-w-0" id="trackDrop">...</p>
-          </div>
+          <div id="trackWaypointsContainer" class="flex flex-col gap-2.5 py-1"></div>
       </div>
 
       <div id="driverInfoBox" class="hidden mb-3 bg-gray-800 border border-gray-700 p-2.5 rounded-xl flex justify-between items-center shadow-sm w-full">
@@ -368,9 +317,7 @@
                   <p class="text-[12px] text-gray-400 font-medium truncate" id="trackDriverCar">-</p>
                   <div class="flex justify-between items-center w-full mt-0.5">
                       <p class="text-[12px] text-gray-300 font-medium truncate pr-1" id="trackDriverName">-</p>
-                      <div class="text-[9px] font-bold text-green-400 bg-gray-900 px-2 py-0.5 rounded border border-gray-700 shrink-0">
-                          <i class="fas fa-shield-alt"></i> ยืนยัน
-                      </div>
+                      <div class="text-[9px] font-bold text-green-400 bg-gray-900 px-2 py-0.5 rounded border border-gray-700 shrink-0"><i class="fas fa-shield-alt"></i> ยืนยัน</div>
                   </div>
               </div>
           </div>
@@ -378,11 +325,8 @@
 
       <div id="actionButtonsBox" class="hidden gap-2 mb-1 shrink-0 w-full flex-row">
           <button id="btnChat" onclick="openLineOA()" class="flex-1 w-full bg-gray-800 text-gray-300 py-3 rounded-xl font-bold border border-gray-700 text-sm shadow-sm hover:bg-gray-700 transition flex justify-center items-center gap-1.5"><i class="fab fa-line text-[20px] text-[#06C755] leading-none"></i> แชท</button>
-          
-          <button id="btnAddWaypt" onclick="openWaypointModal('in-ride')" class="flex-1 w-full bg-yellow-600/30 text-yellow-400 py-3 rounded-xl font-bold border border-yellow-500/30 text-sm shadow-sm hover:bg-yellow-600/50 transition flex justify-center items-center gap-1.5"><i class="fas fa-plus"></i> แวะเพิ่ม</button>
-
+          <button id="btnAddWaypt" onclick="openWaypointSearchModal()" class="flex-1 w-full bg-yellow-600/30 text-yellow-400 py-3 rounded-xl font-bold border border-yellow-500/30 text-sm shadow-sm hover:bg-yellow-600/50 transition flex justify-center items-center gap-1.5"><i class="fas fa-plus"></i> แวะเพิ่ม</button>
           <button id="btnCall" onclick="openCallConfirmModal()" class="flex-1 w-full bg-green-600 text-white py-3 rounded-xl font-bold text-sm shadow-sm hover:bg-green-700 transition flex justify-center items-center gap-1.5"><i class="fas fa-phone-alt"></i> โทร</button>
-
           <button id="btnCancel" onclick="openCancelModal()" class="flex-1 w-full bg-red-900/40 text-red-400 py-3 rounded-xl font-bold border border-red-500/30 text-sm hover:bg-red-900/60 transition flex justify-center items-center gap-1.5"><i class="fas fa-times"></i> ยกเลิก</button>
       </div>
 
@@ -391,41 +335,31 @@
 
   <div id="waypointSearchModal" class="hidden fixed inset-0 z-[150] bg-gray-900 pointer-events-auto transition-transform duration-300 flex flex-col">
       <div class="bg-gray-900 border-b border-gray-800 p-4 flex items-center gap-3 shadow-md">
-          <button onclick="closeWaypointModal()" class="w-10 h-10 shrink-0 bg-gray-800 text-gray-400 rounded-full flex items-center justify-center border border-gray-700 hover:text-white transition">
-              <i class="fas fa-arrow-left"></i>
-          </button>
-          <h2 class="text-lg font-black text-white" id="wpModalTitle">เพิ่มจุดแวะ</h2>
+          <button onclick="closeWaypointSearchModal()" class="w-10 h-10 shrink-0 bg-gray-800 text-gray-400 rounded-full flex items-center justify-center border border-gray-700 hover:text-white transition"><i class="fas fa-arrow-left"></i></button>
+          <h2 class="text-lg font-black text-white">เพิ่มจุดแวะระหว่างทาง</h2>
       </div>
       <div class="p-4 flex-1">
           <div class="relative w-full shadow-sm rounded-2xl bg-gray-800 border border-gray-700 overflow-visible mb-4">
-              <div class="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none z-10">
-                  <i class="fas fa-search text-gray-400"></i>
-              </div>
+              <div class="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none z-10"><i class="fas fa-search text-gray-400"></i></div>
               <input type="text" id="waypointSearchInput" class="w-full py-4 pl-11 pr-4 bg-transparent outline-none font-bold text-[14px] text-white placeholder-gray-500" placeholder="พิมพ์ค้นหาสถานที่จุดแวะ...">
           </div>
-          <p class="text-xs text-gray-500 text-center mt-10" id="wpModalHelper">พิมพ์เพื่อค้นหาจุดแวะ ระบบจะเพิ่มเข้าไปในเส้นทาง</p>
+          <p class="text-xs text-gray-500 text-center mt-10">ระบบจะคำนวณราคาใหม่ และส่งให้คุณยืนยันก่อนเพิ่มลงในเส้นทาง</p>
       </div>
   </div>
 
   <div id="historyModal" class="hidden fixed inset-0 z-[200] bg-gray-900 overflow-y-auto pb-10 transition-opacity">
       <div class="sticky top-0 bg-gray-900 border-b border-gray-800 p-4 flex items-center gap-3 z-10 shadow-md">
-          <button onclick="closePassengerHistory()" class="w-10 h-10 shrink-0 bg-gray-800 text-gray-400 rounded-full flex items-center justify-center border border-gray-700 hover:text-white transition">
-              <i class="fas fa-arrow-left"></i>
-          </button>
+          <button onclick="closePassengerHistory()" class="w-10 h-10 shrink-0 bg-gray-800 text-gray-400 rounded-full flex items-center justify-center border border-gray-700 hover:text-white transition"><i class="fas fa-arrow-left"></i></button>
           <h2 class="text-lg font-black text-white">ประวัติการเดินทาง</h2>
       </div>
-      <div class="p-4" id="historyListContainer">
-          <div class="flex justify-center py-10"><i class="fas fa-spinner fa-spin text-3xl text-blue-500"></i></div>
-      </div>
+      <div class="p-4" id="historyListContainer"><div class="flex justify-center py-10"><i class="fas fa-spinner fa-spin text-3xl text-blue-500"></i></div></div>
   </div>
 
   <div id="historyDetailModal" class="hidden fixed inset-0 z-[210] bg-gray-900/95 flex flex-col justify-end transition-transform">
       <div class="bg-gray-800 rounded-t-[24px] w-full mx-auto shadow-2xl flex flex-col h-[85vh] border-t border-gray-700">
           <div class="p-4 flex justify-between items-center border-b border-gray-700 shrink-0">
               <h3 class="text-lg font-black text-white">รายละเอียด</h3>
-              <button onclick="closeHistoryDetail()" class="text-gray-400 hover:text-white bg-gray-700 rounded-full w-8 h-8 flex items-center justify-center transition-colors">
-                  <i class="fas fa-times"></i>
-              </button>
+              <button onclick="closeHistoryDetail()" class="text-gray-400 hover:text-white bg-gray-700 rounded-full w-8 h-8 flex items-center justify-center transition-colors"><i class="fas fa-times"></i></button>
           </div>
           <div class="p-4 overflow-y-auto flex-1 space-y-4 text-white">
               <div class="flex justify-between items-center bg-gray-900 p-3 rounded-xl border border-gray-700 shadow-sm">
@@ -435,37 +369,19 @@
                   </div>
                   <span class="font-black text-green-400 text-[16px] bg-gray-800 px-3 py-1 rounded-lg shadow-inner" id="histDetPrice">฿0</span>
               </div>
-
               <div class="bg-gray-900 p-3.5 rounded-xl border border-gray-700 relative shadow-sm">
                   <div class="absolute left-[1.35rem] top-6 bottom-6 w-0.5 border-l-[1.5px] border-dashed border-gray-700"></div>
-                  <div class="flex items-start gap-3 mb-3 relative z-10 w-full min-w-0">
-                      <div class="shrink-0 mt-1"><i class="fas fa-circle text-[10px] text-green-500 border border-gray-800 rounded-full"></i></div>
-                      <div class="flex-1 min-w-0">
-                          <p class="text-[10px] text-gray-400 font-bold mb-0.5">จุดรับ</p>
-                          <p class="text-[13px] text-gray-200 font-medium leading-tight" id="histDetPick">...</p>
-                      </div>
-                  </div>
-                  <div class="flex items-start gap-3 relative z-10 w-full min-w-0">
-                      <div class="shrink-0 mt-1"><i class="fas fa-circle text-[10px] text-red-500 border border-gray-800 rounded-full"></i></div>
-                      <div class="flex-1 min-w-0">
-                          <p class="text-[10px] text-gray-400 font-bold mb-0.5">จุดส่ง</p>
-                          <p class="text-[13px] text-gray-200 font-medium leading-tight" id="histDetDrop">...</p>
-                      </div>
-                  </div>
+                  <div class="flex items-start gap-3 mb-3 relative z-10 w-full min-w-0"><div class="shrink-0 mt-1"><i class="fas fa-circle text-[10px] text-green-500 border border-gray-800 rounded-full"></i></div><div class="flex-1 min-w-0"><p class="text-[10px] text-gray-400 font-bold mb-0.5">จุดรับ</p><p class="text-[13px] text-gray-200 font-medium leading-tight" id="histDetPick">...</p></div></div>
+                  <div class="flex items-start gap-3 relative z-10 w-full min-w-0"><div class="shrink-0 mt-1"><i class="fas fa-circle text-[10px] text-red-500 border border-gray-800 rounded-full"></i></div><div class="flex-1 min-w-0"><p class="text-[10px] text-gray-400 font-bold mb-0.5">จุดส่ง</p><p class="text-[13px] text-gray-200 font-medium leading-tight" id="histDetDrop">...</p></div></div>
               </div>
-
-              <button id="btnBlockDriver" onclick="blockCurrentHistoryDriver()" class="w-full mt-2 bg-red-900/40 border border-red-500/30 text-red-400 font-bold py-3.5 rounded-xl shadow-sm hover:bg-red-800 hover:text-white transition flex items-center justify-center gap-2">
-                  <i class="fas fa-ban"></i> บล็อกคนขับคนนี้
-              </button>
+              <button id="btnBlockDriver" onclick="blockCurrentHistoryDriver()" class="w-full mt-2 bg-red-900/40 border border-red-500/30 text-red-400 font-bold py-3.5 rounded-xl shadow-sm hover:bg-red-800 hover:text-white transition flex items-center justify-center gap-2"><i class="fas fa-ban"></i> บล็อกคนขับคนนี้</button>
           </div>
       </div>
   </div>
 
   <div id="routeChangeModal" class="hidden fixed inset-0 z-[200] bg-black/80 flex items-center justify-center p-4 pointer-events-auto transition-opacity">
       <div class="bg-gray-800 rounded-3xl p-6 w-full max-w-sm text-center shadow-xl text-gray-100 border border-gray-700">
-          <div class="w-16 h-16 bg-blue-950/50 text-blue-400 border border-blue-500/30 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl">
-              <i class="fas fa-route"></i>
-          </div>
+          <div class="w-16 h-16 bg-yellow-900/30 text-yellow-400 border border-yellow-500/30 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl"><i class="fas fa-route"></i></div>
           <h3 class="text-xl font-bold mb-2" id="rcTitle">ตรวจสอบราคาใหม่</h3>
           <p class="text-sm text-gray-300 mb-2 leading-relaxed" id="rcAddress">ระบบกำลังเพิ่มจุดแวะ...</p>
           <div class="bg-gray-900 rounded-xl p-3 mb-6 border border-gray-700 inline-block shadow-inner">
@@ -474,16 +390,14 @@
           </div>
           <div class="flex gap-3">
               <button onclick="rejectRouteChange()" class="flex-1 py-3 bg-gray-700 text-gray-200 font-bold rounded-xl hover:bg-gray-600 transition shadow-sm border border-gray-600">ยกเลิก</button>
-              <button onclick="acceptRouteChange()" class="flex-[2] py-3 bg-blue-600 text-white font-bold rounded-xl shadow-md hover:bg-blue-700 transition">ยืนยันการเพิ่ม</button>
+              <button onclick="acceptRouteChange()" class="flex-[2] py-3 bg-yellow-600 text-black font-bold rounded-xl shadow-md hover:bg-yellow-500 transition">ยืนยันการเพิ่ม</button>
           </div>
       </div>
   </div>
 
   <div id="promoModal" class="hidden fixed inset-0 z-[140] bg-black/80 flex items-center justify-center p-4 pointer-events-auto">
       <div class="bg-[#242b35] border border-gray-700 rounded-3xl p-6 w-full max-w-sm text-center shadow-2xl">
-          <div class="w-14 h-14 bg-gray-800 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl shadow-inner border border-gray-700">
-              <i class="fas fa-ticket-alt text-green-400"></i>
-          </div>
+          <div class="w-14 h-14 bg-gray-800 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl shadow-inner border border-gray-700"><i class="fas fa-ticket-alt text-green-400"></i></div>
           <h3 class="text-xl font-black text-white mb-1">โค้ดส่วนลด</h3>
           <p class="text-[13px] text-gray-400 mb-5 leading-relaxed">กรุณากรอกรหัสโปรโมชั่นเพื่อรับส่วนลด</p>
           <input type="text" id="promoInput" placeholder="ใส่รหัสโค้ดที่นี่" class="w-full p-3.5 mb-5 bg-[#1a1f26] border border-gray-700 focus:border-green-500 text-white rounded-xl text-center font-black uppercase outline-none transition placeholder-gray-600 text-sm">
@@ -496,23 +410,19 @@
 
   <div id="confirmActionModal" class="hidden fixed inset-0 z-[130] bg-black/80 flex items-center justify-center p-4 pointer-events-auto">
       <div class="bg-gray-800 border border-gray-700 rounded-3xl p-6 w-full max-w-sm text-center shadow-2xl">
-          <div class="w-16 h-16 bg-blue-900/30 text-blue-500 border border-blue-500/30 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl" id="confirmActionIcon">
-              <i class="fas fa-map-marked-alt"></i>
-          </div>
+          <div class="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl" id="confirmActionIcon"><i class="fas fa-map-marked-alt"></i></div>
           <h3 id="confirmActionTitle" class="text-xl font-black text-white mb-2">...</h3>
           <p id="confirmActionMessage" class="text-sm text-gray-400 mb-6 leading-relaxed">...</p>
           <div class="flex gap-3">
               <button onclick="closeConfirmActionModal()" class="flex-1 py-3 bg-gray-700 text-gray-200 font-bold rounded-xl hover:bg-gray-600 transition">ยกเลิก</button>
-              <button id="confirmActionButton" onclick="submitConfirmAction()" class="flex-1 py-3 bg-blue-600 text-white font-bold rounded-xl shadow-md hover:bg-blue-700 transition">ตกลง</button>
+              <button id="confirmActionButton" onclick="submitConfirmAction()" class="flex-1 py-3 text-white font-bold rounded-xl shadow-md transition">ตกลง</button>
           </div>
       </div>
   </div>
 
   <div id="callConfirmModal" class="hidden fixed inset-0 z-[130] bg-black/80 flex items-center justify-center p-4 pointer-events-auto">
       <div class="bg-gray-800 border border-green-500/30 rounded-3xl p-6 w-full max-w-sm text-center shadow-2xl">
-          <div class="w-16 h-16 bg-green-900/30 text-green-400 border border-green-500/30 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl">
-              <i class="fas fa-phone-volume"></i>
-          </div>
+          <div class="w-16 h-16 bg-green-900/30 text-green-400 border border-green-500/30 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl"><i class="fas fa-phone-volume"></i></div>
           <h3 class="text-xl font-black text-white mb-2">โทรหาคนขับ?</h3>
           <p class="text-sm text-gray-400 mb-6 leading-relaxed">คุณต้องการโทรหาคนขับผ่านเบอร์โทรศัพท์มือถือ ใช่หรือไม่?</p>
           <div class="flex gap-3">
@@ -524,9 +434,7 @@
 
   <div id="emergencyModal" class="hidden fixed inset-0 z-[120] bg-black/80 flex items-center justify-center p-4 pointer-events-auto">
       <div class="bg-gray-800 border border-red-500/50 rounded-3xl p-6 w-full max-w-sm text-center shadow-[0_0_30px_rgba(239,68,68,0.2)]">
-          <div class="w-16 h-16 bg-red-900/30 text-red-500 border border-red-500/30 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl">
-              <i class="fas fa-exclamation-triangle"></i>
-          </div>
+          <div class="w-16 h-16 bg-red-900/30 text-red-500 border border-red-500/30 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl"><i class="fas fa-exclamation-triangle"></i></div>
           <h3 class="text-xl font-black text-white mb-2">แจ้งเหตุฉุกเฉิน?</h3>
           <p class="text-sm text-gray-400 mb-6 leading-relaxed">คุณต้องการโทรออกไปยังสายด่วนตำรวจ (191) เพื่อแจ้งเหตุฉุกเฉินใช่หรือไม่?</p>
           <div class="flex gap-3">
@@ -538,9 +446,7 @@
 
   <div id="cancelModal" class="hidden fixed inset-0 z-[100] bg-black/80 flex items-center justify-center p-4 pointer-events-auto">
       <div class="bg-gray-800 border border-gray-700 rounded-3xl p-6 w-full max-w-sm text-center shadow-2xl">
-          <div class="w-16 h-16 bg-gray-900 text-gray-400 border border-gray-700 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl">
-              <i class="fas fa-question-circle"></i>
-          </div>
+          <div class="w-16 h-16 bg-gray-900 text-gray-400 border border-gray-700 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl"><i class="fas fa-question-circle"></i></div>
           <h3 class="text-xl font-black text-white mb-2">ยืนยันยกเลิกการเรียกรถ?</h3>
           <p class="text-sm text-gray-400 mb-6 leading-relaxed">หากยกเลิกแล้ว งานนี้จะถูกลบทิ้ง และคุณจะต้องทำการเรียกรถใหม่อีกครั้ง</p>
           <div class="flex gap-3">
@@ -576,11 +482,9 @@
     const db = firebase.database();
 
     let map, directionsService, directionsRenderer, geocoder, placesService;
-    let markerPick, markerDrop, markerDriver;
-    let markerHome, markerFav; 
+    let markerPick, markerDrop, markerDriver, markerHome, markerFav; 
     let polylineRoute = null; 
 
-    // เพิ่มระบบจัดการ Waypoints ในหน่วยความจำ (ฝั่งผู้โดยสาร)
     let localWaypoints = []; 
     let waypointMapMarkers = []; 
 
@@ -593,7 +497,7 @@
     let currentRouteBounds = null;
     let currentMapFocus = null; 
     let isTrackingMode = true;
-    let isSatelliteMode = true; 
+    let isSatelliteMode = false; 
     
     let lastNotifiedStatus = "";
     let hasInteractedPick = false;
@@ -602,74 +506,43 @@
 
     let loadedHistoryJobs = {}; 
     let selectedHistoryJobId = null;
+    let myBlockedDrivers = {};
 
-    function getDynamicBottomPadding() {
-        return 70 + (window.innerHeight * 0.4);
-    }
+    function getDynamicBottomPadding() { return 70 + (window.innerHeight * 0.4); }
 
     let pricingConfig = { base: 50, km: 10, pick: 5 }; 
-    db.ref('config/pricing').on('value', snap => {
-        if(snap.exists()) pricingConfig = snap.val();
-    });
+    db.ref('config/pricing').on('value', snap => { if(snap.exists()) pricingConfig = snap.val(); });
 
-    window.hasSpokenAccept = false;
-    window.hasSpokenArrivePick = false;
-    window.hasSpokenAtPickup = false;
-    window.hasSpokenDepart = false;
-    window.hasSpokenArriveDrop = false;
-    window.hasSpokenFinish = false;
-    window.hasSpokenCancel = false;
-    
-    window.hasNotifiedLinePick = false;
-    window.hasNotifiedLineDrop = false;
+    window.hasSpokenAccept = false; window.hasSpokenArrivePick = false; window.hasSpokenAtPickup = false;
+    window.hasSpokenDepart = false; window.hasSpokenArriveDrop = false; window.hasSpokenFinish = false;
+    window.hasSpokenCancel = false; window.hasNotifiedLinePick = false; window.hasNotifiedLineDrop = false;
     window.isShowingRouteChange = false; 
 
     function resetTrackingFlags() {
-        window.hasSpokenAccept = false;
-        window.hasSpokenArrivePick = false;
-        window.hasSpokenAtPickup = false;
-        window.hasSpokenDepart = false;
-        window.hasSpokenArriveDrop = false;
-        window.hasSpokenFinish = false;
-        window.hasSpokenCancel = false;
-        window.hasShownFinish = false;
-        window.hasShownCancel = false;
-        window.hasNotifiedLinePick = false;
-        window.hasNotifiedLineDrop = false;
-        window.isShowingRouteChange = false;
+        window.hasSpokenAccept = false; window.hasSpokenArrivePick = false; window.hasSpokenAtPickup = false;
+        window.hasSpokenDepart = false; window.hasSpokenArriveDrop = false; window.hasSpokenFinish = false;
+        window.hasSpokenCancel = false; window.hasShownFinish = false; window.hasShownCancel = false;
+        window.hasNotifiedLinePick = false; window.hasNotifiedLineDrop = false; window.isShowingRouteChange = false;
         lastNotifiedStatus = "";
     }
 
     async function requestWakeLock() {
-        if ('wakeLock' in navigator) {
-            try { wakeLock = await navigator.wakeLock.request('screen'); } catch (err) {}
-        }
+        if ('wakeLock' in navigator) { try { wakeLock = await navigator.wakeLock.request('screen'); } catch (err) {} }
     }
-
-    document.addEventListener('visibilitychange', () => {
-        if (wakeLock !== null && document.visibilityState === 'visible') {
-            requestWakeLock();
-        }
-    });
+    document.addEventListener('visibilitychange', () => { if (wakeLock !== null && document.visibilityState === 'visible') requestWakeLock(); });
 
     function speakText(text) {
         if ('speechSynthesis' in window) {
             window.speechSynthesis.cancel(); 
-            let msg = new SpeechSynthesisUtterance(text);
-            msg.lang = 'th-TH'; 
-            msg.rate = 1.0;     
+            let msg = new SpeechSynthesisUtterance(text); msg.lang = 'th-TH'; msg.rate = 1.0;     
             window.speechSynthesis.speak(msg);
         }
     }
 
     document.addEventListener("DOMContentLoaded", () => {
         let savedPhone = localStorage.getItem('passengerPhone');
-        if(savedPhone) {
-            let pInp = document.getElementById('userPhone');
-            if(pInp) pInp.value = savedPhone;
-        }
-        renderSavedPlacesUI();
-        renderRecentPlaces();
+        if(savedPhone) { let pInp = document.getElementById('userPhone'); if(pInp) pInp.value = savedPhone; }
+        renderSavedPlacesUI(); renderRecentPlaces();
     });
 
     let currentConfirmCallback = null;
@@ -677,392 +550,231 @@
         document.getElementById('confirmActionTitle').innerText = title;
         document.getElementById('confirmActionMessage').innerText = message;
         currentConfirmCallback = callback;
-        
-        const iconDiv = document.getElementById('confirmActionIcon');
-        const btn = document.getElementById('confirmActionButton');
-
+        const iconDiv = document.getElementById('confirmActionIcon'); const btn = document.getElementById('confirmActionButton');
         iconDiv.className = "w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl border";
         btn.className = "flex-1 py-3 text-white font-bold rounded-xl shadow-md transition";
 
-        if (theme === 'green') {
-            iconDiv.classList.add('bg-green-900/30', 'text-green-500', 'border-green-500/30');
-            btn.classList.add('bg-green-600', 'hover:bg-green-700');
-        } else if (theme === 'red') {
-            iconDiv.classList.add('bg-red-900/30', 'text-red-500', 'border-red-500/30');
-            btn.classList.add('bg-red-600', 'hover:bg-red-700');
-        } else {
-            iconDiv.classList.add('bg-blue-900/30', 'text-blue-500', 'border-blue-500/30');
-            btn.classList.add('bg-blue-600', 'hover:bg-blue-700');
-        }
-
+        if (theme === 'green') { iconDiv.classList.add('bg-green-900/30', 'text-green-500', 'border-green-500/30'); btn.classList.add('bg-green-600', 'hover:bg-green-700'); } 
+        else if (theme === 'red') { iconDiv.classList.add('bg-red-900/30', 'text-red-500', 'border-red-500/30'); btn.classList.add('bg-red-600', 'hover:bg-red-700'); } 
+        else { iconDiv.classList.add('bg-blue-900/30', 'text-blue-500', 'border-blue-500/30'); btn.classList.add('bg-blue-600', 'hover:bg-blue-700'); }
         document.getElementById('confirmActionModal').classList.remove('hidden');
     }
-    function closeConfirmActionModal() {
-        document.getElementById('confirmActionModal').classList.add('hidden');
-        currentConfirmCallback = null;
-    }
-    function submitConfirmAction() {
-        if(currentConfirmCallback) currentConfirmCallback();
-        closeConfirmActionModal();
-    }
+    function closeConfirmActionModal() { document.getElementById('confirmActionModal').classList.add('hidden'); currentConfirmCallback = null; }
+    function submitConfirmAction() { if(currentConfirmCallback) currentConfirmCallback(); closeConfirmActionModal(); }
 
     function openCallConfirmModal() { document.getElementById('callConfirmModal').classList.remove('hidden'); }
     function closeCallConfirmModal() { document.getElementById('callConfirmModal').classList.add('hidden'); }
-
     function openCancelModal() { document.getElementById('cancelModal').classList.remove('hidden'); }
     function closeCancelModal() { document.getElementById('cancelModal').classList.add('hidden'); }
-    
-    function confirmCancelBooking() {
-        document.getElementById('cancelModal').classList.add('hidden');
-        window.isCompleting = true;
-        db.ref('bookings/' + lineUserId).remove().then(() => {
-            if(APPS_SCRIPT_URL) fetch(`${APPS_SCRIPT_URL}?action=notify&type=cancel&name=${lineName}`, {mode:'no-cors'});
-            showAlert('ยกเลิกสำเร็จ', 'ระบบได้ทำการยกเลิกการเรียกรถเรียบร้อยแล้ว', 'success', () => { 
-                resetTrackingFlags();
-                window.isCompleting = false;
-                showPage(4); 
-            });
-        });
-    }
-
     function openPromoModal() { document.getElementById('promoModal').classList.remove('hidden'); }
     function closePromoModal() { document.getElementById('promoModal').classList.add('hidden'); }
 
+    function confirmCancelBooking() {
+        document.getElementById('cancelModal').classList.add('hidden'); window.isCompleting = true;
+        db.ref('bookings/' + lineUserId).remove().then(() => {
+            if(APPS_SCRIPT_URL) fetch(`${APPS_SCRIPT_URL}?action=notify&type=cancel&name=${lineName}`, {mode:'no-cors'});
+            showAlert('ยกเลิกสำเร็จ', 'ระบบได้ทำการยกเลิกการเรียกรถเรียบร้อยแล้ว', 'success', () => { resetTrackingFlags(); window.isCompleting = false; showPage(4); });
+        });
+    }
+
     function handleSavedPlace(type) {
-        let saved = localStorage.getItem('saved_' + type);
-        let typeName = type === 'home' ? 'บ้าน' : 'รายการโปรด';
-
-        if (saved) {
-            let p = JSON.parse(saved);
-            useRecentPlace(p.name, p.lat, p.lng);
-        } else {
-            saveCurrentAsPlace(type, typeName);
-        }
+        let saved = localStorage.getItem('saved_' + type); let typeName = type === 'home' ? 'บ้าน' : 'รายการโปรด';
+        if (saved) { let p = JSON.parse(saved); useRecentPlace(p.name, p.lat, p.lng); } 
+        else { saveCurrentAsPlace(type, typeName); }
     }
-
-    function editSavedPlace(type, event) {
-        event.stopPropagation(); 
-        let typeName = type === 'home' ? 'บ้าน' : 'รายการโปรด';
-        saveCurrentAsPlace(type, typeName);
-    }
+    function editSavedPlace(type, event) { event.stopPropagation(); let typeName = type === 'home' ? 'บ้าน' : 'รายการโปรด'; saveCurrentAsPlace(type, typeName); }
 
     function saveCurrentAsPlace(type, typeName) {
         let currentName = ""; let currentLat = 0; let currentLng = 0;
-        if (currentStep === 2 && markerPick && bookData.pName) {
-            currentName = bookData.pName;
-            currentLat = markerPick.getPosition().lat();
-            currentLng = markerPick.getPosition().lng();
-        } else if (currentStep === 3 && markerDrop && bookData.dName) {
-            currentName = bookData.dName;
-            currentLat = markerDrop.getPosition().lat();
-            currentLng = markerDrop.getPosition().lng();
-        }
+        if (currentStep === 2 && markerPick && bookData.pName) { currentName = bookData.pName; currentLat = markerPick.getPosition().lat(); currentLng = markerPick.getPosition().lng(); } 
+        else if (currentStep === 3 && markerDrop && bookData.dName) { currentName = bookData.dName; currentLat = markerDrop.getPosition().lat(); currentLng = markerDrop.getPosition().lng(); }
 
-        if (!currentName) {
-            showAlert('แจ้งเตือน', 'กรุณาเลื่อนหมุดไปยังจุดที่ต้องการตั้งค่าให้เรียบร้อยก่อนครับ', 'error'); 
-            return;
-        }
+        if (!currentName) { showAlert('แจ้งเตือน', 'กรุณาเลื่อนหมุดไปยังจุดที่ต้องการตั้งค่าให้เรียบร้อยก่อนครับ', 'error'); return; }
 
         let theme = (currentStep === 2) ? 'green' : 'red';
         openConfirmActionModal(`ตั้งค่า ${typeName}?`, `คุณต้องการบันทึกพิกัดปัจจุบันเป็น "${typeName}" ใช่หรือไม่?\n\n${currentName}`, () => {
             localStorage.setItem('saved_' + type, JSON.stringify({name: currentName, lat: currentLat, lng: currentLng}));
             showAlert('บันทึกสำเร็จ', `อัปเดตพิกัด "${typeName}" เรียบร้อยแล้ว!`, 'success');
-            renderSavedPlacesUI(); 
-            updateSavedMarkers(); 
+            renderSavedPlacesUI(); updateSavedMarkers(); 
         }, theme);
     }
 
     function renderSavedPlacesUI() {
-        let h = localStorage.getItem('saved_home');
-        let f = localStorage.getItem('saved_favorite');
+        let h = localStorage.getItem('saved_home'); let f = localStorage.getItem('saved_favorite');
         document.querySelectorAll('.label-home').forEach(el => el.innerText = h ? 'บ้าน' : 'ตั้งค่า');
         document.querySelectorAll('.label-favorite').forEach(el => el.innerText = f ? 'โปรด' : 'ตั้งค่า');
     }
 
     function updateSavedMarkers() {
         if(!map) return;
-        let h = localStorage.getItem('saved_home');
-        let f = localStorage.getItem('saved_favorite');
-        
-        if(h && markerHome) {
-            let p = JSON.parse(h);
-            markerHome.setPosition({lat: p.lat, lng: p.lng});
-            markerHome.setMap(map);
-        } else if(markerHome) markerHome.setMap(null);
-        
-        if(f && markerFav) {
-            let p = JSON.parse(f);
-            markerFav.setPosition({lat: p.lat, lng: p.lng});
-            markerFav.setMap(map);
-        } else if(markerFav) markerFav.setMap(null);
+        let h = localStorage.getItem('saved_home'); let f = localStorage.getItem('saved_favorite');
+        if(h && markerHome) { let p = JSON.parse(h); markerHome.setPosition({lat: p.lat, lng: p.lng}); markerHome.setMap(map); } else if(markerHome) markerHome.setMap(null);
+        if(f && markerFav) { let p = JSON.parse(f); markerFav.setPosition({lat: p.lat, lng: p.lng}); markerFav.setMap(map); } else if(markerFav) markerFav.setMap(null);
     }
 
     function saveRecentPlace(name, lat, lng) {
         if(!name || name === '') return;
         let places = JSON.parse(localStorage.getItem('recentPlaces') || '[]');
-        places = places.filter(p => p.name !== name);
-        places.unshift({name, lat, lng});
-        if(places.length > 5) places.pop(); 
-        localStorage.setItem('recentPlaces', JSON.stringify(places));
-        renderRecentPlaces();
+        places = places.filter(p => p.name !== name); places.unshift({name, lat, lng}); if(places.length > 5) places.pop(); 
+        localStorage.setItem('recentPlaces', JSON.stringify(places)); renderRecentPlaces();
     }
 
     function renderRecentPlaces() {
-        let places = JSON.parse(localStorage.getItem('recentPlaces') || '[]');
-        let html = '';
+        let places = JSON.parse(localStorage.getItem('recentPlaces') || '[]'); let html = '';
         if(places.length > 0) {
             places.forEach(p => {
-                let shortName = p.name.split(' ')[0]; 
-                if(shortName.length > 15) shortName = shortName.substring(0,15) + '...';
+                let shortName = p.name.split(' ')[0]; if(shortName.length > 15) shortName = shortName.substring(0,15) + '...';
                 html += `<button onclick="useRecentPlace('${p.name}', ${p.lat}, ${p.lng})" class="shrink-0 bg-gray-800 border border-gray-700 text-gray-300 px-3 py-1.5 rounded-full text-xs font-bold flex items-center gap-1.5 hover:bg-gray-700 transition shadow-sm"><i class="fas fa-history text-gray-500"></i> ${shortName}</button>`;
             });
         }
-        let pickEl = document.getElementById('recentPlacesPick');
-        let dropEl = document.getElementById('recentPlacesDrop');
-        if(pickEl) pickEl.innerHTML = html;
-        if(dropEl) dropEl.innerHTML = html;
+        let pickEl = document.getElementById('recentPlacesPick'); let dropEl = document.getElementById('recentPlacesDrop');
+        if(pickEl) pickEl.innerHTML = html; if(dropEl) dropEl.innerHTML = html;
     }
 
     function useRecentPlace(name, lat, lng) {
-        let pos = {lat: lat, lng: lng};
-        if(map) map.panTo(pos);
+        let pos = {lat: lat, lng: lng}; if(map) map.panTo(pos);
         if(currentStep === 2) {
-            hasInteractedPick = true;
-            if(markerPick) markerPick.setPosition(pos);
-            bookData.pName = name;
-            let el = document.getElementById('pickupSearch');
-            if(el) { el.value = name; el.dataset.oldValue = name; }
+            hasInteractedPick = true; if(markerPick) markerPick.setPosition(pos); bookData.pName = name;
+            let el = document.getElementById('pickupSearch'); if(el) { el.value = name; el.dataset.oldValue = name; }
         } else if(currentStep === 3) {
-            hasInteractedDrop = true;
-            if(markerDrop) markerDrop.setPosition(pos);
-            bookData.dName = name;
-            let el = document.getElementById('dropoffSearch');
-            if(el) { el.value = name; el.dataset.oldValue = name; }
+            hasInteractedDrop = true; if(markerDrop) markerDrop.setPosition(pos); bookData.dName = name;
+            let el = document.getElementById('dropoffSearch'); if(el) { el.value = name; el.dataset.oldValue = name; }
         }
     }
 
     function togglePage4Panel() {
-        const panel = document.getElementById('page4Panel');
-        if(!panel) return;
+        const panel = document.getElementById('page4Panel'); if(!panel) return;
         panel.classList.toggle('panel-collapsed-page4');
-        if (map && currentStep === 4) {
-            if (panel.classList.contains('panel-collapsed-page4')) {
-                map.setOptions({ padding: { top: 80, bottom: 120, left: 0, right: 0 } });
-            } else {
-                map.setOptions({ padding: { top: 80, bottom: getDynamicBottomPadding(), left: 0, right: 0 } });
-            }
-        }
+        if (map && currentStep === 4) { map.setOptions({ padding: { top: 80, bottom: panel.classList.contains('panel-collapsed-page4') ? 120 : getDynamicBottomPadding(), left: 0, right: 0 } }); }
     }
 
     function toggleTrackingPanel() {
-        const panel = document.getElementById('trackingPanel');
-        if(!panel) return;
+        const panel = document.getElementById('trackingPanel'); if(!panel) return;
         panel.classList.toggle('panel-collapsed');
-        if (map && currentStep === 'Tracking') {
-            if (panel.classList.contains('panel-collapsed')) {
-                map.setOptions({ padding: { top: 80, bottom: 120, left: 0, right: 0 } });
-            } else {
-                map.setOptions({ padding: { top: 80, bottom: 350, left: 0, right: 0 } });
-            }
-        }
+        if (map && currentStep === 'Tracking') { map.setOptions({ padding: { top: 80, bottom: panel.classList.contains('panel-collapsed') ? 120 : 350, left: 0, right: 0 } }); }
     }
 
     function showAlert(title, message, type = 'info', callback = null) {
-        document.getElementById('alertTitle').innerText = title;
-        document.getElementById('alertMessage').innerText = message;
-        
+        document.getElementById('alertTitle').innerText = title; document.getElementById('alertMessage').innerText = message;
         let iconHtml = ''; let iconBg = ''; let iconColor = '';
-        if (type === 'error') {
-            iconHtml = '<i class="fas fa-times"></i>'; iconBg = 'bg-red-900/30 border border-red-500/30'; iconColor = 'text-red-500';
-        } else if (type === 'success') {
-            iconHtml = '<i class="fas fa-check"></i>'; iconBg = 'bg-green-900/30 border border-green-500/30'; iconColor = 'text-green-500';
-        } else {
-            iconHtml = '<i class="fas fa-info"></i>'; iconBg = 'bg-blue-900/30 border border-blue-500/30'; iconColor = 'text-blue-500';
-        }
+        if (type === 'error') { iconHtml = '<i class="fas fa-times"></i>'; iconBg = 'bg-red-900/30 border border-red-500/30'; iconColor = 'text-red-500'; } 
+        else if (type === 'success') { iconHtml = '<i class="fas fa-check"></i>'; iconBg = 'bg-green-900/30 border border-green-500/30'; iconColor = 'text-green-500'; } 
+        else { iconHtml = '<i class="fas fa-info"></i>'; iconBg = 'bg-blue-900/30 border border-blue-500/30'; iconColor = 'text-blue-500'; }
         
         const iconDiv = document.getElementById('alertIcon');
-        if(iconDiv) {
-            iconDiv.innerHTML = iconHtml;
-            iconDiv.className = `w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl ${iconBg} ${iconColor}`;
-        }
+        if(iconDiv) { iconDiv.innerHTML = iconHtml; iconDiv.className = `w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl ${iconBg} ${iconColor}`; }
         document.getElementById('alertModal').classList.remove('hidden');
         window.alertCloseCallback = typeof callback === 'function' ? callback : null;
     }
-
-    function closeAlertModal() {
-        document.getElementById('alertModal').classList.add('hidden');
-        if (window.alertCloseCallback) window.alertCloseCallback();
-    }
+    function closeAlertModal() { document.getElementById('alertModal').classList.add('hidden'); if (window.alertCloseCallback) window.alertCloseCallback(); }
 
     const darkMapStyle = [
-        { elementType: "geometry", stylers: [{ color: "#242f3e" }] },
-        { elementType: "labels.text.stroke", stylers: [{ color: "#242f3e" }] },
-        { elementType: "labels.text.fill", stylers: [{ color: "#746855" }] },
-        { featureType: "administrative.locality", elementType: "labels.text.fill", stylers: [{ color: "#d59563" }] },
-        { featureType: "landscape.man_made", elementType: "geometry.fill", stylers: [{ color: "#364559" }] }, 
-        { featureType: "landscape.man_made", elementType: "geometry.stroke", stylers: [{ color: "#546a82" }] }, 
-        { featureType: "landscape.man_made.building", elementType: "geometry.fill", stylers: [{ color: "#506680" }] }, 
-        { featureType: "landscape.man_made.building", elementType: "geometry.stroke", stylers: [{ color: "#7089a6" }] },
-        { featureType: "landscape.natural", elementType: "geometry", stylers: [{ color: "#1e2836" }] }, 
-        { featureType: "poi", elementType: "labels.text.fill", stylers: [{ color: "#d59563" }] },
-        { featureType: "poi", elementType: "geometry", stylers: [{ color: "#283d3b" }] },
-        { featureType: "poi.park", elementType: "geometry", stylers: [{ color: "#263c3f" }] },
-        { featureType: "poi.park", elementType: "labels.text.fill", stylers: [{ color: "#6b9a76" }] },
-        { featureType: "road", elementType: "geometry", stylers: [{ color: "#111720" }] },
-        { featureType: "road", elementType: "geometry.stroke", stylers: [{ color: "#212a37" }] },
-        { featureType: "road", elementType: "labels.text.fill", stylers: [{ color: "#9ca5b3" }] },
-        { featureType: "road.highway", elementType: "geometry", stylers: [{ color: "#746855" }] },
-        { featureType: "road.highway", elementType: "geometry.stroke", stylers: [{ color: "#1f2835" }] },
-        { featureType: "road.highway", elementType: "labels.text.fill", stylers: [{ color: "#f3d19c" }] },
-        { featureType: "transit", elementType: "geometry", stylers: [{ color: "#2f3948" }] },
-        { featureType: "transit.station", elementType: "labels.text.fill", stylers: [{ color: "#d59563" }] },
-        { featureType: "water", elementType: "geometry", stylers: [{ color: "#17263c" }] },
-        { featureType: "water", elementType: "labels.text.fill", stylers: [{ color: "#515c6d" }] },
-        { featureType: "water", elementType: "labels.text.stroke", stylers: [{ color: "#17263c" }] }
+        { elementType: "geometry", stylers: [{ color: "#242f3e" }] }, { elementType: "labels.text.stroke", stylers: [{ color: "#242f3e" }] },
+        { elementType: "labels.text.fill", stylers: [{ color: "#746855" }] }, { featureType: "administrative.locality", elementType: "labels.text.fill", stylers: [{ color: "#d59563" }] },
+        { featureType: "landscape.man_made", elementType: "geometry.fill", stylers: [{ color: "#364559" }] }, { featureType: "landscape.man_made", elementType: "geometry.stroke", stylers: [{ color: "#546a82" }] }, 
+        { featureType: "landscape.man_made.building", elementType: "geometry.fill", stylers: [{ color: "#506680" }] }, { featureType: "landscape.man_made.building", elementType: "geometry.stroke", stylers: [{ color: "#7089a6" }] },
+        { featureType: "landscape.natural", elementType: "geometry", stylers: [{ color: "#1e2836" }] }, { featureType: "poi", elementType: "labels.text.fill", stylers: [{ color: "#d59563" }] },
+        { featureType: "poi", elementType: "geometry", stylers: [{ color: "#283d3b" }] }, { featureType: "poi.park", elementType: "geometry", stylers: [{ color: "#263c3f" }] },
+        { featureType: "poi.park", elementType: "labels.text.fill", stylers: [{ color: "#6b9a76" }] }, { featureType: "road", elementType: "geometry", stylers: [{ color: "#111720" }] },
+        { featureType: "road", elementType: "geometry.stroke", stylers: [{ color: "#212a37" }] }, { featureType: "road", elementType: "labels.text.fill", stylers: [{ color: "#9ca5b3" }] },
+        { featureType: "road.highway", elementType: "geometry", stylers: [{ color: "#746855" }] }, { featureType: "road.highway", elementType: "geometry.stroke", stylers: [{ color: "#1f2835" }] },
+        { featureType: "road.highway", elementType: "labels.text.fill", stylers: [{ color: "#f3d19c" }] }, { featureType: "transit", elementType: "geometry", stylers: [{ color: "#2f3948" }] },
+        { featureType: "transit.station", elementType: "labels.text.fill", stylers: [{ color: "#d59563" }] }, { featureType: "water", elementType: "geometry", stylers: [{ color: "#17263c" }] },
+        { featureType: "water", elementType: "labels.text.fill", stylers: [{ color: "#515c6d" }] }, { featureType: "water", elementType: "labels.text.stroke", stylers: [{ color: "#17263c" }] }
     ];
 
     function toggleMapStyle() {
-        if(!map) return;
-        isSatelliteMode = !isSatelliteMode;
+        if(!map) return; isSatelliteMode = !isSatelliteMode;
         let btnMapStyle = document.getElementById('btnMapStyle');
-        if(isSatelliteMode) {
-            map.setMapTypeId('hybrid');
-            if(btnMapStyle) btnMapStyle.innerHTML = '<i class="fas fa-layer-group text-xl"></i>';
-        } else {
-            map.setMapTypeId('roadmap');
-            map.setOptions({ styles: darkMapStyle });
-            if(btnMapStyle) btnMapStyle.innerHTML = '<i class="fas fa-satellite text-xl"></i>';
-        }
+        if(isSatelliteMode) { map.setMapTypeId('hybrid'); if(btnMapStyle) btnMapStyle.innerHTML = '<i class="fas fa-layer-group text-xl"></i>'; } 
+        else { map.setMapTypeId('roadmap'); map.setOptions({ styles: darkMapStyle }); if(btnMapStyle) btnMapStyle.innerHTML = '<i class="fas fa-satellite text-xl"></i>'; }
     }
 
     function updateMapControlsPosition(page) {
-        const controls = document.getElementById('mapControls');
-        if (!controls) return;
+        const controls = document.getElementById('mapControls'); if (!controls) return;
         controls.classList.remove('top-[76px]', 'top-[170px]');
-        if (page === 2 || page === 3) controls.classList.add('top-[170px]');
-        else controls.classList.add('top-[76px]');
+        if (page === 2 || page === 3) controls.classList.add('top-[170px]'); else controls.classList.add('top-[76px]');
     }
 
-    function formatPhone(input) {
-      let val = input.value.replace(/\D/g, ''); 
-      if (val.startsWith('66')) val = '0' + val.substring(2); 
-      if (val.length > 10) val = val.substring(0, 10); 
-      input.value = val;
-    }
-
-    function openLineOA() {
-      if (typeof liff !== 'undefined' && liff.isInClient()) {
-        liff.openWindow({ url: LINE_OA_URL, external: true });
-      } else {
-        window.open(LINE_OA_URL, '_blank');
-      }
-    }
-
-    function openEmergencyModal() { document.getElementById('emergencyModal').classList.remove('hidden'); }
-    function closeEmergencyModal() { document.getElementById('emergencyModal').classList.add('hidden'); }
+    function formatPhone(input) { let val = input.value.replace(/\D/g, ''); if (val.startsWith('66')) val = '0' + val.substring(2); if (val.length > 10) val = val.substring(0, 10); input.value = val; }
+    function openLineOA() { if (typeof liff !== 'undefined' && liff.isInClient()) { liff.openWindow({ url: LINE_OA_URL, external: true }); } else { window.open(LINE_OA_URL, '_blank'); } }
 
     function focusLocation(lat, lng, type) {
-        if (currentMapFocus === type) {
-            fitRouteBounds();
-            currentMapFocus = null;
-        } else {
-            map.panTo({lat: lat, lng: lng});
-            map.setZoom(18); 
-            isTrackingMode = false;
-            currentMapFocus = type;
-            let btnC = document.getElementById('btnCrosshair');
-            let btnO = document.getElementById('btnOverview');
-            if(btnC) btnC.classList.replace('text-green-400', 'text-gray-500');
-            if(btnO) btnO.classList.replace('text-green-400', 'text-gray-500');
+        if (currentMapFocus === type) { fitRouteBounds(); currentMapFocus = null; } 
+        else {
+            map.panTo({lat: lat, lng: lng}); map.setZoom(18); isTrackingMode = false; currentMapFocus = type;
+            let btnC = document.getElementById('btnCrosshair'); let btnO = document.getElementById('btnOverview');
+            if(btnC) btnC.classList.replace('text-green-400', 'text-gray-500'); if(btnO) btnO.classList.replace('text-green-400', 'text-gray-500');
         }
     }
 
     function centerToFocus() {
-        if(!map) return;
-        let pos;
-        if(currentStep === 2 && markerPick) pos = markerPick.getPosition();
-        else if(currentStep === 3 && markerDrop) pos = markerDrop.getPosition();
-        else if(currentStep === 'Tracking' && markerDriver) pos = markerDriver.getPosition();
-        
+        if(!map) return; let pos;
+        if(currentStep === 2 && markerPick) pos = markerPick.getPosition(); else if(currentStep === 3 && markerDrop) pos = markerDrop.getPosition(); else if(currentStep === 'Tracking' && markerDriver) pos = markerDriver.getPosition();
         currentMapFocus = null;
         if(pos) {
-            map.panTo(pos);
-            map.setZoom(16);
+            map.panTo(pos); map.setZoom(16);
             if(currentStep === 'Tracking') {
                 isTrackingMode = true; 
-                let bC = document.getElementById('btnCrosshair');
-                let bO = document.getElementById('btnOverview');
-                if(bC) bC.classList.replace('text-gray-500', 'text-green-400');
-                if(bO) bO.classList.replace('text-green-400', 'text-gray-500');
-                
+                let bC = document.getElementById('btnCrosshair'); let bO = document.getElementById('btnOverview');
+                if(bC) bC.classList.replace('text-gray-500', 'text-green-400'); if(bO) bO.classList.replace('text-green-400', 'text-gray-500');
                 const panel = document.getElementById('trackingPanel');
-                if(panel && !panel.classList.contains('panel-collapsed')) {
-                    panel.classList.add('panel-collapsed');
-                    map.setOptions({ padding: { top: 80, bottom: 120, left: 0, right: 0 } });
-                }
+                if(panel && !panel.classList.contains('panel-collapsed')) { panel.classList.add('panel-collapsed'); map.setOptions({ padding: { top: 80, bottom: 120, left: 0, right: 0 } }); }
             }
-        } else {
-            useCurrentLocation();
-        }
+        } else { useCurrentLocation(); }
     }
 
     function fitRouteBounds() {
         if (map && currentRouteBounds) {
-            isTrackingMode = false; 
-            currentMapFocus = null;
-            map.fitBounds(currentRouteBounds, { top: 80, right: 50, bottom: 350, left: 50 });
-            let bC = document.getElementById('btnCrosshair');
-            let bO = document.getElementById('btnOverview');
-            if(bC) bC.classList.replace('text-green-400', 'text-gray-500');
-            if(bO) bO.classList.replace('text-gray-500', 'text-green-400');
-        } else {
-            centerToFocus();
-        }
+            isTrackingMode = false; currentMapFocus = null; map.fitBounds(currentRouteBounds, { top: 80, right: 50, bottom: 350, left: 50 });
+            let bC = document.getElementById('btnCrosshair'); let bO = document.getElementById('btnOverview');
+            if(bC) bC.classList.replace('text-green-400', 'text-gray-500'); if(bO) bO.classList.replace('text-gray-500', 'text-green-400');
+        } else { centerToFocus(); }
     }
 
-    // สร้างระบบเลข Marker
-    function createNumberedMarkerIcon(number, colorHex) {
+    // สร้างไอคอนหมุดแบบมีตัวเลขตรงกลาง
+    function createNumberedMarkerIcon(text, colorHex) {
         return {
             path: "M 0,0 C -12,-16 -18,-22 -18,-32 A 18,18 0 1,1 18,-32 C 18,-22 12,-16 0,0 Z M -8,-32 A 8,8 0 1,0 8,-32 A 8,8 0 1,0 -8,-32 Z",
-            fillColor: colorHex,
-            fillOpacity: 1,
-            strokeWeight: 2,
-            strokeColor: '#ffffff',
-            scale: 1,
-            labelOrigin: typeof google !== 'undefined' && google.maps ? new google.maps.Point(0, -32) : null,
-            anchor: typeof google !== 'undefined' && google.maps ? new google.maps.Point(0, 0) : null
+            fillColor: colorHex, fillOpacity: 1, strokeWeight: 2, strokeColor: '#ffffff', scale: 1,
+            labelOrigin: new google.maps.Point(0, -15),
+            anchor: new google.maps.Point(0, 0)
         };
     }
 
-    const iconHome = { path: "M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z", fillColor: '#3b82f6', fillOpacity: 1, strokeWeight: 1, strokeColor: '#ffffff', scale: 1.4 };
-    const iconFav = { path: "M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z", fillColor: '#ec4899', fillOpacity: 1, strokeWeight: 1, strokeColor: '#ffffff', scale: 1.4 };
+    let iconHome = { path: "M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z", fillColor: '#3b82f6', fillOpacity: 1, strokeWeight: 1, strokeColor: '#ffffff', scale: 1.4 };
+    let iconFav = { path: "M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z", fillColor: '#ec4899', fillOpacity: 1, strokeWeight: 1, strokeColor: '#ffffff', scale: 1.4 };
 
     function initMap() {
       if (typeof google === 'undefined' || typeof google.maps === 'undefined') return;
       if (map) return; 
       
       map = new google.maps.Map(document.getElementById('map'), { 
-        zoom: 16, 
-        center: {lat: driverData.lat, lng: driverData.lng}, 
-        mapTypeId: 'hybrid', 
-        disableDefaultUI: true, 
-        gestureHandling: 'greedy',
-        zoomControl: false,
-        padding: { top: 70, bottom: getDynamicBottomPadding(), left: 0, right: 0 } 
+        zoom: 16, center: {lat: driverData.lat, lng: driverData.lng}, mapTypeId: 'roadmap', styles: darkMapStyle,
+        disableDefaultUI: true, gestureHandling: 'greedy', zoomControl: false, padding: { top: 70, bottom: getDynamicBottomPadding(), left: 0, right: 0 } 
       });
 
+      // จัดการ UI หมุดกลางจอตอนเลื่อน (เพื่อให้รู้พิกัด Center สำหรับกดเพิ่มจุดแวะ)
       map.addListener('dragstart', () => {
          if (currentStep === 'Tracking') {
-             isTrackingMode = false;
-             let btnCrosshair = document.getElementById('btnCrosshair');
+             isTrackingMode = false; let btnCrosshair = document.getElementById('btnCrosshair');
              if(btnCrosshair) btnCrosshair.classList.replace('text-green-400', 'text-gray-500');
+         }
+         if (currentStep === 2 || currentStep === 3) {
+             document.getElementById('centerPinWrapper').classList.add('-translate-y-2');
+             document.getElementById('centerPinShadow').classList.add('scale-75', 'opacity-50');
+         }
+      });
+      map.addListener('idle', () => {
+         if (currentStep === 2 || currentStep === 3) {
+             document.getElementById('centerPinWrapper').classList.remove('-translate-y-2');
+             document.getElementById('centerPinShadow').classList.remove('scale-75', 'opacity-50');
+             updateAddressBox(true); 
          }
       });
 
       directionsService = new google.maps.DirectionsService();
-      directionsRenderer = new google.maps.DirectionsRenderer({ 
-          map: map, suppressMarkers: true, suppressPolylines: true, preserveViewport: true 
-      });
+      directionsRenderer = new google.maps.DirectionsRenderer({ map: map, suppressMarkers: true, suppressPolylines: true, preserveViewport: true });
       geocoder = new google.maps.Geocoder();
       placesService = new google.maps.places.PlacesService(map);
       
@@ -1082,56 +794,14 @@
           zIndex: 9999
       });
 
-      map.addListener('center_changed', () => {
-         if (currentStep === 2 && markerPick) markerPick.setPosition(map.getCenter());
-         if (currentStep === 3 && markerDrop) markerDrop.setPosition(map.getCenter());
-      });
-
-      map.addListener('dragend', () => {
-         if(currentStep === 2) hasInteractedPick = true;
-         if(currentStep === 3) hasInteractedDrop = true;
-         updateAddressBox(true); 
-      });
-
-      map.addListener('click', (event) => {
-        if (event.placeId && placesService) {
-          event.stop(); 
-          placesService.getDetails({ placeId: event.placeId, fields: ['name', 'geometry', 'formatted_address'] }, (place, status) => {
-            if (status === 'OK' && place.geometry) {
-                map.panTo(place.geometry.location);
-                let finalAddr = place.name;
-                if (place.formatted_address) {
-                    let cleanAddr = place.formatted_address.replace(/,?\s*ประเทศไทย/g, '').replace(/Unnamed Road,?\s*/g, '').trim();
-                    if(!cleanAddr.includes(place.name)) finalAddr += " (" + cleanAddr + ")";
-                }
-                
-                if (currentStep === 2) {
-                  hasInteractedPick = true;
-                  markerPick.setPosition(place.geometry.location);
-                  bookData.pName = finalAddr;
-                  let el = document.getElementById('pickupSearch');
-                  if(el) { el.value = finalAddr; el.dataset.oldValue = finalAddr; }
-                } else if (currentStep === 3) {
-                  hasInteractedDrop = true;
-                  markerDrop.setPosition(place.geometry.location);
-                  bookData.dName = finalAddr;
-                  let el = document.getElementById('dropoffSearch');
-                  if(el) { el.value = finalAddr; el.dataset.oldValue = finalAddr; }
-                }
-            }
-          });
-        }
-      });
-
-      // ตั้งค่าช่องค้นหาจุดแวะ
+      setupSearch('pickupSearch', markerPick, true);
+      setupSearch('dropoffSearch', markerDrop, false);
       setupWaypointSearch('waypointSearchInput');
     }
 
     function mockLoginForBrowser() {
-        lineUserId = "U" + Math.random().toString(36).substr(2, 9);
-        lineName = "ลูกค้าทดสอบ (Browser)";
-        let un = document.getElementById('userName');
-        if(un) un.innerText = lineName;
+        lineUserId = "U" + Math.random().toString(36).substr(2, 9); lineName = "ลูกค้าทดสอบ (Browser)";
+        let un = document.getElementById('userName'); if(un) un.innerText = lineName;
         initApp();
     }
 
@@ -1140,156 +810,161 @@
           if(liff.isLoggedIn()){
             liff.getProfile().then(p => {
               lineUserId = p.userId; lineName = p.displayName;
-              let un = document.getElementById('userName');
-              if(un) un.innerText = lineName;
-              if(p.pictureUrl) {
-                  let pic = document.getElementById('userPic');
-                  if(pic) pic.src = p.pictureUrl; 
-              }
+              let un = document.getElementById('userName'); if(un) un.innerText = lineName;
+              if(p.pictureUrl) { let pic = document.getElementById('userPic'); if(pic) pic.src = p.pictureUrl; }
               initApp();
             }).catch(err => { mockLoginForBrowser(); });
           } else { liff.login(); }
         }).catch(e => { mockLoginForBrowser(); });
-    } else {
-        mockLoginForBrowser();
-    }
+    } else { mockLoginForBrowser(); }
 
     window.isCompleting = false;
     
     function initApp() {
       requestWakeLock();
-      
-      db.ref('passenger_blocks/' + lineUserId).on('value', snap => {
-          myBlockedDrivers = snap.val() || {};
-      });
+      db.ref('passenger_blocks/' + lineUserId).on('value', snap => { myBlockedDrivers = snap.val() || {}; });
 
       db.ref('driver').on('value', snap => {
         const d = snap.val();
         if(d) {
-          driverData = d;
-          let ds = document.getElementById('driverStatus');
-          let btn = document.getElementById('btnStart');
-          
+          driverData = d; let ds = document.getElementById('driverStatus'); let btn = document.getElementById('btnStart');
           if(d.status === "ออนไลน์") {
-            if(ds) {
-                ds.innerHTML = `<i class="fas fa-check-circle text-green-500 mr-1"></i> ออนไลน์`; 
-                ds.className = "text-xl font-black text-green-400 relative z-10 flex items-center justify-center";
-            }
-            if(btn) {
-                btn.disabled = false; btn.classList.remove('opacity-50', 'cursor-not-allowed');
-                btn.innerHTML = `เริ่มต้นเรียกรถ <i class="fas fa-arrow-right ml-2"></i>`;
-            }
+            if(ds) { ds.innerHTML = `<i class="fas fa-check-circle text-green-500 mr-1"></i> ออนไลน์`; ds.className = "text-xl font-black text-green-400 relative z-10 flex items-center justify-center"; }
+            if(btn) { btn.disabled = false; btn.classList.remove('opacity-50', 'cursor-not-allowed'); btn.innerHTML = `เริ่มต้นเรียกรถ <i class="fas fa-arrow-right ml-2"></i>`; }
           } else {
-            if(ds) {
-                ds.innerHTML = `<i class="fas fa-times-circle text-red-400 mr-1"></i> ออฟไลน์`; 
-                ds.className = "text-xl font-black text-red-400 relative z-10 flex items-center justify-center";
-            }
-            if(btn) {
-                btn.disabled = true; btn.classList.add('opacity-50', 'cursor-not-allowed');
-                btn.innerHTML = `<i class="fas fa-lock mr-2"></i> คนขับปิดรับงานชั่วคราว`;
-            }
+            if(ds) { ds.innerHTML = `<i class="fas fa-times-circle text-red-400 mr-1"></i> ออฟไลน์`; ds.className = "text-xl font-black text-red-400 relative z-10 flex items-center justify-center"; }
+            if(btn) { btn.disabled = true; btn.classList.add('opacity-50', 'cursor-not-allowed'); btn.innerHTML = `<i class="fas fa-lock mr-2"></i> คนขับปิดรับงานชั่วคราว`; }
           }
-          
-          if(currentStep === 'Tracking' && markerDriver) {
-              let newPos = {lat: d.lat, lng: d.lng};
-              markerDriver.setPosition(newPos);
-              updateRealtimeMap(); 
-          }
+          if(currentStep === 'Tracking' && markerDriver) { markerDriver.setPosition({lat: d.lat, lng: d.lng}); updateRealtimeMap(); }
         }
       });
 
       db.ref('bookings/' + lineUserId).on('value', snap => {
         const b = snap.val();
         if(b) { 
-            if(b.driverPin && b.status === "รับงานแล้ว") {
-                if(myBlockedDrivers[b.driverPin] || myBlockedDrivers[b.driverPhone]) {
-                    db.ref('bookings/' + lineUserId).update({ driverPin: null, driverPhone: null, status: "รอผู้ขับขี่ตอบรับ" });
-                    return; 
-                }
+            if(b.driverPin && b.status === "รับงานแล้ว" && (myBlockedDrivers[b.driverPin] || myBlockedDrivers[b.driverPhone])) {
+                db.ref('bookings/' + lineUserId).update({ driverPin: null, driverPhone: null, status: "รอผู้ขับขี่ตอบรับ" });
+                return; 
             }
-            
-            bookData = b; 
-            localWaypoints = b.waypoints || []; // ดึงข้อมูล waypoints มาโชว์
-            handleTracking(); 
+            bookData = b; localWaypoints = b.waypoints || []; handleTracking(); 
         } 
-        else if ((currentStep === 'Tracking') && !window.isCompleting) {
+        else if (currentStep === 'Tracking' && !window.isCompleting) {
             window.isCompleting = true;
-            showAlert('แจ้งเตือน', 'ขออภัยในความไม่สะดวกครับ งานนี้ถูกยกเลิก รบกวนคุณลูกค้ากดยืนยันเพื่อเรียกรถใหม่อีกครั้งนะครับ', 'info', () => {
-                resetTrackingFlags();
-                window.isCompleting = false;
-                showPage(4);
-            });
+            showAlert('แจ้งเตือน', 'ขออภัยในความไม่สะดวกครับ งานนี้ถูกยกเลิก รบกวนคุณลูกค้ากดยืนยันเพื่อเรียกรถใหม่อีกครั้งนะครับ', 'info', () => { resetTrackingFlags(); window.isCompleting = false; showPage(4); });
         }
       });
     }
 
-    // ฟังก์ชันจัดการหมุด (วาดใหม่เพื่อให้มีตัวเลข)
-    function redrawAllMarkers() {
-        if(!map) return;
-        // ลบ Waypoint markers เดิม
-        waypointMapMarkers.forEach(m => m.setMap(null));
-        waypointMapMarkers = [];
-
-        let totalStops = localWaypoints.length + 2; // จุดรับ + แวะ + จุดส่ง
-
-        if(markerPick) {
-            markerPick.setIcon(createNumberedMarkerIcon('1', '#22c55e')); // สีเขียวเบอร์ 1
-            markerPick.setLabel({text: '1', color: 'white', fontWeight: 'bold'});
-        }
-
-        localWaypoints.forEach((wp, index) => {
-            let num = index + 2;
-            let wm = new google.maps.Marker({
-                position: {lat: wp.lat, lng: wp.lng},
-                map: map,
-                icon: createNumberedMarkerIcon(num.toString(), '#eab308'), // สีเหลือง
-                label: {text: num.toString(), color: 'black', fontWeight: 'bold'},
-                zIndex: 3
-            });
-            waypointMapMarkers.push(wm);
-        });
-
-        if(markerDrop) {
-            markerDrop.setIcon(createNumberedMarkerIcon(totalStops.toString(), '#ef4444')); // สีแดงเบอร์สุดท้าย
-            markerDrop.setLabel({text: totalStops.toString(), color: 'white', fontWeight: 'bold'});
-        }
-    }
-
-    function renderWaypointsUI(listId) {
+    // 🌟 ระบบเพิ่มจุดแวะจากหมุดกลางจอ (Drop animation)
+    function addWaypointFromCenter(type) {
+        if(!map || !geocoder) return;
+        let pos = map.getCenter();
+        let listId = type === 'pick' ? 'pickupWaypointsList' : 'dropoffWaypointsList';
         let container = document.getElementById(listId);
-        if(!container) return;
+        let tempId = 'wp-loading-' + Date.now();
         
-        let html = '';
-        localWaypoints.forEach((wp, index) => {
-            html += `<div class="flex items-center gap-3 bg-gray-800 py-2.5 px-3.5 rounded-xl border border-yellow-500/30 relative z-10 shadow-sm">
-                <div><i class="fas fa-circle text-[10px] text-yellow-500 border border-gray-800 rounded-full"></i></div>
-                <p class="text-[13px] text-gray-200 truncate font-medium flex-1 leading-tight">${wp.name}</p>
-                <button onclick="removeWaypoint(${index})" class="text-red-400 hover:text-red-300 text-xs px-2"><i class="fas fa-trash"></i></button>
-            </div>`;
+        container.insertAdjacentHTML('beforeend', `<div id="${tempId}" class="flex items-center gap-3 bg-gray-800 py-2.5 px-3.5 rounded-xl border border-yellow-500/30 text-xs text-gray-400 animate-pulse"><i class="fas fa-spinner fa-spin text-yellow-500"></i> กำลังดึงข้อมูลสถานที่...</div>`);
+        container.scrollTop = container.scrollHeight;
+
+        geocoder.geocode({location: pos}, (res, status) => {
+            let el = document.getElementById(tempId); if(el) el.remove();
+            
+            if(status === 'OK' && res[0]) {
+                let validResults = res.filter(r => !r.types.includes('plus_code') && !r.formatted_address.match(/^[A-Z0-9]{2,8}\+/));
+                let bestRes = validResults.length > 0 ? validResults[0] : res[0];
+                let fullAddr = bestRes.formatted_address.replace(/,?\s*ประเทศไทย/g, '').replace(/Unnamed Road,?\s*/g, '').replace(/^[A-Z0-9]{2,8}\+.*?\s/g, '').trim();
+                
+                let wp = { lat: pos.lat(), lng: pos.lng(), name: fullAddr, type: type };
+                
+                // สร้าง marker สีเหลือง พร้อม animation DROP
+                let num = type === 'pick' ? localWaypoints.filter(w=>w.type==='pick').length + 1 : localWaypoints.filter(w=>w.type==='drop').length + 1;
+                wp.marker = new google.maps.Marker({
+                    position: {lat: wp.lat, lng: wp.lng}, map: map,
+                    icon: createNumberedMarkerIcon(num.toString(), '#eab308'), 
+                    label: {text: num.toString(), color: 'black', fontWeight: 'bold'},
+                    animation: google.maps.Animation.DROP, zIndex: 3
+                });
+
+                localWaypoints.push(wp);
+                renderWaypointsUI();
+            } else {
+                showAlert("ผิดพลาด", "ไม่สามารถดึงที่อยู่ได้ กรุณาลองใหม่", "error");
+            }
         });
-        container.innerHTML = html;
-        redrawAllMarkers();
     }
 
-    // Modal ค้นหาจุดแวะ
-    let currentWaypointMode = ''; 
-    function openWaypointModal(mode) {
-        currentWaypointMode = mode;
+    function renderWaypointsUI() {
+        let pickHtml = ''; let dropHtml = ''; let sumHtml = '';
+        let pickCount = 1; let dropCount = 1;
+
+        localWaypoints.forEach((wp, index) => {
+            let num = wp.type === 'pick' ? pickCount++ : dropCount++;
+            
+            // อัปเดตตัวเลขในหมุดให้ถูกต้องเสมอเผื่อมีการลบ
+            if (wp.marker) {
+                wp.marker.setIcon(createNumberedMarkerIcon(num.toString(), '#eab308'));
+                wp.marker.setLabel({text: num.toString(), color: 'black', fontWeight: 'bold'});
+            }
+
+            let itemHtml = `<div class="flex items-center gap-3 bg-gray-800 py-2.5 px-3.5 rounded-xl border border-yellow-500/30 relative z-10 shadow-sm mb-2 animate-fade-in">
+                <div class="w-5 h-5 bg-yellow-500 rounded-full flex items-center justify-center text-black text-[10px] font-bold shrink-0">${num}</div>
+                <p class="text-[13px] text-gray-200 truncate font-medium flex-1 leading-tight">${wp.name}</p>
+                <button onclick="removeWaypoint(${index})" class="text-red-400 hover:text-red-300 text-sm px-2 shrink-0 transition active:scale-90"><i class="fas fa-trash-alt"></i></button>
+            </div>`;
+            
+            let sumItemHtml = `<div class="flex items-center gap-3 relative z-10">
+                <div class="w-5 h-5 bg-yellow-500 rounded-full flex items-center justify-center text-black text-[10px] font-bold shrink-0">${num}</div>
+                <p class="text-[13px] text-gray-200 truncate font-medium flex-1 leading-tight">${wp.name}</p>
+            </div>`;
+
+            if (wp.type === 'pick') { pickHtml += itemHtml; sumHtml += sumItemHtml; } 
+            else { dropHtml += itemHtml; }
+        });
+
+        // จุด Drop ต้องต่อท้ายในหน้าสรุปเสมอ
+        localWaypoints.forEach((wp) => {
+            if (wp.type === 'drop') {
+                let num = wp.type === 'pick' ? 0 : 0; 
+                sumHtml += `<div class="flex items-center gap-3 relative z-10">
+                    <div class="w-5 h-5 bg-yellow-500 rounded-full flex items-center justify-center text-black text-[10px] font-bold shrink-0"><i class="fas fa-stop"></i></div>
+                    <p class="text-[13px] text-gray-200 truncate font-medium flex-1 leading-tight">${wp.name}</p>
+                </div>`;
+            }
+        });
+
+        let pickContainer = document.getElementById('pickupWaypointsList'); if(pickContainer) pickContainer.innerHTML = pickHtml;
+        let dropContainer = document.getElementById('dropoffWaypointsList'); if(dropContainer) dropContainer.innerHTML = dropHtml;
+        let sumContainer = document.getElementById('sumWaypointsContainer'); if(sumContainer) sumContainer.innerHTML = sumHtml;
+        let trackContainer = document.getElementById('trackWaypointsContainer'); if(trackContainer) trackContainer.innerHTML = sumHtml;
+
+        // อัปเดตหมุดหลัก (สีเขียว-แดง)
+        if(markerPick) {
+            markerPick.setIcon(createNumberedMarkerIcon(pickCount.toString(), '#22c55e'));
+            markerPick.setLabel({text: pickCount.toString(), color: 'white', fontWeight: 'bold'});
+        }
+        if(markerDrop) {
+            markerDrop.setIcon(createNumberedMarkerIcon(dropCount.toString(), '#ef4444'));
+            markerDrop.setLabel({text: dropCount.toString(), color: 'white', fontWeight: 'bold'});
+        }
+    }
+
+    function removeWaypoint(index) {
+        if(localWaypoints[index].marker) localWaypoints[index].marker.setMap(null);
+        localWaypoints.splice(index, 1);
+        renderWaypointsUI();
+        if(currentStep === 4) { bookData.waypoints = localWaypoints; calculatePrice(); }
+    }
+
+    // Modal ค้นหาจุดแวะด้วยการพิมพ์ (ใช้ตอนอยู่บนรถ)
+    function openWaypointSearchModal() {
         document.getElementById('waypointSearchModal').classList.remove('hidden');
-        let input = document.getElementById('waypointSearchInput');
-        input.value = '';
-        input.focus();
+        let input = document.getElementById('waypointSearchInput'); input.value = ''; input.focus();
     }
-    
-    function closeWaypointModal() {
-        document.getElementById('waypointSearchModal').classList.add('hidden');
-    }
+    function closeWaypointSearchModal() { document.getElementById('waypointSearchModal').classList.add('hidden'); }
 
     function setupWaypointSearch(inputId) {
-      const input = document.getElementById(inputId);
-      if(!input) return;
-      if (typeof google === 'undefined' || typeof google.maps === 'undefined' || typeof google.maps.places === 'undefined') return;
-      
+      const input = document.getElementById(inputId); if(!input) return;
+      if (typeof google === 'undefined' || !google.maps.places) return;
       const chiangRaiBounds = new google.maps.LatLngBounds(new google.maps.LatLng(18.91, 99.16), new google.maps.LatLng(20.46, 100.56));
       const auto = new google.maps.places.Autocomplete(input, { bounds: chiangRaiBounds, strictBounds: true, componentRestrictions: {country: 'th'} });
 
@@ -1301,186 +976,97 @@
                 let cleanAddr = place.formatted_address.replace(/,?\s*ประเทศไทย/g, '').replace(/Unnamed Road,?\s*/g, '').trim();
                 if(!cleanAddr.includes(place.name)) finalAddr += " (" + cleanAddr + ")";
             }
-            
-            // ถ้าระหว่างเดินทาง (In-Ride)
-            if (currentWaypointMode === 'in-ride') {
-                closeWaypointModal();
-                calculateNewRoutePriceForTracking(place.geometry.location.lat(), place.geometry.location.lng(), finalAddr);
-            } else {
-                // ถ้าอยู่ขั้นตอนจัดเรียกรถ
-                localWaypoints.push({ lat: place.geometry.location.lat(), lng: place.geometry.location.lng(), name: finalAddr });
-                closeWaypointModal();
-                
-                if (currentStep === 2) renderWaypointsUI('pickupWaypointsList');
-                else if (currentStep === 3) renderWaypointsUI('dropoffWaypointsList');
-                
-                showAlert("เพิ่มจุดแวะสำเร็จ", `เพิ่ม ${finalAddr} ลงในเส้นทางเรียบร้อยแล้ว`, "success");
-            }
+            closeWaypointSearchModal();
+            calculateNewRoutePriceForTracking(place.geometry.location.lat(), place.geometry.location.lng(), finalAddr);
         }
       });
-    }
-
-    function removeWaypoint(index) {
-        localWaypoints.splice(index, 1);
-        if (currentStep === 2) renderWaypointsUI('pickupWaypointsList');
-        else if (currentStep === 3) renderWaypointsUI('dropoffWaypointsList');
-        else if (currentStep === 4) {
-            bookData.waypoints = localWaypoints;
-            renderWaypointsSummary('sumWaypointsContainer');
-            calculatePrice();
-        }
-    }
-
-    function renderWaypointsSummary(containerId) {
-        let container = document.getElementById(containerId);
-        if(!container) return;
-        let html = '';
-        localWaypoints.forEach((wp) => {
-            html += `<div class="flex items-center gap-3 relative z-10">
-                <div><i class="fas fa-circle text-[10px] text-yellow-500 border border-gray-800 rounded-full"></i></div>
-                <p class="text-[13px] text-gray-200 truncate font-medium flex-1 leading-tight">${wp.name}</p>
-            </div>`;
-        });
-        container.innerHTML = html;
-        redrawAllMarkers();
     }
 
     function showPage(page) {
       currentStep = page;
-      [1,2,3,4,'Tracking'].forEach(p => {
-          const el = document.getElementById('page' + p);
-          if (el) el.classList.add('hidden');
-      });
-      const targetPage = document.getElementById('page' + page);
-      if(targetPage) targetPage.classList.remove('hidden');
-      
+      [1,2,3,4,'Tracking'].forEach(p => { const el = document.getElementById('page' + p); if (el) el.classList.add('hidden'); });
+      const targetPage = document.getElementById('page' + page); if(targetPage) targetPage.classList.remove('hidden');
       requestWakeLock();
 
-      const topSearchPick = document.getElementById('topSearchPick');
-      const topSearchDrop = document.getElementById('topSearchDrop');
+      const topSearchPick = document.getElementById('topSearchPick'); const topSearchDrop = document.getElementById('topSearchDrop');
+      const pinOverlay = document.getElementById('centerPinOverlay');
 
       if (page === 2) {
           document.body.classList.remove('theme-dropoff');
-          if(topSearchPick) topSearchPick.classList.remove('hidden');
-          if(topSearchDrop) topSearchDrop.classList.add('hidden');
-          renderWaypointsUI('pickupWaypointsList');
+          if(topSearchPick) topSearchPick.classList.remove('hidden'); if(topSearchDrop) topSearchDrop.classList.add('hidden');
+          if(pinOverlay) { pinOverlay.classList.remove('hidden'); document.getElementById('centerPinSvg').innerHTML = '<path d="M18,0 C10,0 4,6 4,14 C4,24 18,36 18,36 C18,36 32,24 32,14 C32,6 26,0 18,0 Z M18,20 C14.686,20 12,17.314 12,14 C12,10.686 14.686,8 18,8 C21.314,8 24,10.686 24,14 C24,17.314 21.314,20 18,20 Z" fill="#22c55e" stroke="#ffffff" stroke-width="2"/>'; }
+          renderWaypointsUI();
       } else if (page === 3) {
           document.body.classList.add('theme-dropoff');
-          if(topSearchPick) topSearchPick.classList.add('hidden');
-          if(topSearchDrop) topSearchDrop.classList.remove('hidden');
-          renderWaypointsUI('dropoffWaypointsList');
+          if(topSearchPick) topSearchPick.classList.add('hidden'); if(topSearchDrop) topSearchDrop.classList.remove('hidden');
+          if(pinOverlay) { pinOverlay.classList.remove('hidden'); document.getElementById('centerPinSvg').innerHTML = '<path d="M18,0 C10,0 4,6 4,14 C4,24 18,36 18,36 C18,36 32,24 32,14 C32,6 26,0 18,0 Z M18,20 C14.686,20 12,17.314 12,14 C12,10.686 14.686,8 18,8 C21.314,8 24,10.686 24,14 C24,17.314 21.314,20 18,20 Z" fill="#ef4444" stroke="#ffffff" stroke-width="2"/>'; }
+          renderWaypointsUI();
       } else {
           document.body.classList.remove('theme-dropoff');
-          if(topSearchPick) topSearchPick.classList.add('hidden');
-          if(topSearchDrop) topSearchDrop.classList.add('hidden');
+          if(topSearchPick) topSearchPick.classList.add('hidden'); if(topSearchDrop) topSearchDrop.classList.add('hidden');
+          if(pinOverlay) pinOverlay.classList.add('hidden');
       }
 
-      const navBar = document.getElementById('navBar');
-      const mapControls = document.getElementById('mapControls');
-      const mapEl = document.getElementById('map');
-
+      const navBar = document.getElementById('navBar'); const mapControls = document.getElementById('mapControls'); const mapEl = document.getElementById('map');
       if(page !== 1) {
-        if(navBar) navBar.classList.remove('hidden');
-        if(mapEl) mapEl.classList.remove('hidden');
-        if(mapControls) mapControls.classList.remove('hidden'); 
-        initMap(); 
-        if (typeof google !== 'undefined' && typeof google.maps !== 'undefined' && map) google.maps.event.trigger(map, 'resize');
+        if(navBar) navBar.classList.remove('hidden'); if(mapEl) mapEl.classList.remove('hidden'); if(mapControls) mapControls.classList.remove('hidden'); 
+        initMap(); if (typeof google !== 'undefined' && map) google.maps.event.trigger(map, 'resize');
       } else {
-          if(navBar) navBar.classList.add('hidden');
-          if(mapControls) mapControls.classList.add('hidden');
+          if(navBar) navBar.classList.add('hidden'); if(mapControls) mapControls.classList.add('hidden');
       }
 
       if (page === 2 || page === 3) {
           if (polylineRoute) { polylineRoute.setMap(null); polylineRoute = null; }
           if (markerDriver) markerDriver.setMap(null); 
-          const bOver = document.getElementById('btnOverview');
-          const bEmer = document.getElementById('btnEmergency');
-          const bCross = document.getElementById('btnCrosshair');
-          if(bOver) bOver.classList.add('hidden');
-          if(bEmer) bEmer.classList.add('hidden'); 
-          if(bCross) { bCross.classList.replace('text-gray-500', 'text-green-400'); bCross.classList.remove('hidden'); }
+          const bOver = document.getElementById('btnOverview'); const bEmer = document.getElementById('btnEmergency'); const bCross = document.getElementById('btnCrosshair');
+          if(bOver) bOver.classList.add('hidden'); if(bEmer) bEmer.classList.add('hidden'); if(bCross) { bCross.classList.replace('text-gray-500', 'text-green-400'); bCross.classList.remove('hidden'); }
       }
 
       if(page === 2) {
         if (markerDrop && markerPick && map) {
-          markerDrop.setMap(null); markerPick.setMap(map); 
-          map.setOptions({ padding: { top: 140, bottom: getDynamicBottomPadding(), left: 0, right: 0 } }); 
-          
-          if(bookData.pLat !== 0) { map.panTo({lat: bookData.pLat, lng: bookData.pLng}); } 
-          else { map.panTo({lat: driverData.lat, lng: driverData.lng}); }
-          
-          updateAddressBox(false);
-          setupSearch('pickupSearch', markerPick);
-          redrawAllMarkers();
+          markerDrop.setMap(null); markerPick.setMap(map); map.setOptions({ padding: { top: 140, bottom: getDynamicBottomPadding(), left: 0, right: 0 } }); 
+          if(bookData.pLat !== 0) { map.panTo({lat: bookData.pLat, lng: bookData.pLng}); } else { map.panTo({lat: driverData.lat, lng: driverData.lng}); }
+          updateAddressBox(false); renderWaypointsUI();
         }
       } 
       else if(page === 3) {
         if (markerPick && markerDrop && map) {
-          markerPick.setMap(map); markerDrop.setMap(map);
-          map.setOptions({ padding: { top: 140, bottom: getDynamicBottomPadding(), left: 0, right: 0 } }); 
-
-          if(bookData.dLat !== 0 && bookData.dLng !== 0) { markerDrop.setPosition({lat: bookData.dLat, lng: bookData.dLng}); } 
-          else { markerDrop.setPosition(markerPick.getPosition()); }
-          map.panTo(markerDrop.getPosition());
-          
-          updateAddressBox(false);
-          setupSearch('dropoffSearch', markerDrop);
-          redrawAllMarkers();
+          markerPick.setMap(map); markerDrop.setMap(map); map.setOptions({ padding: { top: 140, bottom: getDynamicBottomPadding(), left: 0, right: 0 } }); 
+          if(bookData.dLat !== 0 && bookData.dLng !== 0) { markerDrop.setPosition({lat: bookData.dLat, lng: bookData.dLng}); } else { markerDrop.setPosition(markerPick.getPosition()); }
+          map.panTo(markerDrop.getPosition()); updateAddressBox(false); renderWaypointsUI();
         }
       }
       else if(page === 4) {
-        const bOver = document.getElementById('btnOverview');
-        const bEmer = document.getElementById('btnEmergency');
-        const bCross = document.getElementById('btnCrosshair');
-        if(bOver) bOver.classList.remove('hidden');
-        if(bEmer) bEmer.classList.add('hidden');
-        if(bCross) bCross.classList.add('hidden'); 
+        const bOver = document.getElementById('btnOverview'); const bEmer = document.getElementById('btnEmergency'); const bCross = document.getElementById('btnCrosshair');
+        if(bOver) bOver.classList.remove('hidden'); if(bEmer) bEmer.classList.add('hidden'); if(bCross) bCross.classList.add('hidden'); 
 
-        if (markerPick && markerDrop && map) { 
-            markerPick.setMap(map); markerDrop.setMap(map); 
-            map.setOptions({ padding: { top: 70, bottom: getDynamicBottomPadding(), left: 0, right: 0 } });
-            redrawAllMarkers();
-        }
+        if (markerPick && markerDrop && map) { markerPick.setMap(map); markerDrop.setMap(map); map.setOptions({ padding: { top: 70, bottom: getDynamicBottomPadding(), left: 0, right: 0 } }); }
         
-        let pI = document.getElementById('promoInput');
-        if(pI) pI.value = '';
+        let pI = document.getElementById('promoInput'); if(pI) pI.value = '';
         bookData.promoCode = ''; bookData.discount = 0;
-        let dT = document.getElementById('discountTag');
-        let sO = document.getElementById('sumPriceOld');
-        if(dT) dT.classList.add('hidden');
-        if(sO) sO.classList.add('hidden');
+        let dT = document.getElementById('discountTag'); let sO = document.getElementById('sumPriceOld');
+        if(dT) dT.classList.add('hidden'); if(sO) sO.classList.add('hidden');
 
-        const p4Panel = document.getElementById('page4Panel');
-        if(p4Panel) p4Panel.classList.remove('panel-collapsed-page4');
-
-        bookData.waypoints = localWaypoints;
-        renderWaypointsSummary('sumWaypointsContainer');
-        calculatePrice();
+        const p4Panel = document.getElementById('page4Panel'); if(p4Panel) p4Panel.classList.remove('panel-collapsed-page4');
+        bookData.waypoints = localWaypoints; renderWaypointsUI(); calculatePrice();
       }
 
       updateMapControlsPosition(page);
     }
     
-    function goBack() { 
-       if(currentStep === 2) showPage(1);
-       if(currentStep === 3) showPage(2);
-       if(currentStep === 4) showPage(3);
-    }
+    function goBack() { if(currentStep === 2) showPage(1); if(currentStep === 3) showPage(2); if(currentStep === 4) showPage(3); }
     function goHome() { window.location.reload(); }
 
     function updateAddressBox(isInteraction = false) {
       if(!map || !geocoder) return;
-      let isPick = (currentStep === 2);
-      let pos = map.getCenter();
+      let isPick = (currentStep === 2); let pos = map.getCenter();
 
       if (placesService && isInteraction) {
           placesService.nearbySearch({ location: pos, radius: 25, type: 'point_of_interest' }, (pRes, pStatus) => {
               if (pStatus === 'OK' && pRes.length > 0) geocoderFallback(pos, isPick, isInteraction, pRes[0].name);
               else geocoderFallback(pos, isPick, isInteraction, null);
           });
-      } else {
-          geocoderFallback(pos, isPick, isInteraction, null);
-      }
+      } else { geocoderFallback(pos, isPick, isInteraction, null); }
     }
 
     function geocoderFallback(pos, isPick, isInteraction, prefixName) {
@@ -1490,28 +1076,57 @@
                 let bestRes = validResults.length > 0 ? validResults[0] : res[0];
                 let fullAddr = bestRes.formatted_address.replace(/,?\s*ประเทศไทย/g, '').replace(/Unnamed Road,?\s*/g, '').replace(/^[A-Z0-9]{2,8}\+.*?\s/g, '').trim();
                 if (prefixName && !fullAddr.includes(prefixName)) fullAddr = prefixName + " (" + fullAddr + ")";
-                applyAddress(fullAddr, isPick, isInteraction);
+                
+                if(isPick) {
+                  bookData.pName = fullAddr;
+                  let el = document.getElementById('pickupSearch');
+                  if(el && isInteraction) { el.value = fullAddr; el.dataset.oldValue = fullAddr; }
+                  if(markerPick) markerPick.setPosition(pos); // ขยับหมุดหลักตาม
+                } else {
+                  bookData.dName = fullAddr;
+                  let el = document.getElementById('dropoffSearch');
+                  if(el && isInteraction) { el.value = fullAddr; el.dataset.oldValue = fullAddr; }
+                  if(markerDrop) markerDrop.setPosition(pos); // ขยับหมุดหลักตาม
+                }
             }
         });
     }
 
-    function applyAddress(addr, isPick, isInteraction) {
-        if(isPick) {
-          bookData.pName = addr;
-          let el = document.getElementById('pickupSearch');
-          if(el && isInteraction) { el.value = addr; el.dataset.oldValue = addr; }
-        } else {
-          bookData.dName = addr;
-          let el = document.getElementById('dropoffSearch');
-          if(el && isInteraction) { el.value = addr; el.dataset.oldValue = addr; }
+    function setupSearch(inputId, marker, isPick) {
+      const input = document.getElementById(inputId); if(!input) return;
+      if (typeof google === 'undefined' || !google.maps.places) return;
+      
+      const chiangRaiBounds = new google.maps.LatLngBounds(new google.maps.LatLng(18.91, 99.16), new google.maps.LatLng(20.46, 100.56));
+      const auto = new google.maps.places.Autocomplete(input, { bounds: chiangRaiBounds, strictBounds: true, componentRestrictions: {country: 'th'} });
+
+      input.addEventListener('focus', function() { if(this.value.trim() !== '') this.dataset.oldValue = this.value; this.value = ''; });
+      input.addEventListener('blur', function() { setTimeout(() => { if(this.value.trim() === '') this.value = this.dataset.oldValue || ''; }, 150); });
+
+      auto.addListener('place_changed', () => {
+        const place = auto.getPlace();
+        if(place.geometry && map) {
+          input.blur(); map.panTo(place.geometry.location); 
+          let finalAddr = place.name;
+          if (place.formatted_address) {
+              let cleanAddr = place.formatted_address.replace(/,?\s*ประเทศไทย/g, '').replace(/Unnamed Road,?\s*/g, '').trim();
+              if(!cleanAddr.includes(place.name)) finalAddr += " (" + cleanAddr + ")";
+          }
+
+          if(isPick) {
+             hasInteractedPick = true; markerPick.setPosition(place.geometry.location); bookData.pName = finalAddr; 
+             input.dataset.oldValue = finalAddr; input.value = finalAddr;
+          } else {
+             hasInteractedDrop = true; markerDrop.setPosition(place.geometry.location); bookData.dName = finalAddr; 
+             input.dataset.oldValue = finalAddr; input.value = finalAddr;
+          }
         }
+      });
     }
 
     function useCurrentLocation() {
       if(navigator.geolocation) {
           navigator.geolocation.getCurrentPosition(p => {
-            let pos = {lat: p.coords.latitude, lng: p.coords.longitude};
-            if(map) map.panTo(pos);
+            let pos = {lat: p.coords.latitude, lng: p.coords.longitude}; if(map) map.panTo(pos);
             if(currentStep===2 && markerPick) { hasInteractedPick = true; markerPick.setPosition(pos); }
             else if(currentStep===3 && markerDrop) { hasInteractedDrop = true; markerDrop.setPosition(pos); }
             updateAddressBox(true);
@@ -1534,13 +1149,10 @@
         } 
     }
 
-    // คำนวณราคาแบบประเมิน (รวมจุดแวะ)
     function calculatePrice() {
       if(!directionsService || !map) return;
-      const sPick = document.getElementById('sumPick');
-      const sDrop = document.getElementById('sumDrop');
-      if(sPick) sPick.innerText = bookData.pName;
-      if(sDrop) sDrop.innerText = bookData.dName;
+      const sPick = document.getElementById('sumPick'); const sDrop = document.getElementById('sumDrop');
+      if(sPick) sPick.innerText = bookData.pName; if(sDrop) sDrop.innerText = bookData.dName;
       
       let origin = new google.maps.LatLng(bookData.pLat, bookData.pLng);
       let dest = new google.maps.LatLng(bookData.dLat, bookData.dLng);
@@ -1549,122 +1161,75 @@
       directionsService.route({origin: origin, destination: dest, waypoints: waypts, travelMode: 'DRIVING'}, (resRide, stat1) => {
         if(stat1 === 'OK') {
           if(polylineRoute) polylineRoute.setMap(null);
-          polylineRoute = new google.maps.Polyline({
-              path: resRide.routes[0].legs.flatMap(leg => leg.steps.flatMap(step => step.path)),
-              strokeColor: '#3b82f6', 
-              strokeWeight: 6,
-              map: map
-          });
+          polylineRoute = new google.maps.Polyline({ path: resRide.routes[0].legs.flatMap(leg => leg.steps.flatMap(step => step.path)), strokeColor: '#3b82f6', strokeWeight: 6, map: map });
 
-          if(markerPick) markerPick.setPosition(origin); 
-          if(markerDrop) markerDrop.setPosition(dest);
+          if(markerPick) markerPick.setPosition(origin); if(markerDrop) markerDrop.setPosition(dest);
           
           let distMeters = 0; let waitMins = 0;
-          resRide.routes[0].legs.forEach(leg => {
-              distMeters += leg.distance.value;
-              waitMins += leg.duration.value;
-          });
-          let distRideKm = distMeters / 1000;
-          waitMins = Math.ceil(waitMins / 60);
-          
+          resRide.routes[0].legs.forEach(leg => { distMeters += leg.distance.value; waitMins += leg.duration.value; });
+          let distRideKm = distMeters / 1000; waitMins = Math.ceil(waitMins / 60);
           currentRouteBounds = resRide.routes[0].bounds;
 
-          let baseFare = parseInt(pricingConfig.base) || 0;
-          let kmRate = parseInt(pricingConfig.km) || 0;
-          
+          let baseFare = parseInt(pricingConfig.base) || 0; let kmRate = parseInt(pricingConfig.km) || 0;
           let calcPrice = Math.ceil(baseFare + (distRideKm * kmRate));
           let minPrice = Math.floor(calcPrice / 10) * 10;
           if(minPrice < baseFare) minPrice = baseFare;
           let maxPrice = minPrice + 20;
           
-          bookData.originalPrice = minPrice;
-          bookData.price = minPrice; 
-          bookData.priceEstimate = `~฿${minPrice} - ${maxPrice}`;
-          bookData.distance = distRideKm.toFixed(1);
-          bookData.duration = waitMins;
+          bookData.originalPrice = minPrice; bookData.price = minPrice; bookData.priceEstimate = `~฿${minPrice} - ${maxPrice}`;
+          bookData.distance = distRideKm.toFixed(1); bookData.duration = waitMins;
 
-          const sDist = document.getElementById('sumDist');
-          const sWait = document.getElementById('sumWait');
-          const sPrice = document.getElementById('sumPrice');
-          if(sDist) sDist.innerText = bookData.distance;
-          if(sWait) sWait.innerText = bookData.duration;
-          if(sPrice) sPrice.innerText = bookData.priceEstimate;
+          const sDist = document.getElementById('sumDist'); const sWait = document.getElementById('sumWait'); const sPrice = document.getElementById('sumPrice');
+          if(sDist) sDist.innerText = bookData.distance; if(sWait) sWait.innerText = bookData.duration; if(sPrice) sPrice.innerText = bookData.priceEstimate;
 
-          setTimeout(() => {
-            const mapPadding = { top: 120, right: 50, bottom: (window.innerHeight * 0.45), left: 50 }; 
-            if(map) map.fitBounds(currentRouteBounds, mapPadding);
-          }, 200);
+          setTimeout(() => { if(map) map.fitBounds(currentRouteBounds, { top: 120, right: 50, bottom: (window.innerHeight * 0.45), left: 50 }); }, 200);
         }
       });
     }
 
     function applyPromoCode() {
-        let codeInput = document.getElementById('promoInput');
-        if(!codeInput) return;
+        let codeInput = document.getElementById('promoInput'); if(!codeInput) return;
         let val = codeInput.value.trim().toUpperCase();
         if(!val) { showAlert('ข้อผิดพลาด', 'กรุณากรอกโค้ดส่วนลดก่อนครับ', 'error'); return; }
 
         db.ref('promotions/' + val).once('value', snap => {
             let p = snap.val();
             if (p && p.isActive !== false) {
-                bookData.promoCode = p.code;
-                bookData.discount = p.value;
+                bookData.promoCode = p.code; bookData.discount = p.value;
                 bookData.price = Math.max(0, bookData.originalPrice - p.value);
                 let maxPrice = Math.max(0, (bookData.originalPrice + 20) - p.value);
                 bookData.priceEstimate = `~฿${bookData.price} - ${maxPrice}`;
                 
-                const oldP = document.getElementById('sumPriceOld');
-                const newP = document.getElementById('sumPrice');
-                const dTag = document.getElementById('discountTag');
-                
+                const oldP = document.getElementById('sumPriceOld'); const newP = document.getElementById('sumPrice'); const dTag = document.getElementById('discountTag');
                 if(oldP) { oldP.innerText = `฿${bookData.originalPrice}`; oldP.classList.remove('hidden'); }
                 if(newP) newP.innerText = bookData.priceEstimate;
                 if(dTag) { dTag.innerText = `ประหยัด ฿${p.value}`; dTag.classList.remove('hidden'); }
                 
-                closePromoModal(); 
-                showAlert('สำเร็จ!', `ใช้โค้ดส่วนลด ${p.code} ได้รับส่วนลด ${p.value} บาทเรียบร้อยแล้ว`, 'success');
+                closePromoModal(); showAlert('สำเร็จ!', `ใช้โค้ดส่วนลด ${p.code} ได้รับส่วนลด ${p.value} บาทเรียบร้อยแล้ว`, 'success');
             } else {
-                showAlert('ขออภัย', 'โค้ดส่วนลดนี้ไม่ถูกต้อง หรือถูกปิดการใช้งานไปแล้วครับ', 'error');
-                codeInput.value = '';
-                
-                bookData.promoCode = ''; bookData.discount = 0;
-                bookData.price = bookData.originalPrice;
+                showAlert('ขออภัย', 'โค้ดส่วนลดนี้ไม่ถูกต้อง หรือถูกปิดการใช้งานไปแล้วครับ', 'error'); codeInput.value = '';
+                bookData.promoCode = ''; bookData.discount = 0; bookData.price = bookData.originalPrice;
                 bookData.priceEstimate = `~฿${bookData.originalPrice} - ${bookData.originalPrice + 20}`;
                 
-                const oldP = document.getElementById('sumPriceOld');
-                const newP = document.getElementById('sumPrice');
-                const dTag = document.getElementById('discountTag');
-                if(oldP) oldP.classList.add('hidden');
-                if(newP) newP.innerText = bookData.priceEstimate;
-                if(dTag) dTag.classList.add('hidden');
+                const oldP = document.getElementById('sumPriceOld'); const newP = document.getElementById('sumPrice'); const dTag = document.getElementById('discountTag');
+                if(oldP) oldP.classList.add('hidden'); if(newP) newP.innerText = bookData.priceEstimate; if(dTag) dTag.classList.add('hidden');
             }
         });
     }
 
     function submitBooking() {
-      if ('speechSynthesis' in window) {
-          let unlockMsg = new SpeechSynthesisUtterance('');
-          window.speechSynthesis.speak(unlockMsg);
-      }
+      if ('speechSynthesis' in window) { let unlockMsg = new SpeechSynthesisUtterance(''); window.speechSynthesis.speak(unlockMsg); }
 
-      let telInput = document.getElementById('userPhone');
-      if(!telInput) return;
+      let telInput = document.getElementById('userPhone'); if(!telInput) return;
       let tel = telInput.value.replace(/\D/g, ''); 
-      
       if(tel.length === 0) { showAlert('แจ้งเตือน', 'กรุณากรอกเบอร์ติดต่อก่อนกดยืนยันเรียกรถครับ', 'error'); return; }
       if(tel.length < 10) { showAlert('แจ้งเตือน', 'กรุณากรอกเบอร์โทรศัพท์ให้ครบ 10 หลักครับ', 'error'); return; }
-      
       localStorage.setItem('passengerPhone', tel);
 
       db.ref('blacklist/' + tel).once('value', snap => {
-          if (snap.exists()) {
-              showAlert('ระงับบริการ', 'ขออภัย เบอร์โทรศัพท์นี้ถูกระงับการให้บริการจากระบบชั่วคราว\nเหตุผล: ' + snap.val().reason, 'error');
-              return; 
-          }
-          
+          if (snap.exists()) { showAlert('ระงับบริการ', 'ขออภัย เบอร์โทรศัพท์นี้ถูกระงับการให้บริการจากระบบชั่วคราว\nเหตุผล: ' + snap.val().reason, 'error'); return; }
           bookData.userId = lineUserId; bookData.name = lineName; bookData.phone = tel;
-          bookData.status = "รอผู้ขับขี่ตอบรับ"; bookData.timestamp = firebase.database.ServerValue.TIMESTAMP; 
-          bookData.waypoints = localWaypoints;
+          bookData.status = "รอผู้ขับขี่ตอบรับ"; bookData.timestamp = firebase.database.ServerValue.TIMESTAMP; bookData.waypoints = localWaypoints;
           
           db.ref('bookings/' + lineUserId).set(bookData).then(() => {
               if(bookData.promoCode) {
@@ -1672,7 +1237,6 @@
                   histRef.set({ date: new Date().toLocaleString('th-TH'), userName: lineName, phone: tel, discount: bookData.discount });
                   db.ref('promotions/' + bookData.promoCode + '/usageCount').set(firebase.database.ServerValue.increment(1));
               }
-
               if(APPS_SCRIPT_URL) fetch(`${APPS_SCRIPT_URL}?action=notify&type=new_ride&name=${lineName}&pick=${bookData.pName}`, {mode: 'no-cors'});
               showPage('Tracking');
           });
@@ -1682,86 +1246,53 @@
     function handleTracking() {
       if(currentStep !== 'Tracking') {
           showPage('Tracking');
-          const btnO = document.getElementById('btnOverview');
-          const btnC = document.getElementById('btnCrosshair');
-          if(btnO) btnO.classList.remove('hidden'); 
-          if(btnC) btnC.classList.remove('hidden'); 
+          const btnO = document.getElementById('btnOverview'); const btnC = document.getElementById('btnCrosshair');
+          if(btnO) btnO.classList.remove('hidden'); if(btnC) btnC.classList.remove('hidden'); 
       }
       
-      const mapControls = document.getElementById('mapControls');
-      if(mapControls) mapControls.classList.remove('hidden');
+      const mapControls = document.getElementById('mapControls'); if(mapControls) mapControls.classList.remove('hidden');
+      const bottomStatusBox = document.getElementById('unifiedStatusBox'); const driverBox = document.getElementById('driverInfoBox'); const actionButtonsBox = document.getElementById('actionButtonsBox');
+      const statusBottom = document.getElementById('unifiedStatusText'); const priceBottom = document.getElementById('unifiedPriceText'); const priceLabelBottom = document.getElementById('priceLabelTracking');
+      const labelBottom = document.getElementById('unifiedStatusLabel'); const etaBottom = document.getElementById('unifiedEtaText'); const searchProgress = document.getElementById('searchProgressBar');
 
-      const bottomStatusBox = document.getElementById('unifiedStatusBox');
-      const driverBox = document.getElementById('driverInfoBox');
-      const actionButtonsBox = document.getElementById('actionButtonsBox');
-      
-      const statusBottom = document.getElementById('unifiedStatusText');
-      const priceBottom = document.getElementById('unifiedPriceText');
-      const priceLabelBottom = document.getElementById('priceLabelTracking');
-      const labelBottom = document.getElementById('unifiedStatusLabel');
-      const etaBottom = document.getElementById('unifiedEtaText');
-      const searchProgress = document.getElementById('searchProgressBar');
-
-      if(driverBox) driverBox.classList.add('hidden');
-      if(actionButtonsBox) actionButtonsBox.classList.add('hidden');
-
+      if(driverBox) driverBox.classList.add('hidden'); if(actionButtonsBox) actionButtonsBox.classList.add('hidden');
       if(statusBottom) statusBottom.innerText = bookData.status;
 
-      // จัดการการแสดงราคาตามสถานะ (ล็อกเป็นราคาคงที่เมื่อคนขับรับงานแล้ว)
       if(bookData.status === "รอผู้ขับขี่ตอบรับ") {
-          if(priceLabelBottom) priceLabelBottom.innerText = "ราคาประเมิน";
-          if(priceBottom) priceBottom.innerText = bookData.priceEstimate || "~฿" + bookData.price;
+          if(priceLabelBottom) priceLabelBottom.innerText = "ราคาประเมิน"; if(priceBottom) priceBottom.innerText = bookData.priceEstimate || "~฿" + bookData.price;
       } else {
-          if(priceLabelBottom) priceLabelBottom.innerText = "ราคา (คำนวณจริง)";
-          if(priceBottom) priceBottom.innerText = "฿" + bookData.price;
+          if(priceLabelBottom) priceLabelBottom.innerText = "ราคา (คำนวณจริง)"; if(priceBottom) priceBottom.innerText = "฿" + bookData.price;
       }
 
       if(bottomStatusBox) bottomStatusBox.classList.remove('hidden');
-
-      if (bookData.routeChangeRequest && bookData.routeChangeRequest.status === 'pending' && !window.isShowingRouteChange) {
-          window.isShowingRouteChange = true;
-          showRouteChangeModal(bookData.routeChangeRequest);
-      } else if (!bookData.routeChangeRequest) {
-          window.isShowingRouteChange = false;
-      }
+      if (bookData.routeChangeRequest && bookData.routeChangeRequest.status === 'pending' && !window.isShowingRouteChange) { window.isShowingRouteChange = true; showRouteChangeModal(bookData.routeChangeRequest); } 
+      else if (!bookData.routeChangeRequest) { window.isShowingRouteChange = false; }
 
       if(bookData.status === "รอผู้ขับขี่ตอบรับ" || bookData.status.includes("ยกเลิก")) {
           if(statusBottom) {
               if (bookData.status.includes("ยกเลิก")) {
-                  if(labelBottom) labelBottom.innerHTML = '<i class="fas fa-times-circle text-red-500"></i> STATUS';
-                  statusBottom.className = "font-black text-[15px] leading-tight text-red-500 truncate";
+                  if(labelBottom) labelBottom.innerHTML = '<i class="fas fa-times-circle text-red-500"></i> STATUS'; statusBottom.className = "font-black text-[15px] leading-tight text-red-500 truncate";
               } else {
-                  if(labelBottom) labelBottom.innerHTML = '<i class="fas fa-spinner fa-spin text-blue-500 text-[12px]"></i> STATUS';
-                  statusBottom.className = "font-black text-[15px] leading-tight text-white truncate";
+                  if(labelBottom) labelBottom.innerHTML = '<i class="fas fa-spinner fa-spin text-blue-500 text-[12px]"></i> STATUS'; statusBottom.className = "font-black text-[15px] leading-tight text-white truncate";
               }
           }
       } else {
           if(bookData.driverPin && driverBox) driverBox.classList.remove('hidden');
-          
           if(statusBottom) {
               if(labelBottom) labelBottom.innerHTML = '<i class="fas fa-info-circle text-blue-400"></i> STATUS';
-              if (bookData.status.includes("กำลังเดินทางไปหา") || bookData.status.includes("รับงานแล้ว") || bookData.status.includes("มาถึงจุดรับ")) {
-                  statusBottom.className = "font-black text-[15px] leading-tight text-green-400 truncate";
-              } else if (bookData.status.includes("ออกเดินทาง") || bookData.status.includes("ไปยังจุดส่ง")) {
-                  statusBottom.className = "font-black text-[15px] leading-tight text-blue-400 truncate";
-              } else {
-                  statusBottom.className = "font-black text-[15px] leading-tight text-white truncate";
-              }
+              if (bookData.status.includes("กำลังเดินทางไปหา") || bookData.status.includes("รับงานแล้ว") || bookData.status.includes("มาถึงจุดรับ")) { statusBottom.className = "font-black text-[15px] leading-tight text-green-400 truncate"; } 
+              else if (bookData.status.includes("ออกเดินทาง") || bookData.status.includes("ไปยังจุดส่ง")) { statusBottom.className = "font-black text-[15px] leading-tight text-blue-400 truncate"; } 
+              else { statusBottom.className = "font-black text-[15px] leading-tight text-white truncate"; }
           }
       }
 
-      const tPick = document.getElementById('trackPick');
-      const tDrop = document.getElementById('trackDrop');
-      if(tPick) { tPick.innerHTML = bookData.pName; }
-      if(tDrop) { tDrop.innerHTML = bookData.dName; }
-      
-      renderWaypointsSummary('trackWaypointsContainer');
+      const tPick = document.getElementById('trackPick'); const tDrop = document.getElementById('trackDrop');
+      if(tPick) { tPick.innerHTML = bookData.pName; } if(tDrop) { tDrop.innerHTML = bookData.dName; }
+      renderWaypointsUI();
 
       if(bookData.driverPin && bookData.status !== "รอผู้ขับขี่ตอบรับ" && !bookData.status.includes("ยกเลิก")) {
           db.ref('drivers_profile/' + bookData.driverPin).once('value', snap => {
-              let pEl = document.getElementById('trackDriverPlate');
-              let cEl = document.getElementById('trackDriverCar');
-              let nEl = document.getElementById('trackDriverName');
+              let pEl = document.getElementById('trackDriverPlate'); let cEl = document.getElementById('trackDriverCar'); let nEl = document.getElementById('trackDriverName');
               if(snap.exists()) {
                   let p = snap.val();
                   if(pEl) pEl.innerHTML = `<span class="text-gray-400 font-normal">ทะเบียน:</span> ${p.plate || '-'}`;
@@ -1776,269 +1307,142 @@
       }
 
       if (lastNotifiedStatus !== bookData.status) {
-          if ((bookData.status.includes("กำลังเดินทางไปหา") || bookData.status.includes("รับงานแล้ว")) && !window.hasSpokenAccept) {
-              speakText("คนขับตอบรับแล้ว ราคาค่าโดยสารแบบคงที่ได้ถูกกำหนดแล้ว");
-              window.hasSpokenAccept = true;
-          } 
-          else if (bookData.status.includes("มาถึงจุดรับ") && !window.hasSpokenAtPickup) {
-              speakText("คนขับมาถึงแล้ว");
-              window.hasSpokenAtPickup = true;
-          }
-          else if ((bookData.status.includes("ออกเดินทาง") || bookData.status.includes("ไปยังจุดส่ง")) && !window.hasSpokenDepart) {
-              speakText("กำลังออกเดินทางไปยังจุดหมาย");
-              window.hasSpokenDepart = true;
-          }
-          else if (bookData.status.includes("ถึงที่หมาย") && !window.hasSpokenFinish) {
-              speakText("ถึงจุดหมายแล้ว ขอบคุณที่ใช้บริการ");
-              window.hasSpokenFinish = true;
-          } 
-          else if (bookData.status.includes("ยกเลิก") && !window.hasSpokenCancel) {
-              speakText("งานถูกยกเลิก");
-              window.hasSpokenCancel = true;
-          }
+          if ((bookData.status.includes("กำลังเดินทางไปหา") || bookData.status.includes("รับงานแล้ว")) && !window.hasSpokenAccept) { speakText("คนขับตอบรับแล้ว ราคาค่าโดยสารแบบคงที่ได้ถูกกำหนดแล้ว"); window.hasSpokenAccept = true; } 
+          else if (bookData.status.includes("มาถึงจุดรับ") && !window.hasSpokenAtPickup) { speakText("คนขับมาถึงแล้ว"); window.hasSpokenAtPickup = true; }
+          else if ((bookData.status.includes("ออกเดินทาง") || bookData.status.includes("ไปยังจุดส่ง")) && !window.hasSpokenDepart) { speakText("กำลังออกเดินทางไปยังจุดหมาย"); window.hasSpokenDepart = true; }
+          else if (bookData.status.includes("ถึงที่หมาย") && !window.hasSpokenFinish) { speakText("ถึงจุดหมายแล้ว ขอบคุณที่ใช้บริการ"); window.hasSpokenFinish = true; } 
+          else if (bookData.status.includes("ยกเลิก") && !window.hasSpokenCancel) { speakText("งานถูกยกเลิก"); window.hasSpokenCancel = true; }
           lastNotifiedStatus = bookData.status;
       }
 
-      let btnE = document.getElementById('btnEmergency');
-      let btnCh = document.getElementById('btnChat');
-      let btnCa = document.getElementById('btnCall');
-      let btnCancel = document.getElementById('btnCancel');
-      let btnAddWp = document.getElementById('btnAddWaypt');
-      let tAddressBox = document.getElementById('trackAddressBox');
+      let btnE = document.getElementById('btnEmergency'); let btnCh = document.getElementById('btnChat'); let btnCa = document.getElementById('btnCall');
+      let btnCancel = document.getElementById('btnCancel'); let btnAddWp = document.getElementById('btnAddWaypt'); let tAddressBox = document.getElementById('trackAddressBox');
 
       if (bookData.status === "รอผู้ขับขี่ตอบรับ") {
-          if(btnE) btnE.classList.add('hidden');
-          if(actionButtonsBox) { actionButtonsBox.classList.remove('hidden'); actionButtonsBox.classList.add('flex'); }
-          if(btnCancel) btnCancel.classList.remove('hidden'); 
-          if(btnCh) btnCh.classList.add('hidden'); 
-          if(btnCa) btnCa.classList.add('hidden'); 
-          if(btnAddWp) btnAddWp.classList.add('hidden');
+          if(btnE) btnE.classList.add('hidden'); if(actionButtonsBox) { actionButtonsBox.classList.remove('hidden'); actionButtonsBox.classList.add('flex'); }
+          if(btnCancel) btnCancel.classList.remove('hidden'); if(btnCh) btnCh.classList.add('hidden'); if(btnCa) btnCa.classList.add('hidden'); if(btnAddWp) btnAddWp.classList.add('hidden');
           if(tAddressBox) { tAddressBox.classList.remove('flex-1'); tAddressBox.classList.add('w-full'); }
       } 
       else if (bookData.status.includes("กำลังเดินทางไปหา") || bookData.status.includes("มาถึงจุดรับ") || bookData.status.includes("รับงานแล้ว")) {
-          if(btnE) btnE.classList.add('hidden'); 
-          if(actionButtonsBox) { actionButtonsBox.classList.remove('hidden'); actionButtonsBox.classList.add('flex'); }
-          if(btnCancel) btnCancel.classList.remove('hidden'); 
-          if(btnCh) btnCh.classList.remove('hidden'); 
-          if(btnCa) btnCa.classList.remove('hidden'); 
-          if(btnAddWp) btnAddWp.classList.add('hidden');
+          if(btnE) btnE.classList.add('hidden'); if(actionButtonsBox) { actionButtonsBox.classList.remove('hidden'); actionButtonsBox.classList.add('flex'); }
+          if(btnCancel) btnCancel.classList.remove('hidden'); if(btnCh) btnCh.classList.remove('hidden'); if(btnCa) btnCa.classList.remove('hidden'); if(btnAddWp) btnAddWp.classList.add('hidden');
           if(tAddressBox) { tAddressBox.classList.remove('w-full'); tAddressBox.classList.add('flex-1'); }
-          
-          let callBtn = document.getElementById('confirmCallBtn');
-          if(bookData.driverPhone && callBtn) callBtn.href = "tel:" + bookData.driverPhone;
+          let callBtn = document.getElementById('confirmCallBtn'); if(bookData.driverPhone && callBtn) callBtn.href = "tel:" + bookData.driverPhone;
       } 
       else if (bookData.status.includes("ออกเดินทาง") || bookData.status.includes("ไปยังจุดส่ง")) {
-          if(btnE) btnE.classList.remove('hidden'); 
-          if(actionButtonsBox) { actionButtonsBox.classList.add('hidden'); actionButtonsBox.classList.remove('flex'); } 
-          if(btnCancel) btnCancel.classList.add('hidden'); 
-          if(btnCh) btnCh.classList.add('hidden'); 
-          if(btnCa) btnCa.classList.add('hidden'); 
-          if(btnAddWp) btnAddWp.classList.remove('hidden'); // โชว์ปุ่มเพิ่มจุดแวะระหว่างเดินทาง
+          if(btnE) btnE.classList.remove('hidden'); if(actionButtonsBox) { actionButtonsBox.classList.add('hidden'); actionButtonsBox.classList.remove('flex'); } 
+          if(btnCancel) btnCancel.classList.add('hidden'); if(btnCh) btnCh.classList.add('hidden'); if(btnCa) btnCa.classList.add('hidden'); if(btnAddWp) btnAddWp.classList.remove('hidden'); 
           if(tAddressBox) { tAddressBox.classList.remove('w-full'); tAddressBox.classList.add('flex-1'); }
       } 
       else {
-          if(btnE) btnE.classList.add('hidden');
-          if(actionButtonsBox) { actionButtonsBox.classList.add('hidden'); actionButtonsBox.classList.remove('flex'); }
+          if(btnE) btnE.classList.add('hidden'); if(actionButtonsBox) { actionButtonsBox.classList.add('hidden'); actionButtonsBox.classList.remove('flex'); }
           if(tAddressBox) { tAddressBox.classList.remove('flex-1'); tAddressBox.classList.add('w-full'); }
       }
 
       if(bookData.status.includes("ถึงที่หมาย") && !window.hasShownFinish) {
         window.hasShownFinish = true;
         let finalMessage = `จุดรับ: ${bookData.pName}\nจุดส่ง: ${bookData.dName}\nระยะทาง: ${bookData.distance || 0} กม. | ราคา: ${bookData.price} บาท\n\nขอบคุณที่ใช้บริการ F1 Driver ครับ!`;
-        showAlert('ถึงที่หมายเรียบร้อย!', finalMessage, 'success', () => {
-            window.isCompleting = true;
-            db.ref('bookings/' + lineUserId).remove().then(() => { window.location.reload(); });
-        });
+        showAlert('ถึงที่หมายเรียบร้อย!', finalMessage, 'success', () => { window.isCompleting = true; db.ref('bookings/' + lineUserId).remove().then(() => { window.location.reload(); }); });
       }
       
       if(bookData.status.includes("ยกเลิก") && !window.hasShownCancel) {
         window.hasShownCancel = true;
-        showAlert('แจ้งเตือน', 'ขออภัยในความไม่สะดวกครับ งานนี้ถูกยกเลิก รบกวนคุณลูกค้ากดยืนยันเพื่อเรียกรถใหม่อีกครั้งนะครับ', 'error', () => {
-            window.isCompleting = true;
-            db.ref('bookings/' + lineUserId).remove().then(() => {
-                resetTrackingFlags();
-                window.isCompleting = false;
-                showPage(4); 
-            });
-        });
+        showAlert('แจ้งเตือน', 'ขออภัยในความไม่สะดวกครับ งานนี้ถูกยกเลิก รบกวนคุณลูกค้ากดยืนยันเพื่อเรียกรถใหม่อีกครั้งนะครับ', 'error', () => { window.isCompleting = true; db.ref('bookings/' + lineUserId).remove().then(() => { resetTrackingFlags(); window.isCompleting = false; showPage(4); }); });
       }
 
-      updateRealtimeMap();
-      updateMapControlsPosition('Tracking');
+      updateRealtimeMap(); updateMapControlsPosition('Tracking');
     }
 
-    // คำนวณราคาใหม่เวลากดเพิ่มจุดแวะระหว่างนั่งรถ
     function calculateNewRoutePriceForTracking(newLat, newLng, newName) {
-        let origin = new google.maps.LatLng(bookData.pLat, bookData.pLng);
-        let dest = new google.maps.LatLng(bookData.dLat, bookData.dLng);
-        
-        let tempWaypts = localWaypoints.map(w => ({location: new google.maps.LatLng(w.lat, w.lng), stopover: true}));
-        tempWaypts.push({location: new google.maps.LatLng(newLat, newLng), stopover: true});
+        let origin = new google.maps.LatLng(bookData.pLat, bookData.pLng); let dest = new google.maps.LatLng(bookData.dLat, bookData.dLng);
+        let tempWaypts = localWaypoints.map(w => ({location: new google.maps.LatLng(w.lat, w.lng), stopover: true})); tempWaypts.push({location: new google.maps.LatLng(newLat, newLng), stopover: true});
 
         directionsService.route({origin: origin, destination: dest, waypoints: tempWaypts, travelMode: 'DRIVING'}, (res, stat) => {
             if (stat === 'OK') {
-                let distMeters = 0;
-                res.routes[0].legs.forEach(leg => distMeters += leg.distance.value);
-                let distKm = distMeters / 1000;
-                
-                let baseFare = parseInt(pricingConfig.base) || 0;
-                let kmRate = parseInt(pricingConfig.km) || 0;
-                let calcPrice = Math.ceil(baseFare + (distKm * kmRate));
-                let minPrice = Math.floor(calcPrice / 10) * 10;
-                if(minPrice < baseFare) minPrice = baseFare;
-                
-                // หักส่วนลดถ้ามี
+                let distMeters = 0; res.routes[0].legs.forEach(leg => distMeters += leg.distance.value); let distKm = distMeters / 1000;
+                let baseFare = parseInt(pricingConfig.base) || 0; let kmRate = parseInt(pricingConfig.km) || 0;
+                let calcPrice = Math.ceil(baseFare + (distKm * kmRate)); let minPrice = Math.floor(calcPrice / 10) * 10; if(minPrice < baseFare) minPrice = baseFare;
                 let finalPrice = Math.max(0, minPrice - (bookData.discount || 0));
 
-                window.tempNewPrice = finalPrice;
-                window.tempNewDist = distKm.toFixed(1);
-                window.tempNewWp = {lat: newLat, lng: newLng, name: newName};
+                window.tempNewPrice = finalPrice; window.tempNewDist = distKm.toFixed(1); window.tempNewWp = {lat: newLat, lng: newLng, name: newName, type: 'drop'};
                 
-                document.getElementById('rcTitle').innerText = `ยืนยันเพิ่มจุดแวะ`;
-                document.getElementById('rcAddress').innerText = newName;
-                document.getElementById('rcPrice').innerText = `฿${finalPrice}`;
+                document.getElementById('rcTitle').innerText = `ยืนยันเพิ่มจุดแวะ`; document.getElementById('rcAddress').innerText = newName; document.getElementById('rcPrice').innerText = `฿${finalPrice}`;
                 document.getElementById('routeChangeModal').classList.remove('hidden');
-            } else {
-                showAlert("เกิดข้อผิดพลาด", "ไม่สามารถคำนวณเส้นทางใหม่ได้ กรุณาลองใหม่อีกครั้ง", "error");
-            }
+            } else { showAlert("เกิดข้อผิดพลาด", "ไม่สามารถคำนวณเส้นทางใหม่ได้ กรุณาลองใหม่อีกครั้ง", "error"); }
         });
     }
 
     function acceptRouteChange() {
-        if(window.tempNewWp) { // เป็นการเพิ่มจากฝั่งผู้โดยสารเอง
+        if(window.tempNewWp) { 
             localWaypoints.push(window.tempNewWp);
-            
-            let updates = {
-                price: window.tempNewPrice,
-                originalPrice: window.tempNewPrice + (bookData.discount || 0),
-                priceEstimate: `฿${window.tempNewPrice}`, // ล็อกเป็นราคาจริง
-                distance: window.tempNewDist,
-                waypoints: localWaypoints
-            };
-
-            db.ref('bookings/' + lineUserId).update(updates).then(() => {
-                document.getElementById('routeChangeModal').classList.add('hidden');
-                showAlert("สำเร็จ", "เพิ่มจุดแวะและอัปเดตราคาใหม่เรียบร้อยแล้ว คนขับจะเห็นเส้นทางใหม่ทันที", "success");
-                window.tempNewWp = null;
-            });
-        } else { // เป็นการตอบรับคำขอจากคนขับ
+            let updates = { price: window.tempNewPrice, originalPrice: window.tempNewPrice + (bookData.discount || 0), priceEstimate: `฿${window.tempNewPrice}`, distance: window.tempNewDist, waypoints: localWaypoints };
+            db.ref('bookings/' + lineUserId).update(updates).then(() => { document.getElementById('routeChangeModal').classList.add('hidden'); showAlert("สำเร็จ", "เพิ่มจุดแวะและอัปเดตราคาใหม่เรียบร้อยแล้ว คนขับจะเห็นเส้นทางใหม่ทันที", "success"); window.tempNewWp = null; });
+        } else { 
             let req = bookData.routeChangeRequest;
-            let updates = {
-                price: window.tempNewPrice,
-                originalPrice: window.tempNewPrice,
-                priceEstimate: `฿${window.tempNewPrice}`,
-                distance: window.tempNewDist,
-                routeChangeRequest: null
-            };
-
-            if (req.type === 'destination') {
-                updates.dLat = req.lat;
-                updates.dLng = req.lng;
-                updates.dName = req.name;
-            } else {
-                localWaypoints.push({lat: req.lat, lng: req.lng, name: req.name});
-                updates.waypoints = localWaypoints;
-            }
-
-            db.ref('bookings/' + lineUserId).update(updates).then(() => {
-                document.getElementById('routeChangeModal').classList.add('hidden');
-                window.isShowingRouteChange = false;
-            });
+            let updates = { price: window.tempNewPrice, originalPrice: window.tempNewPrice, priceEstimate: `฿${window.tempNewPrice}`, distance: window.tempNewDist, routeChangeRequest: null };
+            if (req.type === 'destination') { updates.dLat = req.lat; updates.dLng = req.lng; updates.dName = req.name; } 
+            else { localWaypoints.push({lat: req.lat, lng: req.lng, name: req.name, type: 'drop'}); updates.waypoints = localWaypoints; }
+            db.ref('bookings/' + lineUserId).update(updates).then(() => { document.getElementById('routeChangeModal').classList.add('hidden'); window.isShowingRouteChange = false; });
         }
     }
 
     function rejectRouteChange() {
-        if(window.tempNewWp) { // ยกเลิกการเพิ่มจุดแวะเอง
-            window.tempNewWp = null;
-            document.getElementById('routeChangeModal').classList.add('hidden');
-        } else { // ปฏิเสธคำขอจากคนขับ
-            db.ref('bookings/' + lineUserId + '/routeChangeRequest').remove().then(() => {
-                document.getElementById('routeChangeModal').classList.add('hidden');
-                window.isShowingRouteChange = false;
-            });
-        }
+        if(window.tempNewWp) { window.tempNewWp = null; document.getElementById('routeChangeModal').classList.add('hidden'); } 
+        else { db.ref('bookings/' + lineUserId + '/routeChangeRequest').remove().then(() => { document.getElementById('routeChangeModal').classList.add('hidden'); window.isShowingRouteChange = false; }); }
     }
 
     function updateRealtimeMap() {
       if(!directionsService || !bookData.status || !map) return;
+      let isStatusChanged = (currentRouteStatus !== bookData.status); currentRouteStatus = bookData.status;
 
-      let isStatusChanged = (currentRouteStatus !== bookData.status);
-      currentRouteStatus = bookData.status;
-
-      let etaElBottom = document.getElementById('unifiedEtaText');
-      let searchProgress = document.getElementById('searchProgressBar');
+      let etaElBottom = document.getElementById('unifiedEtaText'); let searchProgress = document.getElementById('searchProgressBar');
 
       if (bookData.status === "รอผู้ขับขี่ตอบรับ" || bookData.status.includes("ยกเลิก")) {
-          if(markerDriver) markerDriver.setMap(null); 
-          if(etaElBottom) etaElBottom.classList.add('hidden'); 
-          if(bookData.status === "รอผู้ขับขี่ตอบรับ") { if(searchProgress) searchProgress.classList.remove('hidden'); } 
-          else { if(searchProgress) searchProgress.classList.add('hidden'); }
+          if(markerDriver) markerDriver.setMap(null); if(etaElBottom) etaElBottom.classList.add('hidden'); 
+          if(bookData.status === "รอผู้ขับขี่ตอบรับ") { if(searchProgress) searchProgress.classList.remove('hidden'); } else { if(searchProgress) searchProgress.classList.add('hidden'); }
 
-          let origin = {lat: bookData.pLat, lng: bookData.pLng};
-          let dest = {lat: bookData.dLat, lng: bookData.dLng};
+          let origin = {lat: bookData.pLat, lng: bookData.pLng}; let dest = {lat: bookData.dLat, lng: bookData.dLng};
           let waypts = localWaypoints.map(w => ({location: new google.maps.LatLng(w.lat, w.lng), stopover: true}));
           
           directionsService.route({origin: origin, destination: dest, waypoints: waypts, travelMode: 'DRIVING'}, (res, stat) => {
               if(stat === 'OK') {
                   if(polylineRoute) polylineRoute.setMap(null);
-                  polylineRoute = new google.maps.Polyline({
-                      path: res.routes[0].legs.flatMap(leg => leg.steps.flatMap(step => step.path)),
-                      strokeColor: '#3b82f6', strokeWeight: 6, map: map
-                  });
-
-                  if(markerPick) { markerPick.setPosition(origin); markerPick.setMap(map); }
-                  if(markerDrop) { markerDrop.setPosition(dest); markerDrop.setMap(map); }
-                  
-                  currentRouteBounds = res.routes[0].bounds;
-                  if(isStatusChanged && map) setTimeout(()=>{ fitRouteBounds(); }, 200);
+                  polylineRoute = new google.maps.Polyline({ path: res.routes[0].legs.flatMap(leg => leg.steps.flatMap(step => step.path)), strokeColor: '#3b82f6', strokeWeight: 6, map: map });
+                  if(markerPick) { markerPick.setPosition(origin); markerPick.setMap(map); } if(markerDrop) { markerDrop.setPosition(dest); markerDrop.setMap(map); }
+                  currentRouteBounds = res.routes[0].bounds; if(isStatusChanged && map) setTimeout(()=>{ fitRouteBounds(); }, 200);
               }
           });
-          redrawAllMarkers();
-          return; 
+          redrawAllMarkers(); return; 
       }
 
       if(searchProgress) searchProgress.classList.add('hidden');
       if(markerDriver) { markerDriver.setMap(map); markerDriver.setPosition({lat: driverData.lat, lng: driverData.lng}); }
 
-      let origin, dest;
-      let isGoingToPickup = false;
-      let waypts = [];
+      let origin, dest; let isGoingToPickup = false; let waypts = [];
 
       if(bookData.status.includes("รับงาน") || bookData.status.includes("มาถึงจุดรับ") || bookData.status.includes("กำลังเดินทางไปหา")) {
-        origin = markerDriver ? markerDriver.getPosition() : {lat: driverData.lat, lng: driverData.lng}; 
-        dest = {lat: bookData.pLat, lng: bookData.pLng};
-        if(markerPick) { markerPick.setPosition(dest); markerPick.setMap(map); }
-        if(markerDrop) { markerDrop.setPosition({lat: bookData.dLat, lng: bookData.dLng}); markerDrop.setMap(map); }
+        origin = markerDriver ? markerDriver.getPosition() : {lat: driverData.lat, lng: driverData.lng}; dest = {lat: bookData.pLat, lng: bookData.pLng};
+        if(markerPick) { markerPick.setPosition(dest); markerPick.setMap(map); } if(markerDrop) { markerDrop.setPosition({lat: bookData.dLat, lng: bookData.dLng}); markerDrop.setMap(map); }
         isGoingToPickup = true;
       } else {
-        origin = markerDriver ? markerDriver.getPosition() : {lat: driverData.lat, lng: driverData.lng}; 
-        dest = {lat: bookData.dLat, lng: bookData.dLng};
-        if(markerDrop) { markerDrop.setPosition(dest); markerDrop.setMap(map); }
-        if(markerPick) { markerPick.setPosition({lat: bookData.pLat, lng: bookData.pLng}); markerPick.setMap(map); }
+        origin = markerDriver ? markerDriver.getPosition() : {lat: driverData.lat, lng: driverData.lng}; dest = {lat: bookData.dLat, lng: bookData.dLng};
+        if(markerDrop) { markerDrop.setPosition(dest); markerDrop.setMap(map); } if(markerPick) { markerPick.setPosition({lat: bookData.pLat, lng: bookData.pLng}); markerPick.setMap(map); }
         waypts = localWaypoints.map(w => ({location: new google.maps.LatLng(w.lat, w.lng), stopover: true}));
       }
 
       directionsService.route({origin: origin, destination: dest, waypoints: waypts, travelMode: 'DRIVING'}, (res, stat) => {
         if(stat === 'OK') {
           if(polylineRoute) polylineRoute.setMap(null);
-          polylineRoute = new google.maps.Polyline({
-              path: res.routes[0].legs.flatMap(leg => leg.steps.flatMap(step => step.path)),
-              strokeColor: '#3b82f6', strokeWeight: 6, map: map
-          });
+          polylineRoute = new google.maps.Polyline({ path: res.routes[0].legs.flatMap(leg => leg.steps.flatMap(step => step.path)), strokeColor: '#3b82f6', strokeWeight: 6, map: map });
           
           currentRouteBounds = res.routes[0].bounds;
-          if(isGoingToPickup && markerPick) currentRouteBounds.extend(markerPick.getPosition());
-          if(!isGoingToPickup && markerDrop) currentRouteBounds.extend(markerDrop.getPosition());
+          if(isGoingToPickup && markerPick) currentRouteBounds.extend(markerPick.getPosition()); if(!isGoingToPickup && markerDrop) currentRouteBounds.extend(markerDrop.getPosition());
 
           let totalMins = 0; let distMeters = 0;
           res.routes[0].legs.forEach(leg => { totalMins += leg.duration.value; distMeters += leg.distance.value; });
           
-          let totalDistText = (distMeters/1000).toFixed(1) + " กม.";
-          const now = new Date();
-          const etaDate = new Date(now.getTime() + totalMins * 1000);
-          const etaHours = etaDate.getHours().toString().padStart(2, '0');
-          const etaMinutes = etaDate.getMinutes().toString().padStart(2, '0');
-
+          let totalDistText = (distMeters/1000).toFixed(1) + " กม."; const now = new Date(); const etaDate = new Date(now.getTime() + totalMins * 1000);
+          const etaHours = etaDate.getHours().toString().padStart(2, '0'); const etaMinutes = etaDate.getMinutes().toString().padStart(2, '0');
           let etaText = `${totalDistText} • ${Math.ceil(totalMins/60)} นาที • ถึง ${etaHours}:${etaMinutes} น.`;
 
           if(isGoingToPickup) {
@@ -2058,11 +1462,9 @@
           if(isStatusChanged && map) setTimeout(()=>{ fitRouteBounds(); }, 200);
           else if (!isTrackingMode && map) fitRouteBounds();
           else if (isTrackingMode && map && markerDriver) {
-              const panel = document.getElementById('trackingPanel');
-              const isCollapsed = panel && panel.classList.contains('panel-collapsed');
+              const panel = document.getElementById('trackingPanel'); const isCollapsed = panel && panel.classList.contains('panel-collapsed');
               const bottomPad = isCollapsed ? 120 : getDynamicBottomPadding();
-              map.setOptions({ padding: { top: 160, bottom: bottomPad, left: 0, right: 0 } });
-              map.panTo(markerDriver.getPosition());
+              map.setOptions({ padding: { top: 160, bottom: bottomPad, left: 0, right: 0 } }); map.panTo(markerDriver.getPosition());
           }
         }
       });
@@ -2071,72 +1473,29 @@
 
     function openPassengerHistory() { document.getElementById('historyModal').classList.remove('hidden'); renderPassengerHistory(); }
     function closePassengerHistory() { document.getElementById('historyModal').classList.add('hidden'); }
-
     function renderPassengerHistory() {
         let container = document.getElementById('historyListContainer');
         db.ref('completed_jobs').orderByChild('userId').equalTo(lineUserId).once('value', snap => {
-            let jobs = [];
-            snap.forEach(child => { jobs.push({id: child.key, data: child.val()}); });
-            jobs.sort((a,b) => (b.data.completedAt || 0) - (a.data.completedAt || 0));
-            
-            if(jobs.length === 0) {
-                container.innerHTML = `<div class="text-center py-10"><i class="fas fa-history text-4xl text-gray-600 mb-3"></i><p class="text-gray-400 font-bold">ยังไม่มีประวัติการเดินทาง</p></div>`;
-                return;
-            }
-
+            let jobs = []; snap.forEach(child => { jobs.push({id: child.key, data: child.val()}); }); jobs.sort((a,b) => (b.data.completedAt || 0) - (a.data.completedAt || 0));
+            if(jobs.length === 0) { container.innerHTML = `<div class="text-center py-10"><i class="fas fa-history text-4xl text-gray-600 mb-3"></i><p class="text-gray-400 font-bold">ยังไม่มีประวัติการเดินทาง</p></div>`; return; }
             let html = '<div class="space-y-3">';
             jobs.forEach(job => {
-                let d = job.data;
-                let dateStr = new Date(d.completedAt || d.timestamp).toLocaleString('th-TH', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
-                loadedHistoryJobs[job.id] = d;
-
-                html += `<div onclick="openPassengerHistoryDetail('${job.id}')" class="bg-gray-800 border border-gray-700 p-4 rounded-2xl shadow-sm cursor-pointer hover:bg-gray-700 transition">
-                    <div class="flex justify-between items-center mb-3">
-                        <p class="text-[10px] text-gray-400 font-bold"><i class="far fa-clock"></i> ${dateStr}</p>
-                        <span class="font-black text-green-400 text-sm bg-gray-900 px-2 py-0.5 rounded border border-gray-700">฿${d.price}</span>
-                    </div>
-                    <div class="flex items-center gap-2 mb-1.5"><i class="fas fa-circle text-[8px] text-green-500 w-3"></i><p class="text-[11px] text-gray-300 truncate">${d.pName}</p></div>
-                    <div class="flex items-center gap-2"><i class="fas fa-circle text-[8px] text-red-500 w-3"></i><p class="text-[11px] text-gray-300 truncate">${d.dName}</p></div>
-                </div>`;
-            });
-            html += '</div>';
-            container.innerHTML = html;
+                let d = job.data; let dateStr = new Date(d.completedAt || d.timestamp).toLocaleString('th-TH', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }); loadedHistoryJobs[job.id] = d;
+                html += `<div onclick="openPassengerHistoryDetail('${job.id}')" class="bg-gray-800 border border-gray-700 p-4 rounded-2xl shadow-sm cursor-pointer hover:bg-gray-700 transition"><div class="flex justify-between items-center mb-3"><p class="text-[10px] text-gray-400 font-bold"><i class="far fa-clock"></i> ${dateStr}</p><span class="font-black text-green-400 text-sm bg-gray-900 px-2 py-0.5 rounded border border-gray-700">฿${d.price}</span></div><div class="flex items-center gap-2 mb-1.5"><i class="fas fa-circle text-[8px] text-green-500 w-3"></i><p class="text-[11px] text-gray-300 truncate">${d.pName}</p></div><div class="flex items-center gap-2"><i class="fas fa-circle text-[8px] text-red-500 w-3"></i><p class="text-[11px] text-gray-300 truncate">${d.dName}</p></div></div>`;
+            }); html += '</div>'; container.innerHTML = html;
         });
     }
-
     function openPassengerHistoryDetail(jobId) {
-        let job = loadedHistoryJobs[jobId];
-        if(!job) return;
-        selectedHistoryJobId = jobId;
-
-        let dateStr = new Date(job.completedAt || job.timestamp).toLocaleString('th-TH');
-        document.getElementById('histDetDate').innerText = "วันที่ " + dateStr;
-        document.getElementById('histDetPrice').innerText = "฿" + job.price;
-        document.getElementById('histDetPick').innerText = job.pName;
-        document.getElementById('histDetDrop').innerText = job.dName;
-
-        if(job.driverPin) {
-            db.ref('drivers_profile/' + job.driverPin).once('value', snap => {
-                if(snap.exists()){
-                    let p = snap.val();
-                    document.getElementById('histDetDriver').innerText = `คนขับ: ${p.name || '-'} (${p.plate || '-'})`;
-                } else document.getElementById('histDetDriver').innerText = `คนขับ: ไม่ทราบชื่อ`;
-            });
-        } else document.getElementById('histDetDriver').innerText = `คนขับ: ไม่ทราบชื่อ`;
-
+        let job = loadedHistoryJobs[jobId]; if(!job) return; selectedHistoryJobId = jobId;
+        document.getElementById('histDetDate').innerText = "วันที่ " + new Date(job.completedAt || job.timestamp).toLocaleString('th-TH'); document.getElementById('histDetPrice').innerText = "฿" + job.price; document.getElementById('histDetPick').innerText = job.pName; document.getElementById('histDetDrop').innerText = job.dName;
+        if(job.driverPin) { db.ref('drivers_profile/' + job.driverPin).once('value', snap => { if(snap.exists()){ document.getElementById('histDetDriver').innerText = `คนขับ: ${snap.val().name || '-'} (${snap.val().plate || '-'})`; } else document.getElementById('histDetDriver').innerText = `คนขับ: ไม่ทราบชื่อ`; }); } else document.getElementById('histDetDriver').innerText = `คนขับ: ไม่ทราบชื่อ`;
         document.getElementById('historyDetailModal').classList.remove('hidden');
     }
-
     function closeHistoryDetail() { document.getElementById('historyDetailModal').classList.add('hidden'); selectedHistoryJobId = null; }
-
     function blockCurrentHistoryDriver() {
-        let job = loadedHistoryJobs[selectedHistoryJobId];
-        if(!job || !job.driverPin) { showAlert("ผิดพลาด", "ไม่สามารถบล็อกได้ เนื่องจากไม่พบข้อมูลคนขับสำหรับงานนี้", "error"); return; }
-
+        let job = loadedHistoryJobs[selectedHistoryJobId]; if(!job || !job.driverPin) { showAlert("ผิดพลาด", "ไม่สามารถบล็อกได้ เนื่องจากไม่พบข้อมูลคนขับสำหรับงานนี้", "error"); return; }
         openConfirmActionModal("บล็อกคนขับ?", "หากยืนยัน คุณจะไม่ถูกจับคู่กับคนขับคนนี้อีกต่อไป คุณสามารถจัดการรายการบล็อกได้ในภายหลัง", () => {
-            let updates = {};
-            updates[job.driverPin] = { driverPin: job.driverPin, timestamp: firebase.database.ServerValue.TIMESTAMP };
-            if(job.driverPhone) updates[job.driverPhone] = { driverPhone: job.driverPhone, timestamp: firebase.database.ServerValue.TIMESTAMP };
+            let updates = {}; updates[job.driverPin] = { driverPin: job.driverPin, timestamp: firebase.database.ServerValue.TIMESTAMP }; if(job.driverPhone) updates[job.driverPhone] = { driverPhone: job.driverPhone, timestamp: firebase.database.ServerValue.TIMESTAMP };
             db.ref('passenger_blocks/' + lineUserId).update(updates).then(() => { showAlert("บล็อกสำเร็จ", "คุณจะไม่ได้รับงานจากคนขับท่านนี้อีก", "success"); closeHistoryDetail(); });
         }, "red");
     }
