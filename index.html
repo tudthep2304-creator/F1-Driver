@@ -55,14 +55,14 @@
 
   <div id="map" class="map-container hidden"></div>
 
-  <div id="centerPinOverlay" class="hidden fixed left-0 right-0 z-[25] pointer-events-none">
-      <div class="absolute top-1/2 left-1/2 w-0 h-0 flex items-center justify-center">
-          <div id="centerPinShadow" class="absolute w-5 h-1.5 bg-black/40 rounded-full blur-[1px] transition-all duration-200"></div>
-          <div id="centerPinWrapper" class="absolute bottom-0 transition-transform duration-200 z-10 flex items-end justify-center mb-0.5">
-              <svg id="centerPinSvg" width="36" height="36" viewBox="0 0 36 36" class="drop-shadow-xl origin-bottom">
-                  <path d="M18,0 C10,0 4,6 4,14 C4,24 18,36 18,36 C18,36 32,24 32,14 C32,6 26,0 18,0 Z M18,20 C14.686,20 12,17.314 12,14 C12,10.686 14.686,8 18,8 C21.314,8 24,10.686 24,14 C24,17.314 21.314,20 18,20 Z" fill="#22c55e" stroke="#ffffff" stroke-width="1.5"/>
+  <div id="centerPinOverlay" class="hidden fixed inset-0 z-[25] pointer-events-none flex items-center justify-center box-border transition-opacity duration-300">
+      <div class="relative w-0 h-0 flex items-center justify-center">
+          <div id="centerPinWrapper" class="absolute bottom-0 left-[50%] transition-transform duration-200 z-10" style="transform: translate(-50%, 0);">
+              <svg id="centerPinSvg" width="36" height="36" viewBox="-2 -2 40 40" class="drop-shadow-xl">
+                  <path d="M18,0 C10,0 4,6 4,14 C4,24 18,36 18,36 C18,36 32,24 32,14 C32,6 26,0 18,0 Z M18,20 C14.686,20 12,17.314 12,14 C12,10.686 14.686,8 18,8 C21.314,8 24,10.686 24,14 C24,17.314 21.314,20 18,20 Z" fill="#22c55e" stroke="#ffffff" stroke-width="2"/>
               </svg>
           </div>
+          <div id="centerPinShadow" class="absolute w-5 h-1.5 bg-black/50 rounded-full blur-[1px] transition-all duration-200" style="transform: translate(-50%, -50%);"></div>
       </div>
   </div>
 
@@ -89,7 +89,7 @@
   <div id="mapControls" class="hidden fixed top-[140px] right-4 z-30 flex-col gap-3 pointer-events-auto transition-all duration-300">
       <button onclick="toggleMapStyle()" id="btnMapStyle" class="bg-gray-800 w-11 h-11 flex items-center justify-center rounded-full shadow-lg text-gray-400 border border-gray-600 active:bg-gray-700 transition" title="สลับโหมดแผนที่"><i class="fas fa-layer-group text-lg"></i></button>
       <button onclick="fitAllWaypoints()" id="btnOverview" class="hidden bg-gray-800 w-11 h-11 flex items-center justify-center rounded-full shadow-lg text-gray-400 border border-gray-600 active:bg-gray-700 transition" title="ดูเส้นทางรวม"><i class="fas fa-route text-lg"></i></button>
-      <button onclick="useCurrentLocation()" id="btnCrosshair" class="bg-gray-800 w-11 h-11 flex items-center justify-center rounded-full shadow-lg text-blue-400 border border-gray-600 active:bg-gray-700 transition" title="โฟกัสพิกัด"><i class="fas fa-crosshairs text-lg"></i></button>
+      <button onclick="centerToFocus()" id="btnCrosshair" class="bg-gray-800 w-11 h-11 flex items-center justify-center rounded-full shadow-lg text-blue-400 border border-gray-600 active:bg-gray-700 transition" title="พิกัดปัจจุบัน"><i class="fas fa-crosshairs text-lg"></i></button>
       <button onclick="openEmergencyModal()" id="btnEmergency" class="hidden bg-red-900/80 w-11 h-11 flex items-center justify-center rounded-full shadow-[0_0_15px_rgba(239,68,68,0.5)] text-red-400 border border-red-500/50 active:bg-red-800 transition mt-2"><i class="fas fa-shield-alt text-lg"></i></button>
   </div>
 
@@ -348,7 +348,7 @@
       <div class="bg-gray-800 border border-gray-700 rounded-3xl p-6 w-full max-w-sm text-center shadow-2xl">
           <div class="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl" id="confirmActionIcon"><i class="fas fa-map-marked-alt"></i></div>
           <h3 id="confirmActionTitle" class="text-xl font-black text-white mb-2">...</h3>
-          <p id="confirmActionMessage" class="text-sm text-gray-400 mb-6 leading-relaxed">...<br><span class="text-[10px] text-gray-500 mt-2 block">(เมื่อบันทึกแล้ว คุณสามารถใช้งานผ่านปุ่มด่วนด้านล่างได้ทันที)</span></p>
+          <p id="confirmActionMessage" class="text-sm text-gray-400 mb-6 leading-relaxed">...</p>
           <div class="flex gap-3">
               <button onclick="closeConfirmActionModal()" class="flex-1 py-3 bg-gray-700 text-gray-200 font-bold rounded-xl hover:bg-gray-600 transition">ยกเลิก</button>
               <button id="confirmActionButton" onclick="submitConfirmAction()" class="flex-1 py-3 text-white font-bold rounded-xl shadow-md transition">ตกลง</button>
@@ -432,7 +432,7 @@
 
     let currentRouteBounds = null;
     let isTrackingMode = true;
-    let isSatelliteMode = true; 
+    let isSatelliteMode = true; // โหมดดาวเทียมเริ่มต้น
     
     let lastNotifiedStatus = "";
     let wakeLock = null;
@@ -458,7 +458,7 @@
 
         map.setOptions({ padding: { top: pTop, bottom: pBottom, left: 0, right: 0 } });
         
-        // ซิงค์เป้าเล็งตรงกลางให้ตรงกับ Padding แผนที่
+        // ขยับเป้าเล็งตาม Padding
         let overlay = document.getElementById('centerPinOverlay');
         if(overlay && (currentStep === 2 || currentStep === 3)) {
             overlay.style.top = pTop + 'px';
@@ -645,6 +645,7 @@
 
     function centerToFocus() {
         if(!map) return;
+        let pos;
         if(currentStep === 'Tracking' && markerDriver && markerDriver.getMap()) {
             map.panTo(markerDriver.getPosition()); map.setZoom(17);
             isTrackingMode = true; 
@@ -653,12 +654,7 @@
             return;
         }
         
-        if (localWaypoints.length > 0) {
-            let lastWp = localWaypoints[localWaypoints.length - 1];
-            map.panTo({lat: lastWp.lat, lng: lastWp.lng}); map.setZoom(17);
-        } else {
-            useCurrentLocation();
-        }
+        useCurrentLocation();
     }
 
     function fitAllWaypoints() {
@@ -728,15 +724,15 @@
       map.addListener('dragstart', () => {
          if (currentStep === 'Tracking') { isTrackingMode = false; }
          if (currentStep === 2 || currentStep === 3) {
-             document.getElementById('centerPinWrapper').classList.add('-translate-y-3');
-             document.getElementById('centerPinShadow').classList.add('scale-75', 'opacity-50');
+             document.getElementById('centerPinWrapper').style.transform = 'translate(-50%, -12px)';
+             document.getElementById('centerPinShadow').style.transform = 'translate(-50%, -50%) scale(0.6)';
          }
       });
       
       map.addListener('idle', () => {
          if (currentStep === 2 || currentStep === 3) {
-             document.getElementById('centerPinWrapper').classList.remove('-translate-y-3');
-             document.getElementById('centerPinShadow').classList.remove('scale-75', 'opacity-50');
+             document.getElementById('centerPinWrapper').style.transform = 'translate(-50%, 0)';
+             document.getElementById('centerPinShadow').style.transform = 'translate(-50%, -50%) scale(1)';
              updateAddressBox(true); 
          }
       });
@@ -748,7 +744,7 @@
       
       markerDriver = new google.maps.Marker({
           map: null, 
-          icon: { url: "https://img.icons8.com/color/48/car-top-view.png", scaledSize: new google.maps.Size(44, 44), anchor: typeof google !== 'undefined' && google.maps ? new google.maps.Point(22, 22) : null }, 
+          icon: { url: "https://img.icons8.com/color/48/car-top-view.png", scaledSize: new google.maps.Size(44, 44), anchor: new google.maps.Point(22, 22) }, 
           zIndex: 9999
       });
 
@@ -832,8 +828,9 @@
     }
 
     function addWaypointFromLocation(lat, lng, name, type) {
-        let num = localWaypoints.length + 1;
+        let num = type === 'pick' ? localWaypoints.filter(w=>w.type==='pick').length + 1 : localWaypoints.filter(w=>w.type==='drop').length + 1;
         let color = type === 'pick' ? '#22c55e' : '#ef4444';
+        
         let marker = new google.maps.Marker({
             position: {lat: lat, lng: lng}, map: map,
             icon: createNumberedMarkerIcon(num.toString(), color),
@@ -885,9 +882,11 @@
             if (picks.length > 0) { 
                 btnConfirmPick.disabled = false; btnConfirmPick.classList.remove('opacity-50', 'cursor-not-allowed', 'bg-gray-700', 'text-gray-400'); 
                 btnConfirmPick.classList.add('bg-green-600', 'text-white', 'hover:bg-green-700'); 
+                btnConfirmPick.innerHTML = 'เลือกจุดหมาย <i class="fas fa-arrow-right"></i>';
             } else { 
                 btnConfirmPick.disabled = true; btnConfirmPick.classList.add('opacity-50', 'cursor-not-allowed', 'bg-gray-700', 'text-gray-400'); 
                 btnConfirmPick.classList.remove('bg-green-600', 'text-white', 'hover:bg-green-700'); 
+                btnConfirmPick.innerHTML = 'เลือกจุดหมาย <i class="fas fa-arrow-right"></i>';
             }
         }
 
@@ -901,27 +900,28 @@
             }
         }
 
+        let pCount = 1; let dCount = 1;
+
         localWaypoints.forEach((wp, index) => {
-            let num = index + 1;
-            let colorClass = 'bg-green-500 text-white';
-            let colorHex = '#22c55e';
+            let num = wp.type === 'pick' ? pCount++ : dCount++;
+            let colorClass = wp.type === 'pick' ? 'bg-green-500 text-white' : 'bg-red-500 text-white';
+            let colorHex = wp.type === 'pick' ? '#22c55e' : '#ef4444';
 
-            if (wp.type === 'drop') { colorClass = 'bg-red-500 text-white'; colorHex = '#ef4444'; }
-
+            // อัปเดต Marker เก่าโดยไม่หล่นใหม่
             if (wp.marker) {
                 wp.marker.setIcon(createNumberedMarkerIcon(num.toString(), colorHex));
                 wp.marker.setLabel({text: num.toString(), color: 'white', fontWeight: 'bold'});
             }
 
-            let itemHtml = `<div class="flex items-center gap-2 bg-gray-800 py-1.5 px-2.5 rounded-lg border border-gray-700 relative z-10 shadow-sm mb-1.5 cursor-pointer hover:bg-gray-700 transition" onclick="focusLocation(${wp.lat}, ${wp.lng})">
-                <div class="w-[20px] h-[20px] ${colorClass} rounded-full flex items-center justify-center text-[10px] font-bold shrink-0 shadow-inner">${num}</div>
-                <p class="text-[11px] text-gray-200 truncate font-medium flex-1 leading-tight">${wp.name}</p>
-                <button onclick="event.stopPropagation(); removeWaypoint(${index})" class="text-red-400 hover:text-red-300 text-[12px] px-2 shrink-0 transition active:scale-90"><i class="fas fa-times"></i></button>
+            let itemHtml = `<div class="flex items-center gap-2.5 bg-gray-800 py-1.5 px-2.5 rounded-xl border border-gray-700 relative z-10 shadow-sm mb-1.5 cursor-pointer hover:bg-gray-700 transition" onclick="focusLocation(${wp.lat}, ${wp.lng})">
+                <div class="w-[22px] h-[22px] ${colorClass} rounded-full flex items-center justify-center text-[11px] font-bold shrink-0 shadow-inner">${num}</div>
+                <p class="text-[12px] text-gray-200 truncate font-medium flex-1 leading-tight">${wp.name}</p>
+                <button onclick="event.stopPropagation(); removeWaypoint(${index})" class="text-red-400 hover:text-red-300 text-[13px] px-2 shrink-0 transition active:scale-90"><i class="fas fa-times"></i></button>
             </div>`;
             
-            let sumItemHtml = `<div class="flex items-center gap-2 relative z-10 py-0.5 cursor-pointer hover:bg-gray-800 rounded transition px-1" onclick="focusLocation(${wp.lat}, ${wp.lng})">
-                <div class="w-[18px] h-[18px] ${colorClass} rounded-full flex items-center justify-center text-[9px] font-bold shrink-0 shadow-inner">${num}</div>
-                <p class="text-[11px] text-gray-200 truncate font-medium flex-1 leading-tight">${wp.name}</p>
+            let sumItemHtml = `<div class="flex items-center gap-2.5 relative z-10 py-0.5 cursor-pointer hover:bg-gray-800 rounded transition px-1" onclick="focusLocation(${wp.lat}, ${wp.lng})">
+                <div class="w-5 h-5 ${colorClass} rounded-full flex items-center justify-center text-[10px] font-bold shrink-0 shadow-inner">${num}</div>
+                <p class="text-[12px] text-gray-200 truncate font-medium flex-1 leading-tight">${wp.name}</p>
             </div>`;
 
             if (wp.type === 'pick') { pickHtml += itemHtml; } else { dropHtml += itemHtml; }
@@ -1054,7 +1054,7 @@
     function useCurrentLocation() {
       if(navigator.geolocation) {
           navigator.geolocation.getCurrentPosition(p => {
-            let pos = {lat: p.coords.latitude, lng: p.coords.longitude}; if(map) map.panTo(pos);
+            let pos = {lat: p.coords.latitude, lng: p.coords.longitude}; if(map) { map.panTo(pos); map.setZoom(18); }
             updateAddressBox(true);
           }, () => { showAlert('ผิดพลาด', 'ไม่สามารถดึงตำแหน่งปัจจุบันได้ กรุณาเปิด GPS', 'error'); }, { enableHighAccuracy: true });
       }
@@ -1155,7 +1155,6 @@
           bookData.userId = lineUserId; bookData.name = lineName; bookData.phone = tel;
           bookData.status = "รอผู้ขับขี่ตอบรับ"; bookData.timestamp = firebase.database.ServerValue.TIMESTAMP; 
           
-          localWaypoints.forEach((w, i) => { if(w.type !== 'pick' && w.type !== 'drop') w.type = 'drop'; }); // กันเหนียว
           let dbWaypoints = localWaypoints.map(w => ({ lat: w.lat, lng: w.lng, name: w.name, type: w.type }));
           bookData.waypoints = dbWaypoints;
           
@@ -1236,7 +1235,7 @@
       }
 
       if (lastNotifiedStatus !== bookData.status) {
-          if ((bookData.status.includes("กำลังเดินทางไปหา") || bookData.status.includes("รับงานแล้ว")) && !window.hasSpokenAccept) { speakText("คนขับตอบรับแล้ว ราคาค่าโดยสารได้ถูกกำหนดแล้ว"); window.hasSpokenAccept = true; } 
+          if ((bookData.status.includes("กำลังเดินทางไปหา") || bookData.status.includes("รับงานแล้ว")) && !window.hasSpokenAccept) { speakText("คนขับตอบรับแล้ว ราคาค่าโดยสารแบบคงที่ได้ถูกกำหนดแล้ว"); window.hasSpokenAccept = true; } 
           else if (bookData.status.includes("มาถึงจุดรับ") && !window.hasSpokenAtPickup) { speakText("คนขับมาถึงแล้ว"); window.hasSpokenAtPickup = true; }
           else if ((bookData.status.includes("ออกเดินทาง") || bookData.status.includes("ไปยังจุดส่ง")) && !window.hasSpokenDepart) { speakText("กำลังออกเดินทางไปยังจุดหมาย"); window.hasSpokenDepart = true; }
           else if (bookData.status.includes("ถึงที่หมาย") && !window.hasSpokenFinish) { speakText("ถึงจุดหมายแล้ว ขอบคุณที่ใช้บริการ"); window.hasSpokenFinish = true; } 
