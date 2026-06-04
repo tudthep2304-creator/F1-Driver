@@ -15,58 +15,35 @@
     .map-container { position: fixed; inset: 0; width: 100vw; height: 100vh; z-index: 0; background: #1f2937; }
     
     .ui-panel { 
-        position: fixed; 
-        bottom: 0; 
-        left: 0; 
-        right: 0; 
-        background: #111827; 
-        border-top-left-radius: 24px; 
-        border-top-right-radius: 24px; 
-        box-shadow: 0 -10px 30px rgba(0,0,0,0.6); 
-        z-index: 10; 
-        display: flex; 
-        flex-direction: column; 
-        padding: 20px; 
-        max-height: 85vh; 
-        overflow-y: auto;
+        position: fixed; bottom: 0; left: 0; right: 0; 
+        background: #111827; border-top-left-radius: 24px; border-top-right-radius: 24px; 
+        box-shadow: 0 -10px 30px rgba(0,0,0,0.6); z-index: 10; 
+        display: flex; flex-direction: column; padding: 20px; 
+        max-height: 85vh; overflow-y: auto;
     }
 
-    #trackingPanel, #page4Panel {
-        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        padding-top: 12px;
-    }
-    
+    #trackingPanel, #page4Panel { transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); padding-top: 12px; }
     .panel-collapsed { transform: translateY(calc(100% - 110px)) !important; }
     .panel-collapsed-page4 { transform: translateY(calc(100% - 110px)) !important; }
 
     .full-page { position: fixed; inset: 0; z-index: 30; background: #111827; flex-direction: column; }
     
     .pac-container { 
-        z-index: 100000 !important; 
-        font-family: 'Kanit' !important; 
-        border-radius: 0 0 16px 16px !important; 
-        border: 1px solid #374151 !important; 
-        border-top: none !important;
-        background-color: #111827 !important; 
-        box-shadow: 0 15px 30px rgba(0,0,0,0.8) !important; 
-        margin-top: -10px !important; 
-        max-height: 40vh !important; 
-        overflow-y: auto !important; 
-        -webkit-overflow-scrolling: touch;
+        z-index: 100000 !important; font-family: 'Kanit' !important; 
+        border-radius: 0 0 16px 16px !important; border: 1px solid #374151 !important; border-top: none !important;
+        background-color: #111827 !important; box-shadow: 0 15px 30px rgba(0,0,0,0.8) !important; 
+        margin-top: -10px !important; max-height: 40vh !important; overflow-y: auto !important; 
     }
-    .pac-container::-webkit-scrollbar { width: 6px; }
-    .pac-container::-webkit-scrollbar-thumb { background-color: #4b5563; border-radius: 10px; }
     .pac-item { padding: 14px 16px; border-top: 1px solid #374151; cursor: pointer; color: #d1d5db; font-size: 14px; }
     .pac-item:first-child { border-top: none; }
     .pac-item-query { color: #10b981; font-weight: bold; } 
-    .pac-item .pac-icon { filter: invert(70%) sepia(50%) saturate(400%) hue-rotate(80deg); }
-
-    body.theme-dropoff .pac-container .pac-item-query { color: #ef4444 !important; }
-    body.theme-dropoff .pac-container .pac-icon { filter: invert(34%) sepia(98%) saturate(7128%) hue-rotate(349deg) brightness(102%) contrast(105%) !important; }
+    .pac-icon { filter: invert(70%) sepia(50%) saturate(400%) hue-rotate(80deg); }
 
     .hide-scrollbar::-webkit-scrollbar { display: none; }
     .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    .animate-fade-in { animation: fadeIn 0.3s ease-out forwards; }
     @keyframes loading-scan { 0% { transform: translateX(-100%); } 100% { transform: translateX(300%); } }
     .animate-loading-scan { animation: loading-scan 1.5s infinite ease-in-out; }
   </style>
@@ -78,7 +55,7 @@
   <div id="centerPinOverlay" class="hidden fixed top-0 left-0 right-0 bottom-[180px] z-[25] pointer-events-none flex flex-col items-center justify-center transition-opacity" style="transform: translateY(-20px);">
       <div id="centerPinWrapper" class="transition-transform duration-200">
           <svg id="centerPinSvg" width="44" height="44" viewBox="-2 -2 40 40" class="drop-shadow-xl" style="margin-left: -22px; margin-top: -40px;">
-              <path d="M18,0 C10,0 4,6 4,14 C4,24 18,36 18,36 C18,36 32,24 32,14 C32,6 26,0 18,0 Z M18,20 C14.686,20 12,17.314 12,14 C12,10.686 14.686,8 18,8 C21.314,8 24,10.686 24,14 C24,17.314 21.314,20 18,20 Z" fill="#22c55e" stroke="#ffffff" stroke-width="2"/>
+              <path d="M18,0 C10,0 4,6 4,14 C4,24 18,36 18,36 C18,36 32,24 32,14 C32,6 26,0 18,0 Z M18,20 C14.686,20 12,17.314 12,14 C12,10.686 14.686,8 18,8 C21.314,8 24,10.686 24,14 C24,17.314 21.314,20 18,20 Z" fill="#3b82f6" stroke="#ffffff" stroke-width="2"/>
           </svg>
       </div>
       <div id="centerPinShadow" class="w-4 h-1.5 bg-black/40 rounded-full blur-[1px] transition-all duration-200 mt-0.5"></div>
@@ -92,62 +69,40 @@
 
   <div id="topSearchPick" class="hidden fixed top-[76px] left-4 right-4 z-40 pointer-events-auto transition-transform duration-300">
       <div class="relative w-full shadow-[0_10px_20px_rgba(34,197,94,0.2)] rounded-2xl bg-gray-900 border-2 border-green-500 overflow-visible">
-          <div class="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none z-10">
-              <i class="fas fa-circle text-[10px] text-green-500 border border-white rounded-full"></i>
-          </div>
-          <input type="text" id="pickupSearch" class="w-full py-4 pl-11 pr-4 bg-transparent outline-none font-bold text-[13.5px] text-green-50 truncate placeholder-gray-400" placeholder="ค้นหาจุดรับ (เลื่อนแผนที่หรือพิมพ์)...">
+          <div class="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none z-10"><i class="fas fa-search text-gray-400"></i></div>
+          <input type="text" id="pickupSearch" class="w-full py-4 pl-11 pr-4 bg-transparent outline-none font-bold text-[13.5px] text-green-50 truncate placeholder-gray-400" placeholder="ค้นหาสถานที่ (หรือเลื่อนเป้าบนแผนที่)...">
       </div>
   </div>
 
   <div id="topSearchDrop" class="hidden fixed top-[76px] left-4 right-4 z-40 pointer-events-auto transition-transform duration-300">
       <div class="relative w-full shadow-[0_10px_20px_rgba(239,68,68,0.2)] rounded-2xl bg-gray-900 border-2 border-red-500 overflow-visible">
-          <div class="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none z-10">
-              <i class="fas fa-circle text-[10px] text-red-500 border border-white rounded-full"></i>
-          </div>
-          <input type="text" id="dropoffSearch" class="w-full py-4 pl-11 pr-4 bg-transparent outline-none font-bold text-[13.5px] text-red-50 truncate placeholder-gray-400" placeholder="ค้นหาจุดหมาย (เลื่อนแผนที่หรือพิมพ์)...">
+          <div class="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none z-10"><i class="fas fa-search text-gray-400"></i></div>
+          <input type="text" id="dropoffSearch" class="w-full py-4 pl-11 pr-4 bg-transparent outline-none font-bold text-[13.5px] text-red-50 truncate placeholder-gray-400" placeholder="ค้นหาสถานที่ (หรือเลื่อนเป้าบนแผนที่)...">
       </div>
   </div>
 
   <div id="mapControls" class="hidden fixed top-[170px] right-4 z-30 flex-col gap-3 pointer-events-auto transition-all duration-300">
-      <button onclick="toggleMapStyle()" id="btnMapStyle" class="bg-gray-800 w-12 h-12 flex items-center justify-center rounded-full shadow-lg text-gray-400 border border-gray-600 active:bg-gray-700 transition" title="สลับโหมดแผนที่">
-          <i class="fas fa-layer-group text-xl"></i>
-      </button>
-      <button onclick="centerToFocus()" id="btnCrosshair" class="bg-gray-800 w-12 h-12 flex items-center justify-center rounded-full shadow-lg text-gray-300 border border-gray-600 active:bg-gray-700 transition">
-          <i class="fas fa-crosshairs text-xl"></i>
-      </button>
-      <button onclick="fitRouteBounds()" id="btnOverview" class="hidden bg-gray-800 w-12 h-12 flex items-center justify-center rounded-full shadow-lg text-gray-500 border border-green-500/30 active:bg-gray-700 transition">
-          <i class="fas fa-route text-xl"></i>
-      </button>
-      <button onclick="openEmergencyModal()" id="btnEmergency" class="hidden bg-red-900/80 w-12 h-12 flex items-center justify-center rounded-full shadow-[0_0_15px_rgba(239,68,68,0.5)] text-red-400 border border-red-500/50 active:bg-red-800 transition mt-2">
-          <i class="fas fa-shield-alt text-xl"></i>
-      </button>
+      <button onclick="toggleMapStyle()" id="btnMapStyle" class="bg-gray-800 w-12 h-12 flex items-center justify-center rounded-full shadow-lg text-gray-400 border border-gray-600 active:bg-gray-700 transition" title="สลับโหมดแผนที่"><i class="fas fa-layer-group text-xl"></i></button>
+      <button onclick="centerToFocus()" id="btnCrosshair" class="bg-gray-800 w-12 h-12 flex items-center justify-center rounded-full shadow-lg text-gray-300 border border-gray-600 active:bg-gray-700 transition"><i class="fas fa-crosshairs text-xl"></i></button>
+      <button onclick="fitRouteBounds()" id="btnOverview" class="hidden bg-gray-800 w-12 h-12 flex items-center justify-center rounded-full shadow-lg text-gray-500 border border-green-500/30 active:bg-gray-700 transition"><i class="fas fa-route text-xl"></i></button>
+      <button onclick="openEmergencyModal()" id="btnEmergency" class="hidden bg-red-900/80 w-12 h-12 flex items-center justify-center rounded-full shadow-[0_0_15px_rgba(239,68,68,0.5)] text-red-400 border border-red-500/50 active:bg-red-800 transition mt-2"><i class="fas fa-shield-alt text-xl"></i></button>
   </div>
 
   <div id="page1" class="full-page flex">
-    <div class="bg-gray-900 border-b border-green-500/30 text-green-400 p-6 text-center shadow-lg">
-        <h1 class="text-2xl font-black tracking-wider flex justify-center items-center gap-2"><i class="fas fa-car-side"></i> F1 DRIVER</h1>
-    </div>
+    <div class="bg-gray-900 border-b border-green-500/30 text-green-400 p-6 text-center shadow-lg"><h1 class="text-2xl font-black tracking-wider flex justify-center items-center gap-2"><i class="fas fa-car-side"></i> F1 DRIVER</h1></div>
     <div class="p-6 space-y-6 flex-1 flex flex-col justify-center">
       <div class="text-center">
         <img id="userPic" class="w-24 h-24 rounded-full mx-auto mb-4 border-4 border-green-500 object-cover shadow-[0_0_15px_rgba(34,197,94,0.3)] bg-gray-800" src="https://img.icons8.com/bubbles/150/user.png" alt="Profile">
         <h2 class="text-xl font-bold text-white" id="userName">กำลังเชื่อมต่อ LINE...</h2>
       </div>
-      
       <div class="bg-gray-800 p-6 rounded-2xl text-center border border-gray-700 shadow-sm relative overflow-hidden">
         <div class="absolute top-0 right-0 p-3 opacity-[0.03]"><i class="fas fa-car-side text-6xl text-white"></i></div>
         <h3 class="text-sm text-gray-400 mb-2 font-bold relative z-10">สถานะรถพร้อมให้บริการ</h3>
-        <div id="driverStatus" class="text-2xl font-black text-gray-500 relative z-10 flex items-center justify-center gap-2">
-            <i class="fas fa-spinner fa-spin text-lg"></i> โหลดข้อมูล...
-        </div>
+        <div id="driverStatus" class="text-2xl font-black text-gray-500 relative z-10 flex items-center justify-center gap-2"><i class="fas fa-spinner fa-spin text-lg"></i> โหลดข้อมูล...</div>
       </div>
-
       <div class="flex gap-2 w-full">
-          <button id="btnStart" onclick="showPage(2)" class="flex-[4] bg-green-600 text-white py-4 rounded-xl font-bold text-lg shadow-[0_0_15px_rgba(34,197,94,0.4)] opacity-50 cursor-not-allowed transition hover:bg-green-700 active:scale-95" disabled>
-              เริ่มต้นเรียกรถ <i class="fas fa-arrow-right ml-2"></i>
-          </button>
-          <button onclick="openPassengerHistory()" class="flex-[1] bg-gray-800 text-blue-400 border border-gray-700 py-4 rounded-xl font-bold shadow-sm hover:bg-gray-700 transition flex items-center justify-center" title="ประวัติการเดินทาง">
-              <i class="fas fa-history text-2xl"></i>
-          </button>
+          <button id="btnStart" onclick="showPage(2)" class="flex-[4] bg-green-600 text-white py-4 rounded-xl font-bold text-lg shadow-[0_0_15px_rgba(34,197,94,0.4)] opacity-50 cursor-not-allowed transition hover:bg-green-700 active:scale-95" disabled>เริ่มต้นเรียกรถ <i class="fas fa-arrow-right ml-2"></i></button>
+          <button onclick="openPassengerHistory()" class="flex-[1] bg-gray-800 text-blue-400 border border-gray-700 py-4 rounded-xl font-bold shadow-sm hover:bg-gray-700 transition flex items-center justify-center"><i class="fas fa-history text-2xl"></i></button>
       </div>
     </div>
   </div>
@@ -155,28 +110,20 @@
   <div id="page2" class="hidden">
     <div class="ui-panel border-t-[4px] border-green-500 h-auto pb-8 pt-5">
       <div class="flex justify-between items-center mb-4">
-        <div>
-            <p class="text-[10px] font-black text-green-500 mb-0.5 tracking-widest"><i class="fas fa-circle"></i> STEP 1</p>
-            <p class="text-lg font-black text-white">เลื่อนหมุดเพื่อเลือกจุดรับ</p>
-        </div>
+        <div><p class="text-[10px] font-black text-green-500 mb-0.5 tracking-widest"><i class="fas fa-circle"></i> STEP 1</p><p class="text-lg font-black text-white">เลือกจุดรับ</p></div>
         <button onclick="useCurrentLocation()" class="text-[11px] font-bold bg-green-900/30 border border-green-500/30 text-green-400 px-3 py-2 rounded-xl hover:bg-green-800/50 transition shadow-sm flex items-center gap-1.5"><i class="fas fa-crosshairs"></i> พิกัดปัจจุบัน</button>
       </div>
       
       <div class="flex gap-2 overflow-x-auto pb-2 hide-scrollbar mb-2 items-center w-full">
           <div class="flex shrink-0 bg-[#2a303c] border border-[#3b4252] rounded-full overflow-hidden shadow-sm items-center">
-              <button onclick="handleSavedPlace('home')" class="px-3 py-1.5 flex items-center gap-1.5 hover:bg-[#343b4a] transition">
-                  <i class="fas fa-home text-blue-400 text-xs"></i><span class="label-home text-xs font-bold text-gray-200">บ้าน</span>
-              </button>
+              <button onclick="handleSavedPlace('home')" class="px-3 py-1.5 flex items-center gap-1.5 hover:bg-[#343b4a] transition"><i class="fas fa-home text-blue-400 text-xs"></i><span class="label-home text-xs font-bold text-gray-200">บ้าน</span></button>
               <div class="w-[1px] h-4 bg-[#3b4252]"></div>
-              <button onclick="editSavedPlace('home', event)" class="px-2.5 py-1.5 text-gray-400 hover:text-white hover:bg-[#343b4a] transition flex items-center" title="ตั้งค่าพิกัด"><i class="fas fa-cog text-[11px]"></i></button>
+              <button onclick="editSavedPlace('home', event)" class="px-2.5 py-1.5 text-gray-400 hover:text-white hover:bg-[#343b4a] transition flex items-center"><i class="fas fa-cog text-[11px]"></i></button>
           </div>
-          
           <div class="flex shrink-0 bg-[#2a303c] border border-[#3b4252] rounded-full overflow-hidden shadow-sm items-center">
-              <button onclick="handleSavedPlace('favorite')" class="px-3 py-1.5 flex items-center gap-1.5 hover:bg-[#343b4a] transition">
-                  <i class="fas fa-heart text-pink-500 text-xs"></i><span class="label-favorite text-xs font-bold text-gray-200">โปรด</span>
-              </button>
+              <button onclick="handleSavedPlace('favorite')" class="px-3 py-1.5 flex items-center gap-1.5 hover:bg-[#343b4a] transition"><i class="fas fa-heart text-pink-500 text-xs"></i><span class="label-favorite text-xs font-bold text-gray-200">โปรด</span></button>
               <div class="w-[1px] h-4 bg-[#3b4252]"></div>
-              <button onclick="editSavedPlace('favorite', event)" class="px-2.5 py-1.5 text-gray-400 hover:text-white hover:bg-[#343b4a] transition flex items-center" title="ตั้งค่าพิกัด"><i class="fas fa-cog text-[11px]"></i></button>
+              <button onclick="editSavedPlace('favorite', event)" class="px-2.5 py-1.5 text-gray-400 hover:text-white hover:bg-[#343b4a] transition flex items-center"><i class="fas fa-cog text-[11px]"></i></button>
           </div>
           <div class="w-[1px] h-5 bg-gray-600 shrink-0 mx-0.5"></div>
           <div id="recentPlacesPick" class="flex gap-2 shrink-0 items-center"></div>
@@ -186,10 +133,10 @@
 
       <div class="flex gap-2 mt-2">
           <button onclick="addWaypointFromCenter('pick')" class="flex-[1] bg-yellow-900/30 border border-yellow-500/50 text-yellow-400 py-3.5 rounded-xl font-bold text-[14px] shadow-sm hover:bg-yellow-800/50 transition flex justify-center items-center gap-1.5">
-              <i class="fas fa-plus"></i> จุดแวะรับ
+              <i class="fas fa-plus"></i> จุดรับ
           </button>
-          <button onclick="confirmPickup()" class="flex-[2] bg-green-600 text-white py-3.5 rounded-xl font-bold text-[15px] shadow-[0_0_20px_rgba(34,197,94,0.3)] hover:bg-green-700 active:scale-[0.98] transition flex justify-center items-center gap-1.5">
-              ต่อไป <i class="fas fa-arrow-right"></i>
+          <button id="btnConfirmPick" onclick="confirmPickup()" disabled class="flex-[2] bg-green-600 text-white py-3.5 rounded-xl font-bold text-[15px] shadow-[0_0_20px_rgba(34,197,94,0.3)] hover:bg-green-700 active:scale-[0.98] transition flex justify-center items-center gap-1.5 opacity-50 cursor-not-allowed">
+              เลือกจุดหมาย <i class="fas fa-arrow-right"></i>
           </button>
       </div>
     </div>
@@ -198,28 +145,20 @@
   <div id="page3" class="hidden">
     <div class="ui-panel border-t-[4px] border-red-500 h-auto pb-8 pt-5">
       <div class="flex justify-between items-center mb-4">
-        <div>
-            <p class="text-[10px] font-black text-red-500 mb-0.5 tracking-widest"><i class="fas fa-circle"></i> STEP 2</p>
-            <p class="text-lg font-black text-white">เลื่อนหมุดเพื่อเลือกจุดส่ง</p>
-        </div>
+        <div><p class="text-[10px] font-black text-red-500 mb-0.5 tracking-widest"><i class="fas fa-circle"></i> STEP 2</p><p class="text-lg font-black text-white">เลือกจุดส่ง</p></div>
         <button onclick="useCurrentLocation()" class="text-[11px] font-bold bg-red-900/30 border border-red-500/30 text-red-400 px-3 py-2 rounded-xl hover:bg-red-800/50 transition shadow-sm flex items-center gap-1.5"><i class="fas fa-crosshairs"></i> พิกัดปัจจุบัน</button>
       </div>
       
       <div class="flex gap-2 overflow-x-auto pb-2 hide-scrollbar mb-2 items-center w-full">
           <div class="flex shrink-0 bg-[#2a303c] border border-[#3b4252] rounded-full overflow-hidden shadow-sm items-center">
-              <button onclick="handleSavedPlace('home')" class="px-3 py-1.5 flex items-center gap-1.5 hover:bg-[#343b4a] transition">
-                  <i class="fas fa-home text-blue-400 text-xs"></i><span class="label-home text-xs font-bold text-gray-200">บ้าน</span>
-              </button>
+              <button onclick="handleSavedPlace('home')" class="px-3 py-1.5 flex items-center gap-1.5 hover:bg-[#343b4a] transition"><i class="fas fa-home text-blue-400 text-xs"></i><span class="label-home text-xs font-bold text-gray-200">บ้าน</span></button>
               <div class="w-[1px] h-4 bg-[#3b4252]"></div>
-              <button onclick="editSavedPlace('home', event)" class="px-2.5 py-1.5 text-gray-400 hover:text-white hover:bg-[#343b4a] transition flex items-center" title="ตั้งค่าพิกัด"><i class="fas fa-cog text-[11px]"></i></button>
+              <button onclick="editSavedPlace('home', event)" class="px-2.5 py-1.5 text-gray-400 hover:text-white hover:bg-[#343b4a] transition flex items-center"><i class="fas fa-cog text-[11px]"></i></button>
           </div>
-          
           <div class="flex shrink-0 bg-[#2a303c] border border-[#3b4252] rounded-full overflow-hidden shadow-sm items-center">
-              <button onclick="handleSavedPlace('favorite')" class="px-3 py-1.5 flex items-center gap-1.5 hover:bg-[#343b4a] transition">
-                  <i class="fas fa-heart text-pink-500 text-xs"></i><span class="label-favorite text-xs font-bold text-gray-200">โปรด</span>
-              </button>
+              <button onclick="handleSavedPlace('favorite')" class="px-3 py-1.5 flex items-center gap-1.5 hover:bg-[#343b4a] transition"><i class="fas fa-heart text-pink-500 text-xs"></i><span class="label-favorite text-xs font-bold text-gray-200">โปรด</span></button>
               <div class="w-[1px] h-4 bg-[#3b4252]"></div>
-              <button onclick="editSavedPlace('favorite', event)" class="px-2.5 py-1.5 text-gray-400 hover:text-white hover:bg-[#343b4a] transition flex items-center" title="ตั้งค่าพิกัด"><i class="fas fa-cog text-[11px]"></i></button>
+              <button onclick="editSavedPlace('favorite', event)" class="px-2.5 py-1.5 text-gray-400 hover:text-white hover:bg-[#343b4a] transition flex items-center"><i class="fas fa-cog text-[11px]"></i></button>
           </div>
           <div class="w-[1px] h-5 bg-gray-600 shrink-0 mx-0.5"></div>
           <div id="recentPlacesDrop" class="flex gap-2 shrink-0 items-center"></div>
@@ -229,10 +168,10 @@
 
       <div class="flex gap-2 mt-2">
           <button onclick="addWaypointFromCenter('drop')" class="flex-[1] bg-yellow-900/30 border border-yellow-500/50 text-yellow-400 py-3.5 rounded-xl font-bold text-[14px] shadow-sm hover:bg-yellow-800/50 transition flex justify-center items-center gap-1.5">
-              <i class="fas fa-plus"></i> จุดแวะส่ง
+              <i class="fas fa-plus"></i> จุดส่ง
           </button>
-          <button onclick="confirmDropoff()" class="flex-[2] bg-red-600 text-white py-3.5 rounded-xl font-bold text-[15px] shadow-[0_0_20px_rgba(239,68,68,0.3)] hover:bg-red-700 active:scale-[0.98] transition flex justify-center items-center gap-1.5">
-              ยืนยันจุดหมาย <i class="fas fa-check-circle"></i>
+          <button id="btnConfirmDrop" onclick="confirmDropoff()" disabled class="flex-[2] bg-red-600 text-white py-3.5 rounded-xl font-bold text-[15px] shadow-[0_0_20px_rgba(239,68,68,0.3)] hover:bg-red-700 active:scale-[0.98] transition flex justify-center items-center gap-1.5 opacity-50 cursor-not-allowed">
+              สรุปการเดินทาง <i class="fas fa-check-circle"></i>
           </button>
       </div>
     </div>
@@ -246,9 +185,8 @@
       </div>
       <div class="border-b border-gray-700 mb-3 w-full opacity-50"></div>
       
-      <div class="bg-gray-800 py-2.5 px-3.5 rounded-xl border border-gray-700 relative mb-2 shadow-sm max-h-[150px] overflow-y-auto hide-scrollbar">
-          <div class="absolute left-[1.4rem] top-6 bottom-6 w-0.5 border-l-[1.5px] border-dashed border-gray-600"></div>
-          
+      <div class="bg-gray-800 py-2.5 px-3.5 rounded-xl border border-gray-700 relative mb-2 shadow-sm max-h-[180px] overflow-y-auto hide-scrollbar">
+          <div class="absolute left-[1.55rem] top-6 bottom-6 w-0.5 border-l-[1.5px] border-dashed border-gray-600"></div>
           <div id="sumWaypointsContainer" class="flex flex-col gap-2.5 py-1"></div>
       </div>
 
@@ -266,7 +204,6 @@
               </div>
             </div>
           </div>
-
           <button onclick="openPromoModal()" class="shrink-0 w-[4.5rem] bg-gray-800 border border-gray-700 text-green-400 rounded-xl text-[11px] font-bold hover:bg-gray-700 transition flex flex-col items-center justify-center gap-1 shadow-sm">
               <i class="fas fa-ticket-alt text-lg"></i><span>ใช้โค้ด</span>
           </button>
@@ -286,9 +223,7 @@
 
   <div id="pageTracking" class="hidden">
     <div id="trackingPanel" class="ui-panel border-t-[4px] border-gray-600 h-auto pb-5 pt-3 transition-transform duration-300"> 
-      
       <div class="w-full flex justify-center pb-3 cursor-pointer" onclick="toggleTrackingPanel()"><div class="w-12 h-1.5 bg-gray-600 rounded-full"></div></div>
-      
       <div id="unifiedStatusBox" class="mb-3 flex justify-between items-center w-full relative overflow-hidden pb-1">
           <div class="min-w-0 flex-1 pr-2">
               <p class="text-[10px] font-black text-gray-400 mb-0.5 tracking-widest flex items-center gap-1.5" id="unifiedStatusLabel"><i class="fas fa-spinner fa-spin text-blue-500 text-[12px]"></i> STATUS</p>
@@ -305,7 +240,7 @@
       <div class="border-b border-gray-700 mb-3 w-full opacity-50"></div>
       
       <div id="trackAddressBox" class="mb-3 bg-gray-800 py-2.5 px-3.5 rounded-xl border border-gray-700 relative shadow-sm transition-all duration-300 w-full max-h-[150px] overflow-y-auto hide-scrollbar">
-          <div class="absolute left-[1.4rem] top-6 bottom-6 w-0.5 border-l-[1.5px] border-dashed border-gray-600"></div>
+          <div class="absolute left-[1.55rem] top-6 bottom-6 w-0.5 border-l-[1.5px] border-dashed border-gray-600"></div>
           <div id="trackWaypointsContainer" class="flex flex-col gap-2.5 py-1"></div>
       </div>
 
@@ -329,19 +264,18 @@
           <button id="btnCall" onclick="openCallConfirmModal()" class="flex-1 w-full bg-green-600 text-white py-3 rounded-xl font-bold text-sm shadow-sm hover:bg-green-700 transition flex justify-center items-center gap-1.5"><i class="fas fa-phone-alt"></i> โทร</button>
           <button id="btnCancel" onclick="openCancelModal()" class="flex-1 w-full bg-red-900/40 text-red-400 py-3 rounded-xl font-bold border border-red-500/30 text-sm hover:bg-red-900/60 transition flex justify-center items-center gap-1.5"><i class="fas fa-times"></i> ยกเลิก</button>
       </div>
-
     </div>
   </div>
 
   <div id="waypointSearchModal" class="hidden fixed inset-0 z-[150] bg-gray-900 pointer-events-auto transition-transform duration-300 flex flex-col">
       <div class="bg-gray-900 border-b border-gray-800 p-4 flex items-center gap-3 shadow-md">
           <button onclick="closeWaypointSearchModal()" class="w-10 h-10 shrink-0 bg-gray-800 text-gray-400 rounded-full flex items-center justify-center border border-gray-700 hover:text-white transition"><i class="fas fa-arrow-left"></i></button>
-          <h2 class="text-lg font-black text-white">เพิ่มจุดแวะระหว่างทาง</h2>
+          <h2 class="text-lg font-black text-white">ค้นหาสถานที่จุดแวะ</h2>
       </div>
       <div class="p-4 flex-1">
           <div class="relative w-full shadow-sm rounded-2xl bg-gray-800 border border-gray-700 overflow-visible mb-4">
               <div class="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none z-10"><i class="fas fa-search text-gray-400"></i></div>
-              <input type="text" id="waypointSearchInput" class="w-full py-4 pl-11 pr-4 bg-transparent outline-none font-bold text-[14px] text-white placeholder-gray-500" placeholder="พิมพ์ค้นหาสถานที่จุดแวะ...">
+              <input type="text" id="waypointSearchInput" class="w-full py-4 pl-11 pr-4 bg-transparent outline-none font-bold text-[14px] text-white placeholder-gray-500" placeholder="พิมพ์ชื่อสถานที่...">
           </div>
           <p class="text-xs text-gray-500 text-center mt-10">ระบบจะคำนวณราคาใหม่ และส่งให้คุณยืนยันก่อนเพิ่มลงในเส้นทาง</p>
       </div>
@@ -363,10 +297,7 @@
           </div>
           <div class="p-4 overflow-y-auto flex-1 space-y-4 text-white">
               <div class="flex justify-between items-center bg-gray-900 p-3 rounded-xl border border-gray-700 shadow-sm">
-                  <div>
-                      <p class="text-[10px] text-gray-400 font-bold" id="histDetDate">วันที่ -</p>
-                      <p class="font-bold text-sm text-green-400 mt-0.5" id="histDetDriver">คนขับ: -</p>
-                  </div>
+                  <div><p class="text-[10px] text-gray-400 font-bold" id="histDetDate">วันที่ -</p><p class="font-bold text-sm text-green-400 mt-0.5" id="histDetDriver">คนขับ: -</p></div>
                   <span class="font-black text-green-400 text-[16px] bg-gray-800 px-3 py-1 rounded-lg shadow-inner" id="histDetPrice">฿0</span>
               </div>
               <div class="bg-gray-900 p-3.5 rounded-xl border border-gray-700 relative shadow-sm">
@@ -466,6 +397,36 @@
   </div>
 
   <script>
+    // ประกาศฟังก์ชัน setupSearch ก่อน เพื่อให้แน่ใจว่าโหลดทัน initMap
+    function setupSearch(inputId, marker, isPick) {
+      const input = document.getElementById(inputId); if(!input) return;
+      if (typeof google === 'undefined' || !google.maps.places) return;
+      const chiangRaiBounds = new google.maps.LatLngBounds(new google.maps.LatLng(18.91, 99.16), new google.maps.LatLng(20.46, 100.56));
+      const auto = new google.maps.places.Autocomplete(input, { bounds: chiangRaiBounds, strictBounds: true, componentRestrictions: {country: 'th'} });
+
+      input.addEventListener('focus', function() { if(this.value.trim() !== '') this.dataset.oldValue = this.value; this.value = ''; });
+      input.addEventListener('blur', function() { setTimeout(() => { if(this.value.trim() === '') this.value = this.dataset.oldValue || ''; }, 150); });
+
+      auto.addListener('place_changed', () => {
+        const place = auto.getPlace();
+        if(place.geometry && map) {
+          input.blur(); map.panTo(place.geometry.location); 
+          let finalAddr = place.name;
+          if (place.formatted_address) {
+              let cleanAddr = place.formatted_address.replace(/,?\s*ประเทศไทย/g, '').replace(/Unnamed Road,?\s*/g, '').trim();
+              if(!cleanAddr.includes(place.name)) finalAddr += " (" + cleanAddr + ")";
+          }
+          if(isPick) {
+             hasInteractedPick = true; markerPick.setPosition(place.geometry.location); bookData.pName = finalAddr; 
+             input.dataset.oldValue = finalAddr; input.value = finalAddr;
+          } else {
+             hasInteractedDrop = true; markerDrop.setPosition(place.geometry.location); bookData.dName = finalAddr; 
+             input.dataset.oldValue = finalAddr; input.value = finalAddr;
+          }
+        }
+      });
+    }
+
     const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwwdopAPESHRrHEYTSa-CzFMbh0JX9WHUa37PMEJmxDkah7ui67cVtOn68cnM-2DtmR/exec"; 
     const MY_LIFF_ID = "2010188449-b9Yq1R2L";
     const LINE_OA_URL = "https://line.me/R/ti/p/%40805zvmii";
@@ -497,7 +458,7 @@
     let currentRouteBounds = null;
     let currentMapFocus = null; 
     let isTrackingMode = true;
-    let isSatelliteMode = false; 
+    let isSatelliteMode = true; 
     
     let lastNotifiedStatus = "";
     let hasInteractedPick = false;
@@ -732,29 +693,24 @@
         } else { centerToFocus(); }
     }
 
-    // สร้างไอคอนหมุดแบบมีตัวเลขตรงกลาง
     function createNumberedMarkerIcon(text, colorHex) {
         return {
             path: "M 0,0 C -12,-16 -18,-22 -18,-32 A 18,18 0 1,1 18,-32 C 18,-22 12,-16 0,0 Z M -8,-32 A 8,8 0 1,0 8,-32 A 8,8 0 1,0 -8,-32 Z",
             fillColor: colorHex, fillOpacity: 1, strokeWeight: 2, strokeColor: '#ffffff', scale: 1,
-            labelOrigin: new google.maps.Point(0, -15),
-            anchor: new google.maps.Point(0, 0)
+            labelOrigin: typeof google !== 'undefined' && google.maps ? new google.maps.Point(0, -15) : null,
+            anchor: typeof google !== 'undefined' && google.maps ? new google.maps.Point(0, 0) : null
         };
     }
-
-    let iconHome = { path: "M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z", fillColor: '#3b82f6', fillOpacity: 1, strokeWeight: 1, strokeColor: '#ffffff', scale: 1.4 };
-    let iconFav = { path: "M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z", fillColor: '#ec4899', fillOpacity: 1, strokeWeight: 1, strokeColor: '#ffffff', scale: 1.4 };
 
     function initMap() {
       if (typeof google === 'undefined' || typeof google.maps === 'undefined') return;
       if (map) return; 
       
       map = new google.maps.Map(document.getElementById('map'), { 
-        zoom: 16, center: {lat: driverData.lat, lng: driverData.lng}, mapTypeId: 'roadmap', styles: darkMapStyle,
+        zoom: 16, center: {lat: driverData.lat, lng: driverData.lng}, mapTypeId: 'hybrid', 
         disableDefaultUI: true, gestureHandling: 'greedy', zoomControl: false, padding: { top: 70, bottom: getDynamicBottomPadding(), left: 0, right: 0 } 
       });
 
-      // จัดการ UI หมุดกลางจอตอนเลื่อน (เพื่อให้รู้พิกัด Center สำหรับกดเพิ่มจุดแวะ)
       map.addListener('dragstart', () => {
          if (currentStep === 'Tracking') {
              isTrackingMode = false; let btnCrosshair = document.getElementById('btnCrosshair');
@@ -778,8 +734,8 @@
       geocoder = new google.maps.Geocoder();
       placesService = new google.maps.places.PlacesService(map);
       
-      iconHome.anchor = new google.maps.Point(12, 20);
-      iconFav.anchor = new google.maps.Point(12, 21);
+      let iconHome = { path: "M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z", fillColor: '#3b82f6', fillOpacity: 1, strokeWeight: 1, strokeColor: '#ffffff', scale: 1.4, anchor: new google.maps.Point(12, 20) };
+      let iconFav = { path: "M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z", fillColor: '#ec4899', fillOpacity: 1, strokeWeight: 1, strokeColor: '#ffffff', scale: 1.4, anchor: new google.maps.Point(12, 21) };
 
       markerPick = new google.maps.Marker({map: null, zIndex: 2});
       markerDrop = new google.maps.Marker({map: null, zIndex: 2});
@@ -796,7 +752,24 @@
 
       setupSearch('pickupSearch', markerPick, true);
       setupSearch('dropoffSearch', markerDrop, false);
-      setupWaypointSearch('waypointSearchInput');
+      
+      const wpInput = document.getElementById('waypointSearchInput');
+      if (wpInput) {
+          const chiangRaiBounds = new google.maps.LatLngBounds(new google.maps.LatLng(18.91, 99.16), new google.maps.LatLng(20.46, 100.56));
+          const autoWp = new google.maps.places.Autocomplete(wpInput, { bounds: chiangRaiBounds, strictBounds: true, componentRestrictions: {country: 'th'} });
+          autoWp.addListener('place_changed', () => {
+              const place = autoWp.getPlace();
+              if(place.geometry) {
+                  let finalAddr = place.name;
+                  if (place.formatted_address) {
+                      let cleanAddr = place.formatted_address.replace(/,?\s*ประเทศไทย/g, '').replace(/Unnamed Road,?\s*/g, '').trim();
+                      if(!cleanAddr.includes(place.name)) finalAddr += " (" + cleanAddr + ")";
+                  }
+                  closeWaypointSearchModal();
+                  calculateNewRoutePriceForTracking(place.geometry.location.lat(), place.geometry.location.lng(), finalAddr);
+              }
+          });
+      }
     }
 
     function mockLoginForBrowser() {
@@ -855,7 +828,6 @@
       });
     }
 
-    // 🌟 ระบบเพิ่มจุดแวะจากหมุดกลางจอ (Drop animation)
     function addWaypointFromCenter(type) {
         if(!map || !geocoder) return;
         let pos = map.getCenter();
@@ -868,68 +840,53 @@
 
         geocoder.geocode({location: pos}, (res, status) => {
             let el = document.getElementById(tempId); if(el) el.remove();
-            
             if(status === 'OK' && res[0]) {
                 let validResults = res.filter(r => !r.types.includes('plus_code') && !r.formatted_address.match(/^[A-Z0-9]{2,8}\+/));
                 let bestRes = validResults.length > 0 ? validResults[0] : res[0];
                 let fullAddr = bestRes.formatted_address.replace(/,?\s*ประเทศไทย/g, '').replace(/Unnamed Road,?\s*/g, '').replace(/^[A-Z0-9]{2,8}\+.*?\s/g, '').trim();
-                
-                let wp = { lat: pos.lat(), lng: pos.lng(), name: fullAddr, type: type };
-                
-                // สร้าง marker สีเหลือง พร้อม animation DROP
-                let num = type === 'pick' ? localWaypoints.filter(w=>w.type==='pick').length + 1 : localWaypoints.filter(w=>w.type==='drop').length + 1;
-                wp.marker = new google.maps.Marker({
-                    position: {lat: wp.lat, lng: wp.lng}, map: map,
-                    icon: createNumberedMarkerIcon(num.toString(), '#eab308'), 
-                    label: {text: num.toString(), color: 'black', fontWeight: 'bold'},
-                    animation: google.maps.Animation.DROP, zIndex: 3
-                });
-
-                localWaypoints.push(wp);
+                localWaypoints.push({ lat: pos.lat(), lng: pos.lng(), name: fullAddr, type: type });
                 renderWaypointsUI();
-            } else {
-                showAlert("ผิดพลาด", "ไม่สามารถดึงที่อยู่ได้ กรุณาลองใหม่", "error");
-            }
+            } else { showAlert("ผิดพลาด", "ไม่สามารถดึงที่อยู่ได้ กรุณาลองใหม่", "error"); }
         });
     }
 
     function renderWaypointsUI() {
         let pickHtml = ''; let dropHtml = ''; let sumHtml = '';
-        let pickCount = 1; let dropCount = 1;
+        let btnConfirmPick = document.getElementById('btnConfirmPick');
+        let btnConfirmDrop = document.getElementById('btnConfirmDrop');
+
+        let pickCount = localWaypoints.filter(w=>w.type==='pick').length;
+        let dropCount = localWaypoints.filter(w=>w.type==='drop').length;
+
+        if (btnConfirmPick) {
+            if (pickCount > 0) { btnConfirmPick.disabled = false; btnConfirmPick.classList.remove('opacity-50', 'cursor-not-allowed'); } 
+            else { btnConfirmPick.disabled = true; btnConfirmPick.classList.add('opacity-50', 'cursor-not-allowed'); }
+        }
+
+        if (btnConfirmDrop) {
+            if (dropCount > 0) { btnConfirmDrop.disabled = false; btnConfirmDrop.classList.remove('opacity-50', 'cursor-not-allowed'); } 
+            else { btnConfirmDrop.disabled = true; btnConfirmDrop.classList.add('opacity-50', 'cursor-not-allowed'); }
+        }
 
         localWaypoints.forEach((wp, index) => {
-            let num = wp.type === 'pick' ? pickCount++ : dropCount++;
-            
-            // อัปเดตตัวเลขในหมุดให้ถูกต้องเสมอเผื่อมีการลบ
-            if (wp.marker) {
-                wp.marker.setIcon(createNumberedMarkerIcon(num.toString(), '#eab308'));
-                wp.marker.setLabel({text: num.toString(), color: 'black', fontWeight: 'bold'});
-            }
+            let num = index + 1;
+            let colorClass = 'bg-yellow-500 text-black';
+            if (index === 0) colorClass = 'bg-green-500 text-white';
+            if (index === localWaypoints.length - 1 && wp.type === 'drop') colorClass = 'bg-red-500 text-white';
 
-            let itemHtml = `<div class="flex items-center gap-3 bg-gray-800 py-2.5 px-3.5 rounded-xl border border-yellow-500/30 relative z-10 shadow-sm mb-2 animate-fade-in">
-                <div class="w-5 h-5 bg-yellow-500 rounded-full flex items-center justify-center text-black text-[10px] font-bold shrink-0">${num}</div>
+            let itemHtml = `<div class="flex items-center gap-3 bg-gray-800 py-2.5 px-3.5 rounded-xl border border-gray-700 relative z-10 shadow-sm mb-2 animate-fade-in">
+                <div class="w-6 h-6 ${colorClass} rounded-full flex items-center justify-center text-[11px] font-bold shrink-0 shadow-inner">${num}</div>
                 <p class="text-[13px] text-gray-200 truncate font-medium flex-1 leading-tight">${wp.name}</p>
                 <button onclick="removeWaypoint(${index})" class="text-red-400 hover:text-red-300 text-sm px-2 shrink-0 transition active:scale-90"><i class="fas fa-trash-alt"></i></button>
             </div>`;
             
-            let sumItemHtml = `<div class="flex items-center gap-3 relative z-10">
-                <div class="w-5 h-5 bg-yellow-500 rounded-full flex items-center justify-center text-black text-[10px] font-bold shrink-0">${num}</div>
+            let sumItemHtml = `<div class="flex items-center gap-3 relative z-10 py-1">
+                <div class="w-6 h-6 ${colorClass} rounded-full flex items-center justify-center text-[11px] font-bold shrink-0 shadow-inner">${num}</div>
                 <p class="text-[13px] text-gray-200 truncate font-medium flex-1 leading-tight">${wp.name}</p>
             </div>`;
 
-            if (wp.type === 'pick') { pickHtml += itemHtml; sumHtml += sumItemHtml; } 
-            else { dropHtml += itemHtml; }
-        });
-
-        // จุด Drop ต้องต่อท้ายในหน้าสรุปเสมอ
-        localWaypoints.forEach((wp) => {
-            if (wp.type === 'drop') {
-                let num = wp.type === 'pick' ? 0 : 0; 
-                sumHtml += `<div class="flex items-center gap-3 relative z-10">
-                    <div class="w-5 h-5 bg-yellow-500 rounded-full flex items-center justify-center text-black text-[10px] font-bold shrink-0"><i class="fas fa-stop"></i></div>
-                    <p class="text-[13px] text-gray-200 truncate font-medium flex-1 leading-tight">${wp.name}</p>
-                </div>`;
-            }
+            if (wp.type === 'pick') { pickHtml += itemHtml; } else { dropHtml += itemHtml; }
+            sumHtml += sumItemHtml;
         });
 
         let pickContainer = document.getElementById('pickupWaypointsList'); if(pickContainer) pickContainer.innerHTML = pickHtml;
@@ -937,50 +894,36 @@
         let sumContainer = document.getElementById('sumWaypointsContainer'); if(sumContainer) sumContainer.innerHTML = sumHtml;
         let trackContainer = document.getElementById('trackWaypointsContainer'); if(trackContainer) trackContainer.innerHTML = sumHtml;
 
-        // อัปเดตหมุดหลัก (สีเขียว-แดง)
-        if(markerPick) {
-            markerPick.setIcon(createNumberedMarkerIcon(pickCount.toString(), '#22c55e'));
-            markerPick.setLabel({text: pickCount.toString(), color: 'white', fontWeight: 'bold'});
-        }
-        if(markerDrop) {
-            markerDrop.setIcon(createNumberedMarkerIcon(dropCount.toString(), '#ef4444'));
-            markerDrop.setLabel({text: dropCount.toString(), color: 'white', fontWeight: 'bold'});
-        }
+        redrawAllMarkers();
+    }
+
+    function redrawAllMarkers() {
+        if(!map) return;
+        waypointMapMarkers.forEach(m => m.setMap(null)); waypointMapMarkers = [];
+
+        localWaypoints.forEach((wp, index) => {
+            let num = index + 1; let color = '#eab308'; 
+            if (index === 0) color = '#22c55e';
+            if (index === localWaypoints.length - 1 && wp.type === 'drop') color = '#ef4444';
+            
+            let wm = new google.maps.Marker({
+                position: {lat: wp.lat, lng: wp.lng}, map: map,
+                icon: createNumberedMarkerIcon(num.toString(), color),
+                label: {text: num.toString(), color: (color==='#eab308' ? 'black' : 'white'), fontWeight: 'bold'},
+                animation: google.maps.Animation.DROP,
+                zIndex: (color==='#eab308' ? 3 : 4)
+            });
+            waypointMapMarkers.push(wm);
+        });
     }
 
     function removeWaypoint(index) {
-        if(localWaypoints[index].marker) localWaypoints[index].marker.setMap(null);
-        localWaypoints.splice(index, 1);
-        renderWaypointsUI();
+        localWaypoints.splice(index, 1); renderWaypointsUI();
         if(currentStep === 4) { bookData.waypoints = localWaypoints; calculatePrice(); }
     }
 
-    // Modal ค้นหาจุดแวะด้วยการพิมพ์ (ใช้ตอนอยู่บนรถ)
-    function openWaypointSearchModal() {
-        document.getElementById('waypointSearchModal').classList.remove('hidden');
-        let input = document.getElementById('waypointSearchInput'); input.value = ''; input.focus();
-    }
+    function openWaypointSearchModal() { document.getElementById('waypointSearchModal').classList.remove('hidden'); let input = document.getElementById('waypointSearchInput'); input.value = ''; input.focus(); }
     function closeWaypointSearchModal() { document.getElementById('waypointSearchModal').classList.add('hidden'); }
-
-    function setupWaypointSearch(inputId) {
-      const input = document.getElementById(inputId); if(!input) return;
-      if (typeof google === 'undefined' || !google.maps.places) return;
-      const chiangRaiBounds = new google.maps.LatLngBounds(new google.maps.LatLng(18.91, 99.16), new google.maps.LatLng(20.46, 100.56));
-      const auto = new google.maps.places.Autocomplete(input, { bounds: chiangRaiBounds, strictBounds: true, componentRestrictions: {country: 'th'} });
-
-      auto.addListener('place_changed', () => {
-        const place = auto.getPlace();
-        if(place.geometry) {
-            let finalAddr = place.name;
-            if (place.formatted_address) {
-                let cleanAddr = place.formatted_address.replace(/,?\s*ประเทศไทย/g, '').replace(/Unnamed Road,?\s*/g, '').trim();
-                if(!cleanAddr.includes(place.name)) finalAddr += " (" + cleanAddr + ")";
-            }
-            closeWaypointSearchModal();
-            calculateNewRoutePriceForTracking(place.geometry.location.lat(), place.geometry.location.lng(), finalAddr);
-        }
-      });
-    }
 
     function showPage(page) {
       currentStep = page;
@@ -1023,24 +966,24 @@
       }
 
       if(page === 2) {
-        if (markerDrop && markerPick && map) {
-          markerDrop.setMap(null); markerPick.setMap(map); map.setOptions({ padding: { top: 140, bottom: getDynamicBottomPadding(), left: 0, right: 0 } }); 
+        if (map) {
+          map.setOptions({ padding: { top: 140, bottom: getDynamicBottomPadding(), left: 0, right: 0 } }); 
           if(bookData.pLat !== 0) { map.panTo({lat: bookData.pLat, lng: bookData.pLng}); } else { map.panTo({lat: driverData.lat, lng: driverData.lng}); }
           updateAddressBox(false); renderWaypointsUI();
         }
       } 
       else if(page === 3) {
-        if (markerPick && markerDrop && map) {
-          markerPick.setMap(map); markerDrop.setMap(map); map.setOptions({ padding: { top: 140, bottom: getDynamicBottomPadding(), left: 0, right: 0 } }); 
-          if(bookData.dLat !== 0 && bookData.dLng !== 0) { markerDrop.setPosition({lat: bookData.dLat, lng: bookData.dLng}); } else { markerDrop.setPosition(markerPick.getPosition()); }
-          map.panTo(markerDrop.getPosition()); updateAddressBox(false); renderWaypointsUI();
+        if (map) {
+          map.setOptions({ padding: { top: 140, bottom: getDynamicBottomPadding(), left: 0, right: 0 } }); 
+          if(bookData.dLat !== 0 && bookData.dLng !== 0) { map.panTo({lat: bookData.dLat, lng: bookData.dLng}); }
+          updateAddressBox(false); renderWaypointsUI();
         }
       }
       else if(page === 4) {
         const bOver = document.getElementById('btnOverview'); const bEmer = document.getElementById('btnEmergency'); const bCross = document.getElementById('btnCrosshair');
         if(bOver) bOver.classList.remove('hidden'); if(bEmer) bEmer.classList.add('hidden'); if(bCross) bCross.classList.add('hidden'); 
 
-        if (markerPick && markerDrop && map) { markerPick.setMap(map); markerDrop.setMap(map); map.setOptions({ padding: { top: 70, bottom: getDynamicBottomPadding(), left: 0, right: 0 } }); }
+        if (map) { map.setOptions({ padding: { top: 70, bottom: getDynamicBottomPadding(), left: 0, right: 0 } }); }
         
         let pI = document.getElementById('promoInput'); if(pI) pI.value = '';
         bookData.promoCode = ''; bookData.discount = 0;
@@ -1078,93 +1021,54 @@
                 if (prefixName && !fullAddr.includes(prefixName)) fullAddr = prefixName + " (" + fullAddr + ")";
                 
                 if(isPick) {
-                  bookData.pName = fullAddr;
                   let el = document.getElementById('pickupSearch');
                   if(el && isInteraction) { el.value = fullAddr; el.dataset.oldValue = fullAddr; }
-                  if(markerPick) markerPick.setPosition(pos); // ขยับหมุดหลักตาม
                 } else {
-                  bookData.dName = fullAddr;
                   let el = document.getElementById('dropoffSearch');
                   if(el && isInteraction) { el.value = fullAddr; el.dataset.oldValue = fullAddr; }
-                  if(markerDrop) markerDrop.setPosition(pos); // ขยับหมุดหลักตาม
                 }
             }
         });
-    }
-
-    function setupSearch(inputId, marker, isPick) {
-      const input = document.getElementById(inputId); if(!input) return;
-      if (typeof google === 'undefined' || !google.maps.places) return;
-      
-      const chiangRaiBounds = new google.maps.LatLngBounds(new google.maps.LatLng(18.91, 99.16), new google.maps.LatLng(20.46, 100.56));
-      const auto = new google.maps.places.Autocomplete(input, { bounds: chiangRaiBounds, strictBounds: true, componentRestrictions: {country: 'th'} });
-
-      input.addEventListener('focus', function() { if(this.value.trim() !== '') this.dataset.oldValue = this.value; this.value = ''; });
-      input.addEventListener('blur', function() { setTimeout(() => { if(this.value.trim() === '') this.value = this.dataset.oldValue || ''; }, 150); });
-
-      auto.addListener('place_changed', () => {
-        const place = auto.getPlace();
-        if(place.geometry && map) {
-          input.blur(); map.panTo(place.geometry.location); 
-          let finalAddr = place.name;
-          if (place.formatted_address) {
-              let cleanAddr = place.formatted_address.replace(/,?\s*ประเทศไทย/g, '').replace(/Unnamed Road,?\s*/g, '').trim();
-              if(!cleanAddr.includes(place.name)) finalAddr += " (" + cleanAddr + ")";
-          }
-
-          if(isPick) {
-             hasInteractedPick = true; markerPick.setPosition(place.geometry.location); bookData.pName = finalAddr; 
-             input.dataset.oldValue = finalAddr; input.value = finalAddr;
-          } else {
-             hasInteractedDrop = true; markerDrop.setPosition(place.geometry.location); bookData.dName = finalAddr; 
-             input.dataset.oldValue = finalAddr; input.value = finalAddr;
-          }
-        }
-      });
     }
 
     function useCurrentLocation() {
       if(navigator.geolocation) {
           navigator.geolocation.getCurrentPosition(p => {
             let pos = {lat: p.coords.latitude, lng: p.coords.longitude}; if(map) map.panTo(pos);
-            if(currentStep===2 && markerPick) { hasInteractedPick = true; markerPick.setPosition(pos); }
-            else if(currentStep===3 && markerDrop) { hasInteractedDrop = true; markerDrop.setPosition(pos); }
             updateAddressBox(true);
           }, () => { showAlert('ผิดพลาด', 'ไม่สามารถดึงตำแหน่งปัจจุบันได้ กรุณาเปิด GPS', 'error'); }, { enableHighAccuracy: true });
       }
     }
 
     function confirmPickup() { 
-        if(markerPick) { 
-            bookData.pLat = markerPick.getPosition().lat(); bookData.pLng = markerPick.getPosition().lng(); 
-            saveRecentPlace(bookData.pName, bookData.pLat, bookData.pLng);
-            showPage(3); 
-        } 
+        let picks = localWaypoints.filter(w => w.type === 'pick');
+        if(picks.length > 0) { showPage(3); } 
     }
     function confirmDropoff() { 
-        if(markerDrop) { 
-            bookData.dLat = markerDrop.getPosition().lat(); bookData.dLng = markerDrop.getPosition().lng(); 
+        let drops = localWaypoints.filter(w => w.type === 'drop');
+        if(drops.length > 0) {
+            bookData.pLat = localWaypoints[0].lat; bookData.pLng = localWaypoints[0].lng; bookData.pName = localWaypoints[0].name;
+            let lastIdx = localWaypoints.length - 1;
+            bookData.dLat = localWaypoints[lastIdx].lat; bookData.dLng = localWaypoints[lastIdx].lng; bookData.dName = localWaypoints[lastIdx].name;
+            
+            saveRecentPlace(bookData.pName, bookData.pLat, bookData.pLng);
             saveRecentPlace(bookData.dName, bookData.dLat, bookData.dLng);
             showPage(4); 
         } 
     }
 
     function calculatePrice() {
-      if(!directionsService || !map) return;
-      const sPick = document.getElementById('sumPick'); const sDrop = document.getElementById('sumDrop');
-      if(sPick) sPick.innerText = bookData.pName; if(sDrop) sDrop.innerText = bookData.dName;
+      if(!directionsService || !map || localWaypoints.length < 2) return;
       
-      let origin = new google.maps.LatLng(bookData.pLat, bookData.pLng);
-      let dest = new google.maps.LatLng(bookData.dLat, bookData.dLng);
-      let waypts = localWaypoints.map(w => ({location: new google.maps.LatLng(w.lat, w.lng), stopover: true}));
+      let origin = new google.maps.LatLng(localWaypoints[0].lat, localWaypoints[0].lng);
+      let dest = new google.maps.LatLng(localWaypoints[localWaypoints.length - 1].lat, localWaypoints[localWaypoints.length - 1].lng);
+      let waypts = localWaypoints.slice(1, -1).map(w => ({location: new google.maps.LatLng(w.lat, w.lng), stopover: true}));
       
       directionsService.route({origin: origin, destination: dest, waypoints: waypts, travelMode: 'DRIVING'}, (resRide, stat1) => {
         if(stat1 === 'OK') {
           if(polylineRoute) polylineRoute.setMap(null);
           polylineRoute = new google.maps.Polyline({ path: resRide.routes[0].legs.flatMap(leg => leg.steps.flatMap(step => step.path)), strokeColor: '#3b82f6', strokeWeight: 6, map: map });
 
-          if(markerPick) markerPick.setPosition(origin); if(markerDrop) markerDrop.setPosition(dest);
-          
           let distMeters = 0; let waitMins = 0;
           resRide.routes[0].legs.forEach(leg => { distMeters += leg.distance.value; waitMins += leg.duration.value; });
           let distRideKm = distMeters / 1000; waitMins = Math.ceil(waitMins / 60);
@@ -1229,7 +1133,8 @@
       db.ref('blacklist/' + tel).once('value', snap => {
           if (snap.exists()) { showAlert('ระงับบริการ', 'ขออภัย เบอร์โทรศัพท์นี้ถูกระงับการให้บริการจากระบบชั่วคราว\nเหตุผล: ' + snap.val().reason, 'error'); return; }
           bookData.userId = lineUserId; bookData.name = lineName; bookData.phone = tel;
-          bookData.status = "รอผู้ขับขี่ตอบรับ"; bookData.timestamp = firebase.database.ServerValue.TIMESTAMP; bookData.waypoints = localWaypoints;
+          bookData.status = "รอผู้ขับขี่ตอบรับ"; bookData.timestamp = firebase.database.ServerValue.TIMESTAMP; 
+          bookData.waypoints = localWaypoints; // บันทึกเส้นทางทั้งหมดลงฐานข้อมูล
           
           db.ref('bookings/' + lineUserId).set(bookData).then(() => {
               if(bookData.promoCode) {
@@ -1286,8 +1191,7 @@
           }
       }
 
-      const tPick = document.getElementById('trackPick'); const tDrop = document.getElementById('trackDrop');
-      if(tPick) { tPick.innerHTML = bookData.pName; } if(tDrop) { tDrop.innerHTML = bookData.dName; }
+      // ดึงเส้นทางมาวาด (Tracking)
       renderWaypointsUI();
 
       if(bookData.driverPin && bookData.status !== "รอผู้ขับขี่ตอบรับ" && !bookData.status.includes("ยกเลิก")) {
@@ -1354,8 +1258,12 @@
     }
 
     function calculateNewRoutePriceForTracking(newLat, newLng, newName) {
-        let origin = new google.maps.LatLng(bookData.pLat, bookData.pLng); let dest = new google.maps.LatLng(bookData.dLat, bookData.dLng);
-        let tempWaypts = localWaypoints.map(w => ({location: new google.maps.LatLng(w.lat, w.lng), stopover: true})); tempWaypts.push({location: new google.maps.LatLng(newLat, newLng), stopover: true});
+        if (localWaypoints.length === 0) return;
+        let origin = new google.maps.LatLng(localWaypoints[0].lat, localWaypoints[0].lng);
+        let dest = new google.maps.LatLng(localWaypoints[localWaypoints.length - 1].lat, localWaypoints[localWaypoints.length - 1].lng);
+        
+        let tempWaypts = localWaypoints.slice(1, -1).map(w => ({location: new google.maps.LatLng(w.lat, w.lng), stopover: true}));
+        tempWaypts.push({location: new google.maps.LatLng(newLat, newLng), stopover: true});
 
         directionsService.route({origin: origin, destination: dest, waypoints: tempWaypts, travelMode: 'DRIVING'}, (res, stat) => {
             if (stat === 'OK') {
@@ -1374,14 +1282,15 @@
 
     function acceptRouteChange() {
         if(window.tempNewWp) { 
-            localWaypoints.push(window.tempNewWp);
+            // แทรกลงก่อนจุดสุดท้ายเสมอ (เป็นจุดแวะ)
+            localWaypoints.splice(localWaypoints.length - 1, 0, window.tempNewWp);
             let updates = { price: window.tempNewPrice, originalPrice: window.tempNewPrice + (bookData.discount || 0), priceEstimate: `฿${window.tempNewPrice}`, distance: window.tempNewDist, waypoints: localWaypoints };
             db.ref('bookings/' + lineUserId).update(updates).then(() => { document.getElementById('routeChangeModal').classList.add('hidden'); showAlert("สำเร็จ", "เพิ่มจุดแวะและอัปเดตราคาใหม่เรียบร้อยแล้ว คนขับจะเห็นเส้นทางใหม่ทันที", "success"); window.tempNewWp = null; });
         } else { 
             let req = bookData.routeChangeRequest;
             let updates = { price: window.tempNewPrice, originalPrice: window.tempNewPrice, priceEstimate: `฿${window.tempNewPrice}`, distance: window.tempNewDist, routeChangeRequest: null };
             if (req.type === 'destination') { updates.dLat = req.lat; updates.dLng = req.lng; updates.dName = req.name; } 
-            else { localWaypoints.push({lat: req.lat, lng: req.lng, name: req.name, type: 'drop'}); updates.waypoints = localWaypoints; }
+            else { localWaypoints.splice(localWaypoints.length - 1, 0, {lat: req.lat, lng: req.lng, name: req.name, type: 'drop'}); updates.waypoints = localWaypoints; }
             db.ref('bookings/' + lineUserId).update(updates).then(() => { document.getElementById('routeChangeModal').classList.add('hidden'); window.isShowingRouteChange = false; });
         }
     }
@@ -1392,7 +1301,7 @@
     }
 
     function updateRealtimeMap() {
-      if(!directionsService || !bookData.status || !map) return;
+      if(!directionsService || !bookData.status || !map || localWaypoints.length < 2) return;
       let isStatusChanged = (currentRouteStatus !== bookData.status); currentRouteStatus = bookData.status;
 
       let etaElBottom = document.getElementById('unifiedEtaText'); let searchProgress = document.getElementById('searchProgressBar');
@@ -1401,14 +1310,14 @@
           if(markerDriver) markerDriver.setMap(null); if(etaElBottom) etaElBottom.classList.add('hidden'); 
           if(bookData.status === "รอผู้ขับขี่ตอบรับ") { if(searchProgress) searchProgress.classList.remove('hidden'); } else { if(searchProgress) searchProgress.classList.add('hidden'); }
 
-          let origin = {lat: bookData.pLat, lng: bookData.pLng}; let dest = {lat: bookData.dLat, lng: bookData.dLng};
-          let waypts = localWaypoints.map(w => ({location: new google.maps.LatLng(w.lat, w.lng), stopover: true}));
+          let origin = new google.maps.LatLng(localWaypoints[0].lat, localWaypoints[0].lng); 
+          let dest = new google.maps.LatLng(localWaypoints[localWaypoints.length - 1].lat, localWaypoints[localWaypoints.length - 1].lng);
+          let waypts = localWaypoints.slice(1, -1).map(w => ({location: new google.maps.LatLng(w.lat, w.lng), stopover: true}));
           
           directionsService.route({origin: origin, destination: dest, waypoints: waypts, travelMode: 'DRIVING'}, (res, stat) => {
               if(stat === 'OK') {
                   if(polylineRoute) polylineRoute.setMap(null);
                   polylineRoute = new google.maps.Polyline({ path: res.routes[0].legs.flatMap(leg => leg.steps.flatMap(step => step.path)), strokeColor: '#3b82f6', strokeWeight: 6, map: map });
-                  if(markerPick) { markerPick.setPosition(origin); markerPick.setMap(map); } if(markerDrop) { markerDrop.setPosition(dest); markerDrop.setMap(map); }
                   currentRouteBounds = res.routes[0].bounds; if(isStatusChanged && map) setTimeout(()=>{ fitRouteBounds(); }, 200);
               }
           });
@@ -1421,13 +1330,13 @@
       let origin, dest; let isGoingToPickup = false; let waypts = [];
 
       if(bookData.status.includes("รับงาน") || bookData.status.includes("มาถึงจุดรับ") || bookData.status.includes("กำลังเดินทางไปหา")) {
-        origin = markerDriver ? markerDriver.getPosition() : {lat: driverData.lat, lng: driverData.lng}; dest = {lat: bookData.pLat, lng: bookData.pLng};
-        if(markerPick) { markerPick.setPosition(dest); markerPick.setMap(map); } if(markerDrop) { markerDrop.setPosition({lat: bookData.dLat, lng: bookData.dLng}); markerDrop.setMap(map); }
+        origin = markerDriver ? markerDriver.getPosition() : {lat: driverData.lat, lng: driverData.lng}; 
+        dest = new google.maps.LatLng(localWaypoints[0].lat, localWaypoints[0].lng);
         isGoingToPickup = true;
       } else {
-        origin = markerDriver ? markerDriver.getPosition() : {lat: driverData.lat, lng: driverData.lng}; dest = {lat: bookData.dLat, lng: bookData.dLng};
-        if(markerDrop) { markerDrop.setPosition(dest); markerDrop.setMap(map); } if(markerPick) { markerPick.setPosition({lat: bookData.pLat, lng: bookData.pLng}); markerPick.setMap(map); }
-        waypts = localWaypoints.map(w => ({location: new google.maps.LatLng(w.lat, w.lng), stopover: true}));
+        origin = markerDriver ? markerDriver.getPosition() : {lat: driverData.lat, lng: driverData.lng}; 
+        dest = new google.maps.LatLng(localWaypoints[localWaypoints.length - 1].lat, localWaypoints[localWaypoints.length - 1].lng);
+        waypts = localWaypoints.slice(1, -1).map(w => ({location: new google.maps.LatLng(w.lat, w.lng), stopover: true}));
       }
 
       directionsService.route({origin: origin, destination: dest, waypoints: waypts, travelMode: 'DRIVING'}, (res, stat) => {
@@ -1436,8 +1345,7 @@
           polylineRoute = new google.maps.Polyline({ path: res.routes[0].legs.flatMap(leg => leg.steps.flatMap(step => step.path)), strokeColor: '#3b82f6', strokeWeight: 6, map: map });
           
           currentRouteBounds = res.routes[0].bounds;
-          if(isGoingToPickup && markerPick) currentRouteBounds.extend(markerPick.getPosition()); if(!isGoingToPickup && markerDrop) currentRouteBounds.extend(markerDrop.getPosition());
-
+          
           let totalMins = 0; let distMeters = 0;
           res.routes[0].legs.forEach(leg => { totalMins += leg.duration.value; distMeters += leg.distance.value; });
           
