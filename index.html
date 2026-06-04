@@ -55,14 +55,15 @@
 
   <div id="map" class="map-container hidden"></div>
 
-  <div id="centerPinOverlay" class="hidden fixed z-[25] pointer-events-none transition-opacity duration-300">
-      <div class="absolute" style="top: 50%; left: 50%;">
-          <div id="centerPinWrapper" class="absolute transition-transform duration-200 z-10" style="bottom: 0px; left: -18px; width: 36px; height: 36px;">
+  <!-- เป้าเล็งตรงกลางจอ ซิงค์ Padding กับแผนที่ให้ตรง 100% -->
+  <div id="centerPinOverlay" class="hidden fixed inset-0 z-[25] pointer-events-none flex items-center justify-center box-border transition-opacity duration-300">
+      <div class="relative w-0 h-0 flex items-center justify-center">
+          <div id="centerPinWrapper" class="absolute bottom-0 left-[50%] transition-transform duration-200 z-10" style="transform: translate(-50%, 0);">
               <svg id="centerPinSvg" width="36" height="36" viewBox="-2 -2 40 40" class="drop-shadow-xl">
                   <path d="M18,0 C10,0 4,6 4,14 C4,24 18,36 18,36 C18,36 32,24 32,14 C32,6 26,0 18,0 Z M18,20 C14.686,20 12,17.314 12,14 C12,10.686 14.686,8 18,8 C21.314,8 24,10.686 24,14 C24,17.314 21.314,20 18,20 Z" fill="#22c55e" stroke="#ffffff" stroke-width="2"/>
               </svg>
           </div>
-          <div id="centerPinShadow" class="absolute w-4 h-1.5 bg-black/40 rounded-full blur-[1px] transition-all duration-200" style="top: -2px; left: -8px;"></div>
+          <div id="centerPinShadow" class="absolute w-5 h-1.5 bg-black/50 rounded-full blur-[1px] transition-all duration-200" style="transform: translate(-50%, -50%);"></div>
       </div>
   </div>
 
@@ -272,6 +273,7 @@
     </div>
   </div>
 
+  <!-- Modal สำหรับค้นหาและเพิ่มจุดแวะ (ใช้เฉพาะตอนอยู่บนรถแล้ว) -->
   <div id="waypointSearchModal" class="hidden fixed inset-0 z-[150] bg-gray-900 pointer-events-auto transition-transform duration-300 flex flex-col">
       <div class="bg-gray-900 border-b border-gray-800 p-4 flex items-center gap-3 shadow-md">
           <button onclick="closeWaypointSearchModal()" class="w-10 h-10 shrink-0 bg-gray-800 text-gray-400 rounded-full flex items-center justify-center border border-gray-700 hover:text-white transition"><i class="fas fa-arrow-left"></i></button>
@@ -402,6 +404,31 @@
   </div>
 
   <script>
+    // ประกาศฟังก์ชัน setupSearch ก่อน เพื่อให้แน่ใจว่าโหลดทัน initMap
+    function setupSearch(inputId) {
+      const input = document.getElementById(inputId); if(!input) return;
+      if (typeof google === 'undefined' || !google.maps.places) return;
+      const chiangRaiBounds = new google.maps.LatLngBounds(new google.maps.LatLng(18.91, 99.16), new google.maps.LatLng(20.46, 100.56));
+      const auto = new google.maps.places.Autocomplete(input, { bounds: chiangRaiBounds, strictBounds: true, componentRestrictions: {country: 'th'} });
+
+      input.addEventListener('focus', function() { if(this.value.trim() !== '') this.dataset.oldValue = this.value; this.value = ''; });
+      input.addEventListener('blur', function() { setTimeout(() => { if(this.value.trim() === '') this.value = this.dataset.oldValue || ''; }, 150); });
+
+      auto.addListener('place_changed', () => {
+        const place = auto.getPlace();
+        if(place.geometry && map) {
+          input.blur(); map.panTo(place.geometry.location); map.setZoom(17); 
+          let finalAddr = place.name;
+          if (place.formatted_address) {
+              let cleanAddr = place.formatted_address.replace(/,?\s*ประเทศไทย/g, '').replace(/Unnamed Road,?\s*/g, '').trim();
+              if(!cleanAddr.includes(place.name)) finalAddr += " (" + cleanAddr + ")";
+          }
+          input.dataset.oldValue = finalAddr; input.value = finalAddr;
+          updateAddressBox(false); // เรียกอัปเดตชื่อเมื่อหมุดเลื่อนไปจุดที่ค้นหา
+        }
+      });
+    }
+
     const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwwdopAPESHRrHEYTSa-CzFMbh0JX9WHUa37PMEJmxDkah7ui67cVtOn68cnM-2DtmR/exec"; 
     const MY_LIFF_ID = "2010188449-b9Yq1R2L";
     const LINE_OA_URL = "https://line.me/R/ti/p/%40805zvmii";
@@ -418,7 +445,7 @@
     const db = firebase.database();
 
     let map, directionsService, directionsRenderer, geocoder, placesService;
-    let markerDriver, markerHome, markerFav; 
+    let markerDriver; 
     let polylineRoute = null; 
 
     let localWaypoints = []; 
@@ -461,6 +488,7 @@
         // ขยับเป้าเล็งตาม Padding
         let overlay = document.getElementById('centerPinOverlay');
         if(overlay && (currentStep === 2 || currentStep === 3)) {
+            // คำนวณ CSS ใหม่ให้มันอยู่ตรงกลาง Padding พอดิบพอดี
             overlay.style.top = pTop + 'px';
             overlay.style.bottom = pBottom + 'px';
         }
@@ -692,33 +720,6 @@
         };
     }
 
-    // ฟังก์ชันค้นหาสถานที่ แบบแยกชัดเจน ป้องกัน Error ซ้ำ
-    function initSearchBox(inputId, isPick) {
-      const input = document.getElementById(inputId); if(!input) return;
-      if (typeof google === 'undefined' || !google.maps.places) return;
-      
-      const chiangRaiBounds = new google.maps.LatLngBounds(new google.maps.LatLng(18.91, 99.16), new google.maps.LatLng(20.46, 100.56));
-      const auto = new google.maps.places.Autocomplete(input, { bounds: chiangRaiBounds, strictBounds: true, componentRestrictions: {country: 'th'} });
-
-      input.addEventListener('focus', function() { if(this.value.trim() !== '') this.dataset.oldValue = this.value; this.value = ''; });
-      input.addEventListener('blur', function() { setTimeout(() => { if(this.value.trim() === '') this.value = this.dataset.oldValue || ''; }, 150); });
-
-      auto.addListener('place_changed', () => {
-        const place = auto.getPlace();
-        if(place.geometry && map) {
-          input.blur(); map.panTo(place.geometry.location); map.setZoom(17); 
-          let finalAddr = place.name;
-          if (place.formatted_address) {
-              let cleanAddr = place.formatted_address.replace(/,?\s*ประเทศไทย/g, '').replace(/Unnamed Road,?\s*/g, '').trim();
-              if(!cleanAddr.includes(place.name)) finalAddr += " (" + cleanAddr + ")";
-          }
-          input.dataset.oldValue = finalAddr; input.value = finalAddr;
-          // เพิ่มลงหมุดทันที
-          addWaypointFromLocation(place.geometry.location.lat(), place.geometry.location.lng(), finalAddr, isPick ? 'pick' : 'drop');
-        }
-      });
-    }
-
     function initMap() {
       if (typeof google === 'undefined' || typeof google.maps === 'undefined') return;
       if (map) return; 
@@ -749,13 +750,6 @@
       geocoder = new google.maps.Geocoder();
       placesService = new google.maps.places.PlacesService(map);
       
-      let iconHome = { path: "M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z", fillColor: '#3b82f6', fillOpacity: 1, strokeWeight: 1, strokeColor: '#ffffff', scale: 1.4, anchor: new google.maps.Point(12, 20) };
-      let iconFav = { path: "M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z", fillColor: '#ec4899', fillOpacity: 1, strokeWeight: 1, strokeColor: '#ffffff', scale: 1.4, anchor: new google.maps.Point(12, 21) };
-
-      markerHome = new google.maps.Marker({map: null, icon: iconHome, zIndex: 1}); 
-      markerFav = new google.maps.Marker({map: null, icon: iconFav, zIndex: 1}); 
-      updateSavedMarkers(); 
-
       markerDriver = new google.maps.Marker({
           map: null, 
           icon: { url: "https://img.icons8.com/color/48/car-top-view.png", scaledSize: new google.maps.Size(44, 44), anchor: new google.maps.Point(22, 22) }, 
@@ -763,8 +757,8 @@
       });
 
       // จัดการค้นหา
-      initSearchBox('pickupSearch', true);
-      initSearchBox('dropoffSearch', false);
+      setupSearch('pickupSearch');
+      setupSearch('dropoffSearch');
       
       const wpInput = document.getElementById('waypointSearchInput');
       if (wpInput) {
@@ -842,7 +836,7 @@
     }
 
     function addWaypointFromLocation(lat, lng, name, type) {
-        let num = localWaypoints.length + 1;
+        let num = type === 'pick' ? localWaypoints.filter(w=>w.type==='pick').length + 1 : localWaypoints.filter(w=>w.type==='drop').length + 1;
         let color = type === 'pick' ? '#22c55e' : '#ef4444';
         
         let marker = new google.maps.Marker({
@@ -914,13 +908,14 @@
             }
         }
 
+        let pCount = 1; let dCount = 1;
+
         localWaypoints.forEach((wp, index) => {
-            let num = index + 1;
-            let colorClass = 'bg-green-500 text-white';
-            let colorHex = '#22c55e';
+            let num = wp.type === 'pick' ? pCount++ : dCount++;
+            let colorClass = wp.type === 'pick' ? 'bg-green-500 text-white' : 'bg-red-500 text-white';
+            let colorHex = wp.type === 'pick' ? '#22c55e' : '#ef4444';
 
-            if (wp.type === 'drop') { colorClass = 'bg-red-500 text-white'; colorHex = '#ef4444'; }
-
+            // อัปเดต Marker เก่าโดยไม่หล่นใหม่
             if (wp.marker) {
                 wp.marker.setIcon(createNumberedMarkerIcon(num.toString(), colorHex));
                 wp.marker.setLabel({text: num.toString(), color: 'white', fontWeight: 'bold'});
@@ -998,8 +993,8 @@
       if (page === 2 || page === 3) {
           if (polylineRoute) { polylineRoute.setMap(null); polylineRoute = null; }
           if (markerDriver) markerDriver.setMap(null); 
-          const bEmer = document.getElementById('btnEmergency'); 
-          if(bEmer) bEmer.classList.add('hidden'); 
+          const bEmer = document.getElementById('btnEmergency'); const bCross = document.getElementById('btnCrosshair');
+          if(bEmer) bEmer.classList.add('hidden'); if(bCross) { bCross.classList.replace('text-gray-500', 'text-blue-400'); bCross.classList.remove('hidden'); }
       }
 
       if(page === 2) {
@@ -1015,8 +1010,8 @@
         }
       }
       else if(page === 4) {
-        const bEmer = document.getElementById('btnEmergency');
-        if(bEmer) bEmer.classList.add('hidden'); 
+        const bEmer = document.getElementById('btnEmergency'); const bCross = document.getElementById('btnCrosshair');
+        if(bEmer) bEmer.classList.add('hidden'); if(bCross) bCross.classList.add('hidden'); 
 
         let pI = document.getElementById('promoInput'); if(pI) pI.value = '';
         bookData.promoCode = ''; bookData.discount = 0;
@@ -1062,15 +1057,6 @@
                 }
             }
         });
-    }
-
-    function useCurrentLocation() {
-      if(navigator.geolocation) {
-          navigator.geolocation.getCurrentPosition(p => {
-            let pos = {lat: p.coords.latitude, lng: p.coords.longitude}; if(map) { map.panTo(pos); map.setZoom(18); }
-            updateAddressBox(true);
-          }, () => { showAlert('ผิดพลาด', 'ไม่สามารถดึงตำแหน่งปัจจุบันได้ กรุณาเปิด GPS', 'error'); }, { enableHighAccuracy: true });
-      }
     }
 
     function confirmPickup() { 
