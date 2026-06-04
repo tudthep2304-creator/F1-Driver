@@ -44,7 +44,7 @@
 
     .hide-scrollbar::-webkit-scrollbar { display: none; }
     .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-    
+
     .slim-scroll::-webkit-scrollbar { width: 4px; }
     .slim-scroll::-webkit-scrollbar-thumb { background: #4b5563; border-radius: 4px; }
 
@@ -58,17 +58,14 @@
 
   <div id="map" class="map-container hidden"></div>
 
-  <div id="centerPinOverlay" class="hidden fixed left-0 right-0 z-[25] pointer-events-none transition-opacity duration-300">
-      <div class="absolute" style="top: 50%; left: 50%; transform: translate(-50%, -100%);">
-          <div id="centerPinWrapper" class="relative transition-transform duration-200 z-10" style="width: 38px; height: 52px;">
-              <svg id="centerPinSvg" width="38" height="52" viewBox="-19 -52 38 52" style="filter: drop-shadow(0px 4px 4px rgba(0,0,0,0.3));">
-                  <path d="M 0,0 C -12,-16 -18,-22 -18,-32 A 18,18 0 1,1 18,-32 C 18,-22 12,-16 0,0 Z" fill="#22c55e" stroke="#ffffff" stroke-width="2"/>
-                  <circle cx="0" cy="-32" r="8" fill="#ffffff"/>
-              </svg>
-          </div>
-      </div>
-      <div class="absolute" style="top: 50%; left: 50%; transform: translate(-50%, -50%);">
-          <div id="centerPinShadow" class="w-5 h-1.5 bg-black/40 rounded-full blur-[1px] transition-all duration-200"></div>
+  <div id="centerPinOverlay" class="hidden fixed pointer-events-none z-[25] transition-opacity duration-300">
+      <div id="centerPinPositioner" class="absolute w-full h-full flex flex-col items-center justify-center">
+           <div class="relative w-0 h-0">
+               <svg id="centerPinSvg" class="absolute bottom-0 transition-transform duration-200" style="left: -15px;" width="30" height="42" viewBox="-15 -42 30 42">
+                   <path d="M 0,0 C -10,-14 -15,-20 -15,-28 A 15,15 0 1,1 15,-28 C 15,-20 10,-14 0,0 Z" fill="#22c55e" stroke="#ffffff" stroke-width="2" filter="drop-shadow(0px 2px 2px rgba(0,0,0,0.4))"/>
+                   <circle cx="0" cy="-28" r="6" fill="#ffffff"/>
+               </svg>
+           </div>
       </div>
   </div>
 
@@ -196,9 +193,9 @@
       </div>
       <div class="border-b border-gray-700 mb-2 w-full opacity-50"></div>
       
-      <div class="bg-gray-800 py-2 px-3 rounded-xl border border-gray-700 relative mb-2 shadow-sm max-h-[110px] overflow-y-auto slim-scroll">
-          <div class="absolute left-[1.4rem] top-4 bottom-4 w-0.5 border-l-[1.5px] border-dashed border-gray-600"></div>
-          <div id="sumWaypointsContainer" class="flex flex-col gap-2 py-1"></div>
+      <div class="bg-gray-800 py-2 px-3 rounded-xl border border-gray-700 relative mb-2 shadow-sm max-h-[140px] overflow-y-auto slim-scroll">
+          <div class="absolute left-[1.4rem] top-5 bottom-5 w-0.5 border-l-[1.5px] border-dashed border-gray-600"></div>
+          <div id="sumWaypointsContainer" class="flex flex-col gap-1.5 py-1"></div>
       </div>
 
       <div class="flex gap-2 mb-2">
@@ -250,9 +247,9 @@
 
       <div class="border-b border-gray-700 mb-2 w-full opacity-50"></div>
       
-      <div id="trackAddressBox" class="mb-3 bg-gray-800 py-2 px-3 rounded-xl border border-gray-700 relative shadow-sm transition-all duration-300 w-full max-h-[110px] overflow-y-auto slim-scroll">
-          <div class="absolute left-[1.3rem] top-4 bottom-4 w-0.5 border-l-[1.5px] border-dashed border-gray-600"></div>
-          <div id="trackWaypointsContainer" class="flex flex-col gap-2 py-1"></div>
+      <div id="trackAddressBox" class="mb-3 bg-gray-800 py-2 px-3 rounded-xl border border-gray-700 relative shadow-sm transition-all duration-300 w-full max-h-[130px] overflow-y-auto slim-scroll">
+          <div class="absolute left-[1.3rem] top-5 bottom-5 w-0.5 border-l-[1.5px] border-dashed border-gray-600"></div>
+          <div id="trackWaypointsContainer" class="flex flex-col gap-1.5 py-1"></div>
       </div>
 
       <div id="driverInfoBox" class="hidden mb-3 bg-gray-800 border border-gray-700 p-2.5 rounded-xl flex justify-between items-center shadow-sm w-full">
@@ -478,6 +475,7 @@
         
         let overlay = document.getElementById('centerPinOverlay');
         if(overlay && (currentStep === 2 || currentStep === 3)) {
+            // ซิงค์ Padding ให้กับ CSS Box ตรงกลางเป๊ะๆ
             overlay.style.top = pTop + 'px';
             overlay.style.bottom = pBottom + 'px';
         }
@@ -679,7 +677,7 @@
             map.panTo({lat: lat, lng: lng}); map.setZoom(17);
             
             // ดันแผนที่ลงเพื่อให้หมุดลอยขึ้นเหนือกล่อง (แก้หมุดบัง)
-            setTimeout(() => { map.panBy(0, -60); }, 50);
+            setTimeout(() => { map.panBy(0, -120); }, 50);
         }
         renderWaypointsUI();
     };
@@ -689,7 +687,7 @@
         if(currentStep === 'Tracking' && markerDriver && markerDriver.getMap()) {
             updateMapPadding();
             map.panTo(markerDriver.getPosition()); map.setZoom(17);
-            setTimeout(() => { map.panBy(0, -60); }, 50);
+            setTimeout(() => { map.panBy(0, -120); }, 50);
             
             isTrackingMode = true; 
             const panel = document.getElementById('trackingPanel');
@@ -707,7 +705,7 @@
         if (localWaypoints.length === 1) {
             updateMapPadding();
             map.panTo({lat: localWaypoints[0].lat, lng: localWaypoints[0].lng}); map.setZoom(16);
-            setTimeout(() => { map.panBy(0, -60); }, 50);
+            setTimeout(() => { map.panBy(0, -120); }, 50);
         } else {
             let bounds = new google.maps.LatLngBounds();
             localWaypoints.forEach(wp => bounds.extend({lat: wp.lat, lng: wp.lng}));
@@ -728,13 +726,13 @@
     function createNumberedMarkerIcon(text, colorHex) {
         return {
             path: "M 0,0 C -12,-16 -18,-22 -18,-32 A 18,18 0 1,1 18,-32 C 18,-22 12,-16 0,0 Z M -8,-32 A 8,8 0 1,0 8,-32 A 8,8 0 1,0 -8,-32 Z",
-            fillColor: colorHex, fillOpacity: 1, strokeWeight: 2, strokeColor: '#ffffff', scale: 1,
-            labelOrigin: typeof google !== 'undefined' && google.maps ? new google.maps.Point(0, -15) : null,
+            fillColor: colorHex, fillOpacity: 1, strokeWeight: 2, strokeColor: '#ffffff', scale: 1.1,
+            labelOrigin: typeof google !== 'undefined' && google.maps ? new google.maps.Point(0, -17) : null,
             anchor: typeof google !== 'undefined' && google.maps ? new google.maps.Point(0, 0) : null
         };
     }
 
-    // ฟังก์ชันค้นหาสถานที่ แบบแยกชัดเจน
+    // ฟังก์ชันค้นหาสถานที่ แบบแยกชัดเจน ป้องกัน Error ซ้ำ
     windowContext.initSearchBox = function(inputId, isPick) {
       const input = document.getElementById(inputId); if(!input) return;
       if (typeof google === 'undefined' || !google.maps.places) return;
@@ -757,7 +755,7 @@
               if(!cleanAddr.includes(place.name)) finalAddr += " (" + cleanAddr + ")";
           }
           input.dataset.oldValue = finalAddr; input.value = finalAddr;
-          addWaypointFromLocation(place.geometry.location.lat(), place.geometry.location.lng(), finalAddr, isPick ? 'pick' : 'drop');
+          // เล็งที่ตำแหน่งนี้ แต่ไม่ Add ลงแผนที่ทันที
         }
       });
     };
@@ -773,10 +771,14 @@
 
       map.addListener('dragstart', () => {
          if (currentStep === 'Tracking') { isTrackingMode = false; }
+         if (currentStep === 2 || currentStep === 3) {
+             document.getElementById('centerPinWrapper').style.transform = 'translateY(-12px)';
+         }
       });
       
       map.addListener('idle', () => {
          if (currentStep === 2 || currentStep === 3) {
+             document.getElementById('centerPinWrapper').style.transform = 'translateY(0px)';
              updateAddressBox(true); 
          }
       });
@@ -964,8 +966,8 @@
 
         localWaypoints.forEach((wp, index) => {
             let num = wp.type === 'pick' ? pCount++ : dCount++;
-            let colorClass = 'bg-green-500 text-white';
-            let colorHex = '#22c55e';
+            let colorClass = wp.type === 'pick' ? 'bg-green-500 text-white' : 'bg-red-500 text-white';
+            let colorHex = wp.type === 'pick' ? '#22c55e' : '#ef4444';
             let isFocused = (focusedWaypointIndex === index);
 
             if (wp.type === 'drop') { colorClass = 'bg-red-500 text-white'; colorHex = '#ef4444'; }
@@ -1027,7 +1029,7 @@
           if(topSearchPick) topSearchPick.classList.remove('hidden'); if(topSearchDrop) topSearchDrop.classList.add('hidden');
           if(pinOverlay && pinSvg) { 
               pinOverlay.classList.remove('hidden'); 
-              pinSvg.innerHTML = '<path d="M 0,0 C -12,-16 -18,-22 -18,-32 A 18,18 0 1,1 18,-32 C 18,-22 12,-16 0,0 Z" fill="#22c55e" stroke="#ffffff" stroke-width="2"/><circle cx="0" cy="-32" r="8" fill="#ffffff"/>'; 
+              pinSvg.innerHTML = '<path d="M18,0 C10,0 4,6 4,14 C4,24 18,36 18,36 C18,36 32,24 32,14 C32,6 26,0 18,0 Z M18,20 C14.686,20 12,17.314 12,14 C12,10.686 14.686,8 18,8 C21.314,8 24,10.686 24,14 C24,17.314 21.314,20 18,20 Z" fill="#22c55e" stroke="#ffffff" stroke-width="2"/>'; 
           }
           renderWaypointsUI();
       } else if (page === 3) {
@@ -1035,7 +1037,7 @@
           if(topSearchPick) topSearchPick.classList.add('hidden'); if(topSearchDrop) topSearchDrop.classList.remove('hidden');
           if(pinOverlay && pinSvg) { 
               pinOverlay.classList.remove('hidden'); 
-              pinSvg.innerHTML = '<path d="M 0,0 C -12,-16 -18,-22 -18,-32 A 18,18 0 1,1 18,-32 C 18,-22 12,-16 0,0 Z" fill="#ef4444" stroke="#ffffff" stroke-width="2"/><circle cx="0" cy="-32" r="8" fill="#ffffff"/>'; 
+              pinSvg.innerHTML = '<path d="M18,0 C10,0 4,6 4,14 C4,24 18,36 18,36 C18,36 32,24 32,14 C32,6 26,0 18,0 Z M18,20 C14.686,20 12,17.314 12,14 C12,10.686 14.686,8 18,8 C21.314,8 24,10.686 24,14 C24,17.314 21.314,20 18,20 Z" fill="#ef4444" stroke="#ffffff" stroke-width="2"/>'; 
           }
           renderWaypointsUI();
       } else {
@@ -1355,7 +1357,7 @@
       updateRealtimeMap(); updateMapControlsPosition('Tracking');
     }
 
-    windowContext.calculateNewRoutePriceForTracking = function(newLat, newLng, newName) {
+    function calculateNewRoutePriceForTracking(newLat, newLng, newName) {
         if (localWaypoints.length === 0) return;
         let origin = new google.maps.LatLng(localWaypoints[0].lat, localWaypoints[0].lng);
         let dest = new google.maps.LatLng(localWaypoints[localWaypoints.length - 1].lat, localWaypoints[localWaypoints.length - 1].lng);
