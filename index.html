@@ -291,7 +291,6 @@
       </div>
   </div>
 
-  <!-- หน้าโปรไฟล์ส่วนตัว (Profile Page) -->
   <div id="profileModal" class="hidden fixed inset-0 z-[190] bg-gray-900 pointer-events-auto transition-transform flex flex-col">
       <div class="bg-gray-900 border-b border-gray-800 p-4 flex items-center gap-3 shadow-md shrink-0">
           <button onclick="closeProfileModal()" class="w-10 h-10 shrink-0 bg-gray-800 text-gray-400 rounded-full flex items-center justify-center border border-gray-700 hover:text-white transition"><i class="fas fa-arrow-left"></i></button>
@@ -403,7 +402,6 @@
       </div>
   </div>
 
-  <!-- Z-Index 9990 ดันลอยหน้าสุด -->
   <div id="confirmActionModal" class="hidden fixed inset-0 z-[9990] bg-black/80 flex items-center justify-center p-4 pointer-events-auto">
       <div class="bg-gray-800 border border-gray-700 rounded-3xl p-6 w-full max-w-sm text-center shadow-2xl">
           <div class="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl" id="confirmActionIcon"><i class="fas fa-map-marked-alt"></i></div>
@@ -592,7 +590,6 @@
     windowContext.openPromoModal = function() { document.getElementById('promoModal').classList.remove('hidden'); }
     windowContext.closePromoModal = function() { document.getElementById('promoModal').classList.add('hidden'); }
 
-    // ฟังก์ชันเปิด-ปิด Profile Modal และจัดการแก้ไขเบอร์มือถือ
     windowContext.openProfileModal = function() {
         document.getElementById('profileModal').classList.remove('hidden');
         document.getElementById('profileNameLarge').innerText = lineName || 'ไม่ทราบชื่อ';
@@ -630,7 +627,6 @@
         });
     }
 
-    // ฟังก์ชันสร้างไอคอนสถานที่ลงบนแผนที่โดยตรง
     function renderSavedPlaceMarkersOnMap() {
         if (!map) return;
         let hData = localStorage.getItem('saved_home');
@@ -786,7 +782,6 @@
         }
     };
 
-    // Smooth panning effect for clicking list items
     windowContext.focusLocationToggle = function(lat, lng, index) {
         if(!map) return;
         if (focusedWaypointIndex === index) {
@@ -795,8 +790,18 @@
         } else {
             focusedWaypointIndex = index;
             updateMapPadding();
-            map.panTo({lat: lat, lng: lng});
-            setTimeout(() => { map.setZoom(17); map.panBy(0, 150); }, 300);
+            
+            let currentZoom = map.getZoom();
+            if(currentZoom > 14) {
+                map.setZoom(14);
+                setTimeout(() => {
+                    map.panTo({lat: lat, lng: lng});
+                    setTimeout(() => { map.setZoom(17); }, 400);
+                }, 300);
+            } else {
+                map.panTo({lat: lat, lng: lng});
+                setTimeout(() => { map.setZoom(17); }, 400);
+            }
         }
         renderWaypointsUI();
     };
@@ -804,13 +809,30 @@
     function centerToFocus() {
         if(!map) return;
         if(currentStep === 'Tracking' && markerDriver && markerDriver.getMap()) {
-            updateMapPadding();
-            map.panTo(markerDriver.getPosition());
-            setTimeout(() => { map.setZoom(17); map.panBy(0, 300); }, 300);
-            
             isTrackingMode = true; 
             const panel = document.getElementById('trackingPanel');
-            if(panel && !panel.classList.contains('panel-collapsed')) { panel.classList.add('panel-collapsed'); updateMapPadding(); }
+            
+            const doFlyToCar = () => {
+                updateMapPadding();
+                let currentZoom = map.getZoom();
+                if(currentZoom > 14) {
+                    map.setZoom(14);
+                    setTimeout(() => {
+                        map.panTo(markerDriver.getPosition());
+                        setTimeout(() => { map.setZoom(17); }, 400);
+                    }, 300);
+                } else {
+                    map.panTo(markerDriver.getPosition());
+                    setTimeout(() => { map.setZoom(17); }, 400);
+                }
+            };
+
+            if(panel && !panel.classList.contains('panel-collapsed')) { 
+                panel.classList.add('panel-collapsed'); 
+                setTimeout(doFlyToCar, 350);
+            } else {
+                doFlyToCar();
+            }
             return;
         }
         useCurrentLocation();
@@ -889,16 +911,16 @@
         disableDefaultUI: true, gestureHandling: 'greedy', zoomControl: false
       });
 
-      // Z-Index = 1 เพื่อให้อยู่ด้านหลังหมุด
       crosshairMarker = new google.maps.Marker({
           map: null, 
-          zIndex: 1,
+          zIndex: 1, // ปรับให้อยู่ด้านหลังหมุดตัวเลข
           clickable: false
       });
       crosshairMarker.bindTo('position', map, 'center');
 
       map.addListener('dragstart', () => {
          if (currentStep === 'Tracking') { isTrackingMode = false; }
+         // เอา animation การเด้งออกไป
       });
       
       map.addListener('idle', () => {
@@ -1314,7 +1336,17 @@
             let pos = {lat: p.coords.latitude, lng: p.coords.longitude}; 
             if(map) { 
                 updateMapPadding();
-                map.panTo(pos); map.setZoom(18); 
+                let currentZoom = map.getZoom();
+                if(currentZoom > 14) {
+                    map.setZoom(14);
+                    setTimeout(() => {
+                        map.panTo(pos); 
+                        setTimeout(() => { map.setZoom(18); }, 400);
+                    }, 300);
+                } else {
+                    map.panTo(pos);
+                    setTimeout(() => { map.setZoom(18); }, 400);
+                }
             }
             updateAddressBox(true);
           }, () => { showAlert('ผิดพลาด', 'ไม่สามารถดึงตำแหน่งปัจจุบันได้ กรุณาเปิด GPS', 'error'); }, { enableHighAccuracy: true });
@@ -1621,21 +1653,14 @@
             }
 
             if(isTrackingMode) {
-                let dynamicBounds = new google.maps.LatLngBounds();
-                let paddingBottom = getDynamicBottomPadding();
-
                 if (bookData.status.includes("กำลังเดินทางไปหา") || bookData.status.includes("รับงานแล้ว") || bookData.status.includes("มาถึงจุดรับ")) {
-                    dynamicBounds.extend(new google.maps.LatLng(driverData.lat, driverData.lng));
-                    if(bookData.pLat !== 0) dynamicBounds.extend(new google.maps.LatLng(bookData.pLat, bookData.pLng));
-                    map.fitBounds(dynamicBounds, { top: 120, right: 50, bottom: paddingBottom, left: 50 });
+                    map.panTo({lat: driverData.lat, lng: driverData.lng});
                 } 
                 else if (bookData.status.includes("ออกเดินทาง") || bookData.status.includes("ไปยังจุดส่ง")) {
-                    dynamicBounds.extend(new google.maps.LatLng(driverData.lat, driverData.lng));
-                    if(bookData.dLat !== 0) dynamicBounds.extend(new google.maps.LatLng(bookData.dLat, bookData.dLng));
-                    map.fitBounds(dynamicBounds, { top: 120, right: 50, bottom: paddingBottom, left: 50 });
+                    map.panTo({lat: driverData.lat, lng: driverData.lng});
                 } 
                 else if (currentRouteBounds) {
-                    map.fitBounds(currentRouteBounds, { top: 120, right: 50, bottom: paddingBottom, left: 50 });
+                    map.fitBounds(currentRouteBounds, { top: 120, right: 50, bottom: getDynamicBottomPadding(), left: 50 });
                 }
             }
         }
