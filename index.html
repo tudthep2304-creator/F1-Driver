@@ -256,12 +256,54 @@
       </div>
 
       <div id="actionButtonsBox" class="hidden gap-2 mb-1 shrink-0 w-full flex-row">
-          <button id="btnChat" onclick="openLineOA()" class="flex-1 w-full bg-gray-800 text-gray-300 py-3 rounded-xl font-bold border border-gray-700 text-sm shadow-sm hover:bg-gray-700 transition flex justify-center items-center gap-1.5"><i class="fab fa-line text-[20px] text-[#06C755] leading-none"></i> แชท</button>
+          <button id="btnChat" onclick="openInAppChatModal()" class="flex-1 w-full bg-blue-900/40 text-blue-400 py-3 rounded-xl font-bold border border-blue-500/30 text-sm shadow-sm hover:bg-blue-800 transition flex justify-center items-center gap-1.5"><i class="fas fa-comments text-[16px]"></i> แชท</button>
           <button id="btnAddWaypt" onclick="openWaypointSearchModal()" class="flex-1 w-full bg-yellow-600/30 text-yellow-400 py-3 rounded-xl font-bold border border-yellow-500/30 text-sm shadow-sm hover:bg-yellow-600/50 transition flex justify-center items-center gap-1.5"><i class="fas fa-plus"></i> แวะเพิ่ม</button>
           <button id="btnCall" onclick="openCallConfirmModal()" class="flex-1 w-full bg-green-600 text-white py-3 rounded-xl font-bold text-sm shadow-sm hover:bg-green-700 transition flex justify-center items-center gap-1.5"><i class="fas fa-phone-alt"></i> โทร</button>
           <button id="btnCancel" onclick="openCancelModal()" class="flex-1 w-full bg-red-900/40 text-red-400 py-3 rounded-xl font-bold border border-red-500/30 text-sm hover:bg-red-900/60 transition flex justify-center items-center gap-1.5"><i class="fas fa-times"></i> ยกเลิก</button>
       </div>
     </div>
+  </div>
+
+  <div id="inAppChatModal" class="hidden fixed inset-0 z-[250] bg-gray-900 flex flex-col pointer-events-auto transition-transform">
+      <div class="bg-gray-800 border-b border-gray-700 p-4 flex items-center gap-3 shadow-md shrink-0">
+          <button onclick="closeInAppChatModal()" class="w-10 h-10 bg-gray-700 text-white rounded-full flex items-center justify-center hover:bg-gray-600"><i class="fas fa-arrow-left"></i></button>
+          <h2 class="text-lg font-black text-white"><i class="fas fa-comments text-blue-400 mr-2"></i>กล่องข้อความสนทนา</h2>
+      </div>
+      <div id="inAppChatMessages" class="flex-1 overflow-y-auto p-4 space-y-3 bg-gray-950 hide-scrollbar flex flex-col">
+          <p class="text-center text-xs text-gray-600 my-4">เริ่มต้นการสนทนากับคนขับที่นี่</p>
+      </div>
+      <div class="bg-gray-800 p-3 flex gap-2 shrink-0 shadow-[0_-5px_15px_rgba(0,0,0,0.3)]">
+          <input type="text" id="inAppChatInput" class="flex-1 rounded-xl bg-gray-700 text-white px-4 py-3 text-sm outline-none focus:border-green-500 border border-transparent transition" placeholder="พิมพ์ข้อความส่งหาคนขับ...">
+          <button onclick="sendInAppChatMessage()" class="bg-green-600 text-white px-5 rounded-xl hover:bg-green-700 transition shadow-md"><i class="fas fa-paper-plane"></i></button>
+      </div>
+  </div>
+
+  <div id="driverRatingModal" class="hidden fixed inset-0 z-[260] bg-black/80 flex items-center justify-center p-4 pointer-events-auto">
+      <div class="bg-gray-800 border border-green-500/30 rounded-3xl p-6 w-full max-w-sm text-center shadow-2xl">
+          <div class="w-16 h-16 bg-yellow-900/30 text-yellow-400 border border-yellow-500/30 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl"><i class="fas fa-star-half-alt"></i></div>
+          <h3 class="text-xl font-black text-white mb-2">ให้คะแนนคนขับ</h3>
+          <p class="text-sm text-gray-400 mb-6 leading-relaxed">กรุณาประเมินความพึงพอใจการให้บริการของคนขับในรอบนี้ครับ</p>
+          <div class="flex justify-center gap-2 mb-6" id="starRatingBox">
+              <i class="fas fa-star text-3xl text-gray-600 cursor-pointer transition hover:text-yellow-400" onclick="updateSelectedRatingScore(1)"></i>
+              <i class="fas fa-star text-3xl text-gray-600 cursor-pointer transition hover:text-yellow-400" onclick="updateSelectedRatingScore(2)"></i>
+              <i class="fas fa-star text-3xl text-gray-600 cursor-pointer transition hover:text-yellow-400" onclick="updateSelectedRatingScore(3)"></i>
+              <i class="fas fa-star text-3xl text-gray-600 cursor-pointer transition hover:text-yellow-400" onclick="updateSelectedRatingScore(4)"></i>
+              <i class="fas fa-star text-3xl text-gray-600 cursor-pointer transition hover:text-yellow-400" onclick="updateSelectedRatingScore(5)"></i>
+          </div>
+          <button onclick="submitDriverRatingScore()" class="w-full py-3.5 bg-green-600 text-white font-black rounded-xl shadow-md hover:bg-green-700 transition">ยืนยันคะแนน</button>
+      </div>
+  </div>
+
+  <div id="customNameInputDialog" class="hidden fixed inset-0 z-[270] bg-black/80 flex items-center justify-center p-4 pointer-events-auto">
+      <div class="bg-gray-800 border border-gray-700 rounded-3xl p-6 w-full max-w-sm text-center shadow-2xl">
+          <h3 id="customNameTitle" class="text-xl font-black text-white mb-1">ระบุชื่อสถานที่โปรด</h3>
+          <p class="text-[13px] text-gray-400 mb-4">พิมพ์ชื่อเรียกสถานที่นี้ตามที่คุณต้องการ</p>
+          <input type="text" id="customNameValue" class="w-full p-3.5 mb-5 bg-gray-900 border border-gray-700 focus:border-green-500 text-white rounded-xl text-center font-bold outline-none" placeholder="เช่น ที่ทำงาน, คอนโดเอ">
+          <div class="flex gap-3">
+              <button onclick="closeCustomNameInputDialog()" class="flex-1 py-3 bg-gray-700 text-gray-200 font-bold rounded-xl hover:bg-gray-600 transition">ยกเลิก</button>
+              <button onclick="submitCustomNameInput()" class="flex-1 py-3 bg-green-600 text-white font-bold rounded-xl shadow-md hover:bg-green-700 transition">บันทึก</button>
+          </div>
+      </div>
   </div>
 
   <div id="waypointSearchModal" class="hidden fixed inset-0 z-[150] bg-gray-900 pointer-events-auto transition-transform duration-300 flex flex-col">
@@ -435,6 +477,9 @@
     let loadedHistoryJobs = {}; 
     let selectedHistoryJobId = null;
     let myBlockedDrivers = {};
+    let activeChatListenerRef = null;
+    let currentSelectedRatingScore = 0;
+    let pendingCustomPlaceSaveType = null;
 
     function getDynamicBottomPadding() {
         if(!document.getElementById('page4Panel')) return 0;
@@ -531,30 +576,32 @@
         });
     }
 
+    // New Feature: Custom Named Places 
     windowContext.handleSavedPlace = function(type) {
-        let saved = localStorage.getItem('saved_' + type); let typeName = type === 'home' ? 'บ้าน' : 'รายการโปรด';
+        let saved = localStorage.getItem('saved_' + type);
         if (saved) { let p = JSON.parse(saved); useRecentPlace(p.name, p.lat, p.lng); } 
-        else { saveCurrentAsPlace(type, typeName); }
+        else { editSavedPlace(type, {stopPropagation: function(){}}); }
     }
-    windowContext.editSavedPlace = function(type, event) { event.stopPropagation(); let typeName = type === 'home' ? 'บ้าน' : 'รายการโปรด'; saveCurrentAsPlace(type, typeName); }
-
-    function saveCurrentAsPlace(type, typeName) {
+    windowContext.editSavedPlace = function(type, event) { 
+        event.stopPropagation(); 
+        pendingCustomPlaceSaveType = type;
+        document.getElementById('customNameValue').value = '';
+        document.getElementById('customNameInputDialog').classList.remove('hidden');
+    }
+    windowContext.closeCustomNameInputDialog = function() { document.getElementById('customNameInputDialog').classList.add('hidden'); pendingCustomPlaceSaveType = null; }
+    windowContext.submitCustomNameInput = function() {
+        let typedName = document.getElementById('customNameValue').value.trim();
+        if(!typedName) { showAlert('พิมพ์ข้อความ', 'กรุณากรอกชื่อสถานที่ด้วยครับ', 'error'); return; }
         let pos = map.getCenter();
-        let currentName = "พิกัดที่เลือกบนแผนที่"; 
-        let currentLat = pos.lat(); let currentLng = pos.lng();
-        
-        let theme = (currentStep === 2) ? 'green' : 'red';
-        openConfirmActionModal(`ตั้งค่า ${typeName}?`, `คุณต้องการบันทึก <b>"พิกัดกลางจอขณะนี้"</b> เป็น "${typeName}" ใช่หรือไม่?<br><span class="text-[10px] text-gray-500 mt-2 block">(เมื่อบันทึกแล้ว คุณสามารถใช้งานผ่านปุ่มลัดด้านล่างได้ทันที)</span>`, () => {
-            localStorage.setItem('saved_' + type, JSON.stringify({name: currentName, lat: currentLat, lng: currentLng}));
-            showAlert('บันทึกสำเร็จ', `อัปเดตพิกัด "${typeName}" เรียบร้อยแล้ว!`, 'success');
-            renderSavedPlacesUI(); 
-        }, theme);
+        localStorage.setItem('saved_' + pendingCustomPlaceSaveType, JSON.stringify({name: typedName, lat: pos.lat(), lng: pos.lng()}));
+        closeCustomNameInputDialog();
+        showAlert('บันทึกสำเร็จ', `บันทึกพิกัด "${typedName}" เรียบร้อยแล้ว!`, 'success');
+        renderSavedPlacesUI();
     }
-
     function renderSavedPlacesUI() {
         let h = localStorage.getItem('saved_home'); let f = localStorage.getItem('saved_favorite');
-        document.querySelectorAll('.label-home').forEach(el => el.innerText = h ? 'บ้าน' : 'ตั้งค่า');
-        document.querySelectorAll('.label-favorite').forEach(el => el.innerText = f ? 'โปรด' : 'ตั้งค่า');
+        document.querySelectorAll('.label-home').forEach(el => el.innerText = h ? JSON.parse(h).name.substring(0, 6) : 'ตั้งค่า');
+        document.querySelectorAll('.label-favorite').forEach(el => el.innerText = f ? JSON.parse(f).name.substring(0, 6) : 'ตั้งค่า');
     }
 
     function saveRecentPlace(name, lat, lng) {
@@ -658,10 +705,6 @@
             focusedWaypointIndex = index;
             updateMapPadding();
             map.panTo({lat: lat, lng: lng}); map.setZoom(17);
-            
-            // ดันแผนที่ขึ้นเพื่อให้หมุดลอยขึ้นเหนือกล่อง (ไม่โดนบัง) 
-            // เลื่อนกล้องขึ้น (panBy y-ติดลบ คือเลื่อนกล้องขึ้น ทำให้วัตถุบนจอตกลงมา)
-            // เลื่อนกล้องลง (panBy y-บวก คือเลื่อนกล้องลง ทำให้วัตถุบนจอเด้งขึ้นไป)
             setTimeout(() => { map.panBy(0, 150); }, 50);
         }
         renderWaypointsUI();
@@ -708,7 +751,6 @@
         } else { centerToFocus(); }
     }
 
-    // สร้างไอคอนหมุดแบบโปร่งใส ไม่มี Text (ใช้แสดงตรงเป้าเล็งชั่วคราว)
     function createNumberedMarkerIcon(text, colorHex) {
         return {
             path: "M 0,0 C -12,-16 -18,-22 -18,-32 A 18,18 0 1,1 18,-32 C 18,-22 12,-16 0,0 Z M -8,-32 A 8,8 0 1,0 8,-32 A 8,8 0 1,0 -8,-32 Z",
@@ -750,7 +792,6 @@
               if(!cleanAddr.includes(place.name)) finalAddr += " (" + cleanAddr + ")";
           }
           input.dataset.oldValue = finalAddr; input.value = finalAddr;
-          // เล็งที่ตำแหน่งนี้ แต่ไม่ Add ลงแผนที่ทันที
         }
       });
     };
@@ -764,7 +805,6 @@
         disableDefaultUI: true, gestureHandling: 'greedy', zoomControl: false
       });
 
-      // ผูกเป้าเล็งเข้ากับจุดศูนย์กลางของแผนที่ 100%
       crosshairMarker = new google.maps.Marker({
           map: null, 
           zIndex: 9999,
@@ -775,7 +815,6 @@
       map.addListener('dragstart', () => {
          if (currentStep === 'Tracking') { isTrackingMode = false; }
          if (crosshairMarker && (currentStep === 2 || currentStep === 3)) {
-             // ทำ Animation กระเด้งขึ้นนิดนึง
              crosshairMarker.setAnimation(google.maps.Animation.BOUNCE);
          }
       });
@@ -787,10 +826,9 @@
          }
       });
 
-      // ดักการกดบนสถานที่ (POI) และซูมไปหา (ไม่โชว์กล่องข้อความสีขาว)
       map.addListener('click', (event) => {
         if (event.placeId) {
-          event.stop(); // ป้องกัน InfoWindow สีขาว
+          event.stop(); 
           if (placesService && (currentStep === 2 || currentStep === 3)) {
             placesService.getDetails({ placeId: event.placeId, fields: ['name', 'geometry', 'formatted_address'] }, (place, status) => {
               if (status === 'OK' && place.geometry) {
@@ -1018,7 +1056,7 @@
 
     windowContext.showPage = function(page) {
       currentStep = page;
-      focusedWaypointIndex = -1; // รีเซ็ตโฟกัส
+      focusedWaypointIndex = -1; 
       [1,2,3,4,'Tracking'].forEach(p => { const el = document.getElementById('page' + p); if (el) el.classList.add('hidden'); });
       const targetPage = document.getElementById('page' + page); if(targetPage) targetPage.classList.remove('hidden');
       requestWakeLock();
@@ -1050,7 +1088,14 @@
       const navBar = document.getElementById('navBar'); const mapControls = document.getElementById('mapControls'); const mapEl = document.getElementById('map');
       if(page !== 1) {
         if(navBar) navBar.classList.remove('hidden'); if(mapEl) mapEl.classList.remove('hidden'); if(mapControls) mapControls.classList.remove('hidden'); 
-        initMap(); updateMapPadding(); if (typeof google !== 'undefined' && map) google.maps.event.trigger(map, 'resize');
+        
+        // Bug Fixed: ป้องกัน Google Maps Initialize ซ้ำซ้อนตอนเปลี่ยนหน้า
+        if (!map) {
+            initMap(); 
+        } else {
+            updateMapPadding(); 
+            if (typeof google !== 'undefined') google.maps.event.trigger(map, 'resize');
+        }
       } else {
           if(navBar) navBar.classList.add('hidden'); if(mapControls) mapControls.classList.add('hidden');
       }
@@ -1090,7 +1135,19 @@
       updateMapControlsPosition(page);
     };
     
-    windowContext.goBack = function() { if(currentStep === 2) showPage(1); if(currentStep === 3) showPage(2); if(currentStep === 4) showPage(3); }
+    // Bug Fixed: เคลียร์ค่าที่หน้า 3 หากกดย้อนกลับเพื่อให้สามารถเลือกพิกัดได้ใหม่อย่างสะอาด
+    windowContext.goBack = function() { 
+        if(currentStep === 2) showPage(1); 
+        if(currentStep === 3) {
+            let dropWaypoints = localWaypoints.filter(w => w.type === 'drop');
+            if (dropWaypoints.length > 0) {
+                let lastDropIdx = localWaypoints.findIndex(w => w.type === 'drop');
+                removeWaypoint(lastDropIdx);
+            }
+            showPage(2); 
+        } 
+        if(currentStep === 4) showPage(3); 
+    }
     windowContext.goHome = function() { window.location.reload(); }
 
     function updateAddressBox(isInteraction = false) {
@@ -1154,6 +1211,7 @@
         } 
     }
 
+    // New Calculation Style: อ้างอิงราคาแอดมิน + รวมระยะห่างคนขับที่ใกล้ที่สุด
     function calculatePrice() {
       if(!directionsService || !map || localWaypoints.length < 2) return;
       
@@ -1171,8 +1229,20 @@
           let distRideKm = distMeters / 1000; waitMins = Math.ceil(waitMins / 60);
           currentRouteBounds = resRide.routes[0].bounds;
 
-          let baseFare = parseInt(pricingConfig.base) || 0; let kmRate = parseInt(pricingConfig.km) || 0;
-          let calcPrice = Math.ceil(baseFare + (distRideKm * kmRate));
+          // ดึงค่า Geometry เพื่อบวกรวมระยะทางของคนขับที่ใกล้ที่สุด (Feature Update)
+          let distanceDriverToPickupKm = 0;
+          if (driverData && driverData.lat && driverData.lng && typeof google.maps.geometry !== 'undefined') {
+              let driverLatLng = new google.maps.LatLng(driverData.lat, driverData.lng);
+              let distanceInMeters = google.maps.geometry.spherical.computeDistanceBetween(driverLatLng, origin);
+              distanceDriverToPickupKm = distanceInMeters / 1000;
+          }
+
+          // การคำนวณราคาอ้างอิงจากราคาฝั่งแอดมิน (pricingConfig)
+          let baseFare = parseInt(pricingConfig.base) || 50; 
+          let kmRate = parseInt(pricingConfig.km) || 10;
+          let calculatedTotalDistance = distRideKm + distanceDriverToPickupKm;
+
+          let calcPrice = Math.ceil(baseFare + (calculatedTotalDistance * kmRate));
           let minPrice = Math.floor(calcPrice / 10) * 10;
           if(minPrice < baseFare) minPrice = baseFare;
           let maxPrice = minPrice + 20;
@@ -1284,7 +1354,7 @@
           if(bookData.driverPin && driverBox) driverBox.classList.remove('hidden');
           if(statusBottom) {
               if(labelBottom) labelBottom.innerHTML = '<i class="fas fa-info-circle text-blue-400"></i> STATUS';
-              if (bookData.status.includes("กำลังเดินทางไปหา") || bookData.status.includes("รับงานแล้ว") || bookData.status.includes("มาถึงจุดรับ")) { statusBottom.className = "font-black text-[15px] leading-tight text-green-400 truncate"; } 
+              if (bookData.status.includes("กำลังเดินทางไปหา") || bookData.status.includes("รับงานแล้ว") || bookData.status.includes("มาถึงจุดรับ")) { d="text-green-400"; statusBottom.className = "font-black text-[15px] leading-tight text-green-400 truncate"; } 
               else if (bookData.status.includes("ออกเดินทาง") || bookData.status.includes("ไปยังจุดส่ง")) { statusBottom.className = "font-black text-[15px] leading-tight text-blue-400 truncate"; } 
               else { statusBottom.className = "font-black text-[15px] leading-tight text-white truncate"; }
           }
@@ -1325,7 +1395,7 @@
 
       if (bookData.status === "รอผู้ขับขี่ตอบรับ") {
           if(btnE) btnE.classList.add('hidden'); if(actionButtonsBox) { actionButtonsBox.classList.remove('hidden'); actionButtonsBox.classList.add('flex'); }
-          if(btnCancel) btnCancel.classList.remove('hidden'); if(btnCh) btnCh.classList.add('hidden'); if(btnCa) btnCa.classList.add('hidden'); if(btnAddWp) btnAddWp.classList.add('hidden');
+          if(btnCancel) btnCancel.classList.remove('hidden'); if(btnCh) btnCh.classList.remove('hidden'); if(btnCa) btnCa.classList.add('hidden'); if(btnAddWp) btnAddWp.classList.add('hidden');
           if(tAddressBox) { tAddressBox.classList.remove('flex-1'); tAddressBox.classList.add('w-full'); }
       } 
       else if (bookData.status.includes("กำลังเดินทางไปหา") || bookData.status.includes("มาถึงจุดรับ") || bookData.status.includes("รับงานแล้ว")) {
@@ -1336,7 +1406,7 @@
       } 
       else if (bookData.status.includes("ออกเดินทาง") || bookData.status.includes("ไปยังจุดส่ง")) {
           if(btnE) btnE.classList.remove('hidden'); if(actionButtonsBox) { actionButtonsBox.classList.add('hidden'); actionButtonsBox.classList.remove('flex'); } 
-          if(btnCancel) btnCancel.classList.add('hidden'); if(btnCh) btnCh.classList.add('hidden'); if(btnCa) btnCa.classList.add('hidden'); if(btnAddWp) btnAddWp.classList.remove('hidden'); 
+          if(btnCancel) btnCancel.classList.add('hidden'); if(btnCh) btnCh.classList.remove('hidden'); if(btnCa) btnCa.classList.add('hidden'); if(btnAddWp) btnAddWp.classList.remove('hidden'); 
           if(tAddressBox) { tAddressBox.classList.remove('w-full'); tAddressBox.classList.add('flex-1'); }
       } 
       else {
@@ -1347,7 +1417,13 @@
       if(bookData.status.includes("ถึงที่หมาย") && !windowContext.hasShownFinish) {
         windowContext.hasShownFinish = true;
         let finalMessage = `จุดรับ: ${bookData.pName}\nจุดส่ง: ${bookData.dName}\nระยะทาง: ${bookData.distance || 0} กม. | ราคา: ${bookData.price} บาท\n\nขอบคุณที่ใช้บริการ F1 Driver ครับ!`;
-        showAlert('ถึงที่หมายเรียบร้อย!', finalMessage, 'success', () => { windowContext.isCompleting = true; db.ref('bookings/' + lineUserId).remove().then(() => { window.location.reload(); }); });
+        showAlert('ถึงที่หมายเรียบร้อย!', finalMessage, 'success', () => { 
+            windowContext.isCompleting = true; 
+            db.ref('bookings/' + lineUserId).remove().then(() => { 
+                // Feature Update: เปิดหน้าประเมิน Rating ดาวแทนการรีโหลดหนีทันที
+                document.getElementById('driverRatingModal').classList.remove('hidden');
+            }); 
+        });
       }
       
       if(bookData.status.includes("ยกเลิก") && !windowContext.hasShownCancel) {
@@ -1356,6 +1432,88 @@
       }
 
       updateRealtimeMap(); updateMapControlsPosition('Tracking');
+    }
+
+    // New Feature Layout: Smart Tracking Auto-Zoom & Focus
+    function updateRealtimeMap() {
+        if(!map || !markerDriver) return;
+        if(currentStep === 'Tracking') {
+            markerDriver.setPosition({lat: driverData.lat, lng: driverData.lng});
+            markerDriver.setMap(map);
+
+            if(isTrackingMode) {
+                let dynamicBounds = new google.maps.LatLngBounds();
+                let paddingBottom = getDynamicBottomPadding();
+
+                if (bookData.status.includes("กำลังเดินทางไปหา") || bookData.status.includes("รับงานแล้ว") || bookData.status.includes("มาถึงจุดรับ")) {
+                    // สถานการณ์ที่ 1: ซูมไล่ระดับกางให้เห็น "รถคนขับ + จุดรับจุดแรก"
+                    dynamicBounds.extend(new google.maps.LatLng(driverData.lat, driverData.lng));
+                    if(bookData.pLat !== 0) dynamicBounds.extend(new google.maps.LatLng(bookData.pLat, bookData.pLng));
+                    map.fitBounds(dynamicBounds, { top: 120, right: 50, bottom: paddingBottom, left: 50 });
+                } 
+                else if (bookData.status.includes("ออกเดินทาง") || bookData.status.includes("ไปยังจุดส่ง")) {
+                    // สถานการณ์ที่ 2: ซูมไล่ระดับกางให้เห็น "รถคนขับ + จุดส่งปลายทาง" จนกว่าจะจบงาน
+                    dynamicBounds.extend(new google.maps.LatLng(driverData.lat, driverData.lng));
+                    if(bookData.dLat !== 0) dynamicBounds.extend(new google.maps.LatLng(bookData.dLat, bookData.dLng));
+                    map.fitBounds(dynamicBounds, { top: 120, right: 50, bottom: paddingBottom, left: 50 });
+                } 
+                else {
+                    if(currentRouteBounds) map.fitBounds(currentRouteBounds, { top: 120, right: 50, bottom: paddingBottom, left: 50 });
+                }
+            }
+        }
+    }
+
+    // New Feature Layout: In-App Chat Modal Integration
+    windowContext.openInAppChatModal = function() {
+        document.getElementById('inAppChatModal').classList.remove('hidden');
+        const box = document.getElementById('inAppChatMessages');
+        
+        if(!activeChatListenerRef) {
+            activeChatListenerRef = db.ref('bookings/' + lineUserId + '/chats');
+            activeChatListenerRef.on('child_added', snap => {
+                let messageData = snap.val();
+                let isSenderMe = messageData.sender === 'passenger';
+                let messageDiv = document.createElement('div');
+                messageDiv.className = `flex w-full ${isSenderMe ? 'justify-end' : 'justify-start'} animate-fade-in`;
+                messageDiv.innerHTML = `<div class="${isSenderMe ? 'bg-green-600' : 'bg-gray-800 border border-gray-700'} text-white px-4 py-2.5 rounded-2xl max-w-[75%] text-[13px] font-bold shadow-sm">${messageData.text}</div>`;
+                box.appendChild(messageDiv);
+                box.scrollTop = box.scrollHeight;
+            });
+        }
+    }
+    windowContext.closeInAppChatModal = function() { document.getElementById('inAppChatModal').classList.add('hidden'); }
+    windowContext.sendInAppChatMessage = function() {
+        let inputEl = document.getElementById('inAppChatInput');
+        let textVal = inputEl.value.trim();
+        if(!textVal) return;
+        db.ref('bookings/' + lineUserId + '/chats').push({
+            sender: 'passenger',
+            text: textVal,
+            timestamp: firebase.database.ServerValue.TIMESTAMP
+        }).then(() => { inputEl.value = ''; });
+    }
+
+    // New Feature Layout: Driver Rating score controls
+    windowContext.updateSelectedRatingScore = function(score) {
+        currentSelectedRatingScore = score;
+        let stars = document.getElementById('starRatingBox').children;
+        for(let i=0; i<5; i++) {
+            if(i < score) stars[i].className = "fas fa-star text-3xl text-yellow-400 cursor-pointer transition scale-110";
+            else stars[i].className = "fas fa-star text-3xl text-gray-600 cursor-pointer transition hover:text-yellow-400";
+        }
+    }
+    windowContext.submitDriverRatingScore = function() {
+        if(currentSelectedRatingScore === 0) { showAlert('แจ้งเตือน', 'กรุณากดเลือกคะแนนดาวก่อนกดยืนยันครับ', 'error'); return; }
+        if(bookData.driverPin) {
+            db.ref('drivers_profile/' + bookData.driverPin + '/ratings').push({
+                passengerName: lineName,
+                score: currentSelectedRatingScore,
+                timestamp: firebase.database.ServerValue.TIMESTAMP
+            });
+        }
+        document.getElementById('driverRatingModal').classList.add('hidden');
+        showAlert('สำเร็จ', 'ขอบคุณสำหรับคะแนนการประเมินความพึงพอใจครับ', 'success', () => { window.location.reload(); });
     }
 
     function calculateNewRoutePriceForTracking(newLat, newLng, newName) {
@@ -1432,6 +1590,6 @@
 
     window.initMap = initMap;
   </script>
-  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDsZ_tbFhH6fUXRz3I6C-tMshNwwrSevd4&libraries=places&callback=initMap" async defer></script>
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDsZ_tbFhH6fUXRz3I6C-tMshNwwrSevd4&libraries=places,geometry&callback=initMap" async defer></script>
 </body>
 </html>
