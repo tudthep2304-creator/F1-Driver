@@ -291,6 +291,7 @@
       </div>
   </div>
 
+  <!-- หน้าโปรไฟล์ส่วนตัว (Profile Page) -->
   <div id="profileModal" class="hidden fixed inset-0 z-[190] bg-gray-900 pointer-events-auto transition-transform flex flex-col">
       <div class="bg-gray-900 border-b border-gray-800 p-4 flex items-center gap-3 shadow-md shrink-0">
           <button onclick="closeProfileModal()" class="w-10 h-10 shrink-0 bg-gray-800 text-gray-400 rounded-full flex items-center justify-center border border-gray-700 hover:text-white transition"><i class="fas fa-arrow-left"></i></button>
@@ -299,7 +300,10 @@
       <div class="p-6 flex flex-col items-center border-b border-gray-800 shrink-0">
           <img id="profilePicLarge" class="w-24 h-24 rounded-full border-4 border-green-500 object-cover bg-gray-800 mb-4 shadow-[0_0_15px_rgba(34,197,94,0.3)]" src="https://img.icons8.com/bubbles/150/user.png" alt="Profile">
           <h2 class="text-2xl font-bold text-white" id="profileNameLarge">กำลังโหลด...</h2>
-          <p class="text-gray-400 mt-1 font-medium" id="profilePhoneLarge">เบอร์โทร: ยังไม่ระบุ</p>
+          <div class="flex items-center gap-2 mt-1">
+              <p class="text-gray-400 font-medium" id="profilePhoneLarge">เบอร์โทร: ยังไม่ระบุ</p>
+              <button onclick="editProfilePhone()" class="text-gray-500 hover:text-white transition w-8 h-8 flex items-center justify-center bg-gray-800 rounded-full border border-gray-700 shadow-sm"><i class="fas fa-edit text-xs"></i></button>
+          </div>
       </div>
       <div class="p-4 space-y-3 flex-1 overflow-y-auto">
           <button onclick="openPassengerHistory()" class="w-full bg-gray-800 border border-gray-700 p-4 rounded-2xl shadow-sm flex items-center justify-between hover:bg-gray-700 transition">
@@ -399,6 +403,7 @@
       </div>
   </div>
 
+  <!-- Z-Index 9990 ดันลอยหน้าสุด -->
   <div id="confirmActionModal" class="hidden fixed inset-0 z-[9990] bg-black/80 flex items-center justify-center p-4 pointer-events-auto">
       <div class="bg-gray-800 border border-gray-700 rounded-3xl p-6 w-full max-w-sm text-center shadow-2xl">
           <div class="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl" id="confirmActionIcon"><i class="fas fa-map-marked-alt"></i></div>
@@ -475,7 +480,9 @@
 
     let map, directionsService, directionsRenderer, geocoder, placesService;
     let crosshairMarker = null; 
-    let markerDriver; 
+    let markerDriver = null; 
+    let markerHome = null;
+    let markerFavorite = null;
     let polylineRoute = null; 
 
     let localWaypoints = []; 
@@ -585,7 +592,7 @@
     windowContext.openPromoModal = function() { document.getElementById('promoModal').classList.remove('hidden'); }
     windowContext.closePromoModal = function() { document.getElementById('promoModal').classList.add('hidden'); }
 
-    // ฟังก์ชันจัดการหน้าโปรไฟล์ส่วนตัว
+    // ฟังก์ชันเปิด-ปิด Profile Modal และจัดการแก้ไขเบอร์มือถือ
     windowContext.openProfileModal = function() {
         document.getElementById('profileModal').classList.remove('hidden');
         document.getElementById('profileNameLarge').innerText = lineName || 'ไม่ทราบชื่อ';
@@ -598,6 +605,22 @@
     windowContext.closeProfileModal = function() {
         document.getElementById('profileModal').classList.add('hidden');
     }
+    windowContext.editProfilePhone = function() {
+        let current = localStorage.getItem('passengerPhone') || '';
+        let newVal = prompt('กรุณากรอกเบอร์โทรศัพท์ใหม่ของคุณ:', current);
+        if(newVal !== null) {
+            let cleanVal = newVal.replace(/\D/g, '');
+            if(cleanVal.length > 0) {
+                localStorage.setItem('passengerPhone', cleanVal);
+                document.getElementById('profilePhoneLarge').innerText = 'เบอร์โทร: ' + cleanVal;
+                let pInp = document.getElementById('userPhone');
+                if(pInp) pInp.value = cleanVal;
+                showAlert('สำเร็จ', 'อัปเดตเบอร์โทรศัพท์เรียบร้อยแล้ว', 'success');
+            } else {
+                showAlert('ผิดพลาด', 'กรุณากรอกเฉพาะตัวเลข', 'error');
+            }
+        }
+    }
 
     windowContext.confirmCancelBooking = function() {
         document.getElementById('cancelModal').classList.add('hidden'); windowContext.isCompleting = true;
@@ -605,6 +628,39 @@
             if(APPS_SCRIPT_URL) fetch(`${APPS_SCRIPT_URL}?action=notify&type=cancel&name=${lineName}`, {mode:'no-cors'});
             showAlert('ยกเลิกสำเร็จ', 'ระบบได้ทำการยกเลิกการเรียกรถเรียบร้อยแล้ว', 'success', () => { resetTrackingFlags(); windowContext.isCompleting = false; showPage(4); });
         });
+    }
+
+    // ฟังก์ชันสร้างไอคอนสถานที่ลงบนแผนที่โดยตรง
+    function renderSavedPlaceMarkersOnMap() {
+        if (!map) return;
+        let hData = localStorage.getItem('saved_home');
+        let fData = localStorage.getItem('saved_favorite');
+
+        if (markerHome) markerHome.setMap(null);
+        if (markerFavorite) markerFavorite.setMap(null);
+
+        if (hData && (currentStep === 2 || currentStep === 3)) {
+            let p = JSON.parse(hData);
+            markerHome = new google.maps.Marker({
+                position: {lat: p.lat, lng: p.lng}, map: map, zIndex: 2,
+                icon: {
+                    path: "M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z",
+                    fillColor: '#3b82f6', fillOpacity: 1, strokeWeight: 2, strokeColor: '#ffffff', scale: 1.5,
+                    anchor: typeof google !== 'undefined' && google.maps ? new google.maps.Point(12, 20) : null
+                }
+            });
+        }
+        if (fData && (currentStep === 2 || currentStep === 3)) {
+            let p = JSON.parse(fData);
+            markerFavorite = new google.maps.Marker({
+                position: {lat: p.lat, lng: p.lng}, map: map, zIndex: 2,
+                icon: {
+                    path: "M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z",
+                    fillColor: '#ec4899', fillOpacity: 1, strokeWeight: 2, strokeColor: '#ffffff', scale: 1.2,
+                    anchor: typeof google !== 'undefined' && google.maps ? new google.maps.Point(12, 20) : null
+                }
+            });
+        }
     }
 
     windowContext.handleSavedPlace = function(type) {
@@ -623,12 +679,14 @@
             showAlert('บันทึกสำเร็จ', `อัปเดตพิกัด "${typeName}" เรียบร้อยแล้ว!`, 'success');
             renderSavedPlacesUI();
             renderWaypointsUI(); 
+            renderSavedPlaceMarkersOnMap();
         }, theme);
     }
     function renderSavedPlacesUI() {
         let h = localStorage.getItem('saved_home'); let f = localStorage.getItem('saved_favorite');
         document.querySelectorAll('.label-home').forEach(el => el.innerText = h ? 'บ้าน' : 'ตั้งค่า (บ้าน)');
         document.querySelectorAll('.label-favorite').forEach(el => el.innerText = f ? 'โปรด' : 'ตั้งค่า (โปรด)');
+        renderSavedPlaceMarkersOnMap();
     }
 
     function saveRecentPlace(name, lat, lng) {
@@ -728,7 +786,7 @@
         }
     };
 
-    // ปรับให้การกดดูสถานที่ต่างๆ มีการเลื่อนหน้าจอที่นุ่มนวลขึ้น (Smooth Pan)
+    // Smooth panning effect for clicking list items
     windowContext.focusLocationToggle = function(lat, lng, index) {
         if(!map) return;
         if (focusedWaypointIndex === index) {
@@ -737,9 +795,7 @@
         } else {
             focusedWaypointIndex = index;
             updateMapPadding();
-            // เลื่อนไปที่จุดหมายแบบนุ่มนวล
             map.panTo({lat: lat, lng: lng});
-            // ซูมหลังจากเลื่อนถึงจุดหมายแล้ว
             setTimeout(() => { map.setZoom(17); map.panBy(0, 150); }, 300);
         }
         renderWaypointsUI();
@@ -833,7 +889,7 @@
         disableDefaultUI: true, gestureHandling: 'greedy', zoomControl: false
       });
 
-      // ตั้งให้เป้าเล็งอยู่ข้างหลังหมุดเสมอด้วย zIndex: 1
+      // Z-Index = 1 เพื่อให้อยู่ด้านหลังหมุด
       crosshairMarker = new google.maps.Marker({
           map: null, 
           zIndex: 1,
@@ -841,7 +897,6 @@
       });
       crosshairMarker.bindTo('position', map, 'center');
 
-      // ลบ Animation การเด้งออกไป เพื่อให้ดูลื่นไหลนิ่งๆ
       map.addListener('dragstart', () => {
          if (currentStep === 'Tracking') { isTrackingMode = false; }
       });
@@ -907,6 +962,7 @@
           updateRealtimeMap();
       } else if (currentStep === 2 || currentStep === 3) {
           renderWaypointsUI();
+          renderSavedPlaceMarkersOnMap();
       }
     };
 
@@ -1087,7 +1143,6 @@
             let bgItem = isFocused ? 'bg-gray-700 border-blue-500/50' : 'bg-gray-800 border-gray-700';
             let textItem = isFocused ? 'text-blue-400' : 'text-gray-200';
             
-            // แสดงไอคอนบ้านและโปรดให้ชัดเจน
             let iconAddon = '';
             if (wp.name.includes('บ้าน') || (homeLoc && Math.abs(wp.lat - homeLoc.lat) < 0.0005 && Math.abs(wp.lng - homeLoc.lng) < 0.0005)) {
                 iconAddon = '<i class="fas fa-home text-blue-400 ml-1.5" title="บ้าน"></i>';
@@ -1177,6 +1232,7 @@
           if (markerDriver) markerDriver.setMap(null); 
           const bEmer = document.getElementById('btnEmergency'); 
           if(bEmer) bEmer.classList.add('hidden'); 
+          renderSavedPlaceMarkersOnMap();
       }
 
       if(page === 2) {
@@ -1326,19 +1382,16 @@
       });
     }
 
-    // วาดเส้นทางใหม่สำหรับ Tracking โดยดึงเส้นจากรถคนขับไปจุดรับด้วย
     function drawTrackingRoute(statusText) {
         if(!directionsService || !map || localWaypoints.length === 0) return;
         
         let rOrigin, rDest, rWaypts = [];
         
         if (statusText.includes("กำลังเดินทางไปหา") || statusText.includes("รับงานแล้ว") || statusText.includes("มาถึงจุดรับ")) {
-            // เส้นทางจาก รถคนขับ -> จุดรับแรก
             if(!driverData || !driverData.lat) return;
             rOrigin = new google.maps.LatLng(driverData.lat, driverData.lng);
             rDest = new google.maps.LatLng(localWaypoints[0].lat, localWaypoints[0].lng);
         } else if (statusText.includes("ออกเดินทาง") || statusText.includes("ไปยังจุดส่ง")) {
-            // เส้นทางจาก รถคนขับ -> จุดแวะ -> จุดส่งสุดท้าย
             if(!driverData || !driverData.lat || localWaypoints.length < 2) return;
             rOrigin = new google.maps.LatLng(driverData.lat, driverData.lng);
             rDest = new google.maps.LatLng(localWaypoints[localWaypoints.length - 1].lat, localWaypoints[localWaypoints.length - 1].lng);
@@ -1346,7 +1399,6 @@
                 rWaypts = localWaypoints.slice(1, -1).map(w => ({location: new google.maps.LatLng(w.lat, w.lng), stopover: true}));
             }
         } else {
-            // สถานะรอคนขับตอบรับ (โชว์เส้นทาง รับ -> ส่ง ปกติ)
             if(localWaypoints.length < 2) return;
             rOrigin = new google.maps.LatLng(localWaypoints[0].lat, localWaypoints[0].lng);
             rDest = new google.maps.LatLng(localWaypoints[localWaypoints.length - 1].lat, localWaypoints[localWaypoints.length - 1].lng);
@@ -1569,12 +1621,21 @@
             }
 
             if(isTrackingMode) {
-                // ซูมหาคนขับถ้าอยู่ในสถานะวิ่งไปหาจุดรับ หรือกำลังวิ่งไปจุดส่ง
-                if (bookData.status.includes("กำลังเดินทางไปหา") || bookData.status.includes("รับงานแล้ว") || bookData.status.includes("มาถึงจุดรับ") || bookData.status.includes("ออกเดินทาง") || bookData.status.includes("ไปยังจุดส่ง")) {
-                    map.panTo({lat: driverData.lat, lng: driverData.lng});
+                let dynamicBounds = new google.maps.LatLngBounds();
+                let paddingBottom = getDynamicBottomPadding();
+
+                if (bookData.status.includes("กำลังเดินทางไปหา") || bookData.status.includes("รับงานแล้ว") || bookData.status.includes("มาถึงจุดรับ")) {
+                    dynamicBounds.extend(new google.maps.LatLng(driverData.lat, driverData.lng));
+                    if(bookData.pLat !== 0) dynamicBounds.extend(new google.maps.LatLng(bookData.pLat, bookData.pLng));
+                    map.fitBounds(dynamicBounds, { top: 120, right: 50, bottom: paddingBottom, left: 50 });
+                } 
+                else if (bookData.status.includes("ออกเดินทาง") || bookData.status.includes("ไปยังจุดส่ง")) {
+                    dynamicBounds.extend(new google.maps.LatLng(driverData.lat, driverData.lng));
+                    if(bookData.dLat !== 0) dynamicBounds.extend(new google.maps.LatLng(bookData.dLat, bookData.dLng));
+                    map.fitBounds(dynamicBounds, { top: 120, right: 50, bottom: paddingBottom, left: 50 });
                 } 
                 else if (currentRouteBounds) {
-                    map.fitBounds(currentRouteBounds, { top: 120, right: 50, bottom: getDynamicBottomPadding(), left: 50 });
+                    map.fitBounds(currentRouteBounds, { top: 120, right: 50, bottom: paddingBottom, left: 50 });
                 }
             }
         }
