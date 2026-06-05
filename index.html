@@ -264,6 +264,7 @@
     </div>
   </div>
 
+  <!-- In-App Chat Modal -->
   <div id="inAppChatModal" class="hidden fixed inset-0 z-[250] bg-gray-900 flex flex-col pointer-events-auto transition-transform">
       <div class="bg-gray-800 border-b border-gray-700 p-4 flex items-center gap-3 shadow-md shrink-0">
           <button onclick="closeInAppChatModal()" class="w-10 h-10 bg-gray-700 text-white rounded-full flex items-center justify-center hover:bg-gray-600"><i class="fas fa-arrow-left"></i></button>
@@ -278,6 +279,7 @@
       </div>
   </div>
 
+  <!-- Driver Rating Modal -->
   <div id="driverRatingModal" class="hidden fixed inset-0 z-[260] bg-black/80 flex items-center justify-center p-4 pointer-events-auto">
       <div class="bg-gray-800 border border-green-500/30 rounded-3xl p-6 w-full max-w-sm text-center shadow-2xl">
           <div class="w-16 h-16 bg-yellow-900/30 text-yellow-400 border border-yellow-500/30 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl"><i class="fas fa-star-half-alt"></i></div>
@@ -294,6 +296,7 @@
       </div>
   </div>
 
+  <!-- Custom Name Input Dialog -->
   <div id="customNameInputDialog" class="hidden fixed inset-0 z-[270] bg-black/80 flex items-center justify-center p-4 pointer-events-auto">
       <div class="bg-gray-800 border border-gray-700 rounded-3xl p-6 w-full max-w-sm text-center shadow-2xl">
           <h3 id="customNameTitle" class="text-xl font-black text-white mb-1">ระบุชื่อสถานที่โปรด</h3>
@@ -576,7 +579,7 @@
         });
     }
 
-    // New Feature: Custom Named Places 
+    // Custom Named Places 
     windowContext.handleSavedPlace = function(type) {
         let saved = localStorage.getItem('saved_' + type);
         if (saved) { let p = JSON.parse(saved); useRecentPlace(p.name, p.lat, p.lng); } 
@@ -871,6 +874,18 @@
               }
           });
       }
+
+      // === BUG FIX: Recovery Logic เมื่อแผนที่เพิ่งโหลดเสร็จหลังเปลี่ยนหน้า ===
+      if (currentStep === 4) {
+          renderWaypointsUI();
+          calculatePrice();
+      } else if (currentStep === 'Tracking') {
+          renderWaypointsUI();
+          if (localWaypoints.length >= 2 && !polylineRoute) drawOnlyMapRoute();
+          updateRealtimeMap();
+      } else if (currentStep === 2 || currentStep === 3) {
+          renderWaypointsUI();
+      }
     };
 
     function mockLoginForBrowser() {
@@ -920,7 +935,18 @@
                 db.ref('bookings/' + lineUserId).update({ driverPin: null, driverPhone: null, status: "รอผู้ขับขี่ตอบรับ" });
                 return; 
             }
-            bookData = b; localWaypoints = b.waypoints || []; handleTracking(); 
+            bookData = b; 
+
+            // === BUG FIX: ลบหมุดค้างและอัปเดตข้อมูลแบบเสถียร ===
+            if (b.waypoints) {
+                // เคลียร์หมุดเก่าทิ้งก่อน (ถ้ามี) เพื่อไม่ให้โหลดทับกันเป็นผี
+                localWaypoints.forEach(w => { if(w.marker) w.marker.setMap(null); });
+                localWaypoints = b.waypoints.map(w => ({ lat: w.lat, lng: w.lng, name: w.name, type: w.type }));
+            } else {
+                localWaypoints = [];
+            }
+            
+            handleTracking(); 
         } 
         else if (currentStep === 'Tracking' && !windowContext.isCompleting) {
             windowContext.isCompleting = true;
@@ -1014,7 +1040,17 @@
             if (wp.type === 'drop') { colorClass = 'bg-red-500 text-white'; colorHex = '#ef4444'; }
             if (wp.type === 'waypoint') { colorClass = 'bg-yellow-500 text-black'; colorHex = '#eab308'; }
 
+            // === BUG FIX: ดามโค้ดป้องกันหมุดหาย ถ้าระบบเจอว่าไม่มีหมุด ให้ปักลงแผนที่ใหม่ทันที ===
+            if (!wp.marker && typeof google !== 'undefined' && map) {
+                wp.marker = new google.maps.Marker({
+                    position: {lat: wp.lat, lng: wp.lng},
+                    map: map,
+                    zIndex: 4
+                });
+            }
+
             if (wp.marker) {
+                wp.marker.setMap(map); // บังคับให้ปักลงแผนที่ชัวร์ๆ
                 wp.marker.setIcon(createNumberedMarkerIcon(num.toString(), colorHex));
                 wp.marker.setLabel({text: num.toString(), color: (wp.type==='waypoint') ? 'black' : 'white', fontWeight: 'bold'});
             }
@@ -1089,7 +1125,6 @@
       if(page !== 1) {
         if(navBar) navBar.classList.remove('hidden'); if(mapEl) mapEl.classList.remove('hidden'); if(mapControls) mapControls.classList.remove('hidden'); 
         
-        // Bug Fixed: ป้องกัน Google Maps Initialize ซ้ำซ้อนตอนเปลี่ยนหน้า
         if (!map) {
             initMap(); 
         } else {
@@ -1135,7 +1170,6 @@
       updateMapControlsPosition(page);
     };
     
-    // Bug Fixed: เคลียร์ค่าที่หน้า 3 หากกดย้อนกลับเพื่อให้สามารถเลือกพิกัดได้ใหม่อย่างสะอาด
     windowContext.goBack = function() { 
         if(currentStep === 2) showPage(1); 
         if(currentStep === 3) {
@@ -1211,7 +1245,6 @@
         } 
     }
 
-    // New Calculation Style: อ้างอิงราคาแอดมิน + รวมระยะห่างคนขับที่ใกล้ที่สุด
     function calculatePrice() {
       if(!directionsService || !map || localWaypoints.length < 2) return;
       
@@ -1229,7 +1262,6 @@
           let distRideKm = distMeters / 1000; waitMins = Math.ceil(waitMins / 60);
           currentRouteBounds = resRide.routes[0].bounds;
 
-          // ดึงค่า Geometry เพื่อบวกรวมระยะทางของคนขับที่ใกล้ที่สุด (Feature Update)
           let distanceDriverToPickupKm = 0;
           if (driverData && driverData.lat && driverData.lng && typeof google.maps.geometry !== 'undefined') {
               let driverLatLng = new google.maps.LatLng(driverData.lat, driverData.lng);
@@ -1237,7 +1269,6 @@
               distanceDriverToPickupKm = distanceInMeters / 1000;
           }
 
-          // การคำนวณราคาอ้างอิงจากราคาฝั่งแอดมิน (pricingConfig)
           let baseFare = parseInt(pricingConfig.base) || 50; 
           let kmRate = parseInt(pricingConfig.km) || 10;
           let calculatedTotalDistance = distRideKm + distanceDriverToPickupKm;
@@ -1256,6 +1287,26 @@
           setTimeout(() => { if(map) { let pb = getDynamicBottomPadding(); map.fitBounds(currentRouteBounds, { top: 120, right: 50, bottom: pb, left: 50 }); } }, 200);
         }
       });
+    }
+
+    // === BUG FIX: ฟังก์ชันวาดเส้นเฉพาะกิจในโหมด Tracking (ป้องกันเส้นหาย) ===
+    function drawOnlyMapRoute() {
+        if(!directionsService || !map || localWaypoints.length < 2) return;
+        let origin = new google.maps.LatLng(localWaypoints[0].lat, localWaypoints[0].lng);
+        let dest = new google.maps.LatLng(localWaypoints[localWaypoints.length - 1].lat, localWaypoints[localWaypoints.length - 1].lng);
+        let waypts = localWaypoints.slice(1, -1).map(w => ({location: new google.maps.LatLng(w.lat, w.lng), stopover: true}));
+
+        directionsService.route({origin: origin, destination: dest, waypoints: waypts, travelMode: 'DRIVING'}, (res, stat) => {
+            if(stat === 'OK') {
+                if(polylineRoute) polylineRoute.setMap(null);
+                polylineRoute = new google.maps.Polyline({
+                    path: res.routes[0].legs.flatMap(leg => leg.steps.flatMap(step => step.path)),
+                    strokeColor: '#3b82f6', strokeWeight: 6, map: map
+                });
+                currentRouteBounds = res.routes[0].bounds;
+                updateRealtimeMap();
+            }
+        });
     }
 
     windowContext.applyPromoCode = function() {
@@ -1360,10 +1411,12 @@
           }
       }
 
-      if(localWaypoints.length === 0 && bookData.waypoints) {
-          localWaypoints = bookData.waypoints.map(w => ({ lat: w.lat, lng: w.lng, name: w.name, type: w.type }));
-      }
       renderWaypointsUI();
+
+      // === BUG FIX: ดามโค้ดวาดเส้นทาง หากกลับมาแล้วพบว่าเส้นหาย ===
+      if (!polylineRoute && localWaypoints.length >= 2 && typeof google !== 'undefined' && map) {
+          drawOnlyMapRoute();
+      }
 
       if(bookData.driverPin && bookData.status !== "รอผู้ขับขี่ตอบรับ" && !bookData.status.includes("ยกเลิก")) {
           db.ref('drivers_profile/' + bookData.driverPin).once('value', snap => {
@@ -1420,7 +1473,6 @@
         showAlert('ถึงที่หมายเรียบร้อย!', finalMessage, 'success', () => { 
             windowContext.isCompleting = true; 
             db.ref('bookings/' + lineUserId).remove().then(() => { 
-                // Feature Update: เปิดหน้าประเมิน Rating ดาวแทนการรีโหลดหนีทันที
                 document.getElementById('driverRatingModal').classList.remove('hidden');
             }); 
         });
@@ -1434,7 +1486,6 @@
       updateRealtimeMap(); updateMapControlsPosition('Tracking');
     }
 
-    // New Feature Layout: Smart Tracking Auto-Zoom & Focus
     function updateRealtimeMap() {
         if(!map || !markerDriver) return;
         if(currentStep === 'Tracking') {
@@ -1446,13 +1497,11 @@
                 let paddingBottom = getDynamicBottomPadding();
 
                 if (bookData.status.includes("กำลังเดินทางไปหา") || bookData.status.includes("รับงานแล้ว") || bookData.status.includes("มาถึงจุดรับ")) {
-                    // สถานการณ์ที่ 1: ซูมไล่ระดับกางให้เห็น "รถคนขับ + จุดรับจุดแรก"
                     dynamicBounds.extend(new google.maps.LatLng(driverData.lat, driverData.lng));
                     if(bookData.pLat !== 0) dynamicBounds.extend(new google.maps.LatLng(bookData.pLat, bookData.pLng));
                     map.fitBounds(dynamicBounds, { top: 120, right: 50, bottom: paddingBottom, left: 50 });
                 } 
                 else if (bookData.status.includes("ออกเดินทาง") || bookData.status.includes("ไปยังจุดส่ง")) {
-                    // สถานการณ์ที่ 2: ซูมไล่ระดับกางให้เห็น "รถคนขับ + จุดส่งปลายทาง" จนกว่าจะจบงาน
                     dynamicBounds.extend(new google.maps.LatLng(driverData.lat, driverData.lng));
                     if(bookData.dLat !== 0) dynamicBounds.extend(new google.maps.LatLng(bookData.dLat, bookData.dLng));
                     map.fitBounds(dynamicBounds, { top: 120, right: 50, bottom: paddingBottom, left: 50 });
@@ -1464,7 +1513,6 @@
         }
     }
 
-    // New Feature Layout: In-App Chat Modal Integration
     windowContext.openInAppChatModal = function() {
         document.getElementById('inAppChatModal').classList.remove('hidden');
         const box = document.getElementById('inAppChatMessages');
@@ -1494,7 +1542,6 @@
         }).then(() => { inputEl.value = ''; });
     }
 
-    // New Feature Layout: Driver Rating score controls
     windowContext.updateSelectedRatingScore = function(score) {
         currentSelectedRatingScore = score;
         let stars = document.getElementById('starRatingBox').children;
