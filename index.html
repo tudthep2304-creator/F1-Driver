@@ -81,7 +81,6 @@
   <div id="mapControls" class="hidden fixed top-[140px] right-4 z-30 flex-col gap-3 pointer-events-auto transition-all duration-300">
       <button onclick="toggleMapStyle()" id="btnMapStyle" class="bg-gray-800 w-11 h-11 flex items-center justify-center rounded-full shadow-lg text-gray-400 border border-gray-600 active:bg-gray-700 transition" title="สลับโหมดแผนที่"><i class="fas fa-layer-group text-lg"></i></button>
       <button onclick="fitAllWaypoints()" id="btnOverview" class="hidden bg-gray-800 w-11 h-11 flex items-center justify-center rounded-full shadow-lg text-gray-400 border border-gray-600 active:bg-gray-700 transition" title="ดูเส้นทางรวม"><i class="fas fa-route text-lg"></i></button>
-      <!-- ปุ่มเล็งพิกัด ซ่อนเป็นค่าเริ่มต้น จะโผล่เฉพาะตอนสถานะออกเดินทาง -->
       <button onclick="handleCrosshairClick()" id="btnCrosshair" class="hidden bg-gray-800 w-11 h-11 flex items-center justify-center rounded-full shadow-lg text-blue-400 border border-gray-600 active:bg-gray-700 transition" title="พิกัดปัจจุบัน"><i class="fas fa-crosshairs text-lg"></i></button>
       <button onclick="openEmergencyModal()" id="btnEmergency" class="hidden bg-red-900/80 w-11 h-11 flex items-center justify-center rounded-full shadow-[0_0_15px_rgba(239,68,68,0.5)] text-red-400 border border-red-500/50 active:bg-red-800 transition mt-2"><i class="fas fa-shield-alt text-lg"></i></button>
   </div>
@@ -116,12 +115,12 @@
           <div class="flex shrink-0 bg-[#2a303c] border border-[#3b4252] rounded-full overflow-hidden shadow-sm items-center">
               <button onclick="handleSavedPlace('home')" class="px-2.5 py-1 flex items-center gap-1.5 hover:bg-[#343b4a] transition"><i class="fas fa-home text-blue-400 text-[10px]"></i><span class="label-home text-[11px] font-bold text-gray-200">บ้าน</span></button>
               <div class="w-[1px] h-3 bg-[#3b4252]"></div>
-              <button onclick="editSavedPlace('home', event)" class="px-2 py-1 text-gray-400 hover:text-white hover:bg-[#343b4a] transition flex items-center" title="ตั้งค่าพิกัด"><i class="fas fa-cog text-[10px]"></i></button>
+              <button onclick="editSavedPlace('home', event)" class="px-2 py-1 text-gray-400 hover:text-white hover:bg-[#343b4a] transition flex items-center" title="ตั้งค่าพิกัดบ้าน"><i class="fas fa-cog text-[10px]"></i></button>
           </div>
           <div class="flex shrink-0 bg-[#2a303c] border border-[#3b4252] rounded-full overflow-hidden shadow-sm items-center">
               <button onclick="handleSavedPlace('favorite')" class="px-2.5 py-1 flex items-center gap-1.5 hover:bg-[#343b4a] transition"><i class="fas fa-heart text-pink-500 text-[10px]"></i><span class="label-favorite text-[11px] font-bold text-gray-200">โปรด</span></button>
               <div class="w-[1px] h-3 bg-[#3b4252]"></div>
-              <button onclick="editSavedPlace('favorite', event)" class="px-2 py-1 text-gray-400 hover:text-white hover:bg-[#343b4a] transition flex items-center" title="ตั้งค่าพิกัด"><i class="fas fa-cog text-[10px]"></i></button>
+              <button onclick="editSavedPlace('favorite', event)" class="px-2 py-1 text-gray-400 hover:text-white hover:bg-[#343b4a] transition flex items-center" title="ตั้งค่าพิกัดโปรด"><i class="fas fa-cog text-[10px]"></i></button>
           </div>
           <div class="w-[1px] h-4 bg-gray-600 shrink-0 mx-0.5"></div>
           <div id="recentPlacesPick" class="flex gap-2 shrink-0 items-center"></div>
@@ -130,6 +129,8 @@
       <div id="pickupWaypointsList" class="flex flex-col gap-1.5 mb-1 max-h-[110px] overflow-y-auto slim-scroll"></div>
 
       <div class="flex gap-2 mt-2">
+          <!-- ปุ่ม Clear All -->
+          <button onclick="clearWaypoints('pick')" class="w-12 shrink-0 bg-gray-800 border border-red-500/50 text-red-400 rounded-xl shadow-sm hover:bg-gray-700 transition flex justify-center items-center" title="ล้างจุดรับทั้งหมด"><i class="fas fa-trash-alt"></i></button>
           <button onclick="addWaypointFromCenter('pick')" class="flex-[1] bg-gray-800 border border-green-500/50 text-green-400 py-3 rounded-xl font-bold text-[14px] shadow-sm hover:bg-gray-700 transition flex justify-center items-center gap-1.5">
               <i class="fas fa-plus"></i> จุดรับ
           </button>
@@ -151,12 +152,12 @@
           <div class="flex shrink-0 bg-[#2a303c] border border-[#3b4252] rounded-full overflow-hidden shadow-sm items-center">
               <button onclick="handleSavedPlace('home')" class="px-2.5 py-1 flex items-center gap-1.5 hover:bg-[#343b4a] transition"><i class="fas fa-home text-blue-400 text-[10px]"></i><span class="label-home text-[11px] font-bold text-gray-200">บ้าน</span></button>
               <div class="w-[1px] h-3 bg-[#3b4252]"></div>
-              <button onclick="editSavedPlace('home', event)" class="px-2 py-1 text-gray-400 hover:text-white hover:bg-[#343b4a] transition flex items-center" title="ตั้งค่าพิกัด"><i class="fas fa-cog text-[10px]"></i></button>
+              <button onclick="editSavedPlace('home', event)" class="px-2 py-1 text-gray-400 hover:text-white hover:bg-[#343b4a] transition flex items-center" title="ตั้งค่าพิกัดบ้าน"><i class="fas fa-cog text-[10px]"></i></button>
           </div>
           <div class="flex shrink-0 bg-[#2a303c] border border-[#3b4252] rounded-full overflow-hidden shadow-sm items-center">
               <button onclick="handleSavedPlace('favorite')" class="px-2.5 py-1 flex items-center gap-1.5 hover:bg-[#343b4a] transition"><i class="fas fa-heart text-pink-500 text-[10px]"></i><span class="label-favorite text-[11px] font-bold text-gray-200">โปรด</span></button>
               <div class="w-[1px] h-3 bg-[#3b4252]"></div>
-              <button onclick="editSavedPlace('favorite', event)" class="px-2 py-1 text-gray-400 hover:text-white hover:bg-[#343b4a] transition flex items-center" title="ตั้งค่าพิกัด"><i class="fas fa-cog text-[10px]"></i></button>
+              <button onclick="editSavedPlace('favorite', event)" class="px-2 py-1 text-gray-400 hover:text-white hover:bg-[#343b4a] transition flex items-center" title="ตั้งค่าพิกัดโปรด"><i class="fas fa-cog text-[10px]"></i></button>
           </div>
           <div class="w-[1px] h-4 bg-gray-600 shrink-0 mx-0.5"></div>
           <div id="recentPlacesDrop" class="flex gap-2 shrink-0 items-center"></div>
@@ -165,6 +166,8 @@
       <div id="dropoffWaypointsList" class="flex flex-col gap-1.5 mb-1 max-h-[110px] overflow-y-auto slim-scroll"></div>
 
       <div class="flex gap-2 mt-2">
+          <!-- ปุ่ม Clear All -->
+          <button onclick="clearWaypoints('drop')" class="w-12 shrink-0 bg-gray-800 border border-red-500/50 text-red-400 rounded-xl shadow-sm hover:bg-gray-700 transition flex justify-center items-center" title="ล้างจุดส่งทั้งหมด"><i class="fas fa-trash-alt"></i></button>
           <button onclick="addWaypointFromCenter('drop')" class="flex-[1] bg-gray-800 border border-red-500/50 text-red-400 py-3 rounded-xl font-bold text-[14px] shadow-sm hover:bg-gray-700 transition flex justify-center items-center gap-1.5">
               <i class="fas fa-plus"></i> จุดส่ง
           </button>
@@ -183,7 +186,6 @@
       </div>
       <div class="border-b border-gray-700 mb-2 w-full opacity-50"></div>
       
-      <!-- ปรับความสูงให้แสดงพอดี 3 รายการเท่านั้น -->
       <div class="bg-gray-800 py-2 px-3 rounded-xl border border-gray-700 relative mb-2 shadow-sm max-h-[110px] overflow-y-auto slim-scroll">
           <div class="absolute left-[1.4rem] top-5 bottom-5 w-0.5 border-l-[1.5px] border-dashed border-gray-600"></div>
           <div id="sumWaypointsContainer" class="flex flex-col gap-1.5 py-1"></div>
@@ -266,7 +268,6 @@
     </div>
   </div>
 
-  <!-- In-App Chat Modal -->
   <div id="inAppChatModal" class="hidden fixed inset-0 z-[250] bg-gray-900 flex flex-col pointer-events-auto transition-transform">
       <div class="bg-gray-800 border-b border-gray-700 p-4 flex items-center gap-3 shadow-md shrink-0">
           <button onclick="closeInAppChatModal()" class="w-10 h-10 bg-gray-700 text-white rounded-full flex items-center justify-center hover:bg-gray-600"><i class="fas fa-arrow-left"></i></button>
@@ -281,7 +282,6 @@
       </div>
   </div>
 
-  <!-- Driver Rating Modal -->
   <div id="driverRatingModal" class="hidden fixed inset-0 z-[260] bg-black/80 flex items-center justify-center p-4 pointer-events-auto">
       <div class="bg-gray-800 border border-green-500/30 rounded-3xl p-6 w-full max-w-sm text-center shadow-2xl">
           <div class="w-16 h-16 bg-yellow-900/30 text-yellow-400 border border-yellow-500/30 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl"><i class="fas fa-star-half-alt"></i></div>
@@ -295,19 +295,6 @@
               <i class="fas fa-star text-3xl text-gray-600 cursor-pointer transition hover:text-yellow-400" onclick="updateSelectedRatingScore(5)"></i>
           </div>
           <button onclick="submitDriverRatingScore()" class="w-full py-3.5 bg-green-600 text-white font-black rounded-xl shadow-md hover:bg-green-700 transition">ยืนยันคะแนน</button>
-      </div>
-  </div>
-
-  <!-- Custom Name Input Dialog -->
-  <div id="customNameInputDialog" class="hidden fixed inset-0 z-[270] bg-black/80 flex items-center justify-center p-4 pointer-events-auto">
-      <div class="bg-gray-800 border border-gray-700 rounded-3xl p-6 w-full max-w-sm text-center shadow-2xl">
-          <h3 id="customNameTitle" class="text-xl font-black text-white mb-1">ระบุชื่อสถานที่โปรด</h3>
-          <p class="text-[13px] text-gray-400 mb-4">พิมพ์ชื่อเรียกสถานที่นี้ตามที่คุณต้องการ</p>
-          <input type="text" id="customNameValue" class="w-full p-3.5 mb-5 bg-gray-900 border border-gray-700 focus:border-green-500 text-white rounded-xl text-center font-bold outline-none" placeholder="เช่น ที่ทำงาน, คอนโดเอ">
-          <div class="flex gap-3">
-              <button onclick="closeCustomNameInputDialog()" class="flex-1 py-3 bg-gray-700 text-gray-200 font-bold rounded-xl hover:bg-gray-600 transition">ยกเลิก</button>
-              <button onclick="submitCustomNameInput()" class="flex-1 py-3 bg-green-600 text-white font-bold rounded-xl shadow-md hover:bg-green-700 transition">บันทึก</button>
-          </div>
       </div>
   </div>
 
@@ -331,13 +318,11 @@
               <button onclick="closePassengerHistory()" class="w-10 h-10 shrink-0 bg-gray-800 text-gray-400 rounded-full flex items-center justify-center border border-gray-700 hover:text-white transition"><i class="fas fa-arrow-left"></i></button>
               <h2 class="text-lg font-black text-white">ประวัติการเดินทาง</h2>
           </div>
-          <!-- ปุ่มจัดการรายชื่อคนขับที่บล็อก -->
           <button onclick="openBlockedDrivers()" class="text-red-400 hover:text-red-300 text-sm font-bold bg-gray-800 px-3 py-1.5 rounded-lg border border-gray-700 shadow-sm"><i class="fas fa-user-slash"></i> ที่ถูกบล็อก</button>
       </div>
       <div class="p-4" id="historyListContainer"><div class="flex justify-center py-10"><i class="fas fa-spinner fa-spin text-3xl text-blue-500"></i></div></div>
   </div>
 
-  <!-- Blocked Drivers Modal -->
   <div id="blockedDriversModal" class="hidden fixed inset-0 z-[220] bg-gray-900 overflow-y-auto pb-10 transition-opacity">
       <div class="sticky top-0 bg-gray-900 border-b border-gray-800 p-4 flex items-center justify-between z-10 shadow-md">
           <div class="flex items-center gap-3">
@@ -400,7 +385,8 @@
       </div>
   </div>
 
-  <div id="confirmActionModal" class="hidden fixed inset-0 z-[130] bg-black/80 flex items-center justify-center p-4 pointer-events-auto">
+  <!-- แก้ไข Z-index ให้เป็น 9990 ดันลอยขึ้นมาบนสุด -->
+  <div id="confirmActionModal" class="hidden fixed inset-0 z-[9990] bg-black/80 flex items-center justify-center p-4 pointer-events-auto">
       <div class="bg-gray-800 border border-gray-700 rounded-3xl p-6 w-full max-w-sm text-center shadow-2xl">
           <div class="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl" id="confirmActionIcon"><i class="fas fa-map-marked-alt"></i></div>
           <h3 id="confirmActionTitle" class="text-xl font-black text-white mb-2">...</h3>
@@ -480,7 +466,6 @@
     let polylineRoute = null; 
 
     let localWaypoints = []; 
-    let waypointMapMarkers = []; 
     let focusedWaypointIndex = -1; 
 
     let lineUserId = "", lineName = "";
@@ -501,11 +486,9 @@
     let myBlockedDrivers = {};
     let activeChatListenerRef = null;
     let currentSelectedRatingScore = 0;
-    let pendingCustomPlaceSaveType = null;
 
     function getDynamicBottomPadding() {
         if(!document.getElementById('page4Panel')) return 0;
-        
         let pBottom = 0;
         if (currentStep === 4) {
             const panel = document.getElementById('page4Panel');
@@ -527,7 +510,6 @@
         if(!map) return;
         let pTop = (currentStep === 2 || currentStep === 3) ? 140 : 70;
         let pBottom = getDynamicBottomPadding();
-
         map.setOptions({ padding: { top: pTop, bottom: pBottom, left: 0, right: 0 } });
     }
 
@@ -598,7 +580,7 @@
         });
     }
 
-    // Custom Named Places
+    // ฟีเจอร์: บันทึกและแก้ไขสถานที่โปรดด้วย Confirm Dialog ตรงๆ
     windowContext.handleSavedPlace = function(type) {
         let saved = localStorage.getItem('saved_' + type);
         if (saved) { let p = JSON.parse(saved); useRecentPlace(p.name, p.lat, p.lng); } 
@@ -606,25 +588,21 @@
     }
     windowContext.editSavedPlace = function(type, event) { 
         event.stopPropagation(); 
-        pendingCustomPlaceSaveType = type;
-        document.getElementById('customNameValue').value = '';
-        document.getElementById('customNameInputDialog').classList.remove('hidden');
-    }
-    windowContext.closeCustomNameInputDialog = function() { document.getElementById('customNameInputDialog').classList.add('hidden'); pendingCustomPlaceSaveType = null; }
-    windowContext.submitCustomNameInput = function() {
-        let typedName = document.getElementById('customNameValue').value.trim();
-        if(!typedName) { showAlert('พิมพ์ข้อความ', 'กรุณากรอกชื่อสถานที่ด้วยครับ', 'error'); return; }
+        let typeName = type === 'home' ? 'บ้าน' : 'โปรด';
+        let theme = (currentStep === 2) ? 'green' : 'red';
         let pos = map.getCenter();
-        localStorage.setItem('saved_' + pendingCustomPlaceSaveType, JSON.stringify({name: typedName, lat: pos.lat(), lng: pos.lng()}));
-        closeCustomNameInputDialog();
-        showAlert('บันทึกสำเร็จ', `บันทึกพิกัด "${typedName}" เรียบร้อยแล้ว!`, 'success');
-        renderSavedPlacesUI();
-        renderWaypointsUI();
+        
+        openConfirmActionModal(`ตั้งค่า "${typeName}"`, `คุณต้องการบันทึกพิกัดกลางจอขณะนี้ให้เป็น "${typeName}" ใช่หรือไม่?`, () => {
+            localStorage.setItem('saved_' + type, JSON.stringify({name: typeName, lat: pos.lat(), lng: pos.lng()}));
+            showAlert('บันทึกสำเร็จ', `อัปเดตพิกัด "${typeName}" เรียบร้อยแล้ว!`, 'success');
+            renderSavedPlacesUI();
+            renderWaypointsUI();
+        }, theme);
     }
     function renderSavedPlacesUI() {
         let h = localStorage.getItem('saved_home'); let f = localStorage.getItem('saved_favorite');
-        document.querySelectorAll('.label-home').forEach(el => el.innerText = h ? JSON.parse(h).name.substring(0, 6) : 'ตั้งค่า (บ้าน)');
-        document.querySelectorAll('.label-favorite').forEach(el => el.innerText = f ? JSON.parse(f).name.substring(0, 6) : 'ตั้งค่า (โปรด)');
+        document.querySelectorAll('.label-home').forEach(el => el.innerText = h ? 'บ้าน' : 'ตั้งค่า (บ้าน)');
+        document.querySelectorAll('.label-favorite').forEach(el => el.innerText = f ? 'โปรด' : 'ตั้งค่า (โปรด)');
     }
 
     function saveRecentPlace(name, lat, lng) {
@@ -707,7 +685,6 @@
         controls.classList.remove('top-[76px]', 'top-[170px]', 'top-[140px]');
         if (page === 2 || page === 3) controls.classList.add('top-[140px]'); else controls.classList.add('top-[76px]');
 
-        // ซ่อนปุ่มเล็งพิกัดค่าเริ่มต้น ยกเว้นตอนเดินทางจริง
         let btnC = document.getElementById('btnCrosshair');
         if (page !== 'Tracking') {
             if(btnC) btnC.classList.add('hidden');
@@ -1016,8 +993,18 @@
         });
     }
 
+    // ฟีเจอร์: ปุ่มล้างหมุดทั้งหมด
+    windowContext.clearWaypoints = function(type) {
+        localWaypoints.forEach((wp) => {
+            if (wp.type === type && wp.marker) wp.marker.setMap(null);
+        });
+        localWaypoints = localWaypoints.filter(w => w.type !== type);
+        focusedWaypointIndex = -1;
+        renderWaypointsUI();
+        if(currentStep === 4) { bookData.waypoints = localWaypoints; calculatePrice(); }
+    }
+
     function renderWaypointsUI() {
-        // จัดเรียงรายการ: รับ -> แวะ -> ส่ง อย่างถูกต้องเสมอ
         const typeOrder = { 'pick': 1, 'waypoint': 2, 'drop': 3 };
         localWaypoints.sort((a, b) => typeOrder[a.type] - typeOrder[b.type]);
 
@@ -1057,10 +1044,11 @@
         }
 
         let pCount = 1; let dCount = 1;
+        
         let hData = localStorage.getItem('saved_home');
         let fData = localStorage.getItem('saved_favorite');
-        let homeName = hData ? JSON.parse(hData).name : null;
-        let favName = fData ? JSON.parse(fData).name : null;
+        let homeLoc = hData ? JSON.parse(hData) : null;
+        let favLoc = fData ? JSON.parse(fData) : null;
 
         localWaypoints.forEach((wp, index) => {
             let num = wp.type === 'pick' ? pCount++ : dCount++;
@@ -1088,10 +1076,13 @@
             let bgItem = isFocused ? 'bg-gray-700 border-blue-500/50' : 'bg-gray-800 border-gray-700';
             let textItem = isFocused ? 'text-blue-400' : 'text-gray-200';
             
-            // แสดงไอคอนสถานที่โปรด
+            // ฟีเจอร์: แสดงไอคอนสถานที่โปรด (เช็กจากความใกล้เคียงของพิกัด)
             let iconAddon = '';
-            if (homeName && wp.name.includes(homeName)) iconAddon = '<i class="fas fa-home text-blue-400 ml-1.5" title="บ้าน"></i>';
-            else if (favName && wp.name.includes(favName)) iconAddon = '<i class="fas fa-heart text-pink-500 ml-1.5" title="โปรด"></i>';
+            if (homeLoc && Math.abs(wp.lat - homeLoc.lat) < 0.0001 && Math.abs(wp.lng - homeLoc.lng) < 0.0001) {
+                iconAddon = '<i class="fas fa-home text-blue-400 ml-1.5" title="บ้าน"></i>';
+            } else if (favLoc && Math.abs(wp.lat - favLoc.lat) < 0.0001 && Math.abs(wp.lng - favLoc.lng) < 0.0001) {
+                iconAddon = '<i class="fas fa-heart text-pink-500 ml-1.5" title="โปรด"></i>';
+            }
 
             let itemHtml = `<div class="flex items-center gap-2.5 py-1.5 px-2.5 rounded-lg border relative z-10 shadow-sm mb-1.5 cursor-pointer hover:bg-gray-700 transition ${bgItem}" onclick="focusLocationToggle(${wp.lat}, ${wp.lng}, ${index})">
                 <div class="w-[20px] h-[20px] ${colorClass} rounded-full flex items-center justify-center text-[10px] font-bold shrink-0 shadow-inner">${num}</div>
@@ -1482,7 +1473,7 @@
       if (bookData.status === "รอผู้ขับขี่ตอบรับ") {
           if(btnE) btnE.classList.add('hidden'); if(actionButtonsBox) { actionButtonsBox.classList.remove('hidden'); actionButtonsBox.classList.add('flex'); }
           if(btnCancel) btnCancel.classList.remove('hidden'); 
-          if(btnCh) btnCh.classList.add('hidden'); // ซ่อนช่องแชทตอนรอ
+          if(btnCh) btnCh.classList.add('hidden'); 
           if(btnCa) btnCa.classList.add('hidden'); 
           if(btnAddWp) btnAddWp.classList.add('hidden');
           if(tAddressBox) { tAddressBox.classList.remove('flex-1'); tAddressBox.classList.add('w-full'); }
@@ -1503,7 +1494,6 @@
           if(tAddressBox) { tAddressBox.classList.remove('flex-1'); tAddressBox.classList.add('w-full'); }
       }
 
-      // แสดงปุ่มเล็งพิกัดเฉพาะหลังจากขึ้นรถ (ออกเดินทาง)
       let btnC = document.getElementById('btnCrosshair');
       if (bookData.status.includes("ออกเดินทาง") || bookData.status.includes("ไปยังจุดส่ง") || bookData.status.includes("ถึงที่หมาย")) {
           if(btnC) btnC.classList.remove('hidden');
@@ -1679,7 +1669,6 @@
         }, "red");
     }
 
-    // ฟังก์ชันจัดการรายการที่ถูกบล็อก
     windowContext.openBlockedDrivers = function() {
         document.getElementById('blockedDriversModal').classList.remove('hidden');
         renderBlockedDrivers();
@@ -1696,7 +1685,8 @@
         let html = '<div class="space-y-3">';
         let promises = Object.keys(myBlockedDrivers).map(key => {
             if (key.length === 10 && !key.startsWith('U')) {
-                return Promise.resolve({key, name: 'เบอร์โทร: ' + key, type: 'phone'});
+                // ซ่อนเบอร์โทรศัพท์ตามเงื่อนไข (แสดงแค่ว่าเป็นผู้ขับขี่ที่ถูกบล็อก)
+                return Promise.resolve({key, name: 'ผู้ขับขี่ (ไม่ระบุข้อมูล)', type: 'phone'});
             } else { 
                 return db.ref('drivers_profile/' + key).once('value').then(snap => {
                     return {key, name: snap.exists() ? snap.val().name + ' (' + snap.val().plate + ')' : 'รหัส: ' + key, type: 'pin'};
@@ -1722,7 +1712,6 @@
     windowContext.unblockDriver = function(key) {
         db.ref('passenger_blocks/' + lineUserId + '/' + key).remove().then(() => {
             showAlert('สำเร็จ', 'ปลดบล็อกคนขับเรียบร้อยแล้ว', 'success');
-            // ทำการลบค่าจากตัวแปร myBlockedDrivers ชั่วคราวเพื่อให้ UI อัปเดตทันที
             delete myBlockedDrivers[key];
             renderBlockedDrivers(); 
         });
