@@ -108,16 +108,22 @@
         <button onclick="useCurrentLocation()" class="text-[10px] font-bold bg-green-900/30 border border-green-500/30 text-green-400 px-2.5 py-1.5 rounded-lg hover:bg-green-800/50 transition shadow-sm flex items-center gap-1.5"><i class="fas fa-crosshairs"></i> ตำแหน่งปัจจุบัน</button>
       </div>
       
+      <!-- เพิ่มปุ่มลัด (บ้าน, โปรด 1, โปรด 2 และ ประวัติแคปซูล) -->
       <div class="flex gap-2 overflow-x-auto pb-2 hide-scrollbar mb-1 items-center w-full">
           <div class="flex shrink-0 bg-[#2a303c] border border-[#3b4252] rounded-full overflow-hidden shadow-sm items-center">
-              <button onclick="handleSavedPlace('home')" class="px-2.5 py-1 flex items-center gap-1.5 hover:bg-[#343b4a] transition"><i class="fas fa-home text-blue-400 text-[10px]"></i><span class="label-home text-[11px] font-bold text-gray-200">บ้าน</span></button>
+              <button onclick="promptShortcut('home')" class="px-2.5 py-1 flex items-center gap-1.5 hover:bg-[#343b4a] transition"><i class="fas fa-home text-blue-400 text-[10px]"></i><span class="label-home text-[11px] font-bold text-gray-200">บ้าน</span></button>
               <div class="w-[1px] h-3 bg-[#3b4252]"></div>
               <button onclick="editSavedPlace('home', event)" class="px-2 py-1 text-gray-400 hover:text-white hover:bg-[#343b4a] transition flex items-center" title="ตั้งค่าพิกัดบ้าน"><i class="fas fa-cog text-[10px]"></i></button>
           </div>
           <div class="flex shrink-0 bg-[#2a303c] border border-[#3b4252] rounded-full overflow-hidden shadow-sm items-center">
-              <button onclick="handleSavedPlace('favorite')" class="px-2.5 py-1 flex items-center gap-1.5 hover:bg-[#343b4a] transition"><i class="fas fa-heart text-pink-500 text-[10px]"></i><span class="label-favorite text-[11px] font-bold text-gray-200">โปรด</span></button>
+              <button onclick="promptShortcut('favorite')" class="px-2.5 py-1 flex items-center gap-1.5 hover:bg-[#343b4a] transition"><i class="fas fa-heart text-pink-500 text-[10px]"></i><span class="label-favorite text-[11px] font-bold text-gray-200">โปรด 1</span></button>
               <div class="w-[1px] h-3 bg-[#3b4252]"></div>
-              <button onclick="editSavedPlace('favorite', event)" class="px-2 py-1 text-gray-400 hover:text-white hover:bg-[#343b4a] transition flex items-center" title="ตั้งค่าพิกัดโปรด"><i class="fas fa-cog text-[10px]"></i></button>
+              <button onclick="editSavedPlace('favorite', event)" class="px-2 py-1 text-gray-400 hover:text-white hover:bg-[#343b4a] transition flex items-center" title="ตั้งค่าพิกัดโปรด 1"><i class="fas fa-cog text-[10px]"></i></button>
+          </div>
+          <div class="flex shrink-0 bg-[#2a303c] border border-[#3b4252] rounded-full overflow-hidden shadow-sm items-center">
+              <button onclick="promptShortcut('favorite2')" class="px-2.5 py-1 flex items-center gap-1.5 hover:bg-[#343b4a] transition"><i class="fas fa-star text-yellow-400 text-[10px]"></i><span class="label-favorite2 text-[11px] font-bold text-gray-200">โปรด 2</span></button>
+              <div class="w-[1px] h-3 bg-[#3b4252]"></div>
+              <button onclick="editSavedPlace('favorite2', event)" class="px-2 py-1 text-gray-400 hover:text-white hover:bg-[#343b4a] transition flex items-center" title="ตั้งค่าพิกัดโปรด 2"><i class="fas fa-cog text-[10px]"></i></button>
           </div>
           <div class="w-[1px] h-4 bg-gray-600 shrink-0 mx-0.5"></div>
           <div id="recentPlacesPick" class="flex gap-2 shrink-0 items-center"></div>
@@ -143,16 +149,22 @@
         <button onclick="useCurrentLocation()" class="text-[10px] font-bold bg-red-900/30 border border-red-500/30 text-red-400 px-2.5 py-1.5 rounded-lg hover:bg-red-800/50 transition shadow-sm flex items-center gap-1.5"><i class="fas fa-crosshairs"></i> ตำแหน่งปัจจุบัน</button>
       </div>
       
+      <!-- เพิ่มปุ่มลัด (บ้าน, โปรด 1, โปรด 2 และ ประวัติแคปซูล) -->
       <div class="flex gap-2 overflow-x-auto pb-2 hide-scrollbar mb-1 items-center w-full">
           <div class="flex shrink-0 bg-[#2a303c] border border-[#3b4252] rounded-full overflow-hidden shadow-sm items-center">
-              <button onclick="handleSavedPlace('home')" class="px-2.5 py-1 flex items-center gap-1.5 hover:bg-[#343b4a] transition"><i class="fas fa-home text-blue-400 text-[10px]"></i><span class="label-home text-[11px] font-bold text-gray-200">บ้าน</span></button>
+              <button onclick="promptShortcut('home')" class="px-2.5 py-1 flex items-center gap-1.5 hover:bg-[#343b4a] transition"><i class="fas fa-home text-blue-400 text-[10px]"></i><span class="label-home text-[11px] font-bold text-gray-200">บ้าน</span></button>
               <div class="w-[1px] h-3 bg-[#3b4252]"></div>
               <button onclick="editSavedPlace('home', event)" class="px-2 py-1 text-gray-400 hover:text-white hover:bg-[#343b4a] transition flex items-center" title="ตั้งค่าพิกัดบ้าน"><i class="fas fa-cog text-[10px]"></i></button>
           </div>
           <div class="flex shrink-0 bg-[#2a303c] border border-[#3b4252] rounded-full overflow-hidden shadow-sm items-center">
-              <button onclick="handleSavedPlace('favorite')" class="px-2.5 py-1 flex items-center gap-1.5 hover:bg-[#343b4a] transition"><i class="fas fa-heart text-pink-500 text-[10px]"></i><span class="label-favorite text-[11px] font-bold text-gray-200">โปรด</span></button>
+              <button onclick="promptShortcut('favorite')" class="px-2.5 py-1 flex items-center gap-1.5 hover:bg-[#343b4a] transition"><i class="fas fa-heart text-pink-500 text-[10px]"></i><span class="label-favorite text-[11px] font-bold text-gray-200">โปรด 1</span></button>
               <div class="w-[1px] h-3 bg-[#3b4252]"></div>
-              <button onclick="editSavedPlace('favorite', event)" class="px-2 py-1 text-gray-400 hover:text-white hover:bg-[#343b4a] transition flex items-center" title="ตั้งค่าพิกัดโปรด"><i class="fas fa-cog text-[10px]"></i></button>
+              <button onclick="editSavedPlace('favorite', event)" class="px-2 py-1 text-gray-400 hover:text-white hover:bg-[#343b4a] transition flex items-center" title="ตั้งค่าพิกัดโปรด 1"><i class="fas fa-cog text-[10px]"></i></button>
+          </div>
+          <div class="flex shrink-0 bg-[#2a303c] border border-[#3b4252] rounded-full overflow-hidden shadow-sm items-center">
+              <button onclick="promptShortcut('favorite2')" class="px-2.5 py-1 flex items-center gap-1.5 hover:bg-[#343b4a] transition"><i class="fas fa-star text-yellow-400 text-[10px]"></i><span class="label-favorite2 text-[11px] font-bold text-gray-200">โปรด 2</span></button>
+              <div class="w-[1px] h-3 bg-[#3b4252]"></div>
+              <button onclick="editSavedPlace('favorite2', event)" class="px-2 py-1 text-gray-400 hover:text-white hover:bg-[#343b4a] transition flex items-center" title="ตั้งค่าพิกัดโปรด 2"><i class="fas fa-cog text-[10px]"></i></button>
           </div>
           <div class="w-[1px] h-4 bg-gray-600 shrink-0 mx-0.5"></div>
           <div id="recentPlacesDrop" class="flex gap-2 shrink-0 items-center"></div>
@@ -481,6 +493,7 @@
     let markerDriver = null; 
     let markerHome = null;
     let markerFavorite = null;
+    let markerFavorite2 = null;
     let polylineRoute = null; 
 
     let localWaypoints = []; 
@@ -627,13 +640,53 @@
         });
     }
 
+    // ฟีเจอร์: นำพิกัดไปให้ผู้ใช้ยืนยันผ่าน Popup ก่อนปักหมุด
+    function triggerPlaceConfirm(name, lat, lng) {
+        if(map) {
+            updateMapPadding();
+            let currentZoom = map.getZoom();
+            if(currentZoom > 14) {
+                map.setZoom(14);
+                setTimeout(() => { map.panTo({lat: lat, lng: lng}); setTimeout(() => { map.setZoom(17); }, 400); }, 300);
+            } else {
+                map.panTo({lat: lat, lng: lng});
+                setTimeout(() => { map.setZoom(17); }, 400);
+            }
+        }
+        
+        let stepName = (currentStep === 2) ? "จุดรับ" : "จุดส่ง";
+        let theme = (currentStep === 2) ? 'green' : 'red';
+        
+        openConfirmActionModal(`เลือก${stepName}?`, `คุณต้องการเดินทางไปยัง <b>${name}</b> ใช่หรือไม่?`, () => {
+            let type = (currentStep === 2) ? 'pick' : 'drop';
+            addWaypointFromLocation(lat, lng, name, type);
+        }, theme);
+    }
+
+    // ฟีเจอร์: ปุ่มลัดทั้งหมดส่งมาที่นี่เพื่อเช็กข้อมูล
+    windowContext.promptShortcut = function(type, nameStr = '', lat = 0, lng = 0) {
+        if (type === 'recent') {
+            triggerPlaceConfirm(nameStr, lat, lng);
+        } else {
+            let saved = localStorage.getItem('saved_' + type);
+            if (saved) { 
+                let p = JSON.parse(saved); 
+                triggerPlaceConfirm(p.name, p.lat, p.lng); 
+            } else { 
+                editSavedPlace(type, {stopPropagation: function(){}}); 
+            }
+        }
+    }
+
     function renderSavedPlaceMarkersOnMap() {
         if (!map) return;
         let hData = localStorage.getItem('saved_home');
         let fData = localStorage.getItem('saved_favorite');
+        let f2Data = localStorage.getItem('saved_favorite2');
 
         if (markerHome) markerHome.setMap(null);
         if (markerFavorite) markerFavorite.setMap(null);
+        if (markerFavorite2) markerFavorite2.setMap(null);
 
         if (hData && (currentStep === 2 || currentStep === 3)) {
             let p = JSON.parse(hData);
@@ -657,16 +710,22 @@
                 }
             });
         }
+        if (f2Data && (currentStep === 2 || currentStep === 3)) {
+            let p = JSON.parse(f2Data);
+            markerFavorite2 = new google.maps.Marker({
+                position: {lat: p.lat, lng: p.lng}, map: map, zIndex: 2,
+                icon: {
+                    path: "M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z",
+                    fillColor: '#facc15', fillOpacity: 1, strokeWeight: 2, strokeColor: '#ffffff', scale: 1.2,
+                    anchor: typeof google !== 'undefined' && google.maps ? new google.maps.Point(12, 20) : null
+                }
+            });
+        }
     }
 
-    windowContext.handleSavedPlace = function(type) {
-        let saved = localStorage.getItem('saved_' + type);
-        if (saved) { let p = JSON.parse(saved); useRecentPlace(p.name, p.lat, p.lng); } 
-        else { editSavedPlace(type, {stopPropagation: function(){}}); }
-    }
     windowContext.editSavedPlace = function(type, event) { 
         event.stopPropagation(); 
-        let typeName = type === 'home' ? 'บ้าน' : 'โปรด';
+        let typeName = type === 'home' ? 'บ้าน' : (type === 'favorite' ? 'โปรด 1' : 'โปรด 2');
         let theme = (currentStep === 2) ? 'green' : 'red';
         let pos = map.getCenter();
         
@@ -675,13 +734,17 @@
             showAlert('บันทึกสำเร็จ', `อัปเดตพิกัด "${typeName}" เรียบร้อยแล้ว!`, 'success');
             renderSavedPlacesUI();
             renderWaypointsUI(); 
-            renderSavedPlaceMarkersOnMap();
         }, theme);
     }
+    
     function renderSavedPlacesUI() {
-        let h = localStorage.getItem('saved_home'); let f = localStorage.getItem('saved_favorite');
-        document.querySelectorAll('.label-home').forEach(el => el.innerText = h ? 'บ้าน' : 'ตั้งค่า (บ้าน)');
-        document.querySelectorAll('.label-favorite').forEach(el => el.innerText = f ? 'โปรด' : 'ตั้งค่า (โปรด)');
+        let h = localStorage.getItem('saved_home'); 
+        let f1 = localStorage.getItem('saved_favorite');
+        let f2 = localStorage.getItem('saved_favorite2');
+        
+        document.querySelectorAll('.label-home').forEach(el => el.innerText = h ? JSON.parse(h).name.substring(0, 6) : 'ตั้งค่า (บ้าน)');
+        document.querySelectorAll('.label-favorite').forEach(el => el.innerText = f1 ? JSON.parse(f1).name.substring(0, 6) : 'ตั้งค่า (โปรด 1)');
+        document.querySelectorAll('.label-favorite2').forEach(el => el.innerText = f2 ? JSON.parse(f2).name.substring(0, 6) : 'ตั้งค่า (โปรด 2)');
         renderSavedPlaceMarkersOnMap();
     }
 
@@ -696,20 +759,14 @@
         let places = JSON.parse(localStorage.getItem('recentPlaces') || '[]'); let html = '';
         if(places.length > 0) {
             places.forEach(p => {
-                let shortName = p.name.split(' ')[0]; if(shortName.length > 15) shortName = shortName.substring(0,15) + '...';
-                html += `<button onclick="useRecentPlace('${p.name}', ${p.lat}, ${p.lng})" class="shrink-0 bg-gray-800 border border-gray-700 text-gray-300 px-2.5 py-1 rounded-full text-[11px] font-bold flex items-center gap-1.5 hover:bg-gray-700 transition shadow-sm"><i class="fas fa-history text-gray-500"></i> ${shortName}</button>`;
+                // ขยายให้โชว์ชื่อได้ยาวขึ้น
+                let shortName = p.name; if(shortName.length > 25) shortName = shortName.substring(0,25) + '...';
+                let safeName = p.name.replace(/'/g, "\\'");
+                html += `<button onclick="promptShortcut('recent', '${safeName}', ${p.lat}, ${p.lng})" class="shrink-0 bg-gray-800 border border-gray-700 text-gray-300 px-2.5 py-1 rounded-full text-[11px] font-bold flex items-center gap-1.5 hover:bg-gray-700 transition shadow-sm"><i class="fas fa-history text-gray-500"></i> ${shortName}</button>`;
             });
         }
         let pickEl = document.getElementById('recentPlacesPick'); let dropEl = document.getElementById('recentPlacesDrop');
         if(pickEl) pickEl.innerHTML = html; if(dropEl) dropEl.innerHTML = html;
-    }
-
-    windowContext.useRecentPlace = function(name, lat, lng) {
-        if(map) { 
-            updateMapPadding();
-            map.panTo({lat: lat, lng: lng}); 
-            map.setZoom(17); 
-        }
     }
 
     windowContext.togglePage4Panel = function() {
@@ -843,16 +900,15 @@
         focusedWaypointIndex = -1; 
         isTrackingMode = false;
         
-        if (localWaypoints.length === 1) {
-            updateMapPadding();
-            map.panTo({lat: localWaypoints[0].lat, lng: localWaypoints[0].lng}); map.setZoom(16);
-            setTimeout(() => { map.panBy(0, 300); }, 50);
-        } else {
-            let bounds = new google.maps.LatLngBounds();
-            localWaypoints.forEach(wp => bounds.extend({lat: wp.lat, lng: wp.lng}));
-            let pb = getDynamicBottomPadding();
-            map.fitBounds(bounds, { top: 140, right: 50, bottom: pb, left: 50 });
+        let bounds = new google.maps.LatLngBounds();
+        localWaypoints.forEach(wp => bounds.extend({lat: wp.lat, lng: wp.lng}));
+        
+        if (currentStep === 'Tracking' && markerDriver && markerDriver.getMap()) {
+            bounds.extend(markerDriver.getPosition());
         }
+        
+        let pb = getDynamicBottomPadding();
+        map.fitBounds(bounds, { top: 140, right: 50, bottom: pb, left: 50 });
         renderWaypointsUI();
     };
 
@@ -913,14 +969,13 @@
 
       crosshairMarker = new google.maps.Marker({
           map: null, 
-          zIndex: 1, // ปรับให้อยู่ด้านหลังหมุดตัวเลข
+          zIndex: 1, 
           clickable: false
       });
       crosshairMarker.bindTo('position', map, 'center');
 
       map.addListener('dragstart', () => {
          if (currentStep === 'Tracking') { isTrackingMode = false; }
-         // เอา animation การเด้งออกไป
       });
       
       map.addListener('idle', () => {
@@ -1136,8 +1191,10 @@
         
         let hData = localStorage.getItem('saved_home');
         let fData = localStorage.getItem('saved_favorite');
+        let f2Data = localStorage.getItem('saved_favorite2');
         let homeLoc = hData ? JSON.parse(hData) : null;
         let favLoc = fData ? JSON.parse(fData) : null;
+        let fav2Loc = f2Data ? JSON.parse(f2Data) : null;
 
         localWaypoints.forEach((wp, index) => {
             let num = wp.type === 'pick' ? pCount++ : dCount++;
@@ -1168,8 +1225,10 @@
             let iconAddon = '';
             if (wp.name.includes('บ้าน') || (homeLoc && Math.abs(wp.lat - homeLoc.lat) < 0.0005 && Math.abs(wp.lng - homeLoc.lng) < 0.0005)) {
                 iconAddon = '<i class="fas fa-home text-blue-400 ml-1.5" title="บ้าน"></i>';
-            } else if (wp.name.includes('โปรด') || (favLoc && Math.abs(wp.lat - favLoc.lat) < 0.0005 && Math.abs(wp.lng - favLoc.lng) < 0.0005)) {
-                iconAddon = '<i class="fas fa-heart text-pink-500 ml-1.5" title="โปรด"></i>';
+            } else if (wp.name.includes('โปรด 1') || (favLoc && Math.abs(wp.lat - favLoc.lat) < 0.0005 && Math.abs(wp.lng - favLoc.lng) < 0.0005)) {
+                iconAddon = '<i class="fas fa-heart text-pink-500 ml-1.5" title="โปรด 1"></i>';
+            } else if (wp.name.includes('โปรด 2') || (fav2Loc && Math.abs(wp.lat - fav2Loc.lat) < 0.0005 && Math.abs(wp.lng - fav2Loc.lng) < 0.0005)) {
+                iconAddon = '<i class="fas fa-star text-yellow-400 ml-1.5" title="โปรด 2"></i>';
             }
 
             let itemHtml = `<div class="flex items-center gap-2.5 py-1.5 px-2.5 rounded-lg border relative z-10 shadow-sm mb-1.5 cursor-pointer hover:bg-gray-700 transition ${bgItem}" onclick="focusLocationToggle(${wp.lat}, ${wp.lng}, ${index})">
@@ -1653,14 +1712,21 @@
             }
 
             if(isTrackingMode) {
+                let dynamicBounds = new google.maps.LatLngBounds();
+                let paddingBottom = getDynamicBottomPadding();
+
                 if (bookData.status.includes("กำลังเดินทางไปหา") || bookData.status.includes("รับงานแล้ว") || bookData.status.includes("มาถึงจุดรับ")) {
-                    map.panTo({lat: driverData.lat, lng: driverData.lng});
+                    dynamicBounds.extend(new google.maps.LatLng(driverData.lat, driverData.lng));
+                    if(bookData.pLat !== 0) dynamicBounds.extend(new google.maps.LatLng(bookData.pLat, bookData.pLng));
+                    map.fitBounds(dynamicBounds, { top: 120, right: 50, bottom: paddingBottom, left: 50 });
                 } 
                 else if (bookData.status.includes("ออกเดินทาง") || bookData.status.includes("ไปยังจุดส่ง")) {
-                    map.panTo({lat: driverData.lat, lng: driverData.lng});
+                    dynamicBounds.extend(new google.maps.LatLng(driverData.lat, driverData.lng));
+                    if(bookData.dLat !== 0) dynamicBounds.extend(new google.maps.LatLng(bookData.dLat, bookData.dLng));
+                    map.fitBounds(dynamicBounds, { top: 120, right: 50, bottom: paddingBottom, left: 50 });
                 } 
                 else if (currentRouteBounds) {
-                    map.fitBounds(currentRouteBounds, { top: 120, right: 50, bottom: getDynamicBottomPadding(), left: 50 });
+                    map.fitBounds(currentRouteBounds, { top: 120, right: 50, bottom: paddingBottom, left: 50 });
                 }
             }
         }
