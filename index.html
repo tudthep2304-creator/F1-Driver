@@ -303,6 +303,7 @@
       </div>
   </div>
 
+  <!-- หน้าโปรไฟล์ส่วนตัว (Profile Page) -->
   <div id="profileModal" class="hidden fixed inset-0 z-[190] bg-gray-900 pointer-events-auto transition-transform flex flex-col">
       <div class="bg-gray-900 border-b border-gray-800 p-4 flex items-center gap-3 shadow-md shrink-0">
           <button onclick="closeProfileModal()" class="w-10 h-10 shrink-0 bg-gray-800 text-gray-400 rounded-full flex items-center justify-center border border-gray-700 hover:text-white transition"><i class="fas fa-arrow-left"></i></button>
@@ -423,6 +424,7 @@
       </div>
   </div>
 
+  <!-- Z-Index 9990 ดันลอยหน้าสุด -->
   <div id="confirmActionModal" class="hidden fixed inset-0 z-[9990] bg-black/80 flex items-center justify-center p-4 pointer-events-auto">
       <div class="bg-gray-800 border border-gray-700 rounded-3xl p-6 w-full max-w-sm text-center shadow-2xl">
           <div class="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl" id="confirmActionIcon"><i class="fas fa-map-marked-alt"></i></div>
@@ -694,7 +696,6 @@
         }
     }
 
-    // เลื่อนแผนที่สมูท โดยรับ iconType เพื่อใช้แสดงไอคอนเฉพาะปุ่มที่กดจริงๆ
     windowContext.panAndConfirmPlace = function(name, lat, lng, iconType = null) {
         if(map) {
             updateMapPadding();
@@ -710,16 +711,14 @@
         
         setTimeout(() => {
             openConfirmActionModal(`ยืนยันสถานที่`, `คุณต้องการเลือก <b>${name}</b> เป็น <b>${typeName}</b> ใช่หรือไม่?`, () => {
-                // ส่ง iconType เข้าไปด้วยเพื่อให้ระบบจำไว้ตอนวาด UI
                 addWaypointFromLocation(lat, lng, name, type, iconType);
             }, theme);
         }, 600); 
     }
 
-    // แก้ไขส่ง iconType ไปให้ panAndConfirmPlace
     windowContext.handleSavedPlace = function(type) {
         let saved = localStorage.getItem('saved_' + type);
-        let iconType = type; // 'home', 'favorite1', 'favorite2'
+        let iconType = type; 
         
         if (saved) { 
             let p = JSON.parse(saved); 
@@ -1234,7 +1233,6 @@
             let bgItem = isFocused ? 'bg-gray-700 border-blue-500/50' : 'bg-gray-800 border-gray-700';
             let textItem = isFocused ? 'text-blue-400' : 'text-gray-200';
             
-            // อ่านค่าจาก wp.iconType โดยตรง ไม่ใช้ .includes('บ้าน') อีกต่อไป
             let iconAddonPrefix = '';
             if (wp.iconType === 'home') {
                 iconAddonPrefix = '<i class="fas fa-home text-blue-400 mr-1.5" title="บ้าน"></i>';
