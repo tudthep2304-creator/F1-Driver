@@ -105,7 +105,11 @@
     <div class="ui-panel border-t-[4px] border-green-500 h-auto pb-6 pt-4">
       <div class="flex justify-between items-center mb-2">
         <div><p class="text-[10px] font-black text-green-500 mb-0.5 tracking-widest"><i class="fas fa-circle"></i> STEP 1</p><p class="text-base font-black text-white">เลื่อนแผนที่เพื่อกำหนดจุดรับ</p></div>
-        <button onclick="useCurrentLocation()" class="text-[10px] font-bold bg-green-900/30 border border-green-500/30 text-green-400 px-2.5 py-1.5 rounded-lg hover:bg-green-800/50 transition shadow-sm flex items-center gap-1.5"><i class="fas fa-crosshairs"></i> ตำแหน่งปัจจุบัน</button>
+        <!-- ย้ายปุ่มประวัติมาอยู่คู่กับปุ่มตำแหน่งปัจจุบัน -->
+        <div class="flex gap-1.5">
+            <button onclick="openRecentPlacesModal()" class="text-[10px] font-bold bg-gray-800 border border-gray-600 text-gray-300 px-2.5 py-1.5 rounded-lg hover:bg-gray-700 transition shadow-sm flex items-center gap-1.5"><i class="fas fa-history"></i> ประวัติ</button>
+            <button onclick="useCurrentLocation()" class="text-[10px] font-bold bg-green-900/30 border border-green-500/30 text-green-400 px-2.5 py-1.5 rounded-lg hover:bg-green-800/50 transition shadow-sm flex items-center gap-1.5"><i class="fas fa-crosshairs"></i> ปัจจุบัน</button>
+        </div>
       </div>
       
       <div class="flex gap-2 overflow-x-auto pb-2 hide-scrollbar mb-1 items-center w-full">
@@ -124,11 +128,7 @@
               <div class="w-[1px] h-3 bg-[#3b4252]"></div>
               <button onclick="editSavedPlace('favorite2', event)" class="px-2 py-1 text-gray-400 hover:text-white hover:bg-[#343b4a] transition flex items-center" title="ตั้งค่าพิกัดโปรด 2"><i class="fas fa-cog text-[10px]"></i></button>
           </div>
-          <div class="w-[1px] h-4 bg-gray-600 shrink-0 mx-0.5"></div>
-          <!-- ยุบรวมปุ่มประวัติ -->
-          <div class="flex shrink-0 bg-[#2a303c] border border-[#3b4252] rounded-full overflow-hidden shadow-sm items-center">
-              <button onclick="openRecentPlacesModal()" class="px-3 py-1 flex items-center gap-1.5 hover:bg-[#343b4a] transition"><i class="fas fa-history text-gray-400 text-[10px]"></i><span class="text-[11px] font-bold text-gray-200">ประวัติสถานที่</span></button>
-          </div>
+          <!-- ถอดปุ่มประวัติออกจากตรงนี้แล้ว -->
       </div>
       
       <div id="pickupWaypointsList" class="flex flex-col gap-1.5 mb-1 max-h-[110px] overflow-y-auto slim-scroll"></div>
@@ -148,7 +148,11 @@
     <div class="ui-panel border-t-[4px] border-red-500 h-auto pb-6 pt-4">
       <div class="flex justify-between items-center mb-2">
         <div><p class="text-[10px] font-black text-red-500 mb-0.5 tracking-widest"><i class="fas fa-circle"></i> STEP 2</p><p class="text-base font-black text-white">เลื่อนแผนที่เพื่อกำหนดจุดส่ง</p></div>
-        <button onclick="useCurrentLocation()" class="text-[10px] font-bold bg-red-900/30 border border-red-500/30 text-red-400 px-2.5 py-1.5 rounded-lg hover:bg-red-800/50 transition shadow-sm flex items-center gap-1.5"><i class="fas fa-crosshairs"></i> ตำแหน่งปัจจุบัน</button>
+        <!-- ย้ายปุ่มประวัติมาอยู่คู่กับปุ่มตำแหน่งปัจจุบัน -->
+        <div class="flex gap-1.5">
+            <button onclick="openRecentPlacesModal()" class="text-[10px] font-bold bg-gray-800 border border-gray-600 text-gray-300 px-2.5 py-1.5 rounded-lg hover:bg-gray-700 transition shadow-sm flex items-center gap-1.5"><i class="fas fa-history"></i> ประวัติ</button>
+            <button onclick="useCurrentLocation()" class="text-[10px] font-bold bg-red-900/30 border border-red-500/30 text-red-400 px-2.5 py-1.5 rounded-lg hover:bg-red-800/50 transition shadow-sm flex items-center gap-1.5"><i class="fas fa-crosshairs"></i> ปัจจุบัน</button>
+        </div>
       </div>
       
       <div class="flex gap-2 overflow-x-auto pb-2 hide-scrollbar mb-1 items-center w-full">
@@ -166,10 +170,6 @@
               <button onclick="handleSavedPlace('favorite2')" class="px-2.5 py-1 flex items-center gap-1.5 hover:bg-[#343b4a] transition"><i class="fas fa-star text-yellow-500 text-[10px]"></i><span class="label-favorite2 text-[11px] font-bold text-gray-200">โปรด 2</span></button>
               <div class="w-[1px] h-3 bg-[#3b4252]"></div>
               <button onclick="editSavedPlace('favorite2', event)" class="px-2 py-1 text-gray-400 hover:text-white hover:bg-[#343b4a] transition flex items-center" title="ตั้งค่าพิกัดโปรด 2"><i class="fas fa-cog text-[10px]"></i></button>
-          </div>
-          <div class="w-[1px] h-4 bg-gray-600 shrink-0 mx-0.5"></div>
-          <div class="flex shrink-0 bg-[#2a303c] border border-[#3b4252] rounded-full overflow-hidden shadow-sm items-center">
-              <button onclick="openRecentPlacesModal()" class="px-3 py-1 flex items-center gap-1.5 hover:bg-[#343b4a] transition"><i class="fas fa-history text-gray-400 text-[10px]"></i><span class="text-[11px] font-bold text-gray-200">ประวัติสถานที่</span></button>
           </div>
       </div>
 
@@ -276,6 +276,7 @@
     </div>
   </div>
 
+  <!-- In-App Chat Modal -->
   <div id="inAppChatModal" class="hidden fixed inset-0 z-[250] bg-gray-900 flex flex-col pointer-events-auto transition-transform">
       <div class="bg-gray-800 border-b border-gray-700 p-4 flex items-center gap-3 shadow-md shrink-0">
           <button onclick="closeInAppChatModal()" class="w-10 h-10 bg-gray-700 text-white rounded-full flex items-center justify-center hover:bg-gray-600"><i class="fas fa-arrow-left"></i></button>
@@ -290,6 +291,7 @@
       </div>
   </div>
 
+  <!-- Driver Rating Modal -->
   <div id="driverRatingModal" class="hidden fixed inset-0 z-[260] bg-black/80 flex items-center justify-center p-4 pointer-events-auto">
       <div class="bg-gray-800 border border-green-500/30 rounded-3xl p-6 w-full max-w-sm text-center shadow-2xl">
           <div class="w-16 h-16 bg-yellow-900/30 text-yellow-400 border border-yellow-500/30 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl"><i class="fas fa-star-half-alt"></i></div>
@@ -306,6 +308,7 @@
       </div>
   </div>
 
+  <!-- หน้าโปรไฟล์ส่วนตัว (Profile Page) -->
   <div id="profileModal" class="hidden fixed inset-0 z-[190] bg-gray-900 pointer-events-auto transition-transform flex flex-col">
       <div class="bg-gray-900 border-b border-gray-800 p-4 flex items-center gap-3 shadow-md shrink-0">
           <button onclick="closeProfileModal()" class="w-10 h-10 shrink-0 bg-gray-800 text-gray-400 rounded-full flex items-center justify-center border border-gray-700 hover:text-white transition"><i class="fas fa-arrow-left"></i></button>
@@ -426,6 +429,7 @@
       </div>
   </div>
 
+  <!-- Z-Index 9990 ดันลอยหน้าสุด -->
   <div id="confirmActionModal" class="hidden fixed inset-0 z-[9990] bg-black/80 flex items-center justify-center p-4 pointer-events-auto">
       <div class="bg-gray-800 border border-gray-700 rounded-3xl p-6 w-full max-w-sm text-center shadow-2xl">
           <div class="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl" id="confirmActionIcon"><i class="fas fa-map-marked-alt"></i></div>
@@ -652,7 +656,6 @@
         });
     }
 
-    // สร้างไอคอนสถานที่ลงบนแผนที่
     function renderSavedPlaceMarkersOnMap() {
         if (!map) return;
         let hData = localStorage.getItem('saved_home');
@@ -698,20 +701,13 @@
         }
     }
 
-    // ฟังก์ชันเลื่อนแผนที่และแสดง Pop-up ถามเพื่อปักหมุด
+    // ฟังก์ชันเลื่อนแผนที่และเปิด Pop-up อย่างนุ่มนวล
     windowContext.panAndConfirmPlace = function(name, lat, lng) {
         if(map) {
             updateMapPadding();
-            let currentZoom = map.getZoom();
-            if(currentZoom > 14) {
-                map.setZoom(14);
-                setTimeout(() => {
-                    map.panTo({lat: lat, lng: lng});
-                    setTimeout(() => { map.setZoom(17); }, 400);
-                }, 300);
-            } else {
-                map.panTo({lat: lat, lng: lng});
-                setTimeout(() => { map.setZoom(17); }, 400);
+            map.panTo({lat: lat, lng: lng});
+            if(map.getZoom() < 16) {
+                setTimeout(() => { map.setZoom(17); }, 300);
             }
         }
         
@@ -723,14 +719,31 @@
             openConfirmActionModal(`ยืนยันสถานที่`, `คุณต้องการเลือก <b>${name}</b> เป็น <b>${typeName}</b> ใช่หรือไม่?`, () => {
                 addWaypointFromLocation(lat, lng, name, type);
             }, theme);
-        }, 800);
+        }, 600); 
     }
 
+    // ฟังก์ชันสำหรับสถานที่โปรด ดึงชื่อเต็มพร้อมตำบล/อำเภอมาให้
     windowContext.handleSavedPlace = function(type) {
         let saved = localStorage.getItem('saved_' + type);
         if (saved) { 
             let p = JSON.parse(saved); 
-            panAndConfirmPlace(p.name, p.lat, p.lng); 
+            let typeName = type === 'home' ? 'บ้าน' : (type === 'favorite1' ? 'โปรด 1' : 'โปรด 2');
+            let pos = {lat: p.lat, lng: p.lng};
+            
+            if (geocoder) {
+                geocoder.geocode({location: pos}, (res, status) => {
+                    let finalAddr = typeName;
+                    if(status === 'OK' && res[0]) {
+                        let validResults = res.filter(r => !r.types.includes('plus_code') && !r.formatted_address.match(/^[A-Z0-9]{2,8}\+/));
+                        let bestRes = validResults.length > 0 ? validResults[0] : res[0];
+                        let fullAddress = bestRes.formatted_address.replace(/,?\s*ประเทศไทย/g, '').replace(/Unnamed Road,?\s*/g, '').replace(/^[A-Z0-9]{2,8}\+.*?\s/g, '').trim();
+                        finalAddr = `${typeName} (${fullAddress})`;
+                    }
+                    panAndConfirmPlace(finalAddr, p.lat, p.lng);
+                });
+            } else {
+                panAndConfirmPlace(typeName, p.lat, p.lng);
+            }
         } else { 
             editSavedPlace(type, {stopPropagation: function(){}}); 
         }
@@ -768,7 +781,6 @@
         localStorage.setItem('recentPlaces', JSON.stringify(places));
     }
 
-    // Modal สำหรับประวัติสถานที่
     windowContext.openRecentPlacesModal = function() {
         document.getElementById('recentPlacesModal').classList.remove('hidden');
         let places = JSON.parse(localStorage.getItem('recentPlaces') || '[]');
@@ -863,6 +875,7 @@
         }
     };
 
+    // Smooth Panning Effect without bounce
     windowContext.focusLocationToggle = function(lat, lng, index) {
         if(!map) return;
         if (focusedWaypointIndex === index) {
@@ -871,17 +884,11 @@
         } else {
             focusedWaypointIndex = index;
             updateMapPadding();
-            
-            let currentZoom = map.getZoom();
-            if(currentZoom > 14) {
-                map.setZoom(14);
-                setTimeout(() => {
-                    map.panTo({lat: lat, lng: lng});
-                    setTimeout(() => { map.setZoom(17); }, 400);
-                }, 300);
+            map.panTo({lat: lat, lng: lng});
+            if(map.getZoom() < 16) {
+                setTimeout(() => { map.setZoom(17); map.panBy(0, 150); }, 300);
             } else {
-                map.panTo({lat: lat, lng: lng});
-                setTimeout(() => { map.setZoom(17); }, 400);
+                setTimeout(() => { map.panBy(0, 150); }, 100);
             }
         }
         renderWaypointsUI();
@@ -893,11 +900,19 @@
             isTrackingMode = true; 
             const panel = document.getElementById('trackingPanel');
             
+            const doPanToCar = () => {
+                updateMapPadding();
+                map.panTo(markerDriver.getPosition());
+                if(map.getZoom() < 16) {
+                    setTimeout(() => { map.setZoom(17); }, 300);
+                }
+            };
+
             if(panel && !panel.classList.contains('panel-collapsed')) { 
                 panel.classList.add('panel-collapsed'); 
-                setTimeout(() => { updateRealtimeMap(); }, 350);
+                setTimeout(doPanToCar, 350);
             } else {
-                updateRealtimeMap();
+                doPanToCar();
             }
             return;
         }
@@ -998,7 +1013,12 @@
           if (placesService && (currentStep === 2 || currentStep === 3)) {
             placesService.getDetails({ placeId: event.placeId, fields: ['name', 'geometry', 'formatted_address'] }, (place, status) => {
               if (status === 'OK' && place.geometry) {
-                  panAndConfirmPlace(place.name, place.geometry.location.lat(), place.geometry.location.lng());
+                  let finalAddr = place.name;
+                  if (place.formatted_address) {
+                      let cleanAddr = place.formatted_address.replace(/,?\s*ประเทศไทย/g, '').replace(/Unnamed Road,?\s*/g, '').trim();
+                      if(!cleanAddr.includes(place.name)) finalAddr += " (" + cleanAddr + ")";
+                  }
+                  panAndConfirmPlace(finalAddr, place.geometry.location.lat(), place.geometry.location.lng());
               }
             });
           }
@@ -1230,7 +1250,7 @@
             let textItem = isFocused ? 'text-blue-400' : 'text-gray-200';
             
             let iconAddon = '';
-            if (wp.name === 'บ้าน' || (homeLoc && Math.abs(wp.lat - homeLoc.lat) < 0.0001 && Math.abs(wp.lng - homeLoc.lng) < 0.0001)) {
+            if (wp.name.includes('บ้าน') || (homeLoc && Math.abs(wp.lat - homeLoc.lat) < 0.0001 && Math.abs(wp.lng - homeLoc.lng) < 0.0001)) {
                 iconAddon = '<i class="fas fa-home text-blue-400 ml-1.5" title="บ้าน"></i>';
             } else if (wp.name.includes('โปรด 1') || (fav1Loc && Math.abs(wp.lat - fav1Loc.lat) < 0.0001 && Math.abs(wp.lng - fav1Loc.lng) < 0.0001)) {
                 iconAddon = '<i class="fas fa-heart text-pink-500 ml-1.5" title="โปรด"></i>';
@@ -1402,16 +1422,11 @@
             let pos = {lat: p.coords.latitude, lng: p.coords.longitude}; 
             if(map) { 
                 updateMapPadding();
-                let currentZoom = map.getZoom();
-                if(currentZoom > 14) {
-                    map.setZoom(14);
-                    setTimeout(() => {
-                        map.panTo(pos); 
-                        setTimeout(() => { map.setZoom(18); }, 400);
-                    }, 300);
+                map.panTo(pos); 
+                if(map.getZoom() < 16) {
+                    setTimeout(() => { map.setZoom(18); }, 300);
                 } else {
-                    map.panTo(pos);
-                    setTimeout(() => { map.setZoom(18); }, 400);
+                    map.setZoom(18);
                 }
             }
             updateAddressBox(true);
@@ -1725,7 +1740,6 @@
                 if (bookData.status.includes("กำลังเดินทางไปหา") || bookData.status.includes("รับงานแล้ว") || bookData.status.includes("มาถึงจุดรับ")) {
                     dynamicBounds.extend(new google.maps.LatLng(driverData.lat, driverData.lng));
                     if(bookData.pLat !== 0) dynamicBounds.extend(new google.maps.LatLng(bookData.pLat, bookData.pLng));
-                    // ขยาย Bounds ให้เห็นหมุดทั้งหมดด้วย
                     localWaypoints.forEach(wp => dynamicBounds.extend(new google.maps.LatLng(wp.lat, wp.lng)));
                     map.fitBounds(dynamicBounds, { top: 120, right: 50, bottom: paddingBottom, left: 50 });
                 } 
