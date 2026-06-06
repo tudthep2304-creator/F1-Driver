@@ -694,7 +694,8 @@
         }
     }
 
-    windowContext.panAndConfirmPlace = function(name, lat, lng) {
+    // เลื่อนแผนที่สมูท โดยรับ iconType เพื่อใช้แสดงไอคอนเฉพาะปุ่มที่กดจริงๆ
+    windowContext.panAndConfirmPlace = function(name, lat, lng, iconType = null) {
         if(map) {
             updateMapPadding();
             map.panTo({lat: lat, lng: lng});
@@ -709,14 +710,17 @@
         
         setTimeout(() => {
             openConfirmActionModal(`ยืนยันสถานที่`, `คุณต้องการเลือก <b>${name}</b> เป็น <b>${typeName}</b> ใช่หรือไม่?`, () => {
-                addWaypointFromLocation(lat, lng, name, type);
+                // ส่ง iconType เข้าไปด้วยเพื่อให้ระบบจำไว้ตอนวาด UI
+                addWaypointFromLocation(lat, lng, name, type, iconType);
             }, theme);
         }, 600); 
     }
 
-    // ปรับแก้ไขตามเงื่อนไขข้อ 1 & 2: ให้แนบที่อยู่จริง (ตำบล อำเภอ) ต่อท้ายชื่อสถานที่โปรดเพื่อให้คนขับรู้พิกัดที่แท้จริง
+    // แก้ไขส่ง iconType ไปให้ panAndConfirmPlace
     windowContext.handleSavedPlace = function(type) {
         let saved = localStorage.getItem('saved_' + type);
+        let iconType = type; // 'home', 'favorite1', 'favorite2'
+        
         if (saved) { 
             let p = JSON.parse(saved); 
             let typeName = type === 'home' ? 'บ้าน' : (type === 'favorite1' ? 'รายการโปรด 1' : 'รายการโปรด 2');
@@ -731,10 +735,10 @@
                         let fullAddress = bestRes.formatted_address.replace(/,?\s*ประเทศไทย/g, '').replace(/Unnamed Road,?\s*/g, '').replace(/^[A-Z0-9]{2,8}\+.*?\s/g, '').trim();
                         finalAddr = `${typeName} (${fullAddress})`;
                     }
-                    panAndConfirmPlace(finalAddr, p.lat, p.lng);
+                    panAndConfirmPlace(finalAddr, p.lat, p.lng, iconType);
                 });
             } else {
-                panAndConfirmPlace(typeName, p.lat, p.lng);
+                panAndConfirmPlace(typeName, p.lat, p.lng, iconType);
             }
         } else { 
             editSavedPlace(type, {stopPropagation: function(){}}); 
@@ -856,7 +860,17 @@
         }
     }
 
-    // แก้ไขข้อ 3: ถ้าระยะห่างไม่มาก ไม่ต้องใช้ fly-to ซูมเข้าออก ให้สไลด์แบบสมูท (PanTo) แทน
+    windowContext.formatPhone = function(input) { let val = input.value.replace(/\D/g, ''); if (val.startsWith('66')) val = '0' + val.substring(2); if (val.length > 10) val = val.substring(0, 10); input.value = val; }
+    windowContext.openLineOA = function() { if (typeof liff !== 'undefined' && liff.isInClient()) { liff.openWindow({ url: LINE_OA_URL, external: true }); } else { window.open(LINE_OA_URL, '_blank'); } }
+
+    windowContext.handleCrosshairClick = function() {
+        if (currentStep === 2 || currentStep === 3) {
+            useCurrentLocation();
+        } else {
+            centerToFocus();
+        }
+    };
+
     windowContext.focusLocationToggle = function(lat, lng, index) {
         if(!map) return;
         if (focusedWaypointIndex === index) {
@@ -865,9 +879,12 @@
         } else {
             focusedWaypointIndex = index;
             updateMapPadding();
-            // ทำการสไลด์กล้องไปหาแบบสมูทแทนโดยไม่ปรับ Zoom เข้าออกบ่อยๆ
             map.panTo({lat: lat, lng: lng});
-            setTimeout(() => { map.panBy(0, 150); }, 100);
+            if(map.getZoom() < 16) {
+                setTimeout(() => { map.setZoom(17); map.panBy(0, 150); }, 300);
+            } else {
+                setTimeout(() => { map.panBy(0, 150); }, 100);
+            }
         }
         renderWaypointsUI();
     };
@@ -1098,7 +1115,7 @@
 
             if (b.waypoints) {
                 localWaypoints.forEach(w => { if(w.marker) w.marker.setMap(null); });
-                localWaypoints = b.waypoints.map(w => ({ lat: w.lat, lng: w.lng, name: w.name, type: w.type }));
+                localWaypoints = b.waypoints.map(w => ({ lat: w.lat, lng: w.lng, name: w.name, type: w.type, iconType: w.iconType || null }));
             } else {
                 localWaypoints = [];
             }
@@ -1112,7 +1129,7 @@
       });
     }
 
-    function addWaypointFromLocation(lat, lng, name, type) {
+    function addWaypointFromLocation(lat, lng, name, type, iconType = null) {
         let num = type === 'pick' ? localWaypoints.filter(w=>w.type==='pick').length + 1 : localWaypoints.filter(w=>w.type==='drop').length + 1;
         let color = type === 'pick' ? '#22c55e' : '#ef4444';
         
@@ -1122,7 +1139,7 @@
             label: {text: num.toString(), color: 'white', fontWeight: 'bold'},
             animation: google.maps.Animation.DROP, zIndex: 4
         });
-        localWaypoints.push({ lat, lng, name: name, type, marker });
+        localWaypoints.push({ lat, lng, name: name, type, marker, iconType });
         focusedWaypointIndex = -1;
         renderWaypointsUI();
     }
@@ -1190,13 +1207,6 @@
         }
 
         let pCount = 1; let dCount = 1;
-        
-        let hData = localStorage.getItem('saved_home');
-        let f1Data = localStorage.getItem('saved_favorite1');
-        let f2Data = localStorage.getItem('saved_favorite2');
-        let homeLoc = hData ? JSON.parse(hData) : null;
-        let fav1Loc = f1Data ? JSON.parse(f1Data) : null;
-        let fav2Loc = f2Data ? JSON.parse(f2Data) : null;
 
         localWaypoints.forEach((wp, index) => {
             let num = wp.type === 'pick' ? pCount++ : dCount++;
@@ -1224,13 +1234,13 @@
             let bgItem = isFocused ? 'bg-gray-700 border-blue-500/50' : 'bg-gray-800 border-gray-700';
             let textItem = isFocused ? 'text-blue-400' : 'text-gray-200';
             
-            // แก้ไขข้อ 2: ขยับไอคอนนำหน้ามาแสดงไว้ "ด้านหน้าสุดของชื่อสถานที่"
+            // อ่านค่าจาก wp.iconType โดยตรง ไม่ใช้ .includes('บ้าน') อีกต่อไป
             let iconAddonPrefix = '';
-            if (wp.name.includes('บ้าน') || (homeLoc && Math.abs(wp.lat - homeLoc.lat) < 0.0001 && Math.abs(wp.lng - homeLoc.lng) < 0.0001)) {
+            if (wp.iconType === 'home') {
                 iconAddonPrefix = '<i class="fas fa-home text-blue-400 mr-1.5" title="บ้าน"></i>';
-            } else if (wp.name.includes('รายการโปรด 1') || (fav1Loc && Math.abs(wp.lat - fav1Loc.lat) < 0.0001 && Math.abs(wp.lng - fav1Loc.lng) < 0.0001)) {
+            } else if (wp.iconType === 'favorite1') {
                 iconAddonPrefix = '<i class="fas fa-heart text-pink-500 mr-1.5" title="รายการโปรด 1"></i>';
-            } else if (wp.name.includes('รายการโปรด 2') || (fav2Loc && Math.abs(wp.lat - fav2Loc.lat) < 0.0001 && Math.abs(wp.lng - fav2Loc.lng) < 0.0001)) {
+            } else if (wp.iconType === 'favorite2') {
                 iconAddonPrefix = '<i class="fas fa-star text-yellow-500 mr-1.5" title="รายการโปรด 2"></i>';
             }
 
@@ -1398,11 +1408,16 @@
             let pos = {lat: p.coords.latitude, lng: p.coords.longitude}; 
             if(map) { 
                 updateMapPadding();
-                map.panTo(pos); 
-                if(map.getZoom() < 16) {
-                    setTimeout(() => { map.setZoom(18); }, 300);
+                let currentZoom = map.getZoom();
+                if(currentZoom > 14) {
+                    map.setZoom(14);
+                    setTimeout(() => {
+                        map.panTo(pos); 
+                        setTimeout(() => { map.setZoom(18); }, 400);
+                    }, 300);
                 } else {
-                    map.setZoom(18);
+                    map.panTo(pos);
+                    setTimeout(() => { map.setZoom(18); }, 400);
                 }
             }
             updateAddressBox(true);
@@ -1553,7 +1568,7 @@
           bookData.userId = lineUserId; bookData.name = lineName; bookData.phone = tel;
           bookData.status = "รอผู้ขับขี่ตอบรับ"; bookData.timestamp = firebase.database.ServerValue.TIMESTAMP; 
           
-          let dbWaypoints = localWaypoints.map(w => ({ lat: w.lat, lng: w.lng, name: w.name, type: w.type }));
+          let dbWaypoints = localWaypoints.map(w => ({ lat: w.lat, lng: w.lng, name: w.name, type: w.type, iconType: w.iconType || null }));
           bookData.waypoints = dbWaypoints;
           
           db.ref('bookings/' + lineUserId).set(bookData).then(() => {
@@ -1808,14 +1823,14 @@
     windowContext.acceptRouteChange = function() {
         if(windowContext.tempNewWp) { 
             localWaypoints.splice(localWaypoints.length - 1, 0, windowContext.tempNewWp);
-            let dbWaypoints = localWaypoints.map(w => ({ lat: w.lat, lng: w.lng, name: w.name, type: w.type }));
+            let dbWaypoints = localWaypoints.map(w => ({ lat: w.lat, lng: w.lng, name: w.name, type: w.type, iconType: w.iconType || null }));
             let updates = { price: windowContext.tempNewPrice, originalPrice: windowContext.tempNewPrice + (bookData.discount || 0), priceEstimate: `฿${windowContext.tempNewPrice}`, distance: windowContext.tempNewDist, waypoints: dbWaypoints };
             db.ref('bookings/' + lineUserId).update(updates).then(() => { document.getElementById('routeChangeModal').classList.add('hidden'); showAlert("สำเร็จ", "เพิ่มจุดแวะและอัปเดตราคาใหม่เรียบร้อยแล้ว คนขับจะเห็นเส้นทางใหม่ทันที", "success"); windowContext.tempNewWp = null; });
         } else { 
             let req = bookData.routeChangeRequest;
             let updates = { price: windowContext.tempNewPrice, originalPrice: windowContext.tempNewPrice, priceEstimate: `฿${windowContext.tempNewPrice}`, distance: windowContext.tempNewDist, routeChangeRequest: null };
             if (req.type === 'destination') { updates.dLat = req.lat; updates.dLng = req.lng; updates.dName = req.name; } 
-            else { localWaypoints.splice(localWaypoints.length - 1, 0, {lat: req.lat, lng: req.lng, name: req.name, type: 'waypoint'}); updates.waypoints = localWaypoints.map(w => ({ lat: w.lat, lng: w.lng, name: w.name, type: w.type })); }
+            else { localWaypoints.splice(localWaypoints.length - 1, 0, {lat: req.lat, lng: req.lng, name: req.name, type: 'waypoint'}); updates.waypoints = localWaypoints.map(w => ({ lat: w.lat, lng: w.lng, name: w.name, type: w.type, iconType: w.iconType || null })); }
             db.ref('bookings/' + lineUserId).update(updates).then(() => { document.getElementById('routeChangeModal').classList.add('hidden'); window.isShowingRouteChange = false; });
         }
     }
@@ -1849,7 +1864,7 @@
     
     windowContext.blockCurrentHistoryDriver = function() {
         let job = loadedHistoryJobs[selectedHistoryJobId]; 
-        if(!job || !job.driverPin) { showAlert("ผิดพลาด", "not found line driver block id", "error"); return; }
+        if(!job || !job.driverPin) { showAlert("ผิดพลาด", "ไม่สามารถบล็อกได้ เนื่องจากไม่พบข้อมูลรหัสคนขับสำหรับงานนี้", "error"); return; }
         openConfirmActionModal("บล็อกคนขับ?", "หากยืนยัน คุณจะไม่ถูกจับคู่กับคนขับคนนี้อีกต่อไป คุณสามารถจัดการรายการบล็อกได้ในภายหลัง", () => {
             let updates = {}; 
             updates[job.driverPin] = { driverPin: job.driverPin, driverPhone: job.driverPhone || null, timestamp: firebase.database.ServerValue.TIMESTAMP };
