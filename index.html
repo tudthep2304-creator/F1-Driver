@@ -695,13 +695,22 @@
         }
     }
 
-    // เลื่อนแผนที่สมูท โดยรับ iconType เพื่อใช้แสดงไอคอนเฉพาะปุ่มที่กดจริงๆ และเปลี่ยนระดับการซูม
+    // เลื่อนแผนที่สมูท โดยรับ iconType เพื่อใช้แสดงไอคอนเฉพาะปุ่มที่กดจริงๆ และเปลี่ยนระดับการซูมให้เนียนขึ้น
     windowContext.panAndConfirmPlace = function(name, lat, lng, iconType = null) {
         if(map) {
             updateMapPadding();
-            map.panTo({lat: lat, lng: lng});
-            // ตรวจสอบถ้าซูมน้อยไปให้ซูมเข้า หรือถ้าซูมมากไป (แคบไป) ก็ถอยออกมาที่ระดับ 17 เพื่อความพอดี
-            setTimeout(() => { map.setZoom(17); }, 300);
+            // ถ้าซูมเยอะไปให้ถอยกล้องออกมาหน่อย ถ้าซูมน้อยไปให้ซูมเข้าแบบนุ่มนวล
+            let currentZoom = map.getZoom();
+            if(currentZoom > 14) {
+                map.setZoom(14);
+                setTimeout(() => {
+                    map.panTo({lat: lat, lng: lng});
+                    setTimeout(() => { map.setZoom(17); }, 400);
+                }, 300);
+            } else {
+                map.panTo({lat: lat, lng: lng});
+                setTimeout(() => { map.setZoom(17); }, 400);
+            }
         }
         
         let type = currentStep === 2 ? 'pick' : 'drop';
@@ -713,12 +722,12 @@
                 // ส่ง iconType เข้าไปด้วยเพื่อให้ระบบจำไว้ตอนวาด UI
                 addWaypointFromLocation(lat, lng, name, type, iconType);
             }, theme);
-        }, 500); 
+        }, 800); 
     }
 
     windowContext.handleSavedPlace = function(type) {
         let saved = localStorage.getItem('saved_' + type);
-        let iconType = type; // 'home', 'favorite1', 'favorite2'
+        let iconType = type; 
         
         if (saved) { 
             let p = JSON.parse(saved); 
@@ -878,20 +887,52 @@
         } else {
             focusedWaypointIndex = index;
             updateMapPadding();
-            // เลื่อนอย่างนุ่มนวลโดยไม่ต้องซูมเข้าซูมออก
-            map.panTo({lat: lat, lng: lng});
-            setTimeout(() => { map.setZoom(17); map.panBy(0, 150); }, 200);
+            
+            let currentZoom = map.getZoom();
+            if(currentZoom > 14) {
+                map.setZoom(14);
+                setTimeout(() => {
+                    map.panTo({lat: lat, lng: lng});
+                    setTimeout(() => { map.setZoom(17); }, 400);
+                }, 300);
+            } else {
+                map.panTo({lat: lat, lng: lng});
+                setTimeout(() => { map.setZoom(17); }, 400);
+            }
         }
         renderWaypointsUI();
     };
 
-    // ปุ่มกด Overview 
+    function centerToFocus() {
+        if(!map) return;
+        if(currentStep === 'Tracking' && markerDriver && markerDriver.getMap()) {
+            isTrackingMode = true; 
+            const panel = document.getElementById('trackingPanel');
+            
+            const doPanToCar = () => {
+                updateMapPadding();
+                map.panTo(markerDriver.getPosition());
+                map.setZoom(18); // ซูมลึก 18 ตามคำขอ
+            };
+
+            // หดกรอบทันทีที่เล็งเป้ารถ
+            if(panel && !panel.classList.contains('panel-collapsed')) { 
+                panel.classList.add('panel-collapsed'); 
+                setTimeout(doPanToCar, 350);
+            } else {
+                doPanToCar();
+            }
+            return;
+        }
+        useCurrentLocation();
+    }
+
     windowContext.fitAllWaypoints = function() {
         if (!map || localWaypoints.length === 0) return;
         focusedWaypointIndex = -1; 
         isTrackingMode = false;
         
-        // เด้งกรอบขึ้นมาด้านบน (ยกเลิก collapse)
+        // เด้งกรอบขึ้นมาด้านบนเวลาดูเส้นทางรวม
         const panel = document.getElementById('trackingPanel');
         if(panel && panel.classList.contains('panel-collapsed')) {
             panel.classList.remove('panel-collapsed');
@@ -903,7 +944,6 @@
             bounds.extend(new google.maps.LatLng(driverData.lat, driverData.lng));
         }
         
-        // แสดงหมุดที่ยังไม่ขีดฆ่าให้เห็นในแผนที่ด้วย
         let activeWaypoints = localWaypoints.filter(w => !w.passed);
         activeWaypoints.forEach(wp => bounds.extend({lat: wp.lat, lng: wp.lng}));
 
@@ -911,32 +951,6 @@
         map.fitBounds(bounds, { top: 140, right: 50, bottom: pb, left: 50 });
         renderWaypointsUI();
     };
-
-    // ปุ่มกดเป้าเล็งรถ
-    function centerToFocus() {
-        if(!map) return;
-        if(currentStep === 'Tracking' && markerDriver && markerDriver.getMap()) {
-            isTrackingMode = true; 
-            const panel = document.getElementById('trackingPanel');
-            
-            const doPanToCar = () => {
-                updateMapPadding();
-                map.panTo(markerDriver.getPosition());
-                // ซูมไประดับ 18
-                map.setZoom(18);
-            };
-
-            // กดเป้าเล็ง ให้หดกรอบด้านล่างลง
-            if(panel && !panel.classList.contains('panel-collapsed')) { 
-                panel.classList.add('panel-collapsed'); 
-                setTimeout(doPanToCar, 350);
-            } else {
-                doPanToCar();
-            }
-            return;
-        }
-        useCurrentLocation();
-    }
 
     function createNumberedMarkerIcon(text, colorHex) {
         return {
@@ -1124,7 +1138,6 @@
 
             if (b.waypoints) {
                 localWaypoints.forEach(w => { if(w.marker) w.marker.setMap(null); });
-                // แมพค่า passed เข้ามาด้วย
                 localWaypoints = b.waypoints.map(w => ({ lat: w.lat, lng: w.lng, name: w.name, type: w.type, iconType: w.iconType || null, passed: w.passed || false }));
             } else {
                 localWaypoints = [];
@@ -1227,7 +1240,6 @@
             if (wp.type === 'drop') { colorClass = 'bg-red-500 text-white'; colorHex = '#ef4444'; }
             if (wp.type === 'waypoint') { colorClass = 'bg-yellow-500 text-black'; colorHex = '#eab308'; }
 
-            // ถ้าจุดนี้ผ่านมาแล้ว ให้เป็นสีเทาทั้งหมด
             let textItem = isFocused ? 'text-blue-400' : 'text-gray-200';
             if (wp.passed) {
                 colorClass = 'bg-gray-600 text-gray-400';
@@ -1502,7 +1514,6 @@
       });
     }
 
-    // วาดเส้นทางใหม่สำหรับ Tracking โดยซ่อนจุดที่ passed แล้ว
     function drawTrackingRoute(statusText) {
         if(!directionsService || !map || localWaypoints.length === 0) return;
         
@@ -1612,7 +1623,24 @@
       const labelBottom = document.getElementById('unifiedStatusLabel'); const etaBottom = document.getElementById('unifiedEtaText'); const searchProgress = document.getElementById('searchProgressBar');
 
       if(driverBox) driverBox.classList.add('hidden'); if(actionButtonsBox) actionButtonsBox.classList.add('hidden');
-      if(statusBottom) statusBottom.innerText = bookData.status;
+
+      // อัปเดตข้อความสเตตัสให้ฉลาดขึ้นตามคิว
+      let displayStatus = bookData.status;
+      let nextWp = localWaypoints.find(w => !w.passed);
+      
+      if (nextWp) {
+          let shortName = nextWp.name.length > 20 ? nextWp.name.substring(0, 20) + '...' : nextWp.name;
+          if (bookData.status.includes("กำลังเดินทางไปหา") || bookData.status.includes("รับงานแล้ว")) {
+              displayStatus = `กำลังไปจุดรับ: ${shortName}`;
+          } else if (bookData.status.includes("ออกเดินทาง") || bookData.status.includes("ไปยังจุดส่ง")) {
+              if (nextWp.type === 'waypoint') {
+                  displayStatus = `กำลังไปจุดแวะ: ${shortName}`;
+              } else if (nextWp.type === 'drop') {
+                  displayStatus = `กำลังไปจุดส่ง: ${shortName}`;
+              }
+          }
+      }
+      if(statusBottom) statusBottom.innerText = displayStatus;
 
       if(bookData.status === "รอผู้ขับขี่ตอบรับ") {
           if(priceLabelBottom) priceLabelBottom.innerText = "ราคาประเมิน"; if(priceBottom) priceBottom.innerText = bookData.priceEstimate || "~฿" + bookData.price;
@@ -1748,7 +1776,6 @@
                     dynamicBounds.extend(new google.maps.LatLng(driverData.lat, driverData.lng));
                 }
 
-                // ควบคุม Overview อัตโนมัติให้รวมเฉพาะจุดหมายถัดไป (ที่ยังไม่ผ่าน) เท่านั้น
                 let nextWp = localWaypoints.find(w => !w.passed);
                 if (nextWp) {
                     dynamicBounds.extend(new google.maps.LatLng(nextWp.lat, nextWp.lng));
@@ -1756,7 +1783,6 @@
 
                 map.fitBounds(dynamicBounds, { top: 120, right: 50, bottom: paddingBottom, left: 50 });
                 
-                // จำกัดไม่ให้ซูมเข้ามากเกินไปเวลารถกับจุดหมายอยู่ใกล้กัน
                 let listener = google.maps.event.addListenerOnce(map, "idle", function() { 
                     if (map.getZoom() > 18) map.setZoom(18); 
                 });
