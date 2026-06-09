@@ -92,34 +92,39 @@
     </div>
 
     <div class="p-4 flex-1 flex flex-col items-center">
-      <div id="homeBannerContainer" class="w-full max-w-sm aspect-video bg-gray-900 rounded-2xl mb-6 shadow-md overflow-hidden relative border border-gray-700 hidden">
-          <div id="bannerSlider" class="flex overflow-x-auto snap-x snap-mandatory hide-scrollbar w-full h-full relative scroll-smooth items-center">
-              </div>
-          <div class="absolute bottom-2 right-2 bg-black/60 px-2 py-0.5 rounded text-[10px] text-white z-10">Ad</div>
-      </div>
-      
-      <div class="grid grid-cols-2 gap-4 w-full max-w-sm mx-auto mb-6">
-          <button onclick="openVehicleModal()" class="bg-blue-600/20 border border-blue-500/50 text-blue-400 p-6 rounded-3xl flex flex-col items-center justify-center gap-3 hover:bg-blue-600 hover:text-white transition shadow-sm active:scale-95">
-              <i class="fas fa-map-marked-alt text-4xl"></i>
-              <span class="font-bold text-sm">เรียกรถ</span>
-          </button>
-          
-          <button onclick="openNewsModal()" class="bg-yellow-600/20 border border-yellow-500/50 text-yellow-400 p-6 rounded-3xl flex flex-col items-center justify-center gap-3 hover:bg-yellow-600 hover:text-white transition shadow-sm active:scale-95 relative">
-              <div class="absolute -top-2 -right-2 bg-red-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow border border-red-400 animate-pulse">New</div>
-              <i class="fas fa-bullhorn text-4xl"></i>
-              <span class="font-bold text-sm text-center leading-tight">ข่าวสาร &<br>โปรโมชั่น</span>
-          </button>
+<div id="homeBannerContainer" class="w-full max-w-sm aspect-video bg-gray-950 rounded-2xl mb-4 shadow-md overflow-hidden relative border border-gray-700 hidden">
+    <div id="bannerSlider" class="flex overflow-x-auto snap-x snap-mandatory hide-scrollbar w-full h-full relative scroll-smooth items-center">
+        </div>
+    <div id="bannerDots" class="absolute bottom-3 left-1/2 transform -translate-x-1/2 flex gap-1.5 z-10 bg-black/40 px-2 py-1 rounded-full"></div>
+</div>
 
-          <button onclick="showAlert('เตรียมพบกันเร็วๆ นี้!', 'ระบบดูสเตตัสและเลือกคนขับจะเปิดให้ใช้งานในอัปเดต Phase 2 ครับ', 'info')" class="bg-purple-600/20 border border-purple-500/50 text-purple-400 p-6 rounded-3xl flex flex-col items-center justify-center gap-3 hover:bg-purple-600 hover:text-white transition shadow-sm active:scale-95">
-              <i class="fas fa-users text-4xl"></i>
-              <span class="font-bold text-sm text-center leading-tight">คอมมูนิตี้<br>คนขับ</span>
-          </button>
+<div class="grid grid-cols-2 gap-3 w-full max-w-sm mx-auto mb-4">
+    <button onclick="openVehicleModal()" class="bg-blue-600/20 border border-blue-500/50 text-blue-400 p-3.5 rounded-2xl flex flex-col items-center justify-center gap-2 hover:bg-blue-600 hover:text-white transition shadow-sm active:scale-95">
+        <i class="fas fa-map-marked-alt text-2xl"></i>
+        <span class="font-bold text-xs">เรียกรถ</span>
+    </button>
+    
+    <button onclick="openNewsModal()" class="bg-yellow-600/20 border border-yellow-500/50 text-yellow-400 p-3.5 rounded-2xl flex flex-col items-center justify-center gap-2 hover:bg-yellow-600 hover:text-white transition shadow-sm active:scale-95 relative">
+        <div class="absolute -top-1 -right-1 bg-red-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full shadow border border-red-400 animate-pulse">New</div>
+        <i class="fas fa-bullhorn text-2xl"></i>
+        <span class="font-bold text-xs text-center leading-tight">ข่าวสาร & โปรโมชั่น</span>
+    </button>
 
-          <button onclick="openProfileModal()" class="bg-gray-800 border border-gray-700 text-gray-300 p-6 rounded-3xl flex flex-col items-center justify-center gap-3 hover:bg-gray-700 hover:text-white transition shadow-sm active:scale-95">
-              <i class="fas fa-user-circle text-4xl"></i>
-              <span class="font-bold text-sm">โปรไฟล์</span>
-          </button>
-      </div>
+    <button onclick="showAlert('เตรียมพบกันเร็วๆ นี้!', 'ระบบดูสเตตัสและเลือกคนขับจะเปิดให้ใช้งานในอัปเดต Phase 2 ครับ', 'info')" class="bg-purple-600/20 border border-purple-500/50 text-purple-400 p-3.5 rounded-2xl flex flex-col items-center justify-center gap-2 hover:bg-purple-600 hover:text-white transition shadow-sm active:scale-95">
+        <i class="fas fa-users text-2xl"></i>
+        <span class="font-bold text-xs text-center leading-tight">คอมมูนิตี้คนขับ</span>
+    </button>
+
+    <button onclick="openProfileModal()" class="bg-gray-800 border border-gray-700 text-gray-300 p-3.5 rounded-2xl flex flex-col items-center justify-center gap-2 hover:bg-gray-700 hover:text-white transition shadow-sm active:scale-95">
+        <i class="fas fa-user-circle text-2xl"></i>
+        <span class="font-bold text-xs">โปรไฟล์</span>
+    </button>
+</div>
+
+<div id="bottomBannerContainer" class="w-full max-w-sm h-14 bg-gray-900 rounded-xl mb-4 border border-gray-800 overflow-hidden hidden relative shadow-md">
+    <div id="bottomBannerSlider" class="flex overflow-x-auto snap-x snap-mandatory hide-scrollbar w-full h-full relative scroll-smooth items-center">
+        </div>
+</div>
 
       <div class="w-full max-w-sm bg-gray-800 p-4 rounded-2xl text-center border border-gray-700 shadow-sm relative overflow-hidden mt-auto">
         <div class="absolute top-0 right-0 p-3 opacity-[0.03]"><i class="fas fa-car-side text-6xl text-white"></i></div>
@@ -706,45 +711,109 @@
     let pricingConfig = { base: 50, km: 10, pick: 5 }; 
     db.ref('config/pricing').on('value', snap => { if(snap.exists()) pricingConfig = snap.val(); });
 
-    // ดึงข้อมูล Banner โฆษณามาแสดงเป็นสไลด์โชว์
-    let bannerInterval;
-    db.ref('config/banners').on('value', snap => {
-        let bannerContainer = document.getElementById('homeBannerContainer');
-        let slider = document.getElementById('bannerSlider');
-        
-        clearInterval(bannerInterval);
-        
-        if(snap.exists()) {
-            let banners = [];
-            snap.forEach(child => { banners.push(child.val()); });
-            
-            if (banners.length > 0) {
-                bannerContainer.classList.remove('hidden');
-                let html = '';
-                banners.forEach(b => {
-                    let target = b.linkUrl ? '_blank' : '_self';
-                    let href = b.linkUrl ? b.linkUrl : '#';
-                    html += `
-                    <a href="${href}" target="${target}" class="min-w-full h-full shrink-0 snap-center relative block cursor-pointer">
-                        <img src="${b.imageUrl}" class="w-full h-full object-contain">
-                    </a>`;
-                });
-                slider.innerHTML = html;
+// ฟังก์ชันจัดการสไลด์แบนเนอร์บน แบนเนอร์ล่าง และระบบจุดเปลี่ยนตามตำแหน่งสไลด์จริง
+let bannerInterval, bottomBannerInterval;
 
-                if (banners.length > 1) {
-                    let currentSlide = 0;
-                    bannerInterval = setInterval(() => {
-                        currentSlide = (currentSlide + 1) % banners.length;
-                        slider.scrollTo({ left: currentSlide * slider.clientWidth, behavior: 'smooth' });
-                    }, 4000);
-                }
-            } else {
-                bannerContainer.classList.add('hidden');
+function checkBannerSchedule(b) {
+    let now = Date.now();
+    let start = b.startTime ? new Date(b.startTime).getTime() : 0;
+    let end = b.endTime ? new Date(b.endTime).getTime() : Infinity;
+    return now >= start && now <= end;
+}
+
+// 🌟 ดึงข้อมูลแบนเนอร์บน + อัปเดตเม็ดไข่ปลาบอกพิกัดสไลด์
+db.ref('config/banners').on('value', snap => {
+    let bannerContainer = document.getElementById('homeBannerContainer');
+    let slider = document.getElementById('bannerSlider');
+    let dotsContainer = document.getElementById('bannerDots');
+    
+    clearInterval(bannerInterval);
+    slider.innerHTML = '';
+    dotsContainer.innerHTML = '';
+    
+    if(snap.exists()) {
+        let banners = [];
+        snap.forEach(child => { 
+            let b = child.val();
+            if (checkBannerSchedule(b)) { banners.push(b); }
+        });
+        
+        if (banners.length > 0) {
+            bannerContainer.classList.remove('hidden');
+            
+            banners.forEach((b, idx) => {
+                let target = b.linkUrl ? '_blank' : '_self';
+                let href = b.linkUrl ? b.linkUrl : '#';
+                
+                // ใช้ object-contain ป้องกันภาพบิดเบี้ยวหรือโดนซูมขอบ
+                slider.innerHTML += `
+                <a href="${href}" target="${target}" class="min-w-full h-full shrink-0 snap-center relative block">
+                    <img src="${b.imageUrl}" class="w-full h-full object-contain bg-gray-950">
+                </a>`;
+                
+                dotsContainer.innerHTML += `<span class="banner-dot h-2 rounded-full transition-all duration-300 ${idx === 0 ? 'bg-green-500 w-4' : 'bg-white/40 w-2'}"></span>`;
+            });
+
+            // ตรวจจับพิกัดสไลด์แบบเรียลไทม์เพื่อสลับสีและความยาวของจุดบอกตำแหน่งดาว
+            slider.addEventListener('scroll', () => {
+                let activeIndex = Math.round(slider.scrollLeft / slider.clientWidth);
+                let dots = dotsContainer.querySelectorAll('.banner-dot');
+                dots.forEach((dot, idx) => {
+                    if (idx === activeIndex) {
+                        dot.className = "banner-dot h-2 rounded-full transition-all duration-300 bg-green-500 w-4";
+                    } else {
+                        dot.className = "banner-dot h-2 rounded-full transition-all duration-300 bg-white/40 w-2";
+                    }
+                });
+            });
+
+            if (banners.length > 1) {
+                let currentSlide = 0;
+                bannerInterval = setInterval(() => {
+                    currentSlide = (currentSlide + 1) % banners.length;
+                    slider.scrollTo({ left: currentSlide * slider.clientWidth, behavior: 'smooth' });
+                }, 4000);
             }
-        } else {
-            bannerContainer.classList.add('hidden');
-        }
-    });
+        } else { bannerContainer.classList.add('hidden'); }
+    } else { bannerContainer.classList.add('hidden'); }
+});
+
+// 🌟 ดึงข้อมูลแบนเนอร์ล่าง (Slim Banner) แนวยาว
+db.ref('config/bottom_banners').on('value', snap => {
+    let container = document.getElementById('bottomBannerContainer');
+    let slider = document.getElementById('bottomBannerSlider');
+    
+    clearInterval(bottomBannerInterval);
+    slider.innerHTML = '';
+    
+    if(snap.exists()) {
+        let banners = [];
+        snap.forEach(child => {
+            let b = child.val();
+            if (checkBannerSchedule(b)) { banners.push(b); }
+        });
+        
+        if(banners.length > 0) {
+            container.classList.remove('hidden');
+            banners.forEach(b => {
+                let target = b.linkUrl ? '_blank' : '_self';
+                let href = b.linkUrl ? b.linkUrl : '#';
+                slider.innerHTML += `
+                <a href="${href}" target="${target}" class="min-w-full h-full shrink-0 snap-center block">
+                    <img src="${b.imageUrl}" class="w-full h-full object-contain bg-gray-950">
+                </a>`;
+            });
+            
+            if(banners.length > 1) {
+                let currentSlide = 0;
+                bottomBannerInterval = setInterval(() => {
+                    currentSlide = (currentSlide + 1) % banners.length;
+                    slider.scrollTo({ left: currentSlide * slider.clientWidth, behavior: 'smooth' });
+                }, 4500);
+            }
+        } else { container.classList.add('hidden'); }
+    } else { container.classList.add('hidden'); }
+});
 
     windowContext.hasSpokenAccept = false; windowContext.hasSpokenArrivePick = false; windowContext.hasSpokenAtPickup = false;
     windowContext.hasSpokenDepart = false; windowContext.hasSpokenArriveDrop = false; windowContext.hasSpokenFinish = false;
