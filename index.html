@@ -92,10 +92,12 @@
     </div>
 
     <div class="p-4 flex-1 flex flex-col items-center">
-      <div id="homeBannerContainer" class="w-full max-w-sm h-40 bg-gray-800 rounded-2xl mb-6 shadow-md overflow-hidden relative border border-gray-700">
-          <img id="homeBannerImg" src="https://via.placeholder.com/600x300/1f2937/22c55e?text=F1+Driver" class="w-full h-full object-cover transition-opacity duration-500" alt="Banner">
-          <div class="absolute bottom-2 right-2 bg-black/60 px-2 py-0.5 rounded text-[10px] text-white">Ad</div>
+            <div id="homeBannerContainer" class="w-full max-w-sm h-40 bg-gray-800 rounded-2xl mb-6 shadow-md overflow-hidden relative border border-gray-700 hidden">
+          <div id="bannerSlider" class="flex overflow-x-auto snap-x snap-mandatory hide-scrollbar w-full h-full relative scroll-smooth">
+              </div>
+          <div class="absolute bottom-2 right-2 bg-black/60 px-2 py-0.5 rounded text-[10px] text-white z-10">Ad</div>
       </div>
+
       
       <div class="grid grid-cols-2 gap-4 w-full max-w-sm mx-auto mb-6">
           <button onclick="openVehicleModal()" class="bg-blue-600/20 border border-blue-500/50 text-blue-400 p-6 rounded-3xl flex flex-col items-center justify-center gap-3 hover:bg-blue-600 hover:text-white transition shadow-sm active:scale-95">
@@ -687,18 +689,47 @@
     let pricingConfig = { base: 50, km: 10, pick: 5 }; 
     db.ref('config/pricing').on('value', snap => { if(snap.exists()) pricingConfig = snap.val(); });
 
-    // ดึงข้อมูล Banner โฆษณามาแสดงในหน้าแรก
+     // ดึงข้อมูล Banner โฆษณามาแสดงเป็นสไลด์โชว์
+    let bannerInterval;
     db.ref('config/banners').on('value', snap => {
         let bannerContainer = document.getElementById('homeBannerContainer');
-        let bannerImg = document.getElementById('homeBannerImg');
-        if(snap.exists() && snap.val().imageUrl) {
-            bannerContainer.classList.remove('hidden');
-            bannerImg.src = snap.val().imageUrl;
+        let slider = document.getElementById('bannerSlider');
+        
+        clearInterval(bannerInterval); // เคลียร์สไลด์เก่าทิ้งก่อน
+        
+        if(snap.exists()) {
+            let banners = [];
+            snap.forEach(child => { banners.push(child.val()); });
+            
+            if (banners.length > 0) {
+                bannerContainer.classList.remove('hidden');
+                let html = '';
+                banners.forEach(b => {
+                    let target = b.linkUrl ? '_blank' : '_self';
+                    let href = b.linkUrl ? b.linkUrl : '#';
+                    html += `
+                    <a href="${href}" target="${target}" class="min-w-full h-full shrink-0 snap-center relative block cursor-pointer">
+                        <img src="${b.imageUrl}" class="w-full h-full object-cover">
+                    </a>`;
+                });
+                slider.innerHTML = html;
+
+                // ถ้ารูปมีมากกว่า 1 รูป ให้ตั้งเวลาสไลด์อัตโนมัติทุกๆ 4 วินาที
+                if (banners.length > 1) {
+                    let currentSlide = 0;
+                    bannerInterval = setInterval(() => {
+                        currentSlide = (currentSlide + 1) % banners.length;
+                        slider.scrollTo({ left: currentSlide * slider.clientWidth, behavior: 'smooth' });
+                    }, 4000);
+                }
+            } else {
+                bannerContainer.classList.add('hidden');
+            }
         } else {
-            // ถ้าแอดมินปิดการแสดงผล หรือไม่มีรูปลบ element ทิ้งไปเลย
             bannerContainer.classList.add('hidden');
         }
     });
+
 
     windowContext.hasSpokenAccept = false; windowContext.hasSpokenArrivePick = false; windowContext.hasSpokenAtPickup = false;
     windowContext.hasSpokenDepart = false; windowContext.hasSpokenArriveDrop = false; windowContext.hasSpokenFinish = false;
