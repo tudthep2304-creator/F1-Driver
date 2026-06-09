@@ -1685,7 +1685,8 @@
 
         db.ref('promotions/' + val).once('value', snap => {
             let p = snap.val();
-            if (p && p.isActive !== false) {
+            // เช็คว่าโค้ดถูกเปิดใช้งาน และ (ไม่ใช่โค้ดสุ่ม หรือ โค้ดสุ่มที่ยังไม่เคยใช้)
+            if (p && p.isActive !== false && (!p.isSingleUse || (p.isSingleUse && (!p.usageCount || p.usageCount < 1)))) {
                 bookData.promoCode = p.code; bookData.discount = p.value;
                 bookData.price = Math.max(0, bookData.originalPrice - p.value);
                 let maxPrice = Math.max(0, (bookData.originalPrice + 20) - p.value);
@@ -1698,7 +1699,7 @@
                 
                 closePromoModal(); showAlert('สำเร็จ!', `ใช้โค้ดส่วนลด ${p.code} ได้รับส่วนลด ${p.value} บาทเรียบร้อยแล้ว`, 'success');
             } else {
-                showAlert('ขออภัย', 'โค้ดส่วนลดนี้ไม่ถูกต้อง หรือถูกปิดการใช้งานไปแล้วครับ', 'error'); codeInput.value = '';
+                showAlert('ขออภัย', 'โค้ดส่วนลดนี้ไม่ถูกต้อง ถูกปิดการใช้งาน หรือถูกใช้งานไปแล้วครับ', 'error'); codeInput.value = '';
                 bookData.promoCode = ''; bookData.discount = 0; bookData.price = bookData.originalPrice;
                 bookData.priceEstimate = `~฿${bookData.originalPrice} - ${bookData.originalPrice + 20}`;
                 
@@ -1707,6 +1708,7 @@
             }
         });
     }
+
 
     windowContext.submitBooking = function() {
       if ('speechSynthesis' in window) { let unlockMsg = new SpeechSynthesisUtterance(''); window.speechSynthesis.speak(unlockMsg); }
