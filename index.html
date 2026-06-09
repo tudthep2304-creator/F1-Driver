@@ -109,7 +109,7 @@
               <span class="font-bold text-sm text-center leading-tight">ข่าวสาร &<br>โปรโมชั่น</span>
           </button>
 
-          <button onclick="showAlert('เตรียมพบกันเร็วๆ นี้!', 'ระบบดูสเตตัสและเลือกคนขับจะเปิดให้ใช้งานในอัปเดต Phase 2 ครับ', 'info')" class="bg-purple-600/20 border border-purple-500/50 text-purple-400 p-6 rounded-3xl flex flex-col items-center justify-center gap-3 hover:bg-purple-600 hover:text-white transition shadow-sm active:scale-95">
+          <button onclick="showAlert('เตรียมพบกันเร็วๆ นี้!', 'ระบบคอมมูนิตี้และเลือกคนขับจะเปิดให้ใช้งานในอัปเดต Phase 2 ครับ', 'info')" class="bg-purple-600/20 border border-purple-500/50 text-purple-400 p-6 rounded-3xl flex flex-col items-center justify-center gap-3 hover:bg-purple-600 hover:text-white transition shadow-sm active:scale-95">
               <i class="fas fa-users text-4xl"></i>
               <span class="font-bold text-sm text-center leading-tight">คอมมูนิตี้<br>คนขับ</span>
           </button>
@@ -591,6 +591,8 @@
 
     // --- State สำหรับเก็บข้อมูลประเภทการเดินทาง ---
     windowContext.currentServiceType = 'car';
+    
+    let activeDriversList = [];
 
     // เปิดหน้าเลือกประเภทรถ
     windowContext.openVehicleModal = function() {
@@ -636,7 +638,6 @@
             
             let items = [];
             snap.forEach(child => { items.push({ id: child.key, ...child.val() }); });
-            // เรียงลำดับจากใหม่ไปเก่า (อิงจากเวลา)
             items.sort((a,b) => (b.timestamp || 0) - (a.timestamp || 0));
 
             let html = '';
@@ -687,7 +688,6 @@
     let pricingConfig = { base: 50, km: 10, pick: 5 }; 
     db.ref('config/pricing').on('value', snap => { if(snap.exists()) pricingConfig = snap.val(); });
 
-    // ดึงข้อมูล Banner โฆษณามาแสดงในหน้าแรก
     db.ref('config/banners').on('value', snap => {
         let bannerContainer = document.getElementById('homeBannerContainer');
         let bannerImg = document.getElementById('homeBannerImg');
@@ -695,7 +695,6 @@
             bannerContainer.classList.remove('hidden');
             bannerImg.src = snap.val().imageUrl;
         } else {
-            // ถ้าแอดมินปิดการแสดงผล หรือไม่มีรูปลบ element ทิ้งไปเลย
             bannerContainer.classList.add('hidden');
         }
     });
@@ -1236,19 +1235,24 @@
       requestWakeLock();
       db.ref('passenger_blocks/' + lineUserId).on('value', snap => { myBlockedDrivers = snap.val() || {}; });
 
-      db.ref('driver').on('value', snap => {
-        const d = snap.val();
-        if(d) {
-          driverData = d; let ds = document.getElementById('driverStatus'); 
-          if(d.status === "ออนไลน์") {
-            if(ds) { ds.innerHTML = `<i class="fas fa-check-circle text-green-500 mr-1"></i> ออนไลน์`; ds.className = "text-xl font-black text-green-400 relative z-10 flex items-center justify-center"; }
+      // ดึงรายชื่อคนขับทั้งหมดที่ออนไลน์
+      db.ref('active_drivers').on('value', snap => {
+          activeDriversList = [];
+          let hasOnline = false;
+          snap.forEach(child => {
+              let d = child.val();
+              if(d.status === "ออนไลน์" && d.lat && d.lng) {
+                  activeDriversList.push(d);
+                  hasOnline = true;
+              }
+          });
+
+          let ds = document.getElementById('driverStatus');
+          if(hasOnline) {
+              if(ds) { ds.innerHTML = `<i class="fas fa-check-circle text-green-500 mr-1"></i> มีรถออนไลน์ ${activeDriversList.length} คัน`; ds.className = "text-xl font-black text-green-400 relative z-10 flex items-center justify-center"; }
           } else {
-            if(ds) { ds.innerHTML = `<i class="fas fa-times-circle text-red-400 mr-1"></i> ออฟไลน์`; ds.className = "text-xl font-black text-red-400 relative z-10 flex items-center justify-center"; }
+              if(ds) { ds.innerHTML = `<i class="fas fa-times-circle text-red-400 mr-1"></i> ออฟไลน์ (ไม่มีรถว่าง)`; ds.className = "text-xl font-black text-red-400 relative z-10 flex items-center justify-center"; }
           }
-          if(currentStep === 'Tracking' && markerDriver) { 
-              markerDriver.setPosition({lat: d.lat, lng: d.lng}); 
-          }
-        }
       });
 
       db.ref('bookings/' + lineUserId).on('value', snap => {
@@ -1611,28 +1615,45 @@
           let distRideKm = distMeters / 1000; waitMins = Math.ceil(waitMins / 60);
           currentRouteBounds = resRide.routes[0].bounds;
 
-          let distanceDriverToPickupKm = 0;
-          if (driverData && driverData.lat && driverData.lng && typeof google.maps.geometry !== 'undefined') {
-              let driverLatLng = new google.maps.LatLng(driverData.lat, driverData.lng);
-              let distanceInMeters = google.maps.geometry.spherical.computeDistanceBetween(driverLatLng, origin);
-              distanceDriverToPickupKm = distanceInMeters / 1000;
-          }
-
           bookData.distance = distRideKm.toFixed(1); bookData.duration = waitMins;
           const sDist = document.getElementById('sumDist'); const sWait = document.getElementById('sumWait');
           if(sDist) sDist.innerText = bookData.distance; if(sWait) sWait.innerText = bookData.duration;
 
-          // คำนวณราคาตามประเภท (ถ้ามีใน Object pricingConfig) หรือ Fallback ไปค่า Default
-          let baseFare = parseInt(pricingConfig[windowContext.currentServiceType]?.base || pricingConfig.base || 50); 
-          let kmRate = parseInt(pricingConfig[windowContext.currentServiceType]?.km || pricingConfig.km || 10);
-          let calculatedTotalDistance = distRideKm + distanceDriverToPickupKm;
+          // -----------------------------------------
+          // NEW LOGIC: คำนวณราคารวมระยะคนขับ
+          // -----------------------------------------
+          let srvType = windowContext.currentServiceType || 'car';
+          let baseFare = parseInt(pricingConfig[srvType]?.base || pricingConfig.base || 50); 
+          let kmRate = parseInt(pricingConfig[srvType]?.km || pricingConfig.km || 10);
 
-          let calcPrice = Math.ceil(baseFare + (calculatedTotalDistance * kmRate));
-          let minPrice = Math.floor(calcPrice / 10) * 10;
-          if(minPrice < baseFare) minPrice = baseFare;
-          let maxPrice = minPrice + 20;
+          let minDriverDist = 0;
+          let maxDriverDist = 5; // Default max buffer ถ้าไม่มีคนออนไลน์เลย
+
+          if (activeDriversList && activeDriversList.length > 0 && typeof google.maps.geometry !== 'undefined') {
+              let distances = activeDriversList.map(d => {
+                  let dLatlng = new google.maps.LatLng(d.lat, d.lng);
+                  return google.maps.geometry.spherical.computeDistanceBetween(dLatlng, origin) / 1000;
+              });
+              minDriverDist = Math.min(...distances);
+              maxDriverDist = Math.max(...distances);
+          }
+
+          // ราคาประเมินต่ำสุด (คนขับใกล้สุด)
+          let minTotalDist = distRideKm + minDriverDist;
+          let minCalcPrice = Math.ceil(baseFare + (minTotalDist * kmRate));
+          let finalMinPrice = Math.max(baseFare, Math.floor(minCalcPrice / 10) * 10);
+
+          // ราคาประเมินสูงสุด (คนขับไกลสุด)
+          let maxTotalDist = distRideKm + maxDriverDist;
+          let maxCalcPrice = Math.ceil(baseFare + (maxTotalDist * kmRate));
+          let finalMaxPrice = Math.max(finalMinPrice, Math.ceil(maxCalcPrice / 10) * 10);
+
+          if (finalMinPrice === finalMaxPrice) finalMaxPrice += 20;
           
-          bookData.originalPrice = minPrice; bookData.price = minPrice; bookData.priceEstimate = `~฿${minPrice} - ${maxPrice}`;
+          bookData.originalPrice = finalMinPrice; 
+          bookData.price = finalMinPrice; 
+          bookData.priceEstimate = `~฿${finalMinPrice} - ${finalMaxPrice}`;
+
           const sPrice = document.getElementById('sumPrice');
           if(sPrice) sPrice.innerText = bookData.priceEstimate;
 
