@@ -13,38 +13,19 @@
     @import url('https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;700&display=swap');
     body { font-family: 'Kanit', sans-serif; background-color: #111827; color: #f3f4f6; }
     .map-container { position: fixed; inset: 0; width: 100vw; height: 100vh; z-index: 0; background: #1f2937; }
-    
-    .ui-panel { 
-        position: fixed; bottom: 0; left: 0; right: 0; 
-        background: #111827; border-top-left-radius: 24px; border-top-right-radius: 24px; 
-        box-shadow: 0 -10px 30px rgba(0,0,0,0.6); z-index: 10; 
-        display: flex; flex-direction: column; padding: 20px; 
-        max-height: 85vh; overflow-y: hidden;
-    }
-
+    .ui-panel { position: fixed; bottom: 0; left: 0; right: 0; background: #111827; border-top-left-radius: 24px; border-top-right-radius: 24px; box-shadow: 0 -10px 30px rgba(0,0,0,0.6); z-index: 10; display: flex; flex-direction: column; padding: 20px; max-height: 85vh; overflow-y: hidden; }
     #trackingPanel, #page4Panel { transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); padding-top: 12px; }
-    .panel-collapsed { transform: translateY(calc(100% - 110px)) !important; }
-    .panel-collapsed-page4 { transform: translateY(calc(100% - 110px)) !important; }
-
+    .panel-collapsed, .panel-collapsed-page4 { transform: translateY(calc(100% - 110px)) !important; }
     .full-page { position: fixed; inset: 0; z-index: 30; background: #111827; flex-direction: column; }
-    
-    .pac-container { 
-        z-index: 100000 !important; font-family: 'Kanit' !important; 
-        border-radius: 0 0 16px 16px !important; border: 1px solid #374151 !important; border-top: none !important;
-        background-color: #111827 !important; box-shadow: 0 15px 30px rgba(0,0,0,0.8) !important; 
-        margin-top: -10px !important; max-height: 40vh !important; overflow-y: auto !important; 
-    }
+    .pac-container { z-index: 100000 !important; font-family: 'Kanit' !important; border-radius: 0 0 16px 16px !important; border: 1px solid #374151 !important; border-top: none !important; background-color: #111827 !important; box-shadow: 0 15px 30px rgba(0,0,0,0.8) !important; margin-top: -10px !important; max-height: 40vh !important; overflow-y: auto !important; }
     .pac-item { padding: 10px 14px; border-top: 1px solid #374151; cursor: pointer; color: #d1d5db; font-size: 13px; }
     .pac-item:first-child { border-top: none; }
     .pac-item-query { color: #10b981; font-weight: bold; } 
     .pac-icon { filter: invert(70%) sepia(50%) saturate(400%) hue-rotate(80deg); }
-
     .hide-scrollbar::-webkit-scrollbar { display: none; }
     .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-
     .slim-scroll::-webkit-scrollbar { width: 4px; }
     .slim-scroll::-webkit-scrollbar-thumb { background: #4b5563; border-radius: 4px; }
-
     @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
     .animate-fade-in { animation: fadeIn 0.2s ease-out forwards; }
     @keyframes loading-scan { 0% { transform: translateX(-100%); } 100% { transform: translateX(300%); } }
@@ -95,35 +76,41 @@
 
     <div class="p-4 flex-1 flex flex-col items-center">
       <div id="homeBannerContainer" class="w-full max-w-sm aspect-video bg-gray-950 rounded-2xl mb-4 shadow-md overflow-hidden relative border border-gray-700 hidden shrink-0">
-          <div id="bannerSlider" class="flex overflow-x-auto snap-x snap-mandatory hide-scrollbar w-full h-full relative scroll-smooth items-center">
-              </div>
+          <div id="bannerSlider" class="flex overflow-x-auto snap-x snap-mandatory hide-scrollbar w-full h-full relative scroll-smooth items-center"></div>
           <div id="bannerDots" class="absolute bottom-3 left-1/2 transform -translate-x-1/2 flex gap-1.5 z-10 bg-black/40 px-2 py-1 rounded-full"></div>
           <div class="absolute top-2 right-2 bg-black/60 px-2 py-0.5 rounded text-[10px] text-white z-10 font-bold">Ad</div>
       </div>
       
       <div class="w-full max-w-sm mx-auto flex flex-col gap-3 shrink-0 mb-4">
-          <button id="btnMainRideAction" onclick="handleMainRideClick()" class="w-full h-24 bg-gray-800 border border-gray-700 text-gray-500 rounded-2xl flex flex-col items-center justify-center gap-1 transition shadow-sm opacity-60 cursor-not-allowed">
-              <span class="font-black text-[17px] flex items-center gap-2" id="btnMainRideText"><i class="fas fa-car-slash"></i> เรียกรถไม่ได้</span>
-              <span class="text-[11px] font-bold text-gray-400" id="btnMainRideSubText">ไม่มีรถออนไลน์ขณะนี้</span>
+          <button id="btnMainRideAction" onclick="handleMainRideClick()" class="w-full h-20 bg-gray-800 border border-gray-700 text-gray-500 rounded-2xl flex flex-row items-center justify-center gap-3 transition shadow-sm opacity-60 cursor-not-allowed">
+              <i class="fas fa-car-slash text-2xl" id="btnMainRideIcon"></i>
+              <span class="font-bold text-sm" id="btnMainRideText">ไม่มีรถออนไลน์</span>
           </button>
           
           <div class="grid grid-cols-2 gap-3 w-full">
-              <button onclick="openNewsModal()" class="h-[75px] bg-yellow-600/20 border border-yellow-500/50 text-yellow-400 rounded-2xl flex flex-col items-center justify-center gap-1 hover:bg-yellow-600 hover:text-white transition shadow-sm active:scale-95 relative">
+              <button onclick="openNewsModal()" class="h-20 bg-yellow-600/20 border border-yellow-500/50 text-yellow-400 rounded-2xl flex flex-col items-center justify-center gap-1.5 hover:bg-yellow-600 hover:text-white transition shadow-sm active:scale-95 relative">
                   <div id="newsBadge" class="hidden absolute -top-1.5 -right-1.5 bg-red-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full shadow border border-red-400 animate-pulse">New</div>
                   <i class="fas fa-bullhorn text-[22px]"></i>
-                  <span class="font-bold text-[11px] text-center leading-tight mt-1">ข่าวสาร &<br>โปรโมชั่น</span>
+                  <span class="font-bold text-xs text-center leading-tight">ข่าวสาร &<br>โปรโมชั่น</span>
               </button>
 
-              <button onclick="showAlert('เตรียมพบกันเร็วๆ นี้!', 'ระบบคอมมูนิตี้จะเปิดให้ใช้งานในอัปเดต Phase 2 ครับ', 'info')" class="h-[75px] bg-purple-600/20 border border-purple-500/50 text-purple-400 rounded-2xl flex flex-col items-center justify-center gap-1 hover:bg-purple-600 hover:text-white transition shadow-sm active:scale-95">
+              <button onclick="showAlert('เตรียมพบกันเร็วๆ นี้!', 'ระบบคอมมูนิตี้จะเปิดให้ใช้งานในอัปเดต Phase 2 ครับ', 'info')" class="h-20 bg-purple-600/20 border border-purple-500/50 text-purple-400 rounded-2xl flex flex-col items-center justify-center gap-1.5 hover:bg-purple-600 hover:text-white transition shadow-sm active:scale-95">
                   <i class="fas fa-users text-[22px]"></i>
-                  <span class="font-bold text-[11px] text-center leading-tight mt-1">คอมมูนิตี้</span>
+                  <span class="font-bold text-xs text-center leading-tight">คอมมูนิตี้</span>
               </button>
           </div>
       </div>
 
-      <div id="bottomBannerContainer" class="w-full max-w-sm h-[70px] bg-gray-800 rounded-2xl border border-gray-700 overflow-hidden hidden relative shadow-md shrink-0 mt-auto mb-2">
-          <div id="bottomBannerSlider" class="flex overflow-x-auto snap-x snap-mandatory hide-scrollbar w-full h-full scroll-smooth items-center">
-              </div>
+      <div class="mt-auto w-full max-w-sm flex flex-col gap-3">
+          <div id="statusBoxContainer" class="w-full bg-gray-800 p-4 rounded-2xl text-center border border-gray-700 shadow-sm relative overflow-hidden transition-all duration-300">
+            <div class="absolute top-0 right-0 p-3 opacity-[0.03]"><i class="fas fa-car-side text-6xl text-white"></i></div>
+            <h3 class="text-xs text-gray-400 mb-1 font-bold relative z-10">สถานะรถในพื้นที่ของคุณ</h3>
+            <div id="driverStatus" class="text-xl font-black text-gray-500 relative z-10 flex items-center justify-center gap-2"><i class="fas fa-spinner fa-spin text-lg"></i> โหลดข้อมูล...</div>
+          </div>
+
+          <div id="bottomBannerContainer" class="w-full h-[70px] bg-gray-800 rounded-2xl border border-gray-700 overflow-hidden hidden relative shadow-md shrink-0">
+              <div id="bottomBannerSlider" class="flex overflow-x-auto snap-x snap-mandatory hide-scrollbar w-full h-full scroll-smooth items-center"></div>
+          </div>
       </div>
 
     </div>
@@ -133,7 +120,6 @@
       <div class="bg-gray-800 border border-green-500/30 rounded-3xl p-6 w-full max-w-sm text-center shadow-2xl transform scale-100">
           <h3 class="text-xl font-black text-white mb-2">เลือกประเภทรถ</h3>
           <p class="text-sm text-gray-400 mb-6 leading-relaxed">กรุณาเลือกประเภทรถที่คุณต้องการเรียกใช้บริการ</p>
-          
           <div class="flex flex-col gap-3">
               <button onclick="selectVehicleAndStart('car')" class="w-full py-4 bg-green-600 text-white font-black text-lg rounded-2xl shadow-md border border-green-500 hover:bg-green-700 transition flex items-center justify-center gap-3 active:scale-95">
                   <i class="fas fa-car-side text-2xl"></i> รถยนต์
@@ -142,7 +128,6 @@
                   <i class="fas fa-motorcycle text-2xl"></i> มอเตอร์ไซค์
               </button>
           </div>
-          
           <button onclick="closeVehicleModal()" class="mt-6 text-sm font-bold text-gray-400 hover:text-white transition">ยกเลิก</button>
       </div>
   </div>
@@ -154,9 +139,7 @@
               <h2 class="text-lg font-black text-yellow-400"><i class="fas fa-bullhorn mr-1"></i> ข่าวสาร & โปรโมชั่น</h2>
           </div>
       </div>
-      <div class="p-4 space-y-4 max-w-sm mx-auto" id="newsListContainer">
-          <div class="flex justify-center py-10"><i class="fas fa-spinner fa-spin text-3xl text-yellow-500"></i></div>
-      </div>
+      <div class="p-4 space-y-4 max-w-sm mx-auto" id="newsListContainer"></div>
   </div>
 
   <div id="page2" class="hidden">
@@ -173,17 +156,17 @@
           <div class="flex shrink-0 bg-[#2a303c] border border-[#3b4252] rounded-full overflow-hidden shadow-sm items-center">
               <button onclick="handleSavedPlace('home')" class="px-2.5 py-1 flex items-center gap-1.5 hover:bg-[#343b4a] transition"><i class="fas fa-home text-blue-400 text-[10px]"></i><span class="label-home text-[11px] font-bold text-gray-200">บ้าน</span></button>
               <div class="w-[1px] h-3 bg-[#3b4252]"></div>
-              <button onclick="editSavedPlace('home', event)" class="px-2 py-1 text-gray-400 hover:text-white hover:bg-[#343b4a] transition flex items-center" title="ตั้งค่าพิกัดบ้าน"><i class="fas fa-cog text-[10px]"></i></button>
+              <button onclick="editSavedPlace('home', event)" class="px-2 py-1 text-gray-400 hover:text-white hover:bg-[#343b4a] transition flex items-center"><i class="fas fa-cog text-[10px]"></i></button>
           </div>
           <div class="flex shrink-0 bg-[#2a303c] border border-[#3b4252] rounded-full overflow-hidden shadow-sm items-center">
               <button onclick="handleSavedPlace('favorite1')" class="px-2.5 py-1 flex items-center gap-1.5 hover:bg-[#343b4a] transition"><i class="fas fa-heart text-pink-500 text-[10px]"></i><span class="label-favorite1 text-[11px] font-bold text-gray-200">รายการโปรด 1</span></button>
               <div class="w-[1px] h-3 bg-[#3b4252]"></div>
-              <button onclick="editSavedPlace('favorite1', event)" class="px-2 py-1 text-gray-400 hover:text-white hover:bg-[#343b4a] transition flex items-center" title="ตั้งค่าพิกัดโปรด 1"><i class="fas fa-cog text-[10px]"></i></button>
+              <button onclick="editSavedPlace('favorite1', event)" class="px-2 py-1 text-gray-400 hover:text-white hover:bg-[#343b4a] transition flex items-center"><i class="fas fa-cog text-[10px]"></i></button>
           </div>
           <div class="flex shrink-0 bg-[#2a303c] border border-[#3b4252] rounded-full overflow-hidden shadow-sm items-center">
               <button onclick="handleSavedPlace('favorite2')" class="px-2.5 py-1 flex items-center gap-1.5 hover:bg-[#343b4a] transition"><i class="fas fa-star text-yellow-500 text-[10px]"></i><span class="label-favorite2 text-[11px] font-bold text-gray-200">รายการโปรด 2</span></button>
               <div class="w-[1px] h-3 bg-[#3b4252]"></div>
-              <button onclick="editSavedPlace('favorite2', event)" class="px-2 py-1 text-gray-400 hover:text-white hover:bg-[#343b4a] transition flex items-center" title="ตั้งค่าพิกัดโปรด 2"><i class="fas fa-cog text-[10px]"></i></button>
+              <button onclick="editSavedPlace('favorite2', event)" class="px-2 py-1 text-gray-400 hover:text-white hover:bg-[#343b4a] transition flex items-center"><i class="fas fa-cog text-[10px]"></i></button>
           </div>
       </div>
       
@@ -214,24 +197,24 @@
           <div class="flex shrink-0 bg-[#2a303c] border border-[#3b4252] rounded-full overflow-hidden shadow-sm items-center">
               <button onclick="handleSavedPlace('home')" class="px-2.5 py-1 flex items-center gap-1.5 hover:bg-[#343b4a] transition"><i class="fas fa-home text-blue-400 text-[10px]"></i><span class="label-home text-[11px] font-bold text-gray-200">บ้าน</span></button>
               <div class="w-[1px] h-3 bg-[#3b4252]"></div>
-              <button onclick="editSavedPlace('home', event)" class="px-2 py-1 text-gray-400 hover:text-white hover:bg-[#343b4a] transition flex items-center" title="ตั้งค่าพิกัดบ้าน"><i class="fas fa-cog text-[10px]"></i></button>
+              <button onclick="editSavedPlace('home', event)" class="px-2 py-1 text-gray-400 hover:text-white hover:bg-[#343b4a] transition flex items-center"><i class="fas fa-cog text-[10px]"></i></button>
           </div>
           <div class="flex shrink-0 bg-[#2a303c] border border-[#3b4252] rounded-full overflow-hidden shadow-sm items-center">
               <button onclick="handleSavedPlace('favorite1')" class="px-2.5 py-1 flex items-center gap-1.5 hover:bg-[#343b4a] transition"><i class="fas fa-heart text-pink-500 text-[10px]"></i><span class="label-favorite1 text-[11px] font-bold text-gray-200">รายการโปรด 1</span></button>
               <div class="w-[1px] h-3 bg-[#3b4252]"></div>
-              <button onclick="editSavedPlace('favorite1', event)" class="px-2 py-1 text-gray-400 hover:text-white hover:bg-[#343b4a] transition flex items-center" title="ตั้งค่าพิกัดโปรด 1"><i class="fas fa-cog text-[10px]"></i></button>
+              <button onclick="editSavedPlace('favorite1', event)" class="px-2 py-1 text-gray-400 hover:text-white hover:bg-[#343b4a] transition flex items-center"><i class="fas fa-cog text-[10px]"></i></button>
           </div>
           <div class="flex shrink-0 bg-[#2a303c] border border-[#3b4252] rounded-full overflow-hidden shadow-sm items-center">
               <button onclick="handleSavedPlace('favorite2')" class="px-2.5 py-1 flex items-center gap-1.5 hover:bg-[#343b4a] transition"><i class="fas fa-star text-yellow-500 text-[10px]"></i><span class="label-favorite2 text-[11px] font-bold text-gray-200">รายการโปรด 2</span></button>
               <div class="w-[1px] h-3 bg-[#3b4252]"></div>
-              <button onclick="editSavedPlace('favorite2', event)" class="px-2 py-1 text-gray-400 hover:text-white hover:bg-[#343b4a] transition flex items-center" title="ตั้งค่าพิกัดโปรด 2"><i class="fas fa-cog text-[10px]"></i></button>
+              <button onclick="editSavedPlace('favorite2', event)" class="px-2 py-1 text-gray-400 hover:text-white hover:bg-[#343b4a] transition flex items-center"><i class="fas fa-cog text-[10px]"></i></button>
           </div>
       </div>
 
       <div id="dropoffWaypointsList" class="flex flex-col gap-1.5 mb-1 max-h-[110px] overflow-y-auto slim-scroll"></div>
 
       <div class="flex gap-2 mt-2">
-          <button onclick="addWaypointFromCenter('drop')" class="flex-[1] bg-gray-800 border border-green-500/50 text-green-400 py-3 rounded-xl font-bold text-[14px] shadow-sm hover:bg-gray-700 transition flex justify-center items-center gap-1.5">
+          <button onclick="addWaypointFromCenter('drop')" class="flex-[1] bg-gray-800 border border-red-500/50 text-red-400 py-3 rounded-xl font-bold text-[14px] shadow-sm hover:bg-gray-700 transition flex justify-center items-center gap-1.5">
               <i class="fas fa-plus"></i> จุดส่ง
           </button>
           <button id="btnConfirmDrop" onclick="confirmDropoff()" disabled class="flex-[2] bg-gray-700 text-gray-400 py-3 rounded-xl font-bold text-[14px] shadow-md transition flex justify-center items-center gap-1.5 cursor-not-allowed opacity-50">
@@ -246,9 +229,7 @@
       <div class="w-full flex justify-center pb-3 cursor-pointer" onclick="togglePage4Panel()"><div class="w-12 h-1.5 bg-gray-600 rounded-full"></div></div>
       <div class="flex justify-between items-center mb-2">
         <div>
-            <p class="text-[10px] font-black text-blue-500 mb-0.5 tracking-widest flex items-center gap-1" id="serviceLabelIndicator">
-                <i class="fas fa-car-side"></i> รถยนต์
-            </p>
+            <p class="text-[10px] font-black text-blue-500 mb-0.5 tracking-widest flex items-center gap-1" id="serviceLabelIndicator"><i class="fas fa-car-side"></i> รถยนต์</p>
             <p class="text-base font-black text-white">ตรวจสอบความถูกต้อง</p>
         </div>
       </div>
@@ -396,8 +377,7 @@
           <button onclick="closeRecentPlacesModal()" class="w-10 h-10 shrink-0 bg-gray-800 text-gray-400 rounded-full flex items-center justify-center border border-gray-700 hover:text-white transition"><i class="fas fa-arrow-left"></i></button>
           <h2 class="text-lg font-black text-white">ประวัติสถานที่ (ล่าสุด)</h2>
       </div>
-      <div class="p-4 space-y-2 flex-1 overflow-y-auto" id="recentPlacesModalList">
-      </div>
+      <div class="p-4 space-y-2 flex-1 overflow-y-auto" id="recentPlacesModalList"></div>
   </div>
 
   <div id="waypointSearchModal" class="hidden fixed inset-0 z-[150] bg-gray-900 pointer-events-auto transition-transform duration-300 flex flex-col">
@@ -593,21 +573,7 @@
     let activeChatListenerRef = null;
     let currentSelectedRatingScore = 0;
 
-    // รวบรวมพิกัดคนขับออนไลน์ และเช็คเพื่ออัปเดตปุ่มหน้าแรก
-    windowContext.activeNodeDrivers = [];
-    windowContext.singleNodeDriver = [];
-    
-    function mergeDrivers() {
-        if (windowContext.activeNodeDrivers && windowContext.activeNodeDrivers.length > 0) {
-            windowContext.onlineDrivers = windowContext.activeNodeDrivers;
-        } else if (windowContext.singleNodeDriver && windowContext.singleNodeDriver.length > 0) {
-            windowContext.onlineDrivers = windowContext.singleNodeDriver;
-        } else {
-            windowContext.onlineDrivers = [];
-        }
-        updateRideButtonState();
-    }
-
+    windowContext.onlineDrivers = [];
     db.ref('active_drivers').on('value', snap => {
         let drivers = [];
         if(snap.exists()) {
@@ -616,30 +582,33 @@
                 if(d.status === 'ออนไลน์' && d.lat) { drivers.push(d); }
             });
         }
-        windowContext.activeNodeDrivers = drivers;
-        mergeDrivers();
+        windowContext.onlineDrivers = drivers;
+        updateRideButtonState();
     });
 
     db.ref('driver').on('value', snap => {
         const d = snap.val();
         if(d) {
             driverData = d;
-            windowContext.singleNodeDriver = (d.status === 'ออนไลน์' && d.lat) ? [d] : [];
-            mergeDrivers();
-            
-            if(currentStep === 'Tracking' && markerDriver) { 
-                markerDriver.setPosition({lat: d.lat, lng: d.lng}); 
+            if(d.status === 'ออนไลน์' && d.lat && windowContext.onlineDrivers.length === 0) {
+                windowContext.onlineDrivers = [d];
             }
+            let ds = document.getElementById('driverStatus'); 
+            if(d.status === "ออนไลน์") {
+                if(ds) { ds.innerHTML = `<i class="fas fa-users text-green-500 mr-1"></i> มีรถพร้อมให้บริการ`; ds.className = "text-[15px] font-black text-green-400 relative z-10 flex items-center justify-center"; }
+            } else {
+                if(ds) { ds.innerHTML = `<i class="fas fa-times-circle text-red-400 mr-1"></i> ไม่มีรถในพื้นที่ขณะนี้`; ds.className = "text-[15px] font-black text-red-400 relative z-10 flex items-center justify-center"; }
+            }
+            if(currentStep === 'Tracking' && markerDriver) { markerDriver.setPosition({lat: d.lat, lng: d.lng}); }
+            updateRideButtonState();
         }
     });
 
     windowContext.currentServiceType = 'car';
 
-    // 🌟 ระบบจัดการปุ่มเรียกรถ หน้าแรก
     function updateRideButtonState() {
         let btnMainRide = document.getElementById('btnMainRideAction');
         let btnMainRideText = document.getElementById('btnMainRideText');
-        let btnMainRideSubText = document.getElementById('btnMainRideSubText');
         if(!btnMainRide) return;
 
         let hasActiveJob = bookData && bookData.status && bookData.status !== "เสร็จสิ้น" && !bookData.status.includes("ยกเลิก") && bookData.status !== "รอผู้ขับขี่ตอบรับ";
@@ -647,21 +616,18 @@
 
         if (hasActiveJob) {
             btnMainRide.disabled = false;
-            btnMainRide.className = "w-full h-24 bg-yellow-600/20 border border-yellow-500/50 text-yellow-400 rounded-2xl flex flex-col items-center justify-center gap-1 hover:bg-yellow-600 hover:text-white transition shadow-sm active:scale-95 animate-pulse";
-            if(btnMainRideText) btnMainRideText.innerHTML = '<i class="fas fa-route mr-1"></i> ดูสถานะรถ';
-            if(btnMainRideSubText) btnMainRideSubText.innerText = "กำลังเดินทาง...";
+            btnMainRide.className = "w-full h-20 bg-yellow-600/20 border border-yellow-500/50 text-yellow-400 rounded-2xl flex flex-row items-center justify-center gap-3 hover:bg-yellow-600 hover:text-white transition shadow-sm active:scale-95 animate-pulse";
+            if(btnMainRideText) btnMainRideText.innerText = "ดูสถานะรถ";
             btnMainRide.onclick = function() { showPage('Tracking'); };
         } else if (hasOnlineDrivers) {
             btnMainRide.disabled = false;
-            btnMainRide.className = "w-full h-24 bg-blue-600/20 border border-blue-500/50 text-blue-400 rounded-2xl flex flex-col items-center justify-center gap-1 hover:bg-blue-600 hover:text-white transition shadow-sm active:scale-95";
-            if(btnMainRideText) btnMainRideText.innerHTML = '<i class="fas fa-map-marked-alt mr-1"></i> เรียกรถ';
-            if(btnMainRideSubText) btnMainRideSubText.innerText = "มีรถพร้อมให้บริการ";
+            btnMainRide.className = "w-full h-20 bg-blue-600/20 border border-blue-500/50 text-blue-400 rounded-2xl flex flex-row items-center justify-center gap-3 hover:bg-blue-600 hover:text-white transition shadow-sm active:scale-95";
+            if(btnMainRideText) btnMainRideText.innerText = "เรียกรถ";
             btnMainRide.onclick = function() { windowContext.openVehicleModal(); };
         } else {
             btnMainRide.disabled = true;
-            btnMainRide.className = "w-full h-24 bg-gray-800 border border-gray-700 text-gray-500 rounded-2xl flex flex-col items-center justify-center gap-1 transition shadow-sm opacity-60 cursor-not-allowed";
-            if(btnMainRideText) btnMainRideText.innerHTML = '<i class="fas fa-car-slash mr-1"></i> เรียกรถไม่ได้';
-            if(btnMainRideSubText) btnMainRideSubText.innerText = "ไม่มีรถออนไลน์ขณะนี้";
+            btnMainRide.className = "w-full h-20 bg-gray-800 border border-gray-700 text-gray-500 rounded-2xl flex flex-row items-center justify-center gap-3 transition shadow-sm opacity-60 cursor-not-allowed";
+            if(btnMainRideText) btnMainRideText.innerText = "ไม่มีรถออนไลน์ขณะนี้";
             btnMainRide.onclick = null;
         }
     }
@@ -669,39 +635,23 @@
     windowContext.handleMainRideClick = function() {
         if(bookData && bookData.status && bookData.status !== "เสร็จสิ้น" && !bookData.status.includes("ยกเลิก")) {
             showPage('Tracking');
-        } else {
-            document.getElementById('vehicleSelectionModal').classList.remove('hidden');
-        }
+        } else { document.getElementById('vehicleSelectionModal').classList.remove('hidden'); }
     }
 
-    windowContext.openVehicleModal = function() {
-        document.getElementById('vehicleSelectionModal').classList.remove('hidden');
-    }
-
-    windowContext.closeVehicleModal = function() {
-        document.getElementById('vehicleSelectionModal').classList.add('hidden');
-    }
+    windowContext.openVehicleModal = function() { document.getElementById('vehicleSelectionModal').classList.remove('hidden'); }
+    windowContext.closeVehicleModal = function() { document.getElementById('vehicleSelectionModal').classList.add('hidden'); }
 
     windowContext.selectVehicleAndStart = function(type) {
         windowContext.currentServiceType = type;
-        
         let labelIcon = type === 'car' ? 'fa-car-side' : 'fa-motorcycle';
         let labelText = type === 'car' ? 'รถยนต์' : 'มอเตอร์ไซค์';
-        
         let indicator = document.getElementById('serviceLabelIndicator');
         if(indicator) indicator.innerHTML = `<i class="fas ${labelIcon}"></i> ${labelText}`;
-
-        closeVehicleModal();
-        showPage(2);
+        closeVehicleModal(); showPage(2);
     }
 
-    windowContext.openNewsModal = function() {
-        document.getElementById('newsModal').classList.remove('hidden');
-        renderNewsAndPromotions();
-    }
-    windowContext.closeNewsModal = function() {
-        document.getElementById('newsModal').classList.add('hidden');
-    }
+    windowContext.openNewsModal = function() { document.getElementById('newsModal').classList.remove('hidden'); renderNewsAndPromotions(); }
+    windowContext.closeNewsModal = function() { document.getElementById('newsModal').classList.add('hidden'); }
 
     function renderNewsAndPromotions() {
         let container = document.getElementById('newsListContainer');
@@ -710,25 +660,14 @@
                 container.innerHTML = `<div class="bg-gray-800 rounded-2xl p-6 text-center border border-gray-700 shadow-sm"><i class="fas fa-box-open text-4xl text-gray-600 mb-3"></i><p class="text-gray-400 font-bold text-sm">ยังไม่มีข่าวสารหรือโปรโมชั่นในขณะนี้</p></div>`;
                 return;
             }
-            
             let items = [];
             snap.forEach(child => { items.push({ id: child.key, ...child.val() }); });
             items.sort((a,b) => (b.timestamp || 0) - (a.timestamp || 0));
 
             let html = '';
             items.forEach(item => {
-                let badge = item.isPromo 
-                    ? `<span class="bg-red-500 text-white text-[10px] font-black px-2 py-0.5 rounded shadow">PROMO</span>` 
-                    : `<span class="bg-blue-500 text-white text-[10px] font-black px-2 py-0.5 rounded shadow">NEWS</span>`;
-                html += `
-                <div class="bg-gray-800 rounded-2xl p-5 border border-gray-700 shadow-sm relative overflow-hidden mb-4">
-                    <div class="flex justify-between items-start mb-2">
-                        ${badge}
-                        <span class="text-[10px] text-gray-500 font-bold">${item.dateStr || ''}</span>
-                    </div>
-                    <h3 class="text-base font-black text-white mb-2 leading-tight">${item.title}</h3>
-                    <p class="text-sm text-gray-400 leading-relaxed">${item.content}</p>
-                </div>`;
+                let badge = item.isPromo ? `<span class="bg-red-500 text-white text-[10px] font-black px-2 py-0.5 rounded shadow">PROMO</span>` : `<span class="bg-blue-500 text-white text-[10px] font-black px-2 py-0.5 rounded shadow">NEWS</span>`;
+                html += `<div class="bg-gray-800 rounded-2xl p-5 border border-gray-700 shadow-sm relative overflow-hidden mb-4"><div class="flex justify-between items-start mb-2">${badge}<span class="text-[10px] text-gray-500 font-bold">${item.dateStr || ''}</span></div><h3 class="text-base font-black text-white mb-2 leading-tight">${item.title}</h3><p class="text-sm text-gray-400 leading-relaxed">${item.content}</p></div>`;
             });
             container.innerHTML = html;
         });
@@ -769,7 +708,6 @@
     let pricingConfig = { base: 50, km: 10, pick: 5 }; 
     db.ref('config/pricing').on('value', snap => { if(snap.exists()) pricingConfig = snap.val(); });
 
-    // ================= ระบบแบนเนอร์โฆษณา (สไลด์อัตโนมัติ) =================
     function checkBannerSchedule(b) {
         let now = Date.now();
         let start = b.startTime ? new Date(b.startTime).getTime() : 0;
@@ -777,7 +715,6 @@
         return now >= start && now <= end;
     }
 
-    // แบนเนอร์ส่วนบน (16:9)
     db.ref('config/banners').on('value', snap => {
         let container = document.getElementById('homeBannerContainer');
         let slider = document.getElementById('bannerSlider');
@@ -799,28 +736,17 @@
                 banners.forEach((b, idx) => {
                     let target = b.linkUrl ? '_blank' : '_self';
                     let href = b.linkUrl ? b.linkUrl : '#';
-                    
-                    if(slider) {
-                        slider.innerHTML += `
-                        <a href="${href}" target="${target}" class="w-full h-full flex-shrink-0 snap-center relative block">
-                            <img src="${b.imageUrl}" class="w-full h-full object-contain bg-gray-950">
-                        </a>`;
-                    }
-                    if(dots) {
-                        dots.innerHTML += `<span class="banner-dot h-1.5 rounded-full transition-all duration-300 ${idx === 0 ? 'bg-green-500 w-4' : 'bg-white/50 w-1.5'}"></span>`;
-                    }
+                    if(slider) slider.innerHTML += `<a href="${href}" target="${target}" class="w-full h-full flex-shrink-0 snap-center relative block"><img src="${b.imageUrl}" class="w-full h-full object-contain bg-gray-950"></a>`;
+                    if(dots) dots.innerHTML += `<span class="banner-dot h-1.5 rounded-full transition-all duration-300 ${idx === 0 ? 'bg-green-500 w-4' : 'bg-white/50 w-1.5'}"></span>`;
                 });
 
                 if(slider && dots) {
                     slider.addEventListener('scroll', () => {
                         let activeIndex = Math.round(slider.scrollLeft / slider.clientWidth);
                         let allDots = dots.querySelectorAll('.banner-dot');
-                        allDots.forEach((d, idx) => {
-                            d.className = `banner-dot h-1.5 rounded-full transition-all duration-300 ${idx === activeIndex ? 'bg-green-500 w-4' : 'bg-white/50 w-1.5'}`;
-                        });
+                        allDots.forEach((d, idx) => { d.className = `banner-dot h-1.5 rounded-full transition-all duration-300 ${idx === activeIndex ? 'bg-green-500 w-4' : 'bg-white/50 w-1.5'}`; });
                     });
                 }
-
                 if (banners.length > 1 && slider) {
                     let currentSlide = 0;
                     bannerInterval = setInterval(() => {
@@ -832,7 +758,6 @@
         } else { if(container) container.classList.add('hidden'); }
     });
 
-    // แบนเนอร์ส่วนล่าง (Slim)
     db.ref('config/bottom_banners').on('value', snap => {
         let container = document.getElementById('bottomBannerContainer');
         let slider = document.getElementById('bottomBannerSlider');
@@ -842,25 +767,13 @@
         
         if(snap.exists()) {
             let banners = [];
-            snap.forEach(child => {
-                let b = child.val();
-                if (checkBannerSchedule(b)) banners.push(b);
-            });
-            
+            snap.forEach(child => { let b = child.val(); if (checkBannerSchedule(b)) banners.push(b); });
             if(banners.length > 0) {
                 if(container) container.classList.remove('hidden');
-                
                 banners.forEach(b => {
-                    let target = b.linkUrl ? '_blank' : '_self';
-                    let href = b.linkUrl ? b.linkUrl : '#';
-                    if(slider) {
-                        slider.innerHTML += `
-                        <a href="${href}" target="${target}" class="w-full h-full flex-shrink-0 snap-center block">
-                            <img src="${b.imageUrl}" class="w-full h-full object-cover">
-                        </a>`;
-                    }
+                    let target = b.linkUrl ? '_blank' : '_self'; let href = b.linkUrl ? b.linkUrl : '#';
+                    if(slider) slider.innerHTML += `<a href="${href}" target="${target}" class="w-full h-full flex-shrink-0 snap-center block"><img src="${b.imageUrl}" class="w-full h-full object-cover"></a>`;
                 });
-                
                 if(banners.length > 1 && slider) {
                     let currentSlide = 0;
                     bottomBannerInterval = setInterval(() => {
@@ -868,12 +781,8 @@
                         slider.scrollTo({ left: currentSlide * slider.clientWidth, behavior: 'smooth' });
                     }, 4500); 
                 }
-            } else { 
-                if(container) container.classList.add('hidden'); 
-            }
-        } else { 
-            if(container) container.classList.add('hidden'); 
-        }
+            } else { if(container) container.classList.add('hidden'); }
+        } else { if(container) container.classList.add('hidden'); }
     });
 
     windowContext.hasSpokenAccept = false; windowContext.hasSpokenArrivePick = false; windowContext.hasSpokenAtPickup = false;
@@ -889,17 +798,12 @@
         lastNotifiedStatus = "";
     }
 
-    async function requestWakeLock() {
-        if ('wakeLock' in navigator) { try { wakeLock = await navigator.wakeLock.request('screen'); } catch (err) {} }
-    }
+    async function requestWakeLock() { if ('wakeLock' in navigator) { try { wakeLock = await navigator.wakeLock.request('screen'); } catch (err) {} } }
     document.addEventListener('visibilitychange', () => { if (wakeLock !== null && document.visibilityState === 'visible') requestWakeLock(); });
 
     function playSoundAlert() {
         if(!notiAudio) notiAudio = document.getElementById('notiSound');
-        if(notiAudio) {
-            notiAudio.currentTime = 0;
-            notiAudio.play().catch(e => console.log('Audio playback prevented'));
-        }
+        if(notiAudio) { notiAudio.currentTime = 0; notiAudio.play().catch(e => console.log('Audio playback prevented')); }
     }
 
     function speakText(text) {
@@ -919,13 +823,10 @@
 
     let currentConfirmCallback = null;
     windowContext.openConfirmActionModal = function(title, message, callback, theme = 'blue') {
-        document.getElementById('confirmActionTitle').innerText = title;
-        document.getElementById('confirmActionMessage').innerHTML = message;
+        document.getElementById('confirmActionTitle').innerText = title; document.getElementById('confirmActionMessage').innerHTML = message;
         currentConfirmCallback = callback;
         const iconDiv = document.getElementById('confirmActionIcon'); const btn = document.getElementById('confirmActionButton');
-        iconDiv.className = "w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl border";
-        btn.className = "flex-1 py-3 text-white font-bold rounded-xl shadow-md transition";
-
+        iconDiv.className = "w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl border"; btn.className = "flex-1 py-3 text-white font-bold rounded-xl shadow-md transition";
         if (theme === 'green') { iconDiv.classList.add('bg-green-900/30', 'text-green-500', 'border-green-500/30'); btn.classList.add('bg-green-600', 'hover:bg-green-700'); } 
         else if (theme === 'red') { iconDiv.classList.add('bg-red-900/30', 'text-red-500', 'border-red-500/30'); btn.classList.add('bg-red-600', 'hover:bg-red-700'); } 
         else { iconDiv.classList.add('bg-blue-900/30', 'text-blue-500', 'border-blue-500/30'); btn.classList.add('bg-blue-600', 'hover:bg-blue-700'); }
@@ -943,16 +844,12 @@
 
     windowContext.openProfileModal = function() {
         document.getElementById('profileModal').classList.remove('hidden');
-        
         let pNameL = document.getElementById('profileNameLarge');
         if(pNameL) pNameL.innerText = lineName || 'ไม่ทราบชื่อ';
         
         let picSrc = 'https://img.icons8.com/bubbles/150/user.png';
-        let uPic = document.getElementById('userPic');
-        let uPicSmall = document.getElementById('userPicSmall');
-        
-        if(uPic && uPic.src) picSrc = uPic.src;
-        else if (uPicSmall && uPicSmall.src) picSrc = uPicSmall.src;
+        let uPic = document.getElementById('userPic'); let uPicSmall = document.getElementById('userPicSmall');
+        if(uPic && uPic.src) picSrc = uPic.src; else if (uPicSmall && uPicSmall.src) picSrc = uPicSmall.src;
         
         let pPicL = document.getElementById('profilePicLarge');
         if(pPicL) pPicL.src = picSrc;
@@ -962,9 +859,7 @@
         if(pPhoneL) pPhoneL.innerText = savedPhone ? 'เบอร์โทร: ' + savedPhone : 'เบอร์โทร: ยังไม่ระบุ';
     }
 
-    windowContext.closeProfileModal = function() {
-        document.getElementById('profileModal').classList.add('hidden');
-    }
+    windowContext.closeProfileModal = function() { document.getElementById('profileModal').classList.add('hidden'); }
     windowContext.editProfilePhone = function() {
         let current = localStorage.getItem('passengerPhone') || '';
         let newVal = prompt('กรุณากรอกเบอร์โทรศัพท์ใหม่ของคุณ:', current);
@@ -977,9 +872,7 @@
                 let pInp = document.getElementById('userPhone');
                 if(pInp) pInp.value = cleanVal;
                 showAlert('สำเร็จ', 'อัปเดตเบอร์โทรศัพท์เรียบร้อยแล้ว', 'success');
-            } else {
-                showAlert('ผิดพลาด', 'กรุณากรอกเฉพาะตัวเลข', 'error');
-            }
+            } else { showAlert('ผิดพลาด', 'กรุณากรอกเฉพาะตัวเลข', 'error'); }
         }
     }
 
@@ -993,78 +886,36 @@
 
     function renderSavedPlaceMarkersOnMap() {
         if (!map) return;
-        let hData = localStorage.getItem('saved_home');
-        let f1Data = localStorage.getItem('saved_favorite1');
-        let f2Data = localStorage.getItem('saved_favorite2');
-
-        if (markerHome) markerHome.setMap(null);
-        if (markerFavorite1) markerFavorite1.setMap(null);
-        if (markerFavorite2) markerFavorite2.setMap(null);
+        let hData = localStorage.getItem('saved_home'); let f1Data = localStorage.getItem('saved_favorite1'); let f2Data = localStorage.getItem('saved_favorite2');
+        if (markerHome) markerHome.setMap(null); if (markerFavorite1) markerFavorite1.setMap(null); if (markerFavorite2) markerFavorite2.setMap(null);
 
         if (hData && (currentStep === 2 || currentStep === 3)) {
             let p = JSON.parse(hData);
-            markerHome = new google.maps.Marker({
-                position: {lat: p.lat, lng: p.lng}, map: map, zIndex: 2,
-                icon: {
-                    path: "M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z",
-                    fillColor: '#3b82f6', fillOpacity: 1, strokeWeight: 2, strokeColor: '#ffffff', scale: 1.5,
-                    anchor: typeof google !== 'undefined' && google.maps ? new google.maps.Point(12, 20) : null
-                }
-            });
+            markerHome = new google.maps.Marker({ position: {lat: p.lat, lng: p.lng}, map: map, zIndex: 2, icon: { path: "M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z", fillColor: '#3b82f6', fillOpacity: 1, strokeWeight: 2, strokeColor: '#ffffff', scale: 1.5, anchor: typeof google !== 'undefined' && google.maps ? new google.maps.Point(12, 20) : null } });
         }
         if (f1Data && (currentStep === 2 || currentStep === 3)) {
             let p = JSON.parse(f1Data);
-            markerFavorite1 = new google.maps.Marker({
-                position: {lat: p.lat, lng: p.lng}, map: map, zIndex: 2,
-                icon: {
-                    path: "M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z",
-                    fillColor: '#ec4899', fillOpacity: 1, strokeWeight: 2, strokeColor: '#ffffff', scale: 1.2,
-                    anchor: typeof google !== 'undefined' && google.maps ? new google.maps.Point(12, 20) : null
-                }
-            });
+            markerFavorite1 = new google.maps.Marker({ position: {lat: p.lat, lng: p.lng}, map: map, zIndex: 2, icon: { path: "M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z", fillColor: '#ec4899', fillOpacity: 1, strokeWeight: 2, strokeColor: '#ffffff', scale: 1.2, anchor: typeof google !== 'undefined' && google.maps ? new google.maps.Point(12, 20) : null } });
         }
         if (f2Data && (currentStep === 2 || currentStep === 3)) {
             let p = JSON.parse(f2Data);
-            markerFavorite2 = new google.maps.Marker({
-                position: {lat: p.lat, lng: p.lng}, map: map, zIndex: 2,
-                icon: {
-                    path: "M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z",
-                    fillColor: '#eab308', fillOpacity: 1, strokeWeight: 2, strokeColor: '#ffffff', scale: 1.2,
-                    anchor: typeof google !== 'undefined' && google.maps ? new google.maps.Point(12, 20) : null
-                }
-            });
+            markerFavorite2 = new google.maps.Marker({ position: {lat: p.lat, lng: p.lng}, map: map, zIndex: 2, icon: { path: "M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z", fillColor: '#eab308', fillOpacity: 1, strokeWeight: 2, strokeColor: '#ffffff', scale: 1.2, anchor: typeof google !== 'undefined' && google.maps ? new google.maps.Point(12, 20) : null } });
         }
     }
 
     windowContext.panAndConfirmPlace = function(name, lat, lng, iconType = null) {
-        if(map) {
-            updateMapPadding();
-            map.panTo({lat: lat, lng: lng});
-            if(map.getZoom() < 16) {
-                setTimeout(() => { map.setZoom(17); }, 300);
-            }
-        }
-        
-        let type = currentStep === 2 ? 'pick' : 'drop';
-        let typeName = currentStep === 2 ? 'จุดรับ' : 'จุดส่ง';
-        let theme = currentStep === 2 ? 'green' : 'red';
+        if(map) { updateMapPadding(); map.panTo({lat: lat, lng: lng}); if(map.getZoom() < 16) { setTimeout(() => { map.setZoom(17); }, 300); } }
+        let type = currentStep === 2 ? 'pick' : 'drop'; let typeName = currentStep === 2 ? 'จุดรับ' : 'จุดส่ง'; let theme = currentStep === 2 ? 'green' : 'red';
         
         setTimeout(() => {
-            openConfirmActionModal(`ยืนยันสถานที่`, `คุณต้องการเลือก <b>${name}</b> เป็น <b>${typeName}</b> ใช่หรือไม่?`, () => {
-                addWaypointFromLocation(lat, lng, name, type, iconType);
-            }, theme);
+            openConfirmActionModal(`ยืนยันสถานที่`, `คุณต้องการเลือก <b>${name}</b> เป็น <b>${typeName}</b> ใช่หรือไม่?`, () => { addWaypointFromLocation(lat, lng, name, type, iconType); }, theme);
         }, 600); 
     }
 
     windowContext.handleSavedPlace = function(type) {
-        let saved = localStorage.getItem('saved_' + type);
-        let iconType = type; 
-        
+        let saved = localStorage.getItem('saved_' + type); let iconType = type; 
         if (saved) { 
-            let p = JSON.parse(saved); 
-            let typeName = type === 'home' ? 'บ้าน' : (type === 'favorite1' ? 'รายการโปรด 1' : 'รายการโปรด 2');
-            let pos = {lat: p.lat, lng: p.lng};
-            
+            let p = JSON.parse(saved); let typeName = type === 'home' ? 'บ้าน' : (type === 'favorite1' ? 'รายการโปรด 1' : 'รายการโปรด 2'); let pos = {lat: p.lat, lng: p.lng};
             if (geocoder) {
                 geocoder.geocode({location: pos}, (res, status) => {
                     let finalAddr = typeName;
@@ -1076,33 +927,22 @@
                     }
                     panAndConfirmPlace(finalAddr, p.lat, p.lng, iconType);
                 });
-            } else {
-                panAndConfirmPlace(typeName, p.lat, p.lng, iconType);
-            }
-        } else { 
-            editSavedPlace(type, {stopPropagation: function(){}}); 
-        }
+            } else { panAndConfirmPlace(typeName, p.lat, p.lng, iconType); }
+        } else { editSavedPlace(type, {stopPropagation: function(){}}); }
     }
 
     windowContext.editSavedPlace = function(type, event) { 
         event.stopPropagation(); 
-        let typeName = type === 'home' ? 'บ้าน' : (type === 'favorite1' ? 'รายการโปรด 1' : 'รายการโปรด 2');
-        let theme = (currentStep === 2) ? 'green' : 'red';
-        let pos = map.getCenter();
-        
+        let typeName = type === 'home' ? 'บ้าน' : (type === 'favorite1' ? 'รายการโปรด 1' : 'รายการโปรด 2'); let theme = (currentStep === 2) ? 'green' : 'red'; let pos = map.getCenter();
         openConfirmActionModal(`ตั้งค่า "${typeName}"`, `คุณต้องการบันทึกพิกัดกลางจอขณะนี้ให้เป็น "${typeName}" ใช่หรือไม่?`, () => {
             localStorage.setItem('saved_' + type, JSON.stringify({name: typeName, lat: pos.lat(), lng: pos.lng()}));
             showAlert('บันทึกสำเร็จ', `อัปเดตพิกัด "${typeName}" เรียบร้อยแล้ว!`, 'success');
-            renderSavedPlacesUI();
-            renderWaypointsUI(); 
-            renderSavedPlaceMarkersOnMap();
+            renderSavedPlacesUI(); renderWaypointsUI(); renderSavedPlaceMarkersOnMap();
         }, theme);
     }
 
     function renderSavedPlacesUI() {
-        let h = localStorage.getItem('saved_home'); 
-        let f1 = localStorage.getItem('saved_favorite1');
-        let f2 = localStorage.getItem('saved_favorite2');
+        let h = localStorage.getItem('saved_home'); let f1 = localStorage.getItem('saved_favorite1'); let f2 = localStorage.getItem('saved_favorite2');
         document.querySelectorAll('.label-home').forEach(el => el.innerText = h ? 'บ้าน' : 'ตั้งค่า (บ้าน)');
         document.querySelectorAll('.label-favorite1').forEach(el => el.innerText = f1 ? 'รายการโปรด 1' : 'ตั้งค่า (โปรด 1)');
         document.querySelectorAll('.label-favorite2').forEach(el => el.innerText = f2 ? 'รายการโปรด 2' : 'ตั้งค่า (โปรด 2)');
@@ -1120,36 +960,24 @@
         document.getElementById('recentPlacesModal').classList.remove('hidden');
         let places = JSON.parse(localStorage.getItem('recentPlaces') || '[]');
         let container = document.getElementById('recentPlacesModalList');
-        if(places.length === 0) {
-            container.innerHTML = '<p class="text-center text-gray-500 mt-10">ยังไม่มีประวัติสถานที่</p>';
-            return;
-        }
+        if(places.length === 0) { container.innerHTML = '<p class="text-center text-gray-500 mt-10">ยังไม่มีประวัติสถานที่</p>'; return; }
         let html = '';
         places.forEach(p => {
-            html += `
-            <button onclick="closeRecentPlacesModal(); panAndConfirmPlace('${p.name}', ${p.lat}, ${p.lng});" class="w-full text-left bg-gray-800 border border-gray-700 p-3.5 rounded-xl shadow-sm flex items-center gap-3 hover:bg-gray-700 transition">
-                <div class="w-8 h-8 rounded-full bg-gray-700 flex items-center justify-center shrink-0"><i class="fas fa-history text-gray-400"></i></div>
-                <span class="text-gray-200 font-medium text-sm truncate">${p.name}</span>
-            </button>
-            `;
+            html += `<button onclick="closeRecentPlacesModal(); panAndConfirmPlace('${p.name}', ${p.lat}, ${p.lng});" class="w-full text-left bg-gray-800 border border-gray-700 p-3.5 rounded-xl shadow-sm flex items-center gap-3 hover:bg-gray-700 transition"><div class="w-8 h-8 rounded-full bg-gray-700 flex items-center justify-center shrink-0"><i class="fas fa-history text-gray-400"></i></div><span class="text-gray-200 font-medium text-sm truncate">${p.name}</span></button>`;
         });
         container.innerHTML = html;
     }
 
-    windowContext.closeRecentPlacesModal = function() {
-        document.getElementById('recentPlacesModal').classList.add('hidden');
-    }
+    windowContext.closeRecentPlacesModal = function() { document.getElementById('recentPlacesModal').classList.add('hidden'); }
 
     windowContext.togglePage4Panel = function() {
         const panel = document.getElementById('page4Panel'); if(!panel) return;
-        panel.classList.toggle('panel-collapsed-page4');
-        updateMapPadding();
+        panel.classList.toggle('panel-collapsed-page4'); updateMapPadding();
     }
 
     windowContext.toggleTrackingPanel = function() {
         const panel = document.getElementById('trackingPanel'); if(!panel) return;
-        panel.classList.toggle('panel-collapsed');
-        updateMapPadding();
+        panel.classList.toggle('panel-collapsed'); updateMapPadding();
     }
 
     function showAlert(title, message, type = 'info', callback = null) {
@@ -1192,56 +1020,27 @@
         const controls = document.getElementById('mapControls'); if (!controls) return;
         controls.classList.remove('top-[76px]', 'top-[170px]', 'top-[140px]');
         if (page === 2 || page === 3) controls.classList.add('top-[140px]'); else controls.classList.add('top-[76px]');
-
-        let btnC = document.getElementById('btnCrosshair');
-        if (page !== 'Tracking') {
-            if(btnC) btnC.classList.add('hidden');
-        }
+        let btnC = document.getElementById('btnCrosshair'); if (page !== 'Tracking') { if(btnC) btnC.classList.add('hidden'); }
     }
 
     windowContext.formatPhone = function(input) { let val = input.value.replace(/\D/g, ''); if (val.startsWith('66')) val = '0' + val.substring(2); if (val.length > 10) val = val.substring(0, 10); input.value = val; }
     windowContext.openLineOA = function() { if (typeof liff !== 'undefined' && liff.isInClient()) { liff.openWindow({ url: LINE_OA_URL, external: true }); } else { window.open(LINE_OA_URL, '_blank'); } }
 
-    windowContext.handleCrosshairClick = function() {
-        if (currentStep === 2 || currentStep === 3) {
-            useCurrentLocation();
-        } else {
-            centerToFocus();
-        }
-    };
+    windowContext.handleCrosshairClick = function() { if (currentStep === 2 || currentStep === 3) { useCurrentLocation(); } else { centerToFocus(); } };
 
     windowContext.focusLocationToggle = function(lat, lng, index) {
         if(!map) return;
-        if (focusedWaypointIndex === index) {
-            focusedWaypointIndex = -1;
-            fitAllWaypoints();
-        } else {
-            focusedWaypointIndex = index;
-            updateMapPadding();
-            map.panTo({lat: lat, lng: lng});
-            setTimeout(() => { map.panBy(0, 150); }, 100);
-        }
+        if (focusedWaypointIndex === index) { focusedWaypointIndex = -1; fitAllWaypoints(); } 
+        else { focusedWaypointIndex = index; updateMapPadding(); map.panTo({lat: lat, lng: lng}); setTimeout(() => { map.panBy(0, 150); }, 100); }
         renderWaypointsUI();
     };
 
     function centerToFocus() {
         if(!map) return;
         if(currentStep === 'Tracking' && markerDriver && markerDriver.getMap()) {
-            isTrackingMode = true; 
-            const panel = document.getElementById('trackingPanel');
-            
-            const doPanToCar = () => {
-                updateMapPadding();
-                map.panTo(markerDriver.getPosition());
-                map.setZoom(18);
-            };
-
-            if(panel && !panel.classList.contains('panel-collapsed')) { 
-                panel.classList.add('panel-collapsed'); 
-                setTimeout(doPanToCar, 350);
-            } else {
-                doPanToCar();
-            }
+            isTrackingMode = true; const panel = document.getElementById('trackingPanel');
+            const doPanToCar = () => { updateMapPadding(); map.panTo(markerDriver.getPosition()); map.setZoom(18); };
+            if(panel && !panel.classList.contains('panel-collapsed')) { panel.classList.add('panel-collapsed'); setTimeout(doPanToCar, 350); } else { doPanToCar(); }
             return;
         }
         useCurrentLocation();
@@ -1249,20 +1048,12 @@
 
     windowContext.fitAllWaypoints = function() {
         if (!map || localWaypoints.length === 0) return;
-        focusedWaypointIndex = -1; 
-        isTrackingMode = false;
-        
-        const panel = document.getElementById('trackingPanel');
-        if(panel && panel.classList.contains('panel-collapsed')) {
-            panel.classList.remove('panel-collapsed');
-        }
+        focusedWaypointIndex = -1; isTrackingMode = false;
+        const panel = document.getElementById('trackingPanel'); if(panel && panel.classList.contains('panel-collapsed')) { panel.classList.remove('panel-collapsed'); }
         updateMapPadding();
 
         let bounds = new google.maps.LatLngBounds();
-        if (driverData && driverData.lat) {
-            bounds.extend(new google.maps.LatLng(driverData.lat, driverData.lng));
-        }
-        
+        if (driverData && driverData.lat) { bounds.extend(new google.maps.LatLng(driverData.lat, driverData.lng)); }
         let activeWaypoints = localWaypoints.filter(w => !w.passed);
         activeWaypoints.forEach(wp => bounds.extend({lat: wp.lat, lng: wp.lng}));
 
@@ -1272,22 +1063,11 @@
     };
 
     function createNumberedMarkerIcon(text, colorHex) {
-        return {
-            path: "M 0,0 C -12,-16 -18,-22 -18,-32 A 18,18 0 1,1 18,-32 C 18,-22 12,-16 0,0 Z M -8,-32 A 8,8 0 1,0 8,-32 A 8,8 0 1,0 -8,-32 Z",
-            fillColor: colorHex, fillOpacity: 1, strokeWeight: 2, strokeColor: '#ffffff', scale: 1.1,
-            labelOrigin: typeof google !== 'undefined' && google.maps ? new google.maps.Point(0, -17) : null,
-            anchor: typeof google !== 'undefined' && google.maps ? new google.maps.Point(0, 0) : null
-        };
+        return { path: "M 0,0 C -12,-16 -18,-22 -18,-32 A 18,18 0 1,1 18,-32 C 18,-22 12,-16 0,0 Z M -8,-32 A 8,8 0 1,0 8,-32 A 8,8 0 1,0 -8,-32 Z", fillColor: colorHex, fillOpacity: 1, strokeWeight: 2, strokeColor: '#ffffff', scale: 1.1, labelOrigin: typeof google !== 'undefined' && google.maps ? new google.maps.Point(0, -17) : null, anchor: typeof google !== 'undefined' && google.maps ? new google.maps.Point(0, 0) : null };
     }
 
     windowContext.updateCrosshairColor = function(colorHex) {
-        if(crosshairMarker) {
-            crosshairMarker.setIcon({
-                path: "M 0,0 C -12,-16 -18,-22 -18,-32 A 18,18 0 1,1 18,-32 C 18,-22 12,-16 0,0 Z M -8,-32 A 8,8 0 1,0 8,-32 A 8,8 0 1,0 -8,-32 Z",
-                fillColor: colorHex, fillOpacity: 1, strokeWeight: 2, strokeColor: '#ffffff', scale: 1.1,
-                anchor: typeof google !== 'undefined' && google.maps ? new google.maps.Point(0, 0) : null
-            });
-        }
+        if(crosshairMarker) { crosshairMarker.setIcon({ path: "M 0,0 C -12,-16 -18,-22 -18,-32 A 18,18 0 1,1 18,-32 C 18,-22 12,-16 0,0 Z M -8,-32 A 8,8 0 1,0 8,-32 A 8,8 0 1,0 -8,-32 Z", fillColor: colorHex, fillOpacity: 1, strokeWeight: 2, strokeColor: '#ffffff', scale: 1.1, anchor: typeof google !== 'undefined' && google.maps ? new google.maps.Point(0, 0) : null }); }
     }
 
     windowContext.initSearchBox = function(inputId, isPick) {
@@ -1324,23 +1104,11 @@
         disableDefaultUI: true, gestureHandling: 'greedy', zoomControl: false
       });
 
-      crosshairMarker = new google.maps.Marker({
-          map: null, 
-          zIndex: 1,
-          clickable: false
-      });
+      crosshairMarker = new google.maps.Marker({ map: null, zIndex: 1, clickable: false });
       crosshairMarker.bindTo('position', map, 'center');
 
-      map.addListener('dragstart', () => {
-         if (currentStep === 'Tracking') { isTrackingMode = false; }
-      });
-      
-      map.addListener('idle', () => {
-         if (crosshairMarker && (currentStep === 2 || currentStep === 3)) {
-             updateAddressBox(true); 
-         }
-      });
-
+      map.addListener('dragstart', () => { if (currentStep === 'Tracking') { isTrackingMode = false; } });
+      map.addListener('idle', () => { if (crosshairMarker && (currentStep === 2 || currentStep === 3)) { updateAddressBox(true); } });
       map.addListener('click', (event) => {
         if (event.placeId) {
           event.stop(); 
@@ -1363,12 +1131,7 @@
       directionsRenderer = new google.maps.DirectionsRenderer({ map: map, suppressMarkers: true, suppressPolylines: true, preserveViewport: true });
       geocoder = new google.maps.Geocoder();
       placesService = new google.maps.places.PlacesService(map);
-      
-      markerDriver = new google.maps.Marker({
-          map: null, 
-          icon: { url: "https://img.icons8.com/color/48/car-top-view.png", scaledSize: new google.maps.Size(44, 44), anchor: new google.maps.Point(22, 22) }, 
-          zIndex: 9999
-      });
+      markerDriver = new google.maps.Marker({ map: null, icon: { url: "https://img.icons8.com/color/48/car-top-view.png", scaledSize: new google.maps.Size(44, 44), anchor: new google.maps.Point(22, 22) }, zIndex: 9999 });
 
       initSearchBox('pickupSearch', true);
       initSearchBox('dropoffSearch', false);
@@ -1391,17 +1154,9 @@
           });
       }
 
-      if (currentStep === 4) {
-          renderWaypointsUI();
-          calculatePrice();
-      } else if (currentStep === 'Tracking') {
-          renderWaypointsUI();
-          drawTrackingRoute(bookData.status);
-          updateRealtimeMap();
-      } else if (currentStep === 2 || currentStep === 3) {
-          renderWaypointsUI();
-          renderSavedPlaceMarkersOnMap();
-      }
+      if (currentStep === 4) { renderWaypointsUI(); calculatePrice(); } 
+      else if (currentStep === 'Tracking') { renderWaypointsUI(); drawTrackingRoute(bookData.status); updateRealtimeMap(); } 
+      else if (currentStep === 2 || currentStep === 3) { renderWaypointsUI(); renderSavedPlaceMarkersOnMap(); }
     };
 
     function mockLoginForBrowser() {
@@ -1434,7 +1189,7 @@
       requestWakeLock();
       db.ref('passenger_blocks/' + lineUserId).on('value', snap => { myBlockedDrivers = snap.val() || {}; });
 
-db.ref('bookings/' + lineUserId).on('value', snap => {
+      db.ref('bookings/' + lineUserId).on('value', snap => {
         const b = snap.val();
         if(b) { 
             if(b.driverPin && b.status === "รับงานแล้ว" && (myBlockedDrivers[b.driverPin] || myBlockedDrivers[b.driverPhone])) {
@@ -1456,36 +1211,30 @@ db.ref('bookings/' + lineUserId).on('value', snap => {
         else if (currentStep === 'Tracking' && !windowContext.isCompleting) {
             windowContext.isCompleting = true;
             
-            // 🌟 แก้ไขบั๊กแจ้งเตือนยกเลิกตอนจบงาน: เช็คจากประวัติก่อนว่างานเพิ่งจบจริงไหม 🌟
+            // ตรวจสอบประวัติว่างานเพิ่งจบจริงไหม (แก้บั๊กเด้งยกเลิกตอนจบงาน)
             db.ref('completed_jobs').orderByChild('userId').equalTo(lineUserId).limitToLast(1).once('value', cSnap => {
                 let isCompleted = false;
                 if(cSnap.exists()){
                     cSnap.forEach(child => {
                         let cData = child.val();
-                        // ถ้ามีประวัติงานเพิ่งถูกสร้างไม่เกิน 3 นาที ถือว่าจบงานสำเร็จ ไม่ใช่โดนยกเลิก
-                        if (Date.now() - (cData.completedAt || cData.timestamp || 0) < 180000) {
-                            isCompleted = true;
-                        }
+                        if (Date.now() - (cData.completedAt || cData.timestamp || 0) < 180000) { isCompleted = true; }
                     });
                 }
 
                 if (isCompleted || bookData.status.includes("ถึงที่หมาย") || bookData.status.includes("เสร็จสิ้น")) {
-                    // จบงานสำเร็จ -> เด้งหน้าต่างให้คะแนนดาว
                     let finalMessage = `จุดรับ: ${bookData.pName}\nจุดส่ง: ${bookData.dName}\nราคา: ${bookData.price} บาท\n\nขอบคุณที่ใช้บริการ F1 Driver ครับ!`;
                     showAlert('เดินทางถึงที่หมายเรียบร้อย!', finalMessage, 'success', () => { 
                         document.getElementById('driverRatingModal').classList.remove('hidden');
                     });
                 } else {
-                    // โดนยกเลิกจริงๆ -> เด้งหน้าต่างสีแดง
                     showAlert('แจ้งเตือน', 'ขออภัยในความไม่สะดวกครับ งานนี้ถูกยกเลิก รบกวนคุณลูกค้ากดยืนยันเพื่อเรียกรถใหม่อีกครั้งนะครับ', 'error', () => { 
-                        resetTrackingFlags(); 
-                        windowContext.isCompleting = false; 
-                        showPage(4); 
+                        resetTrackingFlags(); windowContext.isCompleting = false; showPage(4); 
                     });
                 }
             });
         }
     });
+    }
 
     function addWaypointFromLocation(lat, lng, name, type, iconType = null) {
         let num = type === 'pick' ? localWaypoints.filter(w=>w.type==='pick').length + 1 : localWaypoints.filter(w=>w.type==='drop').length + 1;
@@ -1808,7 +1557,7 @@ db.ref('bookings/' + lineUserId).on('value', snap => {
         } 
     }
 
-    // 🌟 ระบบคำนวณราคาแบบจับเฉพาะรถคันใกล้ 🌟
+    // 🌟 ระบบคำนวณราคาแบบจับเฉพาะรถคันใกล้-ไกล เพื่อทำช่วงราคา 🌟
     function calculatePrice() {
       if(!directionsService || !map || localWaypoints.length < 2) return;
 
@@ -1859,7 +1608,7 @@ db.ref('bookings/' + lineUserId).on('value', snap => {
           let priceRangeStr = `~฿${minPrice} - ${maxPrice}`;
           if (minDriverDist === 0 && maxDriverDist === 0) {
               priceRangeStr = `~฿${minPrice} - ${minPrice + 20}`;
-              document.getElementById('sumPriceLabel').innerText = "ราคาประเมิน (อิงเรทพื้นฐาน)";
+              document.getElementById('sumPriceLabel').innerText = "ราคาประเมิน (ไม่มีรถออนไลน์)";
           } else {
               document.getElementById('sumPriceLabel').innerText = "ราคาประเมิน";
           }
@@ -2124,22 +1873,6 @@ db.ref('bookings/' + lineUserId).on('value', snap => {
           if(btnC) btnC.classList.remove('hidden');
       } else {
           if(btnC) btnC.classList.add('hidden');
-      }
-
-      if(bookData.status.includes("ถึงที่หมาย") && !windowContext.hasShownFinish) {
-        windowContext.hasShownFinish = true;
-        let finalMessage = `จุดรับ: ${bookData.pName}\nจุดส่ง: ${bookData.dName}\nระยะทาง: ${bookData.distance || 0} กม. | ราคา: ${bookData.price} บาท\n\nขอบคุณที่ใช้บริการ F1 Driver ครับ!`;
-        showAlert('ถึงที่หมายเรียบร้อย!', finalMessage, 'success', () => { 
-            windowContext.isCompleting = true; 
-            db.ref('bookings/' + lineUserId).remove().then(() => { 
-                document.getElementById('driverRatingModal').classList.remove('hidden');
-            }); 
-        });
-      }
-      
-      if(bookData.status.includes("ยกเลิก") && !windowContext.hasShownCancel) {
-        windowContext.hasShownCancel = true;
-        showAlert('แจ้งเตือน', 'ขออภัยในความไม่สะดวกครับ งานนี้ถูกยกเลิก รบกวนคุณลูกค้ากดยืนยันเพื่อเรียกรถใหม่อีกครั้งนะครับ', 'error', () => { windowContext.isCompleting = true; db.ref('bookings/' + lineUserId).remove().then(() => { resetTrackingFlags(); windowContext.isCompleting = false; showPage(4); }); });
       }
 
       updateRealtimeMap(); updateMapControlsPosition('Tracking');
