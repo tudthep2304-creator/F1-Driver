@@ -102,19 +102,19 @@
       </div>
       
       <div class="w-full max-w-sm mx-auto mb-auto mt-2 flex flex-col gap-3 shrink-0">
-          <button id="btnMainRideAction" onclick="handleMainRideClick()" class="w-full h-[88px] bg-blue-600/20 border border-blue-500/50 text-blue-400 rounded-2xl flex flex-row items-center justify-center gap-3 hover:bg-blue-600 hover:text-white transition shadow-sm active:scale-95">
+          <button id="btnMainRideAction" onclick="handleMainRideClick()" class="w-full h-20 bg-blue-600/20 border border-blue-500/50 text-blue-400 rounded-2xl flex flex-row items-center justify-center gap-3 hover:bg-blue-600 hover:text-white transition shadow-sm active:scale-95">
               <i class="fas fa-map-marked-alt text-3xl"></i>
-              <span class="font-bold text-base" id="btnMainRideText">เรียกรถ</span>
+              <span class="font-bold text-sm" id="btnMainRideText">เรียกรถ</span>
           </button>
           
           <div class="grid grid-cols-2 gap-3 w-full">
-              <button onclick="openNewsModal()" class="h-[88px] bg-yellow-600/20 border border-yellow-500/50 text-yellow-400 rounded-2xl flex flex-col items-center justify-center gap-1.5 hover:bg-yellow-600 hover:text-white transition shadow-sm active:scale-95 relative">
+              <button onclick="openNewsModal()" class="h-20 bg-yellow-600/20 border border-yellow-500/50 text-yellow-400 rounded-2xl flex flex-col items-center justify-center gap-1.5 hover:bg-yellow-600 hover:text-white transition shadow-sm active:scale-95 relative">
                   <div id="newsBadge" class="hidden absolute -top-1.5 -right-1.5 bg-red-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full shadow border border-red-400 animate-pulse">New</div>
                   <i class="fas fa-bullhorn text-2xl"></i>
-                  <span class="font-bold text-xs text-center leading-tight">ข่าวสาร &<br>โปรโมชั่น</span>
+                  <span class="font-bold text-xs text-center leading-tight">ข่าวสาร & โปรโมชั่น</span>
               </button>
 
-              <button onclick="showAlert('เตรียมพบกันเร็วๆ นี้!', 'ระบบคอมมูนิตี้จะเปิดให้ใช้งานในอัปเดต Phase 2 ครับ', 'info')" class="h-[88px] bg-purple-600/20 border border-purple-500/50 text-purple-400 rounded-2xl flex flex-col items-center justify-center gap-1.5 hover:bg-purple-600 hover:text-white transition shadow-sm active:scale-95">
+              <button onclick="showAlert('เตรียมพบกันเร็วๆ นี้!', 'ระบบคอมมูนิตี้จะเปิดให้ใช้งานในอัปเดต Phase 2 ครับ', 'info')" class="h-20 bg-purple-600/20 border border-purple-500/50 text-purple-400 rounded-2xl flex flex-col items-center justify-center gap-1.5 hover:bg-purple-600 hover:text-white transition shadow-sm active:scale-95">
                   <i class="fas fa-users text-2xl"></i>
                   <span class="font-bold text-xs text-center leading-tight">คอมมูนิตี้</span>
               </button>
@@ -236,7 +236,7 @@
       <div id="dropoffWaypointsList" class="flex flex-col gap-1.5 mb-1 max-h-[110px] overflow-y-auto slim-scroll"></div>
 
       <div class="flex gap-2 mt-2">
-          <button onclick="addWaypointFromCenter('drop')" class="flex-[1] bg-gray-800 border border-red-500/50 text-red-400 py-3 rounded-xl font-bold text-[14px] shadow-sm hover:bg-gray-700 transition flex justify-center items-center gap-1.5">
+          <button onclick="addWaypointFromCenter('drop')" class="flex-[1] bg-gray-800 border border-green-500/50 text-green-400 py-3 rounded-xl font-bold text-[14px] shadow-sm hover:bg-gray-700 transition flex justify-center items-center gap-1.5">
               <i class="fas fa-plus"></i> จุดส่ง
           </button>
           <button id="btnConfirmDrop" onclick="confirmDropoff()" disabled class="flex-[2] bg-gray-700 text-gray-400 py-3 rounded-xl font-bold text-[14px] shadow-md transition flex justify-center items-center gap-1.5 cursor-not-allowed opacity-50">
@@ -283,12 +283,12 @@
           </button>
       </div>
 
-      <form onsubmit="event.preventDefault(); submitBooking();" class="flex gap-2 w-full mt-1 shrink-0">
-          <div class="relative flex-[1.2]">
+      <form onsubmit="event.preventDefault(); submitBooking();" class="flex gap-2 w-full mt-1 shrink-0 pb-2">
+          <div class="relative flex-[1.2] min-w-[140px]">
               <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-green-500"><i class="fas fa-phone-alt text-[13px]"></i></div>
-              <input type="tel" id="userPhone" name="tel" autocomplete="tel" inputmode="tel" oninput="formatPhone(this)" placeholder="เบอร์ติดต่อ" class="w-full py-3 pl-9 pr-2 bg-gray-800 border border-gray-700 focus:border-green-500 focus:bg-gray-900 text-white placeholder-gray-500 rounded-xl text-[13px] font-bold outline-none transition-colors">
+              <input type="tel" id="userPhone" name="tel" autocomplete="tel" inputmode="tel" oninput="formatPhone(this)" placeholder="เบอร์ติดต่อ" class="w-full py-3 pl-9 pr-2 bg-gray-800 border border-gray-700 focus:border-green-500 focus:bg-gray-900 text-white placeholder-gray-500 rounded-xl text-[13px] font-bold outline-none transition-colors h-full">
           </div>
-          <button type="submit" class="flex-1 bg-green-600 text-white py-3 rounded-xl font-bold text-sm shadow-[0_0_15px_rgba(34,197,94,0.3)] hover:bg-green-700 active:scale-[0.98] transition flex justify-center items-center gap-1.5 whitespace-nowrap">
+          <button type="submit" class="flex-1 bg-green-600 text-white py-3 rounded-xl font-bold text-sm shadow-[0_0_15px_rgba(34,197,94,0.3)] hover:bg-green-700 active:scale-[0.98] transition flex justify-center items-center gap-1.5 whitespace-nowrap h-full shrink-0">
               ยืนยันเรียกรถ <i class="fas fa-check"></i>
           </button>
       </form>
@@ -563,10 +563,10 @@
     });
     const db = firebase.database();
 
-    // 🌟 ประกาศตัวแปร Global ไว้ที่นี่ที่เดียว
+    // 🌟 ประกาศตัวแปร Global
     let bannerInterval = null; 
     let bottomBannerInterval = null;
-    let notiAudio = null; // ตัวแปรสำหรับเสียง
+    let notiAudio = null;
 
     let map, directionsService, directionsRenderer, geocoder, placesService;
     let crosshairMarker = null; 
@@ -598,7 +598,7 @@
     let activeChatListenerRef = null;
     let currentSelectedRatingScore = 0;
 
-    // ระบบรวบรวมพิกัดคนขับทั้งหมด
+    // รวบรวมพิกัดคนขับออนไลน์
     windowContext.onlineDrivers = [];
     db.ref('active_drivers').on('value', snap => {
         let drivers = [];
@@ -611,6 +611,7 @@
             });
         }
         windowContext.onlineDrivers = drivers;
+        updateRideButtonState();
     });
 
     db.ref('driver').on('value', snap => {
@@ -635,15 +636,43 @@
 
     windowContext.currentServiceType = 'car';
 
-    // 🌟 ระบบจัดการปุ่มเรียกรถ หน้าแรก
+    // 🌟 ระบบควบคุมปุ่มหน้าแรกอัจฉริยะ 🌟
+    function updateRideButtonState() {
+        let btnMainRide = document.getElementById('btnMainRideAction');
+        let btnMainRideText = document.getElementById('btnMainRideText');
+        if(!btnMainRide) return;
+
+        let hasActiveJob = bookData && bookData.status && bookData.status !== "เสร็จสิ้น" && !bookData.status.includes("ยกเลิก") && bookData.status !== "รอผู้ขับขี่ตอบรับ";
+        let hasOnlineDrivers = windowContext.onlineDrivers && windowContext.onlineDrivers.length > 0;
+
+        if (hasActiveJob) {
+            btnMainRide.disabled = false;
+            btnMainRide.className = "w-full h-20 bg-yellow-600/20 border border-yellow-500/50 text-yellow-400 rounded-2xl flex flex-row items-center justify-center gap-3 hover:bg-yellow-600 hover:text-white transition shadow-sm active:scale-95 animate-pulse";
+            if(btnMainRideText) btnMainRideText.innerText = "ดูสถานะรถที่กำลังมารับ";
+            btnMainRide.onclick = function() { showPage('Tracking'); };
+        } else if (hasOnlineDrivers) {
+            btnMainRide.disabled = false;
+            btnMainRide.className = "w-full h-20 bg-blue-600/20 border border-blue-500/50 text-blue-400 rounded-2xl flex flex-row items-center justify-center gap-3 hover:bg-blue-600 hover:text-white transition shadow-sm active:scale-95";
+            if(btnMainRideText) btnMainRideText.innerText = "เรียกรถ";
+            btnMainRide.onclick = function() { windowContext.openVehicleModal(); };
+        } else {
+            btnMainRide.disabled = true;
+            btnMainRide.className = "w-full h-20 bg-gray-800 border border-gray-700 text-gray-500 rounded-2xl flex flex-row items-center justify-center gap-3 transition shadow-sm opacity-60 cursor-not-allowed";
+            if(btnMainRideText) btnMainRideText.innerText = "ไม่มีรถออนไลน์ขณะนี้";
+            btnMainRide.onclick = null;
+        }
+    }
+
     windowContext.handleMainRideClick = function() {
-        // ถ้ามีงานค้างอยู่ ให้วิ่งไปหน้า Tracking
         if(bookData && bookData.status && bookData.status !== "เสร็จสิ้น" && !bookData.status.includes("ยกเลิก")) {
             showPage('Tracking');
         } else {
-            // ถ้าว่าง ให้เปิดตัวเลือกรถ
             document.getElementById('vehicleSelectionModal').classList.remove('hidden');
         }
+    }
+
+    windowContext.openVehicleModal = function() {
+        document.getElementById('vehicleSelectionModal').classList.remove('hidden');
     }
 
     windowContext.closeVehicleModal = function() {
@@ -702,14 +731,10 @@
         });
     }
 
-    // แจ้งเตือนป้ายข่าว
     db.ref('news_promotions').on('value', snap => {
         let badge = document.getElementById('newsBadge');
-        if(snap.exists()) {
-            if(badge) badge.classList.remove('hidden');
-        } else {
-            if(badge) badge.classList.add('hidden');
-        }
+        if(snap.exists() && badge) badge.classList.remove('hidden');
+        else if(badge) badge.classList.add('hidden');
     });
 
     function getDynamicBottomPadding() {
@@ -774,8 +799,8 @@
                     
                     if(slider) {
                         slider.innerHTML += `
-                        <a href="${href}" target="${target}" class="w-full h-full flex-shrink-0 snap-center relative block">
-                            <img src="${b.imageUrl}" class="w-full h-full object-contain bg-gray-950">
+                        <a href="${href}" target="${target}" class="min-w-full h-full shrink-0 snap-center relative block">
+                            <img src="${b.imageUrl}" class="w-full h-full object-contain">
                         </a>`;
                     }
                     if(dots) {
@@ -808,7 +833,6 @@
     db.ref('config/bottom_banners').on('value', snap => {
         let container = document.getElementById('bottomBannerContainer');
         let slider = document.getElementById('bottomBannerSlider');
-        let statusBox = document.getElementById('statusBoxContainer');
         
         clearInterval(bottomBannerInterval);
         if(slider) slider.innerHTML = '';
@@ -828,8 +852,8 @@
                     let href = b.linkUrl ? b.linkUrl : '#';
                     if(slider) {
                         slider.innerHTML += `
-                        <a href="${href}" target="${target}" class="w-full h-full flex-shrink-0 snap-center block">
-                            <img src="${b.imageUrl}" class="w-full h-full object-cover">
+                        <a href="${href}" target="${target}" class="min-w-full h-full shrink-0 snap-center block">
+                            <img src="${b.imageUrl}" class="w-full h-full object-contain">
                         </a>`;
                     }
                 });
@@ -914,14 +938,13 @@
     windowContext.openPromoModal = function() { document.getElementById('promoModal').classList.remove('hidden'); }
     windowContext.closePromoModal = function() { document.getElementById('promoModal').classList.add('hidden'); }
 
-    // 🌟 แก้ไข Null Error ในหน้า Profile
     windowContext.openProfileModal = function() {
         document.getElementById('profileModal').classList.remove('hidden');
         
         let pNameL = document.getElementById('profileNameLarge');
         if(pNameL) pNameL.innerText = lineName || 'ไม่ทราบชื่อ';
         
-        let picSrc = null;
+        let picSrc = 'https://img.icons8.com/bubbles/150/user.png';
         let uPic = document.getElementById('userPic');
         let uPicSmall = document.getElementById('userPicSmall');
         
@@ -929,11 +952,11 @@
         else if (uPicSmall && uPicSmall.src) picSrc = uPicSmall.src;
         
         let pPicL = document.getElementById('profilePicLarge');
-        if(picSrc && pPicL) { pPicL.src = picSrc; }
+        if(pPicL) pPicL.src = picSrc;
         
         let savedPhone = localStorage.getItem('passengerPhone');
         let pPhoneL = document.getElementById('profilePhoneLarge');
-        if(pPhoneL) { pPhoneL.innerText = savedPhone ? 'เบอร์โทร: ' + savedPhone : 'เบอร์โทร: ยังไม่ระบุ'; }
+        if(pPhoneL) pPhoneL.innerText = savedPhone ? 'เบอร์โทร: ' + savedPhone : 'เบอร์โทร: ยังไม่ระบุ';
     }
 
     windowContext.closeProfileModal = function() {
@@ -1424,17 +1447,7 @@
                 localWaypoints = [];
             }
             
-            // ทำให้ปุ่มหน้าแรกกระพริบถ้ารถกำลังมารับ/เดินทาง
-            let btnMainRide = document.getElementById('btnMainRideAction');
-            let btnMainRideText = document.getElementById('btnMainRideText');
-            if(btnMainRide && b.status !== "รอผู้ขับขี่ตอบรับ" && !b.status.includes("ยกเลิก") && b.status !== "เสร็จสิ้น") {
-                btnMainRide.classList.add('animate-pulse', 'border-yellow-500');
-                btnMainRideText.innerText = "ดูสถานะรถ";
-            } else if (btnMainRide) {
-                btnMainRide.classList.remove('animate-pulse', 'border-yellow-500');
-                btnMainRideText.innerText = "เรียกรถ";
-            }
-
+            updateRideButtonState();
             handleTracking(); 
         } 
         else if (currentStep === 'Tracking' && !windowContext.isCompleting) {
@@ -1689,8 +1702,9 @@
         } 
         if(currentStep === 4) showPage(3); 
     }
+    // เปลี่ยนปุ่มหน้าแรก ให้สลับมา Page 1 โดยตรง
     windowContext.goHome = function() { 
-        showPage(1); // เปลี่ยนจากโหลดหน้าใหม่ เป็นพากลับหน้า 1 เฉยๆ
+        showPage(1); 
     }
 
     function updateAddressBox(isInteraction = false) {
@@ -1781,13 +1795,6 @@
           let distRideKm = distMeters / 1000; waitMins = Math.ceil(waitMins / 60);
           currentRouteBounds = resRide.routes[0].bounds;
 
-          let distanceDriverToPickupKm = 0;
-          if (driverData && driverData.lat && driverData.lng && typeof google.maps.geometry !== 'undefined') {
-              let driverLatLng = new google.maps.LatLng(driverData.lat, driverData.lng);
-              let distanceInMeters = google.maps.geometry.spherical.computeDistanceBetween(driverLatLng, origin);
-              distanceDriverToPickupKm = distanceInMeters / 1000;
-          }
-
           bookData.distance = distRideKm.toFixed(1); bookData.duration = waitMins;
           const sDist = document.getElementById('sumDist'); const sWait = document.getElementById('sumWait');
           if(sDist) sDist.innerText = bookData.distance; if(sWait) sWait.innerText = bookData.duration;
@@ -1821,9 +1828,8 @@
 
           let priceRangeStr = `~฿${minPrice} - ${maxPrice}`;
           if (minDriverDist === 0 && maxDriverDist === 0) {
-              // กรณีไม่มีรถออนไลน์ จะแจ้งเป็นราคาขั้นต่ำของระยะทาง
               priceRangeStr = `~฿${minPrice} - ${minPrice + 20}`;
-              document.getElementById('sumPriceLabel').innerText = "ราคาประเมิน (ขั้นต่ำ)";
+              document.getElementById('sumPriceLabel').innerText = "ราคาประเมิน (ไม่มีรถออนไลน์)";
           } else {
               document.getElementById('sumPriceLabel').innerText = "ราคาประเมิน";
           }
@@ -2046,7 +2052,6 @@
           });
       }
 
-      // เล่นเสียง "ติ๊ง!" เมื่อสถานะเปลี่ยน
       if (lastNotifiedStatus !== bookData.status) {
           playSoundAlert();
           if ((bookData.status.includes("กำลังเดินทางไปหา") || bookData.status.includes("รับงานแล้ว")) && !windowContext.hasSpokenAccept) { speakText("คนขับตอบรับแล้ว ราคาค่าโดยสารได้ถูกกำหนดแล้ว"); windowContext.hasSpokenAccept = true; } 
