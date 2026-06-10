@@ -1434,7 +1434,7 @@
       requestWakeLock();
       db.ref('passenger_blocks/' + lineUserId).on('value', snap => { myBlockedDrivers = snap.val() || {}; });
 
-      db.ref('bookings/' + lineUserId).on('value', snap => {
+db.ref('bookings/' + lineUserId).on('value', snap => {
         const b = snap.val();
         if(b) { 
             if(b.driverPin && b.status === "รับงานแล้ว" && (myBlockedDrivers[b.driverPin] || myBlockedDrivers[b.driverPhone])) {
@@ -1455,10 +1455,37 @@
         } 
         else if (currentStep === 'Tracking' && !windowContext.isCompleting) {
             windowContext.isCompleting = true;
-            showAlert('แจ้งเตือน', 'ขออภัยในความไม่สะดวกครับ งานนี้ถูกยกเลิก รบกวนคุณลูกค้ากดยืนยันเพื่อเรียกรถใหม่อีกครั้งนะครับ', 'info', () => { resetTrackingFlags(); windowContext.isCompleting = false; showPage(4); });
+            
+            // 🌟 แก้ไขบั๊กแจ้งเตือนยกเลิกตอนจบงาน: เช็คจากประวัติก่อนว่างานเพิ่งจบจริงไหม 🌟
+            db.ref('completed_jobs').orderByChild('userId').equalTo(lineUserId).limitToLast(1).once('value', cSnap => {
+                let isCompleted = false;
+                if(cSnap.exists()){
+                    cSnap.forEach(child => {
+                        let cData = child.val();
+                        // ถ้ามีประวัติงานเพิ่งถูกสร้างไม่เกิน 3 นาที ถือว่าจบงานสำเร็จ ไม่ใช่โดนยกเลิก
+                        if (Date.now() - (cData.completedAt || cData.timestamp || 0) < 180000) {
+                            isCompleted = true;
+                        }
+                    });
+                }
+
+                if (isCompleted || bookData.status.includes("ถึงที่หมาย") || bookData.status.includes("เสร็จสิ้น")) {
+                    // จบงานสำเร็จ -> เด้งหน้าต่างให้คะแนนดาว
+                    let finalMessage = `จุดรับ: ${bookData.pName}\nจุดส่ง: ${bookData.dName}\nราคา: ${bookData.price} บาท\n\nขอบคุณที่ใช้บริการ F1 Driver ครับ!`;
+                    showAlert('เดินทางถึงที่หมายเรียบร้อย!', finalMessage, 'success', () => { 
+                        document.getElementById('driverRatingModal').classList.remove('hidden');
+                    });
+                } else {
+                    // โดนยกเลิกจริงๆ -> เด้งหน้าต่างสีแดง
+                    showAlert('แจ้งเตือน', 'ขออภัยในความไม่สะดวกครับ งานนี้ถูกยกเลิก รบกวนคุณลูกค้ากดยืนยันเพื่อเรียกรถใหม่อีกครั้งนะครับ', 'error', () => { 
+                        resetTrackingFlags(); 
+                        windowContext.isCompleting = false; 
+                        showPage(4); 
+                    });
+                }
+            });
         }
-      });
-    }
+    });
 
     function addWaypointFromLocation(lat, lng, name, type, iconType = null) {
         let num = type === 'pick' ? localWaypoints.filter(w=>w.type==='pick').length + 1 : localWaypoints.filter(w=>w.type==='drop').length + 1;
