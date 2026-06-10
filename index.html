@@ -101,36 +101,31 @@
           <div class="absolute top-2 right-2 bg-black/60 px-2 py-0.5 rounded text-[10px] text-white z-10 font-bold">Ad</div>
       </div>
       
-      <div class="w-full max-w-sm mx-auto mb-auto mt-2 flex flex-col gap-3 shrink-0">
-          <button id="btnMainRideAction" onclick="handleMainRideClick()" class="w-full h-20 bg-blue-600/20 border border-blue-500/50 text-blue-400 rounded-2xl flex flex-row items-center justify-center gap-3 hover:bg-blue-600 hover:text-white transition shadow-sm active:scale-95">
-              <i class="fas fa-map-marked-alt text-3xl"></i>
-              <span class="font-bold text-sm" id="btnMainRideText">เรียกรถ</span>
+      <div class="w-full max-w-sm mx-auto flex flex-col gap-3 shrink-0 mb-4">
+          <button id="btnMainRideAction" onclick="handleMainRideClick()" class="w-full h-24 bg-gray-800 border border-gray-700 text-gray-500 rounded-2xl flex flex-col items-center justify-center gap-1 transition shadow-sm opacity-60 cursor-not-allowed">
+              <span class="font-black text-[17px] flex items-center gap-2" id="btnMainRideText"><i class="fas fa-car-slash"></i> เรียกรถไม่ได้</span>
+              <span class="text-[11px] font-bold text-gray-400" id="btnMainRideSubText">ไม่มีรถออนไลน์ขณะนี้</span>
           </button>
           
           <div class="grid grid-cols-2 gap-3 w-full">
-              <button onclick="openNewsModal()" class="h-20 bg-yellow-600/20 border border-yellow-500/50 text-yellow-400 rounded-2xl flex flex-col items-center justify-center gap-1.5 hover:bg-yellow-600 hover:text-white transition shadow-sm active:scale-95 relative">
+              <button onclick="openNewsModal()" class="h-[75px] bg-yellow-600/20 border border-yellow-500/50 text-yellow-400 rounded-2xl flex flex-col items-center justify-center gap-1 hover:bg-yellow-600 hover:text-white transition shadow-sm active:scale-95 relative">
                   <div id="newsBadge" class="hidden absolute -top-1.5 -right-1.5 bg-red-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full shadow border border-red-400 animate-pulse">New</div>
-                  <i class="fas fa-bullhorn text-2xl"></i>
-                  <span class="font-bold text-xs text-center leading-tight">ข่าวสาร & โปรโมชั่น</span>
+                  <i class="fas fa-bullhorn text-[22px]"></i>
+                  <span class="font-bold text-[11px] text-center leading-tight mt-1">ข่าวสาร &<br>โปรโมชั่น</span>
               </button>
 
-              <button onclick="showAlert('เตรียมพบกันเร็วๆ นี้!', 'ระบบคอมมูนิตี้จะเปิดให้ใช้งานในอัปเดต Phase 2 ครับ', 'info')" class="h-20 bg-purple-600/20 border border-purple-500/50 text-purple-400 rounded-2xl flex flex-col items-center justify-center gap-1.5 hover:bg-purple-600 hover:text-white transition shadow-sm active:scale-95">
-                  <i class="fas fa-users text-2xl"></i>
-                  <span class="font-bold text-xs text-center leading-tight">คอมมูนิตี้</span>
+              <button onclick="showAlert('เตรียมพบกันเร็วๆ นี้!', 'ระบบคอมมูนิตี้จะเปิดให้ใช้งานในอัปเดต Phase 2 ครับ', 'info')" class="h-[75px] bg-purple-600/20 border border-purple-500/50 text-purple-400 rounded-2xl flex flex-col items-center justify-center gap-1 hover:bg-purple-600 hover:text-white transition shadow-sm active:scale-95">
+                  <i class="fas fa-users text-[22px]"></i>
+                  <span class="font-bold text-[11px] text-center leading-tight mt-1">คอมมูนิตี้</span>
               </button>
           </div>
       </div>
 
-      <div id="statusBoxContainer" class="w-full max-w-sm bg-gray-800 p-4 rounded-2xl text-center border border-gray-700 shadow-sm relative overflow-hidden transition-all duration-300 mt-4 mb-3 shrink-0">
-        <div class="absolute top-0 right-0 p-3 opacity-[0.03]"><i class="fas fa-car-side text-6xl text-white"></i></div>
-        <h3 class="text-xs text-gray-400 mb-1 font-bold relative z-10">สถานะรถในพื้นที่ของคุณ</h3>
-        <div id="driverStatus" class="text-xl font-black text-gray-500 relative z-10 flex items-center justify-center gap-2"><i class="fas fa-spinner fa-spin text-lg"></i> โหลดข้อมูล...</div>
-      </div>
-
-      <div id="bottomBannerContainer" class="w-full max-w-sm h-[70px] bg-gray-800 rounded-2xl border border-gray-700 overflow-hidden hidden relative shadow-md shrink-0 mb-4">
+      <div id="bottomBannerContainer" class="w-full max-w-sm h-[70px] bg-gray-800 rounded-2xl border border-gray-700 overflow-hidden hidden relative shadow-md shrink-0 mt-auto mb-2">
           <div id="bottomBannerSlider" class="flex overflow-x-auto snap-x snap-mandatory hide-scrollbar w-full h-full scroll-smooth items-center">
               </div>
       </div>
+
     </div>
   </div>
 
@@ -271,7 +266,7 @@
               <p class="font-black text-blue-400 text-xs" id="sumDistBox"><span id="sumDist">0</span> กม. • <span id="sumWait">0</span> นาที</p>
             </div>
             <div class="text-right">
-              <p class="text-[9px] text-gray-400 font-bold mb-0.5" id="sumPriceLabel">ราคาประเมิน <span id="discountTag" class="hidden text-green-400 bg-green-900/50 border border-green-500/30 px-1 rounded"></span></p>
+              <p class="text-[9px] text-gray-400 font-bold mb-0.5" id="sumPriceLabel">ราคาประเมิน</p>
               <div class="flex items-end justify-end gap-1">
                   <p id="sumPriceOld" class="hidden text-[10px] text-gray-500 line-through font-bold pb-0.5"></p>
                   <p class="font-black text-[16px] text-green-400 leading-none" id="sumPrice">~฿0</p>
@@ -598,36 +593,40 @@
     let activeChatListenerRef = null;
     let currentSelectedRatingScore = 0;
 
-    // รวบรวมพิกัดคนขับออนไลน์
-    windowContext.onlineDrivers = [];
+    // รวบรวมพิกัดคนขับออนไลน์ และเช็คเพื่ออัปเดตปุ่มหน้าแรก
+    windowContext.activeNodeDrivers = [];
+    windowContext.singleNodeDriver = [];
+    
+    function mergeDrivers() {
+        if (windowContext.activeNodeDrivers && windowContext.activeNodeDrivers.length > 0) {
+            windowContext.onlineDrivers = windowContext.activeNodeDrivers;
+        } else if (windowContext.singleNodeDriver && windowContext.singleNodeDriver.length > 0) {
+            windowContext.onlineDrivers = windowContext.singleNodeDriver;
+        } else {
+            windowContext.onlineDrivers = [];
+        }
+        updateRideButtonState();
+    }
+
     db.ref('active_drivers').on('value', snap => {
         let drivers = [];
         if(snap.exists()) {
             snap.forEach(child => {
                 let d = child.val();
-                if(d.status === 'ออนไลน์' && d.lat) {
-                    drivers.push(d);
-                }
+                if(d.status === 'ออนไลน์' && d.lat) { drivers.push(d); }
             });
         }
-        windowContext.onlineDrivers = drivers;
-        updateRideButtonState();
+        windowContext.activeNodeDrivers = drivers;
+        mergeDrivers();
     });
 
     db.ref('driver').on('value', snap => {
         const d = snap.val();
         if(d) {
             driverData = d;
-            if(d.status === 'ออนไลน์' && d.lat && windowContext.onlineDrivers.length === 0) {
-                windowContext.onlineDrivers = [d];
-            }
+            windowContext.singleNodeDriver = (d.status === 'ออนไลน์' && d.lat) ? [d] : [];
+            mergeDrivers();
             
-            let ds = document.getElementById('driverStatus'); 
-            if(d.status === "ออนไลน์") {
-                if(ds) { ds.innerHTML = `<i class="fas fa-users text-green-500 mr-1"></i> มีรถพร้อมให้บริการ`; ds.className = "text-[15px] font-black text-green-400 relative z-10 flex items-center justify-center"; }
-            } else {
-                if(ds) { ds.innerHTML = `<i class="fas fa-times-circle text-red-400 mr-1"></i> ไม่มีรถในพื้นที่ขณะนี้`; ds.className = "text-[15px] font-black text-red-400 relative z-10 flex items-center justify-center"; }
-            }
             if(currentStep === 'Tracking' && markerDriver) { 
                 markerDriver.setPosition({lat: d.lat, lng: d.lng}); 
             }
@@ -636,10 +635,11 @@
 
     windowContext.currentServiceType = 'car';
 
-    // 🌟 ระบบควบคุมปุ่มหน้าแรกอัจฉริยะ 🌟
+    // 🌟 ระบบจัดการปุ่มเรียกรถ หน้าแรก
     function updateRideButtonState() {
         let btnMainRide = document.getElementById('btnMainRideAction');
         let btnMainRideText = document.getElementById('btnMainRideText');
+        let btnMainRideSubText = document.getElementById('btnMainRideSubText');
         if(!btnMainRide) return;
 
         let hasActiveJob = bookData && bookData.status && bookData.status !== "เสร็จสิ้น" && !bookData.status.includes("ยกเลิก") && bookData.status !== "รอผู้ขับขี่ตอบรับ";
@@ -647,18 +647,21 @@
 
         if (hasActiveJob) {
             btnMainRide.disabled = false;
-            btnMainRide.className = "w-full h-20 bg-yellow-600/20 border border-yellow-500/50 text-yellow-400 rounded-2xl flex flex-row items-center justify-center gap-3 hover:bg-yellow-600 hover:text-white transition shadow-sm active:scale-95 animate-pulse";
-            if(btnMainRideText) btnMainRideText.innerText = "ดูสถานะรถที่กำลังมารับ";
+            btnMainRide.className = "w-full h-24 bg-yellow-600/20 border border-yellow-500/50 text-yellow-400 rounded-2xl flex flex-col items-center justify-center gap-1 hover:bg-yellow-600 hover:text-white transition shadow-sm active:scale-95 animate-pulse";
+            if(btnMainRideText) btnMainRideText.innerHTML = '<i class="fas fa-route mr-1"></i> ดูสถานะรถ';
+            if(btnMainRideSubText) btnMainRideSubText.innerText = "กำลังเดินทาง...";
             btnMainRide.onclick = function() { showPage('Tracking'); };
         } else if (hasOnlineDrivers) {
             btnMainRide.disabled = false;
-            btnMainRide.className = "w-full h-20 bg-blue-600/20 border border-blue-500/50 text-blue-400 rounded-2xl flex flex-row items-center justify-center gap-3 hover:bg-blue-600 hover:text-white transition shadow-sm active:scale-95";
-            if(btnMainRideText) btnMainRideText.innerText = "เรียกรถ";
+            btnMainRide.className = "w-full h-24 bg-blue-600/20 border border-blue-500/50 text-blue-400 rounded-2xl flex flex-col items-center justify-center gap-1 hover:bg-blue-600 hover:text-white transition shadow-sm active:scale-95";
+            if(btnMainRideText) btnMainRideText.innerHTML = '<i class="fas fa-map-marked-alt mr-1"></i> เรียกรถ';
+            if(btnMainRideSubText) btnMainRideSubText.innerText = "มีรถพร้อมให้บริการ";
             btnMainRide.onclick = function() { windowContext.openVehicleModal(); };
         } else {
             btnMainRide.disabled = true;
-            btnMainRide.className = "w-full h-20 bg-gray-800 border border-gray-700 text-gray-500 rounded-2xl flex flex-row items-center justify-center gap-3 transition shadow-sm opacity-60 cursor-not-allowed";
-            if(btnMainRideText) btnMainRideText.innerText = "ไม่มีรถออนไลน์ขณะนี้";
+            btnMainRide.className = "w-full h-24 bg-gray-800 border border-gray-700 text-gray-500 rounded-2xl flex flex-col items-center justify-center gap-1 transition shadow-sm opacity-60 cursor-not-allowed";
+            if(btnMainRideText) btnMainRideText.innerHTML = '<i class="fas fa-car-slash mr-1"></i> เรียกรถไม่ได้';
+            if(btnMainRideSubText) btnMainRideSubText.innerText = "ไม่มีรถออนไลน์ขณะนี้";
             btnMainRide.onclick = null;
         }
     }
@@ -799,8 +802,8 @@
                     
                     if(slider) {
                         slider.innerHTML += `
-                        <a href="${href}" target="${target}" class="min-w-full h-full shrink-0 snap-center relative block">
-                            <img src="${b.imageUrl}" class="w-full h-full object-contain">
+                        <a href="${href}" target="${target}" class="w-full h-full flex-shrink-0 snap-center relative block">
+                            <img src="${b.imageUrl}" class="w-full h-full object-contain bg-gray-950">
                         </a>`;
                     }
                     if(dots) {
@@ -852,8 +855,8 @@
                     let href = b.linkUrl ? b.linkUrl : '#';
                     if(slider) {
                         slider.innerHTML += `
-                        <a href="${href}" target="${target}" class="min-w-full h-full shrink-0 snap-center block">
-                            <img src="${b.imageUrl}" class="w-full h-full object-contain">
+                        <a href="${href}" target="${target}" class="w-full h-full flex-shrink-0 snap-center block">
+                            <img src="${b.imageUrl}" class="w-full h-full object-cover">
                         </a>`;
                     }
                 });
@@ -1702,7 +1705,7 @@
         } 
         if(currentStep === 4) showPage(3); 
     }
-    // เปลี่ยนปุ่มหน้าแรก ให้สลับมา Page 1 โดยตรง
+    
     windowContext.goHome = function() { 
         showPage(1); 
     }
@@ -1778,6 +1781,7 @@
         } 
     }
 
+    // 🌟 ระบบคำนวณราคาแบบจับเฉพาะรถคันใกล้ 🌟
     function calculatePrice() {
       if(!directionsService || !map || localWaypoints.length < 2) return;
 
@@ -1804,7 +1808,6 @@
           let pickRate = parseInt(pricingConfig[windowContext.currentServiceType]?.pick || pricingConfig.pick || 5);
 
           let baseRidePrice = baseFare + (distRideKm * kmRate);
-          
           let minDriverDist = 0;
           let maxDriverDist = 0;
 
@@ -1829,7 +1832,7 @@
           let priceRangeStr = `~฿${minPrice} - ${maxPrice}`;
           if (minDriverDist === 0 && maxDriverDist === 0) {
               priceRangeStr = `~฿${minPrice} - ${minPrice + 20}`;
-              document.getElementById('sumPriceLabel').innerText = "ราคาประเมิน (ไม่มีรถออนไลน์)";
+              document.getElementById('sumPriceLabel').innerText = "ราคาประเมิน (อิงเรทพื้นฐาน)";
           } else {
               document.getElementById('sumPriceLabel').innerText = "ราคาประเมิน";
           }
