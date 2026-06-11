@@ -90,42 +90,42 @@
   </div>
 
   <div id="page1" class="full-page flex flex-col overflow-y-auto hide-scrollbar">
-    <div class="bg-[#1e234e] border-b border-[#2a2f5c] text-[#fae100] h-16 px-4 w-full shadow-lg shrink-0 flex justify-between items-center sticky top-0 z-20">
-        <h1 class="text-xl font-black tracking-wider flex items-center gap-2"><i class="fas fa-car-side font-normal"></i> F1 DRIVER</h1>
-        <div class="flex items-center gap-2 text-sm text-gray-400 bg-[#2a2f5c] px-3 py-1.5 rounded-full border border-[#383d6a] cursor-pointer shadow-sm hover:text-[#fae100] transition" onclick="openProfileModal()">
+    <div class="bg-[#1e234e] border-b border-[#2a2f5c] text-[#fae100] h-16 px-4 shadow-md shrink-0 flex justify-between items-center sticky top-0 z-20">
+        <h1 class="text-lg font-black tracking-wide flex items-center gap-2"><i class="fas fa-car-side font-normal"></i> F1 DRIVER</h1>
+        <div class="flex items-center gap-2 text-sm text-gray-400 bg-[#2a2f5c] px-3 py-1 rounded-full border border-[#383d6a] cursor-pointer shadow-sm hover:text-[#fae100] transition" onclick="openProfileModal()">
             <img id="userPicSmall" class="w-6 h-6 rounded-full object-cover bg-gray-700" src="https://img.icons8.com/bubbles/150/user.png" alt="Profile">
-            <span id="userNameSmall" class="font-normal truncate max-w-[100px]">...</span>
+            <span id="userNameSmall" class="font-normal truncate max-w-[90px] text-xs">...</span>
         </div>
     </div>
 
     <div class="p-4 flex-1 flex flex-col items-center w-full max-w-sm mx-auto">
-      <div id="homeBannerContainer" class="w-full aspect-video bg-[#1e234e] rounded-none mb-6 shadow-md overflow-hidden relative hidden shrink-0">
+      <div id="homeBannerContainer" class="w-full aspect-video bg-black rounded-none mb-6 shadow-md overflow-hidden relative hidden shrink-0">
           <div id="bannerSlider" class="flex overflow-x-auto snap-x snap-mandatory hide-scrollbar w-full h-full relative scroll-smooth items-center"></div>
           <div id="bannerDots" class="absolute bottom-3 left-1/2 transform -translate-x-1/2 flex gap-1.5 z-10 bg-black/40 px-2 py-1 rounded-full"></div>
           <div class="absolute top-2 right-2 bg-black/60 px-2 py-0.5 rounded text-[10px] text-white z-10 font-normal">Ad</div>
       </div>
       
       <div class="w-full grid grid-cols-3 gap-2 shrink-0 mb-4 mt-2">
-          <button id="btnMainRideAction" onclick="handleMainRideClick()" class="flex flex-col items-center justify-center gap-1.5 text-[#fae100] transition active:scale-95 bg-[#2a2f5c] border border-[#383d6a] rounded-2xl p-4 outline-none">
+          <button id="btnMainRideAction" onclick="handleMainRideClick()" class="flex flex-col items-center justify-center gap-1.5 text-[#fae100] transition active:scale-95 bg-transparent outline-none">
               <i class="fas fa-car text-[30px] font-normal" id="btnMainRideIcon"></i>
-              <span class="font-normal text-xs text-center leading-tight tracking-wide" id="btnMainRideText">รอสถานะ...</span>
+              <span class="font-normal text-xs text-center leading-tight tracking-wide" id="btnMainRideText">เรียกรถ</span>
           </button>
           
-          <button onclick="openNewsModal()" class="flex flex-col items-center justify-center gap-1.5 text-[#fae100] transition active:scale-95 relative bg-[#2a2f5c] border border-[#383d6a] rounded-2xl p-4 outline-none">
-              <div id="newsBadge" class="hidden absolute top-2 right-2 bg-red-500 text-white text-[8px] font-bold px-1.5 py-0.5 rounded-full shadow animate-pulse">New</div>
+          <button onclick="openNewsModal()" class="flex flex-col items-center justify-center gap-1.5 text-[#fae100] transition active:scale-95 relative bg-transparent outline-none">
+              <div id="newsBadge" class="hidden absolute top-0 right-3 bg-red-500 text-white text-[9px] font-normal px-1.5 py-0.5 rounded-full shadow animate-pulse">New</div>
               <i class="fas fa-bullhorn text-[30px] font-normal"></i>
               <span class="font-normal text-xs text-center leading-tight tracking-wide">ข่าวสาร<br>&โปรโมชั่น</span>
           </button>
 
-          <button onclick="openCommunityModal()" class="flex flex-col items-center justify-center gap-1.5 text-[#fae100] transition active:scale-95 relative bg-[#2a2f5c] border border-[#383d6a] rounded-2xl p-4 outline-none">
-              <div id="chatBadge" class="hidden absolute top-2 right-2 bg-red-500 text-white text-[8px] font-bold px-1.5 py-0.5 rounded-full shadow">0</div>
+          <button onclick="openCommunityModal()" class="flex flex-col items-center justify-center gap-1.5 text-[#fae100] transition active:scale-95 relative bg-transparent outline-none">
+              <div id="chatBadge" class="hidden absolute top-0 right-3 bg-red-500 text-white text-[9px] font-normal px-1.5 py-0.5 rounded-full shadow">0</div>
               <i class="fas fa-users text-[30px] font-normal"></i>
               <span class="font-normal text-xs text-center leading-tight tracking-wide">คอมมูนิตี้</span>
           </button>
       </div>
 
       <div class="mt-auto w-full flex flex-col gap-3">
-          <div id="bottomBannerContainer" class="w-full h-[70px] bg-[#2a2f5c] rounded-none overflow-hidden hidden relative shadow-md shrink-0 border-t border-b border-[#383d6a]">
+          <div id="bottomBannerContainer" class="w-full h-[70px] bg-[#2a2f5c] rounded-none overflow-hidden hidden relative shadow-md shrink-0">
               <div id="bottomBannerSlider" class="flex overflow-x-auto snap-x snap-mandatory hide-scrollbar w-full h-full scroll-smooth items-center"></div>
           </div>
       </div>
@@ -138,24 +138,24 @@
           <p class="text-sm font-normal text-gray-400 mb-4 leading-relaxed shrink-0">ระบบรองรับบริการหลายรูปแบบ ราคาประเมินจะแตกต่างกัน</p>
           
           <div class="grid grid-cols-2 gap-3 overflow-y-auto slim-scroll pr-1 pb-2 flex-1">
-              <button id="btnSelectCar" onclick="selectVehicleAndStart('car')" class="w-full py-4 bg-[#2a2f5c] text-gray-500 font-normal rounded-2xl transition flex flex-col items-center justify-center gap-2 opacity-50 cursor-not-allowed border border-[#383d6a] shrink-0">
+              <button id="btnSelectCar" onclick="selectVehicleAndStart('car')" class="w-full py-4 bg-[#fae100] text-[#1e234e] font-black rounded-2xl shadow-md hover:bg-[#e5ce00] transition flex flex-col items-center justify-center gap-2 active:scale-95 shrink-0">
                   <i class="fas fa-car-side text-3xl font-normal"></i> 
-                  <div class="flex flex-col items-center"><span class="text-sm font-normal">รถยนต์</span><span class="text-[10px] font-normal" id="subtext-car">(ไม่มีรถว่าง)</span></div>
+                  <span class="text-sm font-bold text-center leading-tight">รถยนต์</span>
               </button>
               
-              <button id="btnSelectPremiumCar" onclick="selectVehicleAndStart('premium_car')" class="w-full py-4 bg-[#2a2f5c] text-gray-500 font-normal rounded-2xl transition flex flex-col items-center justify-center gap-2 opacity-50 cursor-not-allowed border border-[#383d6a] shrink-0">
+              <button id="btnSelectPremiumCar" onclick="selectVehicleAndStart('premium_car')" class="w-full py-4 bg-[#fae100] text-[#1e234e] font-black rounded-2xl shadow-md hover:bg-[#e5ce00] transition flex flex-col items-center justify-center gap-2 active:scale-95 shrink-0">
                   <i class="fas fa-car text-3xl font-normal"></i> 
-                  <div class="flex flex-col items-center"><span class="text-sm font-normal">รถยนต์พรีเมียม</span><span class="text-[10px] font-normal" id="subtext-premium_car">(ไม่มีรถว่าง)</span></div>
+                  <span class="text-sm font-bold text-center leading-tight">รถยนต์พรีเมียม</span>
               </button>
 
-              <button id="btnSelectBike" onclick="selectVehicleAndStart('bike')" class="w-full py-4 bg-[#2a2f5c] text-gray-500 font-normal rounded-2xl transition flex flex-col items-center justify-center gap-2 opacity-50 cursor-not-allowed border border-[#383d6a] shrink-0">
-                  <i class="fas fa-motorcycle text-3xl font-normal text-blue-400"></i> 
-                  <div class="flex flex-col items-center"><span class="text-sm font-normal">รถมอเตอร์ไซค์</span><span class="text-[10px] font-normal" id="subtext-bike">(ไม่มีรถว่าง)</span></div>
+              <button id="btnSelectBike" onclick="selectVehicleAndStart('bike')" class="w-full py-4 bg-[#fae100] text-[#1e234e] font-black rounded-2xl shadow-md hover:bg-[#e5ce00] transition flex flex-col items-center justify-center gap-2 active:scale-95 shrink-0">
+                  <i class="fas fa-motorcycle text-3xl font-normal text-blue-600"></i> 
+                  <span class="text-sm font-bold text-center leading-tight">รถมอเตอร์ไซค์</span>
               </button>
 
-              <button id="btnSelectPremiumBike" onclick="selectVehicleAndStart('premium_bike')" class="w-full py-4 bg-[#2a2f5c] text-gray-500 font-normal rounded-2xl transition flex flex-col items-center justify-center gap-2 opacity-50 cursor-not-allowed border border-[#383d6a] shrink-0">
-                  <i class="fas fa-motorcycle text-3xl font-normal text-purple-400"></i> 
-                  <div class="flex flex-col items-center"><span class="text-sm font-normal text-center leading-tight">มอเตอร์ไซค์<br>พรีเมียม</span><span class="text-[10px] font-normal" id="subtext-premium_bike">(ไม่มีรถว่าง)</span></div>
+              <button id="btnSelectPremiumBike" onclick="selectVehicleAndStart('premium_bike')" class="w-full py-4 bg-[#fae100] text-[#1e234e] font-black rounded-2xl shadow-md hover:bg-[#e5ce00] transition flex flex-col items-center justify-center gap-2 active:scale-95 shrink-0">
+                  <i class="fas fa-motorcycle text-3xl font-normal text-purple-600"></i> 
+                  <span class="text-sm font-bold text-center leading-tight">รถมอเตอร์ไซค์<br>พรีเมียม</span>
               </button>
           </div>
           
@@ -163,16 +163,16 @@
       </div>
   </div>
 
-  <div id="newsModal" class="hidden fixed inset-0 z-[200] bg-[#1e234e] overflow-y-auto pb-10 transition-opacity">
-      <div class="sticky top-0 bg-[#1e234e] border-b border-[#2a2f5c] h-16 px-4 flex items-center justify-between z-10 shadow-md shrink-0 w-full">
+  <div id="newsModal" class="hidden fixed inset-0 z-[200] bg-[#1e234e] transition-opacity flex flex-col">
+      <div class="sticky top-0 bg-[#1e234e] border-b border-[#2a2f5c] p-4 flex items-center justify-between z-10 shadow-md shrink-0">
           <div class="flex items-center gap-3">
               <button onclick="closeNewsModal()" class="w-10 h-10 shrink-0 bg-[#2a2f5c] text-gray-400 rounded-full flex items-center justify-center border border-[#383d6a] hover:text-[#fae100] transition font-normal"><i class="fas fa-arrow-left"></i></button>
               <h2 class="text-lg font-black text-[#fae100]"><i class="fas fa-bullhorn mr-1 font-normal"></i> ข่าวสาร & โปรโมชั่น</h2>
           </div>
       </div>
       
-      <div class="flex-1 overflow-y-auto flex flex-col w-full hide-scrollbar min-h-screen">
-          <div class="w-full max-w-sm mx-auto shrink-0 mt-4">
+      <div class="flex-1 overflow-y-auto flex flex-col w-full hide-scrollbar">
+          <div class="px-4 w-full max-w-sm mx-auto shrink-0 mt-4">
               <div id="newsTopBannerContainer" class="w-full aspect-video bg-black hidden relative shadow-md rounded-none">
                   <div id="newsTopBannerSlider" class="flex overflow-x-auto snap-x snap-mandatory hide-scrollbar w-full h-full relative scroll-smooth items-center"></div>
               </div>
@@ -180,8 +180,8 @@
           
           <div class="p-4 space-y-4 w-full max-w-sm mx-auto flex-1" id="newsListContainer"></div>
 
-          <div class="w-full max-w-sm mx-auto shrink-0 mt-auto">
-              <div id="newsBottomBannerContainer" class="w-full h-[70px] bg-[#2a2f5c] rounded-none overflow-hidden hidden relative shadow-md border-t border-[#383d6a]">
+          <div class="px-4 w-full max-w-sm mx-auto shrink-0 mb-4 mt-auto">
+              <div id="newsBottomBannerContainer" class="w-full h-[70px] bg-[#2a2f5c] rounded-none overflow-hidden hidden relative shadow-md">
                   <div id="newsBottomBannerSlider" class="flex overflow-x-auto snap-x snap-mandatory hide-scrollbar w-full h-full scroll-smooth items-center"></div>
               </div>
           </div>
@@ -189,18 +189,10 @@
   </div>
 
   <div id="communityModal" class="hidden fixed inset-0 z-[200] bg-[#1e234e] flex flex-col pointer-events-auto transition-transform">
-      <div class="bg-[#2a2f5c] border-b border-[#383d6a] h-16 px-4 flex items-center gap-3 shadow-md shrink-0 w-full">
+      <div class="bg-[#2a2f5c] border-b border-[#383d6a] p-4 flex items-center gap-3 shadow-md shrink-0">
           <button onclick="closeCommunityModal()" class="w-10 h-10 bg-[#383d6a] text-gray-400 rounded-full flex items-center justify-center hover:text-[#fae100] transition font-normal"><i class="fas fa-arrow-left"></i></button>
           <h2 class="text-lg font-black text-[#fae100]"><i class="fas fa-users mr-2 font-normal"></i> แชทคอมมูนิตี้ส่วนกลาง</h2>
       </div>
-      
-      <div class="p-3 bg-[#1e234e] border-b border-[#383d6a] shrink-0">
-          <div class="relative w-full shadow-sm rounded-xl bg-[#2a2f5c] border border-[#383d6a] overflow-hidden">
-              <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none z-10"><i class="fas fa-search text-gray-400 font-normal"></i></div>
-              <input type="text" id="chatSearchInput" onkeyup="filterCommunityChat()" class="w-full py-2.5 pl-9 pr-3 bg-transparent outline-none font-normal text-[13px] text-white placeholder-gray-500" placeholder="ค้นหาข้อความ หรือวันที่ (เช่น 11/06)...">
-          </div>
-      </div>
-
       <div id="globalChatBox" class="flex-1 overflow-y-auto p-4 bg-[#1e234e] hide-scrollbar flex flex-col">
           <div id="globalChatMessages" class="space-y-3 flex-1 flex flex-col justify-end">
               <p class="text-center text-xs font-normal text-gray-500 my-4">พูดคุยกับผู้โดยสารและคนขับในพื้นที่ได้ที่นี่</p>
@@ -404,7 +396,7 @@
   </div>
 
   <div id="profileModal" class="hidden fixed inset-0 z-[190] bg-[#1e234e] pointer-events-auto transition-transform flex flex-col">
-      <div class="bg-[#2a2f5c] border-b border-[#383d6a] h-16 px-4 flex items-center gap-3 shadow-md shrink-0 w-full">
+      <div class="bg-[#2a2f5c] border-b border-[#383d6a] p-4 flex items-center gap-3 shadow-md shrink-0">
           <button onclick="closeProfileModal()" class="w-10 h-10 shrink-0 bg-[#383d6a] text-gray-400 rounded-full flex items-center justify-center hover:text-white transition font-normal"><i class="fas fa-arrow-left"></i></button>
           <h2 class="text-lg font-black text-white">โปรไฟล์ส่วนตัว</h2>
       </div>
@@ -429,7 +421,7 @@
   </div>
 
   <div id="recentPlacesModal" class="hidden fixed inset-0 z-[250] bg-[#1e234e] pointer-events-auto transition-transform flex flex-col">
-      <div class="bg-[#2a2f5c] border-b border-[#383d6a] h-16 px-4 flex items-center gap-3 shadow-md shrink-0 w-full">
+      <div class="bg-[#2a2f5c] border-b border-[#383d6a] p-4 flex items-center gap-3 shadow-md shrink-0">
           <button onclick="closeRecentPlacesModal()" class="w-10 h-10 shrink-0 bg-[#383d6a] text-gray-400 rounded-full flex items-center justify-center hover:text-[#fae100] transition font-normal"><i class="fas fa-arrow-left"></i></button>
           <h2 class="text-lg font-black text-white">ประวัติสถานที่ (ล่าสุด)</h2>
       </div>
@@ -437,7 +429,7 @@
   </div>
 
   <div id="waypointSearchModal" class="hidden fixed inset-0 z-[150] bg-[#1e234e] pointer-events-auto transition-transform duration-300 flex flex-col">
-      <div class="bg-[#2a2f5c] border-b border-[#383d6a] h-16 px-4 flex items-center gap-3 shadow-md shrink-0 w-full">
+      <div class="bg-[#2a2f5c] border-b border-[#383d6a] p-4 flex items-center gap-3 shadow-md">
           <button onclick="closeWaypointSearchModal()" class="w-10 h-10 shrink-0 bg-[#383d6a] text-gray-400 rounded-full flex items-center justify-center hover:text-white transition font-normal"><i class="fas fa-arrow-left"></i></button>
           <h2 class="text-lg font-black text-white">ค้นหาสถานที่จุดแวะ</h2>
       </div>
@@ -451,7 +443,7 @@
   </div>
 
   <div id="historyModal" class="hidden fixed inset-0 z-[200] bg-[#1e234e] overflow-y-auto pb-10 transition-opacity">
-      <div class="sticky top-0 bg-[#2a2f5c] border-b border-[#383d6a] h-16 px-4 flex items-center justify-between z-10 shadow-md shrink-0 w-full">
+      <div class="sticky top-0 bg-[#2a2f5c] border-b border-[#383d6a] p-4 flex items-center justify-between z-10 shadow-md">
           <div class="flex items-center gap-3">
               <button onclick="closePassengerHistory()" class="w-10 h-10 shrink-0 bg-[#383d6a] text-gray-400 rounded-full flex items-center justify-center hover:text-[#fae100] transition font-normal"><i class="fas fa-arrow-left"></i></button>
               <h2 class="text-lg font-black text-white">ประวัติการเดินทาง</h2>
@@ -461,7 +453,7 @@
   </div>
 
   <div id="blockedDriversModal" class="hidden fixed inset-0 z-[220] bg-[#1e234e] overflow-y-auto pb-10 transition-opacity">
-      <div class="sticky top-0 bg-[#2a2f5c] border-b border-[#383d6a] h-16 px-4 flex items-center justify-between z-10 shadow-md shrink-0 w-full">
+      <div class="sticky top-0 bg-[#2a2f5c] border-b border-[#383d6a] p-4 flex items-center justify-between z-10 shadow-md">
           <div class="flex items-center gap-3">
               <button onclick="closeBlockedDrivers()" class="w-10 h-10 shrink-0 bg-[#383d6a] text-gray-400 rounded-full flex items-center justify-center hover:text-[#fae100] transition font-normal"><i class="fas fa-arrow-left"></i></button>
               <h2 class="text-lg font-black text-white">จัดการการบล็อก</h2>
@@ -627,6 +619,7 @@
     let activeGlobalChatListenerRef = null;
     let currentSelectedRatingScore = 0;
     
+    // ประกาศตัวแปรรับค่า Badge คอมมูนิตี้ให้เป็น Global 
     let unreadChatCount = 0;
 
     const detailedDarkMapStyle = [
@@ -688,25 +681,20 @@
             if(btnMainRideIcon) btnMainRideIcon.className = "fas fa-route text-[30px] font-normal";
             if(btnMainRideText) btnMainRideText.innerText = "ดูสถานะ";
             btnMainRide.onclick = function() { showPage('Tracking'); };
-        } else if (hasOnlineDrivers) {
+        } else {
+            // รถจะว่างหรือไม่ว่าง ก็ให้กดเปิด Modal ได้เสมอ
             btnMainRide.disabled = false;
             btnMainRide.className = "flex flex-col items-center justify-center gap-1.5 text-[#fae100] transition active:scale-95 bg-[#2a2f5c] border border-[#383d6a] rounded-2xl p-4 outline-none";
             if(btnMainRideIcon) btnMainRideIcon.className = "fas fa-car text-[30px] font-normal";
             if(btnMainRideText) btnMainRideText.innerText = "เรียกรถ";
             btnMainRide.onclick = function() { windowContext.openVehicleModal(); };
-        } else {
-            btnMainRide.disabled = true;
-            btnMainRide.className = "flex flex-col items-center justify-center gap-1.5 text-gray-500 transition active:scale-95 bg-[#2a2f5c] border border-[#383d6a] rounded-2xl p-4 outline-none opacity-50 cursor-not-allowed";
-            if(btnMainRideIcon) btnMainRideIcon.className = "fas fa-car-slash text-[30px] font-normal";
-            if(btnMainRideText) btnMainRideText.innerText = "ไม่มีรถ";
-            btnMainRide.onclick = null;
         }
     }
 
     windowContext.handleMainRideClick = function() {
         if(bookData && bookData.status && bookData.status !== "เสร็จสิ้น" && !bookData.status.includes("ยกเลิก")) {
             showPage('Tracking');
-        } else { document.getElementById('vehicleSelectionModal').classList.remove('hidden'); }
+        } else { windowContext.openVehicleModal(); }
     }
 
     windowContext.openVehicleModal = function() { 
@@ -727,7 +715,7 @@
             } else {
                 btn.disabled = true;
                 btn.className = "w-full py-4 bg-[#2a2f5c] text-gray-500 font-black rounded-2xl transition flex flex-col items-center justify-center gap-2 opacity-50 cursor-not-allowed border border-[#383d6a] shrink-0";
-                btn.innerHTML = `<i class="${iconClass} text-3xl font-normal"></i> <div class="flex flex-col items-center"><span class="text-sm font-bold text-center leading-tight">${title}</span><span class="text-[10px] font-normal mt-0.5">(ไม่มีรถว่าง)</span></div>`;
+                btn.innerHTML = `<i class="${iconClass} text-3xl font-normal"></i> <div class="flex flex-col items-center"><span class="text-sm font-bold text-center leading-tight">${title}</span><span class="text-[10px] font-normal mt-0.5 text-red-400">(ไม่มีรถว่าง)</span></div>`;
             }
         };
 
@@ -1411,7 +1399,6 @@
             }
             updateChatBadge();
 
-            // Update UI if modal is open
             const messagesDiv = document.getElementById('globalChatMessages');
             const chatBox = document.getElementById('globalChatBox');
             if (messagesDiv && !modal.classList.contains('hidden')) {
@@ -1450,7 +1437,6 @@
         }
     }
 
-    // ฟังก์ชันค้นหาแชทคอมมูนิตี้
     windowContext.filterCommunityChat = function() {
         let keyword = document.getElementById('chatSearchInput').value.toLowerCase();
         let messages = document.querySelectorAll('.chat-msg-item');
