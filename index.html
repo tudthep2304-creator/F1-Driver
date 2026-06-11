@@ -113,14 +113,14 @@
           </button>
           
           <div class="grid grid-cols-2 gap-3 w-full">
-              <button onclick="openNewsModal()" class="h-20 bg-[#2a2f5c] border border-[#383d6a] text-blue-400 rounded-2xl flex flex-col items-center justify-center gap-1.5 hover:bg-blue-600 hover:text-white transition shadow-sm active:scale-95 relative">
-                  <div id="newsBadge" class="hidden absolute -top-1.5 -right-1.5 bg-red-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full shadow border border-red-400 animate-pulse">New</div>
-                  <i class="fas fa-bullhorn text-[22px]"></i>
-                  <span class="font-bold text-xs text-center leading-tight">ข่าวสาร &<br>โปรโมชั่น</span>
+              <button onclick="openNewsModal()" class="h-20 bg-[#2a2f5c] border border-[#383d6a] text-[#fae100] rounded-2xl flex flex-col items-center justify-center gap-1.5 hover:bg-[#383d6a] transition shadow-sm active:scale-95 relative">
+                  <div id="newsBadge" class="hidden absolute top-2 right-2 bg-red-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full shadow animate-pulse">New</div>
+                  <i class="fas fa-bullhorn text-[26px]"></i>
+                  <span class="font-bold text-xs text-center leading-tight">ข่าวสาร</span>
               </button>
 
-              <button onclick="showAlert('เตรียมพบกันเร็วๆ นี้!', 'ระบบคอมมูนิตี้จะเปิดให้ใช้งานในอัปเดตถัดไปครับ', 'info')" class="h-20 bg-[#2a2f5c] border border-[#383d6a] text-purple-400 rounded-2xl flex flex-col items-center justify-center gap-1.5 hover:bg-purple-600 hover:text-white transition shadow-sm active:scale-95">
-                  <i class="fas fa-users text-[22px]"></i>
+              <button onclick="showAlert('เตรียมพบกันเร็วๆ นี้!', 'ระบบคอมมูนิตี้จะเปิดให้ใช้งานในอัปเดตถัดไปครับ', 'info')" class="h-20 bg-[#2a2f5c] border border-[#383d6a] text-[#fae100] rounded-2xl flex flex-col items-center justify-center gap-1.5 hover:bg-[#383d6a] transition shadow-sm active:scale-95">
+                  <i class="fas fa-users text-[26px]"></i>
                   <span class="font-bold text-xs text-center leading-tight">คอมมูนิตี้</span>
               </button>
           </div>
@@ -143,7 +143,7 @@
                   <i class="fas fa-car-side text-2xl"></i> รถยนต์
               </button>
               <button id="btnSelectBike" onclick="selectVehicleAndStart('bike')" class="w-full py-4 bg-[#2a2f5c] text-white font-black text-lg rounded-2xl shadow-md border border-[#383d6a] hover:bg-[#383d6a] transition flex items-center justify-center gap-3 active:scale-95">
-                  <i class="fas fa-motorcycle text-2xl text-blue-400"></i> มอเตอร์ไซค์
+                  <i class="fas fa-motorcycle text-2xl"></i> มอเตอร์ไซค์
               </button>
           </div>
           <button onclick="closeVehicleModal()" class="mt-6 text-sm font-bold text-gray-400 hover:text-white transition">ยกเลิก</button>
@@ -154,7 +154,7 @@
       <div class="sticky top-0 bg-[#1e234e] border-b border-[#2a2f5c] p-4 flex items-center justify-between z-10 shadow-md">
           <div class="flex items-center gap-3">
               <button onclick="closeNewsModal()" class="w-10 h-10 shrink-0 bg-[#2a2f5c] text-gray-400 rounded-full flex items-center justify-center border border-[#383d6a] hover:text-[#fae100] transition"><i class="fas fa-arrow-left"></i></button>
-              <h2 class="text-lg font-black text-blue-400"><i class="fas fa-bullhorn mr-1"></i> ข่าวสาร & โปรโมชั่น</h2>
+              <h2 class="text-lg font-black text-[#fae100]"><i class="fas fa-bullhorn mr-1"></i> ข่าวสาร & โปรโมชั่น</h2>
           </div>
       </div>
       <div id="newsBannerContainer" class="w-full max-w-sm mx-auto aspect-video bg-black hidden relative mb-4 mt-4 shadow-md">
@@ -341,7 +341,7 @@
   <div id="inAppChatModal" class="hidden fixed inset-0 z-[250] bg-[#1e234e] flex flex-col pointer-events-auto transition-transform">
       <div class="bg-[#2a2f5c] border-b border-[#383d6a] p-4 flex items-center gap-3 shadow-md shrink-0">
           <button onclick="closeInAppChatModal()" class="w-10 h-10 bg-[#383d6a] text-white rounded-full flex items-center justify-center hover:bg-[#4b507d]"><i class="fas fa-arrow-left"></i></button>
-          <h2 class="text-lg font-black text-white"><i class="fas fa-comments text-blue-400 mr-2"></i>ข้อความถึงคนขับ</h2>
+          <h2 class="text-lg font-black text-white"><i class="fas fa-comments text-[#fae100] mr-2"></i>ข้อความถึงคนขับ</h2>
       </div>
       <div id="inAppChatMessages" class="flex-1 overflow-y-auto p-4 space-y-3 bg-[#1e234e]/80 hide-scrollbar flex flex-col">
           <p class="text-center text-xs text-gray-500 my-4">เริ่มต้นการสนทนากับคนขับที่นี่</p>
@@ -545,7 +545,6 @@
     const windowContext = window;
     const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwwdopAPESHRrHEYTSa-CzFMbh0JX9WHUa37PMEJmxDkah7ui67cVtOn68cnM-2DtmR/exec"; 
     const MY_LIFF_ID = "2010188449-b9Yq1R2L";
-    const LINE_OA_URL = "https://line.me/R/ti/p/%40805zvmii";
     
     firebase.initializeApp({
       apiKey: "AIzaSyBNtaYaX1OW-86_9EGiVN9EpgPzWOX_twQ",
@@ -592,7 +591,7 @@
     let activeChatListenerRef = null;
     let currentSelectedRatingScore = 0;
 
-    // ✅ Dark Map แบบละเอียด
+    // ประกาศ Dark Map เพียงครั้งเดียวเท่านั้น!
     const detailedDarkMapStyle = [
       { elementType: "geometry", stylers: [{ color: "#1e234e" }] },
       { elementType: "labels.text.stroke", stylers: [{ color: "#1e234e" }] },
@@ -637,7 +636,6 @@
 
     windowContext.currentServiceType = 'car';
 
-    // ✅ ปรับปุ่มให้รวมสถานะคนขับเข้าไป
     function updateRideButtonState() {
         let btnMainRide = document.getElementById('btnMainRideAction');
         if(!btnMainRide) return;
@@ -669,14 +667,13 @@
         } else { document.getElementById('vehicleSelectionModal').classList.remove('hidden'); }
     }
 
-    // ✅ ปิดปุ่มเลือกรถ ถ้ารถประเภทนั้นไม่มีออนไลน์
     windowContext.openVehicleModal = function() { 
         let hasCar = false;
         let hasBike = false;
 
         windowContext.onlineDrivers.forEach(d => {
             if (d.serviceType === 'bike') hasBike = true;
-            else hasCar = true; // สมมติว่าถ้าไม่มีระบุให้เป็น car ไปก่อน
+            else hasCar = true; 
         });
 
         let carBtn = document.getElementById('btnSelectCar');
@@ -1153,23 +1150,6 @@
       });
     };
 
-    const detailedDarkMapStyle = [
-      { elementType: "geometry", stylers: [{ color: "#1e234e" }] },
-      { elementType: "labels.text.stroke", stylers: [{ color: "#1e234e" }] },
-      { elementType: "labels.text.fill", stylers: [{ color: "#8b93b5" }] },
-      { featureType: "administrative.locality", elementType: "labels.text.fill", stylers: [{ color: "#fae100" }] },
-      { featureType: "landscape.man_made", elementType: "geometry.fill", stylers: [{ color: "#252a55" }] }, 
-      { featureType: "landscape.man_made.building", elementType: "geometry.fill", stylers: [{ color: "#323868" }] }, 
-      { featureType: "landscape.man_made.building", elementType: "geometry.stroke", stylers: [{ color: "#4b507d" }] }, 
-      { featureType: "landscape.natural", elementType: "geometry", stylers: [{ color: "#1a1f44" }] }, 
-      { featureType: "poi", elementType: "labels.text.fill", stylers: [{ color: "#8b93b5" }] },
-      { featureType: "poi.park", elementType: "geometry", stylers: [{ color: "#20254f" }] },
-      { featureType: "road", elementType: "geometry.fill", stylers: [{ color: "#2a2f5c" }] },
-      { featureType: "road", elementType: "geometry.stroke", stylers: [{ color: "#383d6a" }] },
-      { featureType: "road", elementType: "labels.text.fill", stylers: [{ color: "#8b93b5" }] },
-      { featureType: "water", elementType: "geometry", stylers: [{ color: "#121530" }] }
-    ];
-
     windowContext.initMap = function() {
       if (typeof google === 'undefined' || typeof google.maps === 'undefined') return;
       if (map) return; 
@@ -1207,7 +1187,6 @@
       geocoder = new google.maps.Geocoder();
       placesService = new google.maps.places.PlacesService(map);
       
-      // ✅ เปลี่ยนรถเป็นรถสีแดง ให้ตรงกับคนขับ
       markerDriver = new google.maps.Marker({ 
           map: null, 
           icon: { url: "https://img.icons8.com/color/48/car-top-view.png", scaledSize: new google.maps.Size(40, 40), anchor: new google.maps.Point(20, 20) }, 
