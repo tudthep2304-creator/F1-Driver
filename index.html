@@ -99,31 +99,29 @@
     </div>
 
     <div class="p-4 flex-1 flex flex-col items-center">
-      <div id="homeBannerContainer" class="w-full max-w-sm aspect-video bg-black rounded-none mb-4 shadow-md overflow-hidden relative hidden shrink-0">
+      <div id="homeBannerContainer" class="w-full max-w-sm aspect-video bg-black rounded-none mb-6 shadow-md overflow-hidden relative hidden shrink-0">
           <div id="bannerSlider" class="flex overflow-x-auto snap-x snap-mandatory hide-scrollbar w-full h-full relative scroll-smooth items-center"></div>
           <div id="bannerDots" class="absolute bottom-3 left-1/2 transform -translate-x-1/2 flex gap-1.5 z-10 bg-black/40 px-2 py-1 rounded-full"></div>
           <div class="absolute top-2 right-2 bg-black/60 px-2 py-0.5 rounded text-[10px] text-white z-10 font-bold">Ad</div>
       </div>
       
-      <div class="w-full max-w-sm mx-auto flex flex-col gap-3 shrink-0 mb-4">
-          <button id="btnMainRideAction" onclick="handleMainRideClick()" class="w-full h-24 bg-[#2a2f5c] border border-[#383d6a] text-gray-400 rounded-2xl flex flex-col items-center justify-center gap-1 transition shadow-sm opacity-60 cursor-not-allowed relative overflow-hidden">
-              <div class="absolute top-0 right-0 p-3 opacity-[0.03] pointer-events-none"><i class="fas fa-car-side text-6xl text-white"></i></div>
-              <i class="fas fa-spinner fa-spin text-2xl" id="btnMainRideIcon"></i>
-              <span class="font-bold text-sm mt-1" id="btnMainRideText">กำลังโหลดสถานะ...</span>
+      <div class="w-full max-w-sm mx-auto grid grid-cols-3 gap-2 shrink-0 mb-4 mt-2">
+          
+          <button id="btnMainRideAction" onclick="handleMainRideClick()" class="flex flex-col items-center justify-center gap-2 text-[#fae100] transition active:scale-95 bg-transparent outline-none">
+              <i class="fas fa-car text-[36px]" id="btnMainRideIcon"></i>
+              <span class="font-black text-sm text-center leading-tight tracking-wide" id="btnMainRideText">รอสถานะ...</span>
           </button>
           
-          <div class="grid grid-cols-2 gap-3 w-full">
-              <button onclick="openNewsModal()" class="h-20 bg-[#2a2f5c] border border-[#383d6a] text-[#fae100] rounded-2xl flex flex-col items-center justify-center gap-1.5 hover:bg-[#383d6a] transition shadow-sm active:scale-95 relative">
-                  <div id="newsBadge" class="hidden absolute top-2 right-2 bg-red-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full shadow animate-pulse">New</div>
-                  <i class="fas fa-bullhorn text-[26px]"></i>
-                  <span class="font-bold text-xs text-center leading-tight">ข่าวสาร</span>
-              </button>
+          <button onclick="openNewsModal()" class="flex flex-col items-center justify-center gap-2 text-[#fae100] transition active:scale-95 relative bg-transparent outline-none">
+              <div id="newsBadge" class="hidden absolute top-0 right-3 bg-red-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full shadow animate-pulse">New</div>
+              <i class="fas fa-bullhorn text-[36px]"></i>
+              <span class="font-black text-sm text-center leading-tight tracking-wide">ข่าวสาร</span>
+          </button>
 
-              <button onclick="showAlert('เตรียมพบกันเร็วๆ นี้!', 'ระบบคอมมูนิตี้จะเปิดให้ใช้งานในอัปเดตถัดไปครับ', 'info')" class="h-20 bg-[#2a2f5c] border border-[#383d6a] text-[#fae100] rounded-2xl flex flex-col items-center justify-center gap-1.5 hover:bg-[#383d6a] transition shadow-sm active:scale-95">
-                  <i class="fas fa-users text-[26px]"></i>
-                  <span class="font-bold text-xs text-center leading-tight">คอมมูนิตี้</span>
-              </button>
-          </div>
+          <button onclick="openCommunityModal()" class="flex flex-col items-center justify-center gap-2 text-[#fae100] transition active:scale-95 bg-transparent outline-none">
+              <i class="fas fa-users text-[36px]"></i>
+              <span class="font-black text-sm text-center leading-tight tracking-wide">คอมมูนิตี้</span>
+          </button>
       </div>
 
       <div class="mt-auto w-full max-w-sm flex flex-col gap-3">
@@ -143,7 +141,7 @@
                   <i class="fas fa-car-side text-2xl"></i> รถยนต์
               </button>
               <button id="btnSelectBike" onclick="selectVehicleAndStart('bike')" class="w-full py-4 bg-[#2a2f5c] text-white font-black text-lg rounded-2xl shadow-md border border-[#383d6a] hover:bg-[#383d6a] transition flex items-center justify-center gap-3 active:scale-95">
-                  <i class="fas fa-motorcycle text-2xl"></i> มอเตอร์ไซค์
+                  <i class="fas fa-motorcycle text-2xl text-blue-400"></i> มอเตอร์ไซค์
               </button>
           </div>
           <button onclick="closeVehicleModal()" class="mt-6 text-sm font-bold text-gray-400 hover:text-white transition">ยกเลิก</button>
@@ -157,10 +155,30 @@
               <h2 class="text-lg font-black text-[#fae100]"><i class="fas fa-bullhorn mr-1"></i> ข่าวสาร & โปรโมชั่น</h2>
           </div>
       </div>
-      <div id="newsBannerContainer" class="w-full max-w-sm mx-auto aspect-video bg-black hidden relative mb-4 mt-4 shadow-md">
-          <div id="newsBannerSlider" class="flex overflow-x-auto snap-x snap-mandatory hide-scrollbar w-full h-full relative scroll-smooth items-center"></div>
+      
+      <div id="newsTopBannerContainer" class="w-full max-w-sm mx-auto aspect-video bg-black hidden relative mt-4 shadow-md rounded-none">
+          <div id="newsTopBannerSlider" class="flex overflow-x-auto snap-x snap-mandatory hide-scrollbar w-full h-full relative scroll-smooth items-center"></div>
       </div>
-      <div class="p-4 space-y-4 max-w-sm mx-auto" id="newsListContainer"></div>
+      
+      <div class="p-4 space-y-4 max-w-sm mx-auto min-h-[30vh]" id="newsListContainer"></div>
+
+      <div id="newsBottomBannerContainer" class="w-full max-w-sm mx-auto h-[70px] bg-[#2a2f5c] rounded-none overflow-hidden hidden relative shadow-md shrink-0 mb-4">
+          <div id="newsBottomBannerSlider" class="flex overflow-x-auto snap-x snap-mandatory hide-scrollbar w-full h-full scroll-smooth items-center"></div>
+      </div>
+  </div>
+
+  <div id="communityModal" class="hidden fixed inset-0 z-[200] bg-[#1e234e] flex flex-col pointer-events-auto transition-transform">
+      <div class="bg-[#2a2f5c] border-b border-[#383d6a] p-4 flex items-center gap-3 shadow-md shrink-0">
+          <button onclick="closeCommunityModal()" class="w-10 h-10 bg-[#383d6a] text-gray-400 rounded-full flex items-center justify-center hover:text-[#fae100] transition"><i class="fas fa-arrow-left"></i></button>
+          <h2 class="text-lg font-black text-[#fae100]"><i class="fas fa-users mr-2"></i> แชทคอมมูนิตี้ส่วนกลาง</h2>
+      </div>
+      <div id="globalChatBox" class="flex-1 overflow-y-auto p-4 space-y-3 bg-[#1e234e] hide-scrollbar flex flex-col">
+          <p class="text-center text-xs text-gray-500 my-4">พูดคุยกับผู้โดยสารและคนขับในพื้นที่ได้ที่นี่</p>
+      </div>
+      <div class="bg-[#2a2f5c] p-3 flex gap-2 shrink-0 shadow-[0_-5px_15px_rgba(0,0,0,0.3)]">
+          <input type="text" id="globalChatInput" class="flex-1 rounded-xl bg-[#383d6a] text-white px-4 py-3 text-sm outline-none focus:border-[#fae100] border border-transparent transition" placeholder="พิมพ์ข้อความพูดคุย...">
+          <button onclick="sendGlobalChat()" class="bg-[#fae100] text-[#1e234e] font-black px-5 rounded-xl hover:bg-[#e5ce00] transition shadow-md"><i class="fas fa-paper-plane"></i></button>
+      </div>
   </div>
 
   <div id="page2" class="hidden">
@@ -336,20 +354,6 @@
           <button id="btnCancel" onclick="openCancelModal()" class="flex-1 w-full bg-red-900/40 text-red-400 py-3 rounded-xl font-bold border border-red-500/30 text-sm hover:bg-red-900/60 transition flex justify-center items-center gap-1.5"><i class="fas fa-times"></i> ยกเลิก</button>
       </div>
     </div>
-  </div>
-
-  <div id="inAppChatModal" class="hidden fixed inset-0 z-[250] bg-[#1e234e] flex flex-col pointer-events-auto transition-transform">
-      <div class="bg-[#2a2f5c] border-b border-[#383d6a] p-4 flex items-center gap-3 shadow-md shrink-0">
-          <button onclick="closeInAppChatModal()" class="w-10 h-10 bg-[#383d6a] text-white rounded-full flex items-center justify-center hover:bg-[#4b507d]"><i class="fas fa-arrow-left"></i></button>
-          <h2 class="text-lg font-black text-white"><i class="fas fa-comments text-[#fae100] mr-2"></i>ข้อความถึงคนขับ</h2>
-      </div>
-      <div id="inAppChatMessages" class="flex-1 overflow-y-auto p-4 space-y-3 bg-[#1e234e]/80 hide-scrollbar flex flex-col">
-          <p class="text-center text-xs text-gray-500 my-4">เริ่มต้นการสนทนากับคนขับที่นี่</p>
-      </div>
-      <div class="bg-[#2a2f5c] p-3 flex gap-2 shrink-0 shadow-[0_-5px_15px_rgba(0,0,0,0.3)]">
-          <input type="text" id="inAppChatInput" class="flex-1 rounded-xl bg-[#383d6a] text-white px-4 py-3 text-sm outline-none focus:border-[#fae100] border border-transparent transition" placeholder="พิมพ์ข้อความส่งหาคนขับ...">
-          <button onclick="sendInAppChatMessage()" class="bg-[#fae100] text-[#1e234e] font-black px-5 rounded-xl hover:bg-[#e5ce00] transition shadow-md"><i class="fas fa-paper-plane"></i></button>
-      </div>
   </div>
 
   <div id="driverRatingModal" class="hidden fixed inset-0 z-[260] bg-black/80 flex items-center justify-center p-4 pointer-events-auto">
@@ -591,21 +595,21 @@
     let activeChatListenerRef = null;
     let currentSelectedRatingScore = 0;
 
-    // ประกาศ Dark Map เพียงครั้งเดียวเท่านั้น!
+    // ✅ Dark Map แบบละเอียด
     const detailedDarkMapStyle = [
       { elementType: "geometry", stylers: [{ color: "#1e234e" }] },
       { elementType: "labels.text.stroke", stylers: [{ color: "#1e234e" }] },
-      { elementType: "labels.text.fill", stylers: [{ color: "#8b93b5" }] },
-      { featureType: "administrative.locality", elementType: "labels.text.fill", stylers: [{ color: "#fae100" }] },
+      { elementType: "labels.text.fill", stylers: [{ color: "#ffffff" }] },
+      { featureType: "administrative.locality", elementType: "labels.text.fill", stylers: [{ color: "#ffffff" }] },
       { featureType: "landscape.man_made", elementType: "geometry.fill", stylers: [{ color: "#252a55" }] }, 
       { featureType: "landscape.man_made.building", elementType: "geometry.fill", stylers: [{ color: "#323868" }] }, 
       { featureType: "landscape.man_made.building", elementType: "geometry.stroke", stylers: [{ color: "#4b507d" }] }, 
       { featureType: "landscape.natural", elementType: "geometry", stylers: [{ color: "#1a1f44" }] }, 
-      { featureType: "poi", elementType: "labels.text.fill", stylers: [{ color: "#8b93b5" }] },
+      { featureType: "poi", elementType: "labels.text.fill", stylers: [{ color: "#ffffff" }] },
       { featureType: "poi.park", elementType: "geometry", stylers: [{ color: "#20254f" }] },
       { featureType: "road", elementType: "geometry.fill", stylers: [{ color: "#2a2f5c" }] },
       { featureType: "road", elementType: "geometry.stroke", stylers: [{ color: "#383d6a" }] },
-      { featureType: "road", elementType: "labels.text.fill", stylers: [{ color: "#8b93b5" }] },
+      { featureType: "road", elementType: "labels.text.fill", stylers: [{ color: "#ffffff" }] },
       { featureType: "water", elementType: "geometry", stylers: [{ color: "#121530" }] }
     ];
 
@@ -636,8 +640,11 @@
 
     windowContext.currentServiceType = 'car';
 
+    // ✅ ปรับปุ่มให้รวมสถานะคนขับเข้าไป
     function updateRideButtonState() {
         let btnMainRide = document.getElementById('btnMainRideAction');
+        let btnMainRideIcon = document.getElementById('btnMainRideIcon');
+        let btnMainRideText = document.getElementById('btnMainRideText');
         if(!btnMainRide) return;
 
         let hasActiveJob = bookData && bookData.status && bookData.status !== "เสร็จสิ้น" && !bookData.status.includes("ยกเลิก") && bookData.status !== "รอผู้ขับขี่ตอบรับ";
@@ -645,18 +652,24 @@
 
         if (hasActiveJob) {
             btnMainRide.disabled = false;
-            btnMainRide.className = "w-full h-24 bg-[#fae100]/20 border border-[#fae100]/50 text-[#fae100] rounded-2xl flex flex-col items-center justify-center gap-1 hover:bg-[#fae100] hover:text-[#1e234e] transition shadow-sm active:scale-95 animate-pulse relative overflow-hidden";
-            btnMainRide.innerHTML = '<div class="absolute top-0 right-0 p-3 opacity-[0.03] pointer-events-none"><i class="fas fa-car-side text-6xl text-white"></i></div><i class="fas fa-route text-3xl mb-1"></i><span class="font-bold text-[15px]">ดูสถานะการเดินทาง</span><span class="text-[11px] opacity-80">มีรถกำลังมารับคุณ</span>';
+            btnMainRide.classList.add('animate-pulse');
+            btnMainRide.style.opacity = '1';
+            if(btnMainRideIcon) btnMainRideIcon.className = "fas fa-route text-[36px] text-[#fae100]";
+            if(btnMainRideText) btnMainRideText.innerText = "ดูสถานะรถ";
             btnMainRide.onclick = function() { showPage('Tracking'); };
         } else if (hasOnlineDrivers) {
             btnMainRide.disabled = false;
-            btnMainRide.className = "w-full h-24 bg-blue-600/20 border border-blue-500/50 text-blue-400 rounded-2xl flex flex-col items-center justify-center gap-1 hover:bg-blue-600 hover:text-white transition shadow-sm active:scale-95 relative overflow-hidden";
-            btnMainRide.innerHTML = `<div class="absolute top-0 right-0 p-3 opacity-[0.03] pointer-events-none"><i class="fas fa-car-side text-6xl text-white"></i></div><i class="fas fa-car text-3xl mb-1"></i><span class="font-bold text-[15px]">เรียกรถ (พร้อมให้บริการ)</span><span class="text-[11px] text-green-400 opacity-90"><i class="fas fa-users"></i> มีรถออนไลน์ ${windowContext.onlineDrivers.length} คัน</span>`;
+            btnMainRide.classList.remove('animate-pulse');
+            btnMainRide.style.opacity = '1';
+            if(btnMainRideIcon) btnMainRideIcon.className = "fas fa-car text-[36px] text-[#fae100]";
+            if(btnMainRideText) btnMainRideText.innerText = "เรียกรถ";
             btnMainRide.onclick = function() { windowContext.openVehicleModal(); };
         } else {
             btnMainRide.disabled = true;
-            btnMainRide.className = "w-full h-24 bg-[#2a2f5c] border border-[#383d6a] text-gray-500 rounded-2xl flex flex-col items-center justify-center gap-1 transition shadow-sm opacity-60 cursor-not-allowed relative overflow-hidden";
-            btnMainRide.innerHTML = '<div class="absolute top-0 right-0 p-3 opacity-[0.03] pointer-events-none"><i class="fas fa-car-side text-6xl text-white"></i></div><i class="fas fa-car-slash text-3xl mb-1"></i><span class="font-bold text-[15px]">ไม่มีรถออนไลน์ขณะนี้</span><span class="text-[11px] opacity-70">กรุณาลองใหม่ในภายหลัง</span>';
+            btnMainRide.classList.remove('animate-pulse');
+            btnMainRide.style.opacity = '0.5';
+            if(btnMainRideIcon) btnMainRideIcon.className = "fas fa-car-slash text-[36px] text-gray-400";
+            if(btnMainRideText) btnMainRideText.innerText = "ไม่มีรถ";
             btnMainRide.onclick = null;
         }
     }
@@ -667,6 +680,7 @@
         } else { document.getElementById('vehicleSelectionModal').classList.remove('hidden'); }
     }
 
+    // ✅ ปิดปุ่มเลือกรถ ถ้ารถประเภทนั้นไม่มีออนไลน์
     windowContext.openVehicleModal = function() { 
         let hasCar = false;
         let hasBike = false;
@@ -686,7 +700,7 @@
                 carBtn.innerHTML = '<i class="fas fa-car-side text-2xl"></i> รถยนต์';
             } else {
                 carBtn.disabled = true;
-                carBtn.className = "w-full py-4 bg-[#2a2f5c] text-gray-500 font-black text-lg rounded-2xl transition flex items-center justify-center gap-3 opacity-50 cursor-not-allowed";
+                carBtn.className = "w-full py-4 bg-[#2a2f5c] text-gray-500 font-black text-lg rounded-2xl transition flex items-center justify-center gap-3 opacity-50 cursor-not-allowed border border-[#383d6a]";
                 carBtn.innerHTML = '<i class="fas fa-car-side text-2xl"></i> รถยนต์ <span class="text-xs font-normal">(ไม่มีรถว่าง)</span>';
             }
         }
@@ -698,7 +712,7 @@
                 bikeBtn.innerHTML = '<i class="fas fa-motorcycle text-2xl"></i> มอเตอร์ไซค์';
             } else {
                 bikeBtn.disabled = true;
-                bikeBtn.className = "w-full py-4 bg-[#2a2f5c] text-gray-500 font-black text-lg rounded-2xl transition flex items-center justify-center gap-3 opacity-50 cursor-not-allowed";
+                bikeBtn.className = "w-full py-4 bg-[#2a2f5c] text-gray-500 font-black text-lg rounded-2xl transition flex items-center justify-center gap-3 opacity-50 cursor-not-allowed border border-[#383d6a]";
                 bikeBtn.innerHTML = '<i class="fas fa-motorcycle text-2xl"></i> มอเตอร์ไซค์ <span class="text-xs font-normal">(ไม่มีรถว่าง)</span>';
             }
         }
@@ -717,7 +731,15 @@
         closeVehicleModal(); showPage(2);
     }
 
-    windowContext.openNewsModal = function() { document.getElementById('newsModal').classList.remove('hidden'); renderNewsAndPromotions(); }
+    // ✅ เอา New badge ออกเมื่อเปิดอ่านข่าว
+    windowContext.openNewsModal = function() { 
+        document.getElementById('newsModal').classList.remove('hidden'); 
+        renderNewsAndPromotions(); 
+        
+        let badge = document.getElementById('newsBadge');
+        if(badge) badge.classList.add('hidden');
+        localStorage.setItem('lastSeenNewsTime', Date.now());
+    }
     windowContext.closeNewsModal = function() { document.getElementById('newsModal').classList.add('hidden'); }
 
     function renderNewsAndPromotions() {
@@ -742,8 +764,16 @@
 
     db.ref('news_promotions').on('value', snap => {
         let badge = document.getElementById('newsBadge');
-        if(snap.exists() && badge) badge.classList.remove('hidden');
-        else if(badge) badge.classList.add('hidden');
+        if(snap.exists() && badge) {
+            let hasNew = false;
+            let lastSeen = parseInt(localStorage.getItem('lastSeenNewsTime') || '0');
+            snap.forEach(child => {
+                let item = child.val();
+                if ((item.timestamp || 0) > lastSeen) hasNew = true;
+            });
+            if (hasNew) badge.classList.remove('hidden');
+            else badge.classList.add('hidden');
+        }
     });
 
     function getDynamicBottomPadding() {
@@ -782,18 +812,19 @@
         return now >= start && now <= end;
     }
 
+    // ✅ อัปเดตแบนเนอร์ให้โชว์ในหน้าข่าวสารด้วย
     db.ref('config/banners').on('value', snap => {
         let hContainer = document.getElementById('homeBannerContainer');
         let hSlider = document.getElementById('bannerSlider');
         let hDots = document.getElementById('bannerDots');
         
-        let nContainer = document.getElementById('newsBannerContainer');
-        let nSlider = document.getElementById('newsBannerSlider');
+        let nContainerTop = document.getElementById('newsTopBannerContainer');
+        let nSliderTop = document.getElementById('newsTopBannerSlider');
         
         clearInterval(bannerInterval);
         if(hSlider) hSlider.innerHTML = '';
         if(hDots) hDots.innerHTML = '';
-        if(nSlider) nSlider.innerHTML = '';
+        if(nSliderTop) nSliderTop.innerHTML = '';
         
         if(snap.exists()) {
             let banners = [];
@@ -804,7 +835,7 @@
             
             if (banners.length > 0) {
                 if(hContainer) hContainer.classList.remove('hidden');
-                if(nContainer) nContainer.classList.remove('hidden');
+                if(nContainerTop) nContainerTop.classList.remove('hidden');
                 
                 banners.forEach((b, idx) => {
                     let target = b.linkUrl ? '_blank' : '_self';
@@ -812,7 +843,7 @@
                     let slideHtml = `<a href="${href}" target="${target}" class="w-full h-full flex-shrink-0 snap-center relative block"><img src="${b.imageUrl}" class="w-full h-full object-contain bg-black"></a>`;
                     
                     if(hSlider) hSlider.innerHTML += slideHtml;
-                    if(nSlider) nSlider.innerHTML += slideHtml;
+                    if(nSliderTop) nSliderTop.innerHTML += slideHtml;
                     if(hDots) hDots.innerHTML += `<span class="banner-dot h-1.5 rounded-full transition-all duration-300 ${idx === 0 ? 'bg-[#fae100] w-4' : 'bg-white/50 w-1.5'}"></span>`;
                 });
 
@@ -821,16 +852,16 @@
                     bannerInterval = setInterval(() => {
                         currentSlide = (currentSlide + 1) % banners.length;
                         hSlider.scrollTo({ left: currentSlide * hSlider.clientWidth, behavior: 'smooth' });
-                        if(nSlider) nSlider.scrollTo({ left: currentSlide * nSlider.clientWidth, behavior: 'smooth' });
+                        if(nSliderTop) nSliderTop.scrollTo({ left: currentSlide * nSliderTop.clientWidth, behavior: 'smooth' });
                     }, 4000); 
                 }
             } else { 
                 if(hContainer) hContainer.classList.add('hidden'); 
-                if(nContainer) nContainer.classList.add('hidden'); 
+                if(nContainerTop) nContainerTop.classList.add('hidden'); 
             }
         } else { 
             if(hContainer) hContainer.classList.add('hidden'); 
-            if(nContainer) nContainer.classList.add('hidden'); 
+            if(nContainerTop) nContainerTop.classList.add('hidden'); 
         }
     });
 
@@ -838,27 +869,42 @@
         let container = document.getElementById('bottomBannerContainer');
         let slider = document.getElementById('bottomBannerSlider');
         
+        let nContainerBot = document.getElementById('newsBottomBannerContainer');
+        let nSliderBot = document.getElementById('newsBottomBannerSlider');
+        
         clearInterval(bottomBannerInterval);
         if(slider) slider.innerHTML = '';
+        if(nSliderBot) nSliderBot.innerHTML = '';
         
         if(snap.exists()) {
             let banners = [];
             snap.forEach(child => { let b = child.val(); if (checkBannerSchedule(b)) banners.push(b); });
             if(banners.length > 0) {
                 if(container) container.classList.remove('hidden');
+                if(nContainerBot) nContainerBot.classList.remove('hidden');
+                
                 banners.forEach(b => {
                     let target = b.linkUrl ? '_blank' : '_self'; let href = b.linkUrl ? b.linkUrl : '#';
-                    if(slider) slider.innerHTML += `<a href="${href}" target="${target}" class="w-full h-full flex-shrink-0 snap-center block"><img src="${b.imageUrl}" class="w-full h-full object-cover"></a>`;
+                    let slideHtml = `<a href="${href}" target="${target}" class="w-full h-full flex-shrink-0 snap-center block"><img src="${b.imageUrl}" class="w-full h-full object-cover"></a>`;
+                    if(slider) slider.innerHTML += slideHtml;
+                    if(nSliderBot) nSliderBot.innerHTML += slideHtml;
                 });
                 if(banners.length > 1 && slider) {
                     let currentSlide = 0;
                     bottomBannerInterval = setInterval(() => {
                         currentSlide = (currentSlide + 1) % banners.length;
                         slider.scrollTo({ left: currentSlide * slider.clientWidth, behavior: 'smooth' });
+                        if(nSliderBot) nSliderBot.scrollTo({ left: currentSlide * nSliderBot.clientWidth, behavior: 'smooth' });
                     }, 4500); 
                 }
-            } else { if(container) container.classList.add('hidden'); }
-        } else { if(container) container.classList.add('hidden'); }
+            } else { 
+                if(container) container.classList.add('hidden'); 
+                if(nContainerBot) nContainerBot.classList.add('hidden'); 
+            }
+        } else { 
+            if(container) container.classList.add('hidden'); 
+            if(nContainerBot) nContainerBot.classList.add('hidden'); 
+        }
     });
 
     windowContext.hasSpokenAccept = false; windowContext.hasSpokenArrivePick = false; windowContext.hasSpokenAtPickup = false;
