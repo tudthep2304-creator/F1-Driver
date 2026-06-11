@@ -172,7 +172,7 @@
   <div id="communityModal" class="hidden fixed inset-0 z-[200] bg-[#1e234e] flex flex-col pointer-events-auto transition-transform">
       <div class="bg-[#2a2f5c] border-b border-[#383d6a] h-16 px-4 flex items-center gap-3 shadow-md shrink-0 w-full">
           <button onclick="closeCommunityModal()" class="w-10 h-10 bg-[#383d6a] text-gray-400 rounded-full flex items-center justify-center hover:text-[#fae100] transition"><i class="fas fa-arrow-left"></i></button>
-          <h2 class="text-lg font-black text-[#fae100]"><i class="fas fa-users mr-2"></i> แชทคอมมูนิตี้ส่วนกลาง</h2>
+          <h2 class="text-lg font-black text-[#fae100]"><i class="fas fa-users mr-2"></i> แชทคอมมูนิตี้</h2>
       </div>
       <div class="p-3 bg-[#1e234e] border-b border-[#383d6a] shrink-0">
           <div class="relative w-full shadow-sm rounded-xl bg-[#2a2f5c] border border-[#383d6a] overflow-hidden">
@@ -388,14 +388,13 @@
           <button onclick="closeProfileModal()" class="w-10 h-10 shrink-0 bg-[#383d6a] text-gray-400 rounded-full flex items-center justify-center hover:text-white transition"><i class="fas fa-arrow-left"></i></button>
           <h2 class="text-lg font-black text-white">โปรไฟล์ส่วนตัว</h2>
       </div>
-      
       <div class="p-6 flex flex-col items-center border-b border-[#383d6a] shrink-0">
           <img id="profilePicLarge" class="w-24 h-24 rounded-full border-4 border-[#fae100] object-cover bg-[#2a2f5c] mb-4 shadow-[0_0_15px_rgba(250,225,0,0.3)]" src="https://img.icons8.com/bubbles/150/user.png" alt="Profile">
           <h2 class="text-2xl font-black text-white" id="profileNameLarge">กำลังโหลด...</h2>
           <div class="flex items-center gap-3 mt-2">
               <div class="bg-[#2a2f5c] px-3 py-1 rounded-full border border-[#383d6a] flex items-center gap-1.5 shadow-sm">
                   <i class="fas fa-star text-[#fae100] text-xs"></i>
-                  <span class="text-[#fae100] font-bold text-sm" id="profileRatingLarge">5.0</span>
+                  <span class="text-[#fae100] font-bold text-sm" id="profileRatingLarge">0.0</span>
               </div>
               <div class="flex items-center gap-1.5">
                   <p class="text-gray-400 font-normal text-sm" id="profilePhoneLarge">ยังไม่ระบุ</p>
@@ -403,7 +402,6 @@
               </div>
           </div>
       </div>
-      
       <div class="p-4 space-y-3 flex-1 overflow-y-auto">
           <button onclick="openPassengerHistory()" class="w-full bg-[#2a2f5c] border border-[#383d6a] p-4 rounded-2xl shadow-sm flex items-center justify-between hover:bg-[#383d6a] transition">
               <div class="flex items-center gap-3"><div class="w-8 h-8 rounded-full bg-blue-900/30 flex items-center justify-center"><i class="fas fa-history text-blue-400"></i></div> <span class="text-gray-200 font-normal text-sm">ประวัติการเดินทาง</span></div>
@@ -615,9 +613,9 @@
     let myBlockedDrivers = {};
     let activeChatListenerRef = null;
     
+    let activeGlobalChatListenerRef = null;
     let currentSelectedRatingScore = 0;
     let unreadChatCount = 0;
-    let activeGlobalChatListenerRef = null;
 
     const detailedDarkMapStyle = [
       { elementType: "geometry", stylers: [{ color: "#1e234e" }] },
@@ -738,7 +736,6 @@
     function openNewsModal() { 
         document.getElementById('newsModal').classList.remove('hidden'); 
         renderNewsAndPromotions(); 
-        
         let badge = document.getElementById('newsBadge');
         if(badge) badge.classList.add('hidden');
         localStorage.setItem('lastSeenNewsTime', Date.now());
@@ -1102,7 +1099,7 @@
         if(places.length === 0) { container.innerHTML = '<p class="text-center text-gray-500 mt-10 font-normal">ยังไม่มีประวัติสถานที่</p>'; return; }
         let html = '';
         places.forEach(p => {
-            html += `<button onclick="closeRecentPlacesModal(); panAndConfirmPlace('${p.name}', ${p.lat}, ${p.lng});" class="w-full text-left bg-[#2a2f5c] border border-[#383d6a] p-3.5 rounded-xl shadow-sm flex items-center gap-3 hover:bg-[#383d6a] transition"><div class="w-8 h-8 rounded-full bg-[#1e234e] flex items-center justify-center shrink-0"><i class="fas fa-history text-gray-400 font-normal"></i></div><span class="text-gray-200 font-normal text-sm truncate">${p.name}</span></button>`;
+            html += `<button onclick="closeRecentPlacesModal(); panAndConfirmPlace('${p.name}', ${p.lat}, ${p.lng});" class="w-full text-left bg-[#2a2f5c] border border-[#383d6a] p-3.5 rounded-xl shadow-sm flex items-center gap-3 hover:bg-[#383d6a] transition"><div class="w-8 h-8 rounded-full bg-[#1e234e] flex items-center justify-center shrink-0"><i class="fas fa-history text-gray-400"></i></div><span class="text-gray-200 text-sm truncate">${p.name}</span></button>`;
         });
         container.innerHTML = html;
     }
@@ -1122,9 +1119,9 @@
     function showAlert(title, message, type = 'info', callback = null) {
         document.getElementById('alertTitle').innerText = title; document.getElementById('alertMessage').innerText = message;
         let iconHtml = ''; let iconBg = ''; let iconColor = '';
-        if (type === 'error') { iconHtml = '<i class="fas fa-times font-normal"></i>'; iconBg = 'bg-red-900/30 border border-red-500/30'; iconColor = 'text-red-500'; } 
-        else if (type === 'success') { iconHtml = '<i class="fas fa-check font-normal"></i>'; iconBg = 'bg-[#fae100]/20 border border-[#fae100]/30'; iconColor = 'text-[#fae100]'; } 
-        else { iconHtml = '<i class="fas fa-info font-normal"></i>'; iconBg = 'bg-[#fae100]/20 border border-[#fae100]/30'; iconColor = 'text-[#fae100]'; }
+        if (type === 'error') { iconHtml = '<i class="fas fa-times"></i>'; iconBg = 'bg-red-900/30 border border-red-500/30'; iconColor = 'text-red-500'; } 
+        else if (type === 'success') { iconHtml = '<i class="fas fa-check"></i>'; iconBg = 'bg-[#fae100]/20 border border-[#fae100]/30'; iconColor = 'text-[#fae100]'; } 
+        else { iconHtml = '<i class="fas fa-info"></i>'; iconBg = 'bg-[#fae100]/20 border border-[#fae100]/30'; iconColor = 'text-[#fae100]'; }
         
         const iconDiv = document.getElementById('alertIcon');
         if(iconDiv) { iconDiv.innerHTML = iconHtml; iconDiv.className = `w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl ${iconBg} ${iconColor}`; }
@@ -1136,8 +1133,8 @@
     function toggleMapStyle() {
         if(!map) return; isSatelliteMode = !isSatelliteMode;
         let btnMapStyle = document.getElementById('btnMapStyle');
-        if(isSatelliteMode) { map.setMapTypeId('hybrid'); if(btnMapStyle) btnMapStyle.innerHTML = '<i class="fas fa-layer-group text-[18px] font-normal"></i>'; } 
-        else { map.setMapTypeId('roadmap'); map.setOptions({ styles: detailedDarkMapStyle }); if(btnMapStyle) btnMapStyle.innerHTML = '<i class="fas fa-satellite text-[18px] font-normal"></i>'; }
+        if(isSatelliteMode) { map.setMapTypeId('hybrid'); if(btnMapStyle) btnMapStyle.innerHTML = '<i class="fas fa-layer-group text-[18px]"></i>'; } 
+        else { map.setMapTypeId('roadmap'); map.setOptions({ styles: detailedDarkMapStyle }); if(btnMapStyle) btnMapStyle.innerHTML = '<i class="fas fa-satellite text-[18px]"></i>'; }
     }
 
     function updateMapControlsPosition(page) {
@@ -1315,7 +1312,7 @@
       requestWakeLock();
       db.ref('passenger_blocks/' + lineUserId).on('value', snap => { myBlockedDrivers = snap.val() || {}; });
 
-      // แก้ไข: เพิ่มการดึงคะแนนเรตติ้งผู้โดยสาร
+      // ดึงคะแนนเรตติ้งผู้โดยสาร
       db.ref('passengers_profile/' + lineUserId).on('value', snap => {
           if(snap.exists() && snap.val().rating) {
               let r = snap.val().rating;
@@ -1371,12 +1368,22 @@
         }
       });
 
+      initGlobalChat();
+    }
+
+    function initGlobalChat() {
+      if (activeGlobalChatListenerRef) return;
+      
+      const messagesDiv = document.getElementById('globalChatMessages');
+      if (messagesDiv) messagesDiv.innerHTML = '<p class="text-center text-xs font-normal text-gray-500 my-4">พูดคุยกับผู้โดยสารและคนขับในพื้นที่ได้ที่นี่</p>';
+
       activeGlobalChatListenerRef = db.ref('community_chat').limitToLast(50);
       activeGlobalChatListenerRef.on('child_added', snap => {
           let messageData = snap.val();
           let modal = document.getElementById('communityModal');
+          let isModalOpen = !modal.classList.contains('hidden');
           
-          if(!modal.classList.contains('hidden')) {
+          if(isModalOpen) {
               localStorage.setItem('lastSeenChatTime', Date.now());
               unreadChatCount = 0;
           } else {
@@ -1387,7 +1394,6 @@
           }
           updateChatBadge();
 
-          const messagesDiv = document.getElementById('globalChatMessages');
           const chatBox = document.getElementById('globalChatBox');
           if (messagesDiv) {
               let isSenderMe = messageData.pin === lineUserId;
@@ -1417,78 +1423,100 @@
               </div>`;
               
               messagesDiv.insertAdjacentHTML('beforeend', messageHtml);
-              if(!modal.classList.contains('hidden')) {
+              if(isModalOpen) {
                   chatBox.scrollTop = chatBox.scrollHeight;
               }
           }
       });
     }
 
-    // Explicitly mapping functions to window to avoid scope issues in HTML
-    window.handleMainRideClick = handleMainRideClick;
-    window.openVehicleModal = openVehicleModal;
-    window.closeVehicleModal = closeVehicleModal;
-    window.selectVehicleAndStart = selectVehicleAndStart;
-    window.openNewsModal = openNewsModal;
-    window.closeNewsModal = closeNewsModal;
-    window.openCommunityModal = openCommunityModal;
-    window.closeCommunityModal = closeCommunityModal;
-    window.sendGlobalChat = sendGlobalChat;
-    window.filterCommunityChat = filterCommunityChat;
-    window.goBack = goBack;
-    window.goHome = goHome;
-    window.useCurrentLocation = useCurrentLocation;
-    window.confirmPickup = confirmPickup;
-    window.confirmDropoff = confirmDropoff;
-    window.addWaypointFromCenter = addWaypointFromCenter;
-    window.removeWaypoint = removeWaypoint;
-    window.openWaypointSearchModal = openWaypointSearchModal;
-    window.closeWaypointSearchModal = closeWaypointSearchModal;
-    window.showPage = showPage;
-    window.togglePage4Panel = togglePage4Panel;
-    window.toggleTrackingPanel = toggleTrackingPanel;
-    window.toggleMapStyle = toggleMapStyle;
-    window.handleCrosshairClick = handleCrosshairClick;
-    window.focusLocationToggle = focusLocationToggle;
-    window.centerToFocus = centerToFocus;
-    window.fitAllWaypoints = fitAllWaypoints;
-    window.openInAppChatModal = openInAppChatModal;
-    window.closeInAppChatModal = closeInAppChatModal;
-    window.sendInAppChatMessage = sendInAppChatMessage;
-    window.updateSelectedRatingScore = updateSelectedRatingScore;
-    window.submitDriverRatingScore = submitDriverRatingScore;
-    window.rejectRouteChange = rejectRouteChange;
-    window.acceptRouteChange = acceptRouteChange;
-    window.openPassengerHistory = openPassengerHistory;
-    window.closePassengerHistory = closePassengerHistory;
-    window.openBlockedDrivers = openBlockedDrivers;
-    window.closeBlockedDrivers = closeBlockedDrivers;
-    window.unblockDriver = unblockDriver;
-    window.closeAlertModal = closeAlertModal;
-    window.closeConfirmActionModal = closeConfirmActionModal;
-    window.submitConfirmAction = submitConfirmAction;
-    window.openCallConfirmModal = openCallConfirmModal;
-    window.closeCallConfirmModal = closeCallConfirmModal;
-    window.openCancelModal = openCancelModal;
-    window.closeCancelModal = closeCancelModal;
-    window.openPromoModal = openPromoModal;
-    window.closePromoModal = closePromoModal;
-    window.openProfileModal = openProfileModal;
-    window.closeProfileModal = closeProfileModal;
-    window.editProfilePhone = editProfilePhone;
-    window.confirmCancelBooking = confirmCancelBooking;
-    window.handleSavedPlace = handleSavedPlace;
-    window.editSavedPlace = editSavedPlace;
-    window.openRecentPlacesModal = openRecentPlacesModal;
-    window.closeRecentPlacesModal = closeRecentPlacesModal;
-    window.openEmergencyModal = openEmergencyModal;
-    window.closeEmergencyModal = closeEmergencyModal;
-    window.applyPromoCode = applyPromoCode;
-    window.submitBooking = submitBooking;
-    window.openPassengerHistoryDetail = openPassengerHistoryDetail;
-    window.closeHistoryDetail = closeHistoryDetail;
-    window.blockCurrentHistoryDriver = blockCurrentHistoryDriver;
-    window.initMap = initMap;
+    function drawHistoryDetailMap(waypoints) {
+        if (typeof google === 'undefined' || !waypoints || waypoints.length < 2) return;
+
+        const mapOptions = {
+            zoom: 14,
+            center: { lat: waypoints[0].lat, lng: waypoints[0].lng },
+            styles: detailedDarkMapStyle,
+            disableDefaultUI: true,
+            gestureHandling: 'cooperative'
+        };
+
+        const historyMap = new google.maps.Map(document.getElementById('historyDetailMap'), mapOptions);
+        const histDirectionsService = new google.maps.DirectionsService();
+        const histDirectionsRenderer = new google.maps.DirectionsRenderer({
+            map: historyMap,
+            suppressMarkers: true,
+            polylineOptions: { strokeColor: '#3b82f6', strokeWeight: 5 }
+        });
+
+        let bounds = new google.maps.LatLngBounds();
+        waypoints.forEach((wp, index) => {
+            let isPickup = wp.type === 'pick';
+            let colorHex = isPickup ? '#22c55e' : '#ef4444';
+            let textColor = isPickup ? '#1e234e' : '#ffffff';
+            let labelNum = (index + 1).toString();
+
+            let marker = new google.maps.Marker({
+                position: { lat: wp.lat, lng: wp.lng },
+                map: historyMap,
+                icon: createNumberedMarkerIcon(labelNum, colorHex, textColor),
+                label: { text: labelNum, color: textColor, fontWeight: 'bold', fontSize: '12px' },
+                zIndex: 10
+            });
+            bounds.extend(marker.getPosition());
+        });
+
+        const origin = new google.maps.LatLng(waypoints[0].lat, waypoints[0].lng);
+        const destination = new google.maps.LatLng(waypoints[waypoints.length - 1].lat, waypoints[waypoints.length - 1].lng);
+        const histWaypts = waypoints.slice(1, -1).map(w => ({ location: new google.maps.LatLng(w.lat, w.lng), stopover: true }));
+
+        histDirectionsService.route({
+            origin: origin,
+            destination: destination,
+            waypoints: histWaypts,
+            travelMode: 'DRIVING'
+        }, (res, status) => {
+            if (status === 'OK') {
+                histDirectionsRenderer.setDirections(res);
+                historyMap.fitBounds(bounds);
+                google.maps.event.addListenerOnce(historyMap, "idle", function() {
+                    if (historyMap.getZoom() > 16) historyMap.setZoom(16);
+                });
+            } else {
+                historyMap.fitBounds(bounds);
+            }
+        });
+    }
+
+    function openPassengerHistoryDetail(jobId) {
+        let job = loadedHistoryJobs[jobId]; if(!job) return; selectedHistoryJobId = jobId;
+        document.getElementById('histDetDate').innerText = "วันที่ " + new Date(job.completedAt || job.timestamp).toLocaleString('th-TH'); document.getElementById('histDetPrice').innerText = "฿" + job.price; 
+        if(job.driverPin) { db.ref('drivers_profile/' + job.driverPin).once('value', snap => { if(snap.exists()){ document.getElementById('histDetDriver').innerText = `คนขับ: ${snap.val().name || '-'} (${snap.val().plate || '-'})`; } else document.getElementById('histDetDriver').innerText = `คนขับ: ไม่ทราบชื่อ`; }); } else document.getElementById('histDetDriver').innerText = `คนขับ: ไม่ทราบชื่อ`;
+        
+        let wpContainer = document.getElementById('historyDetailWaypointsContainer');
+        if (wpContainer) {
+            let wpHtml = '';
+            let waypoints = job.waypoints || [];
+            let globalCount = 1;
+            waypoints.forEach((wp) => {
+                let isPickup = wp.type === 'pick';
+                let bgClass = isPickup ? 'bg-[#22c55e]' : 'bg-[#ef4444]';
+                
+                wpHtml += `<div class="flex items-start gap-2 relative z-10 w-full mb-1">
+                    <div class="shrink-0 mt-0.5"><div class="w-4 h-4 rounded-full ${bgClass} text-white flex items-center justify-center text-[9px] font-bold">${globalCount}</div></div>
+                    <div class="flex-1 overflow-hidden min-w-0"><p class="text-[12px] text-gray-200 truncate font-normal leading-tight">${wp.name}</p></div>
+                </div>`; 
+                globalCount++;
+            });
+            wpContainer.innerHTML = wpHtml;
+            
+            document.getElementById('historyDetailModal').classList.remove('hidden');
+            
+            setTimeout(() => {
+                drawHistoryDetailMap(waypoints);
+            }, 100);
+        }
+    }
 
   </script>
 </body>
