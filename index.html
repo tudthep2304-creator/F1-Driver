@@ -105,22 +105,25 @@
           <div class="absolute top-2 right-2 bg-black/60 px-2 py-0.5 rounded text-[10px] text-white z-10 font-bold">Ad</div>
       </div>
       
-      <div class="w-full max-w-sm mx-auto grid grid-cols-3 gap-2 shrink-0 mb-4">
-          <button id="btnMainRideAction" onclick="handleMainRideClick()" class="h-24 bg-[#2a2f5c] text-[#fae100] rounded-2xl flex flex-col items-center justify-center gap-1.5 transition shadow-sm opacity-60 cursor-not-allowed">
-              <i class="fas fa-spinner fa-spin text-[26px]" id="btnMainRideIcon"></i>
-              <span class="font-bold text-xs mt-1 leading-tight" id="btnMainRideText">รอสถานะ...</span>
+      <div class="w-full max-w-sm mx-auto flex flex-col gap-3 shrink-0 mb-4">
+          <button id="btnMainRideAction" onclick="handleMainRideClick()" class="w-full h-24 bg-[#2a2f5c] border border-[#383d6a] text-gray-400 rounded-2xl flex flex-col items-center justify-center gap-1 transition shadow-sm opacity-60 cursor-not-allowed relative overflow-hidden">
+              <div class="absolute top-0 right-0 p-3 opacity-[0.03] pointer-events-none"><i class="fas fa-car-side text-6xl text-white"></i></div>
+              <i class="fas fa-spinner fa-spin text-2xl" id="btnMainRideIcon"></i>
+              <span class="font-bold text-sm mt-1" id="btnMainRideText">กำลังโหลดสถานะ...</span>
           </button>
           
-          <button onclick="openNewsModal()" class="h-24 bg-[#2a2f5c] text-[#fae100] rounded-2xl flex flex-col items-center justify-center gap-1.5 hover:bg-[#383d6a] transition shadow-sm active:scale-95 relative">
-              <div id="newsBadge" class="hidden absolute top-2 right-2 bg-red-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full shadow animate-pulse">New</div>
-              <i class="fas fa-bullhorn text-[26px]"></i>
-              <span class="font-bold text-xs text-center leading-tight">ข่าวสาร</span>
-          </button>
+          <div class="grid grid-cols-2 gap-3 w-full">
+              <button onclick="openNewsModal()" class="h-20 bg-[#2a2f5c] border border-[#383d6a] text-blue-400 rounded-2xl flex flex-col items-center justify-center gap-1.5 hover:bg-blue-600 hover:text-white transition shadow-sm active:scale-95 relative">
+                  <div id="newsBadge" class="hidden absolute -top-1.5 -right-1.5 bg-red-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full shadow border border-red-400 animate-pulse">New</div>
+                  <i class="fas fa-bullhorn text-[22px]"></i>
+                  <span class="font-bold text-xs text-center leading-tight">ข่าวสาร &<br>โปรโมชั่น</span>
+              </button>
 
-          <button onclick="showAlert('เตรียมพบกันเร็วๆ นี้!', 'ระบบคอมมูนิตี้จะเปิดให้ใช้งานในอัปเดตถัดไปครับ', 'info')" class="h-24 bg-[#2a2f5c] text-[#fae100] rounded-2xl flex flex-col items-center justify-center gap-1.5 hover:bg-[#383d6a] transition shadow-sm active:scale-95">
-              <i class="fas fa-users text-[26px]"></i>
-              <span class="font-bold text-xs text-center leading-tight">คอมมูนิตี้</span>
-          </button>
+              <button onclick="showAlert('เตรียมพบกันเร็วๆ นี้!', 'ระบบคอมมูนิตี้จะเปิดให้ใช้งานในอัปเดตถัดไปครับ', 'info')" class="h-20 bg-[#2a2f5c] border border-[#383d6a] text-purple-400 rounded-2xl flex flex-col items-center justify-center gap-1.5 hover:bg-purple-600 hover:text-white transition shadow-sm active:scale-95">
+                  <i class="fas fa-users text-[22px]"></i>
+                  <span class="font-bold text-xs text-center leading-tight">คอมมูนิตี้</span>
+              </button>
+          </div>
       </div>
 
       <div class="mt-auto w-full max-w-sm flex flex-col gap-3">
@@ -136,11 +139,11 @@
           <h3 class="text-xl font-black text-[#fae100] mb-2">เลือกประเภทรถ</h3>
           <p class="text-sm text-gray-400 mb-6 leading-relaxed">กรุณาเลือกประเภทรถที่คุณต้องการเรียกใช้บริการ</p>
           <div class="flex flex-col gap-3">
-              <button id="btnSelectCar" onclick="selectVehicleAndStart('car')" class="w-full py-4 bg-[#fae100] text-[#1e234e] font-black text-lg rounded-2xl shadow-md hover:bg-[#e5ce00] transition flex items-center justify-center gap-3 active:scale-95">
+              <button id="btnSelectCar" onclick="selectVehicleAndStart('car')" class="w-full py-4 bg-[#fae100] text-[#1e234e] font-black text-lg rounded-2xl shadow-md border border-[#fae100]/50 hover:bg-[#e5ce00] transition flex items-center justify-center gap-3 active:scale-95">
                   <i class="fas fa-car-side text-2xl"></i> รถยนต์
               </button>
-              <button id="btnSelectBike" onclick="selectVehicleAndStart('bike')" class="w-full py-4 bg-[#2a2f5c] text-white font-black text-lg rounded-2xl shadow-md transition flex items-center justify-center gap-3 active:scale-95">
-                  <i class="fas fa-motorcycle text-2xl"></i> มอเตอร์ไซค์
+              <button id="btnSelectBike" onclick="selectVehicleAndStart('bike')" class="w-full py-4 bg-[#2a2f5c] text-white font-black text-lg rounded-2xl shadow-md border border-[#383d6a] hover:bg-[#383d6a] transition flex items-center justify-center gap-3 active:scale-95">
+                  <i class="fas fa-motorcycle text-2xl text-blue-400"></i> มอเตอร์ไซค์
               </button>
           </div>
           <button onclick="closeVehicleModal()" class="mt-6 text-sm font-bold text-gray-400 hover:text-white transition">ยกเลิก</button>
@@ -644,18 +647,18 @@
 
         if (hasActiveJob) {
             btnMainRide.disabled = false;
-            btnMainRide.className = "h-24 bg-[#fae100]/20 text-[#fae100] flex flex-col items-center justify-center gap-1.5 hover:bg-[#fae100] hover:text-[#1e234e] transition shadow-sm active:scale-95 animate-pulse rounded-2xl";
-            btnMainRide.innerHTML = '<i class="fas fa-route text-2xl"></i><span class="font-bold text-xs text-center leading-tight">ดูสถานะรถ</span>';
+            btnMainRide.className = "w-full h-24 bg-[#fae100]/20 border border-[#fae100]/50 text-[#fae100] rounded-2xl flex flex-col items-center justify-center gap-1 hover:bg-[#fae100] hover:text-[#1e234e] transition shadow-sm active:scale-95 animate-pulse relative overflow-hidden";
+            btnMainRide.innerHTML = '<div class="absolute top-0 right-0 p-3 opacity-[0.03] pointer-events-none"><i class="fas fa-car-side text-6xl text-white"></i></div><i class="fas fa-route text-3xl mb-1"></i><span class="font-bold text-[15px]">ดูสถานะการเดินทาง</span><span class="text-[11px] opacity-80">มีรถกำลังมารับคุณ</span>';
             btnMainRide.onclick = function() { showPage('Tracking'); };
         } else if (hasOnlineDrivers) {
             btnMainRide.disabled = false;
-            btnMainRide.className = "h-24 bg-[#2a2f5c] text-[#fae100] flex flex-col items-center justify-center gap-1.5 hover:bg-[#383d6a] transition shadow-sm active:scale-95 rounded-2xl";
-            btnMainRide.innerHTML = '<i class="fas fa-car text-2xl"></i><span class="font-bold text-xs text-center leading-tight">เรียกรถ</span>';
+            btnMainRide.className = "w-full h-24 bg-blue-600/20 border border-blue-500/50 text-blue-400 rounded-2xl flex flex-col items-center justify-center gap-1 hover:bg-blue-600 hover:text-white transition shadow-sm active:scale-95 relative overflow-hidden";
+            btnMainRide.innerHTML = `<div class="absolute top-0 right-0 p-3 opacity-[0.03] pointer-events-none"><i class="fas fa-car-side text-6xl text-white"></i></div><i class="fas fa-car text-3xl mb-1"></i><span class="font-bold text-[15px]">เรียกรถ (พร้อมให้บริการ)</span><span class="text-[11px] text-green-400 opacity-90"><i class="fas fa-users"></i> มีรถออนไลน์ ${windowContext.onlineDrivers.length} คัน</span>`;
             btnMainRide.onclick = function() { windowContext.openVehicleModal(); };
         } else {
             btnMainRide.disabled = true;
-            btnMainRide.className = "h-24 bg-[#2a2f5c] text-gray-500 flex flex-col items-center justify-center gap-1.5 transition shadow-sm opacity-60 cursor-not-allowed rounded-2xl";
-            btnMainRide.innerHTML = '<i class="fas fa-car-slash text-2xl"></i><span class="font-bold text-xs text-center leading-tight">ไม่มีรถ</span>';
+            btnMainRide.className = "w-full h-24 bg-[#2a2f5c] border border-[#383d6a] text-gray-500 rounded-2xl flex flex-col items-center justify-center gap-1 transition shadow-sm opacity-60 cursor-not-allowed relative overflow-hidden";
+            btnMainRide.innerHTML = '<div class="absolute top-0 right-0 p-3 opacity-[0.03] pointer-events-none"><i class="fas fa-car-side text-6xl text-white"></i></div><i class="fas fa-car-slash text-3xl mb-1"></i><span class="font-bold text-[15px]">ไม่มีรถออนไลน์ขณะนี้</span><span class="text-[11px] opacity-70">กรุณาลองใหม่ในภายหลัง</span>';
             btnMainRide.onclick = null;
         }
     }
