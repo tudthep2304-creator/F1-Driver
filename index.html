@@ -52,10 +52,11 @@
 </head>
 <body class="h-screen w-screen m-0 overflow-hidden">
 
+  <!-- Splash Screen -->
   <div id="splashScreen">
-      <i class="fas fa-car-side splash-logo animate-pulse"></i>
+      <i class="fas fa-car-side splash-logo animate-pulse font-normal"></i>
       <h1 class="splash-text">F1 DRIVER</h1>
-      <p class="text-[#fae100] text-sm mt-3 font-normal tracking-widest"><i class="fas fa-spinner fa-spin"></i> กำลังเชื่อมต่อระบบ...</p>
+      <p class="text-[#fae100] text-sm mt-3 font-normal tracking-widest"><i class="fas fa-spinner fa-spin font-normal"></i> กำลังเชื่อมต่อระบบ...</p>
   </div>
 
   <audio id="notiSound" src="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3" preload="auto"></audio>
@@ -63,35 +64,36 @@
   <div id="map" class="map-container hidden"></div>
 
   <div id="navBar" class="hidden fixed top-0 w-full h-16 bg-[#1e234e] border-b border-[#2a2f5c] flex items-center justify-between px-4 z-20 text-white shadow-md pointer-events-auto">
-    <button onclick="goBack()" class="p-2 text-2xl active:opacity-50 hover:text-[#fae100] transition"><i class="fas fa-chevron-left"></i></button>
-    <h1 id="navTitle" class="text-lg font-black text-[#fae100] tracking-wide"><i class="fas fa-car-side"></i> F1 Fast and Furious</h1>
-    <button onclick="goHome()" class="p-2 text-xl active:opacity-50 hover:text-[#fae100] transition"><i class="fas fa-home"></i></button>
+    <button onclick="goBack()" class="p-2 text-2xl active:opacity-50 hover:text-[#fae100] transition font-normal"><i class="fas fa-chevron-left"></i></button>
+    <h1 id="navTitle" class="text-lg font-black text-[#fae100] tracking-wide"><i class="fas fa-car-side font-normal"></i> F1 Fast and Furious</h1>
+    <button onclick="goHome()" class="p-2 text-xl active:opacity-50 hover:text-[#fae100] transition font-normal"><i class="fas fa-home"></i></button>
   </div>
 
   <div id="topSearchPick" class="hidden fixed top-[76px] left-4 right-4 z-40 pointer-events-auto transition-transform duration-300">
       <div class="relative w-full shadow-[0_10px_20px_rgba(250,225,0,0.2)] rounded-2xl bg-[#2a2f5c] border-2 border-[#fae100] overflow-visible">
-          <div class="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none z-10"><i class="fas fa-search text-gray-400"></i></div>
+          <div class="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none z-10"><i class="fas fa-search text-gray-400 font-normal"></i></div>
           <input type="text" id="pickupSearch" class="w-full py-3.5 pl-11 pr-4 bg-transparent outline-none font-normal text-[13px] text-white truncate placeholder-gray-400" placeholder="พิมพ์ค้นหาสถานที่ (หรือเลื่อนเป้าบนแผนที่)">
       </div>
   </div>
 
   <div id="topSearchDrop" class="hidden fixed top-[76px] left-4 right-4 z-40 pointer-events-auto transition-transform duration-300">
       <div class="relative w-full shadow-[0_10px_20px_rgba(239,68,68,0.2)] rounded-2xl bg-[#2a2f5c] border-2 border-red-500 overflow-visible">
-          <div class="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none z-10"><i class="fas fa-search text-gray-400"></i></div>
+          <div class="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none z-10"><i class="fas fa-search text-gray-400 font-normal"></i></div>
           <input type="text" id="dropoffSearch" class="w-full py-3.5 pl-11 pr-4 bg-transparent outline-none font-normal text-[13px] text-white truncate placeholder-gray-400" placeholder="พิมพ์ค้นหาสถานที่ (หรือเลื่อนเป้าบนแผนที่)">
       </div>
   </div>
 
   <div id="mapControls" class="hidden fixed top-[140px] right-4 z-30 flex-col gap-3 pointer-events-auto transition-all duration-300">
-      <button onclick="toggleMapStyle()" id="btnMapStyle" class="glass-box w-11 h-11 flex items-center justify-center rounded-full shadow-lg text-gray-300 border border-[#383d6a] hover:bg-white/10 transition" title="สลับโหมดแผนที่"><i class="fas fa-satellite text-[18px]"></i></button>
-      <button onclick="fitAllWaypoints()" id="btnOverview" class="hidden glass-box w-11 h-11 flex items-center justify-center rounded-full shadow-lg text-gray-300 border border-[#383d6a] hover:bg-white/10 transition" title="ดูเส้นทางรวม"><i class="fas fa-route text-[18px]"></i></button>
-      <button onclick="handleCrosshairClick()" id="btnCrosshair" class="hidden glass-box w-11 h-11 flex items-center justify-center rounded-full shadow-lg text-[#fae100] border border-[#383d6a] hover:bg-white/10 transition" title="พิกัดปัจจุบัน"><i class="fas fa-crosshairs text-[18px]"></i></button>
-      <button onclick="openEmergencyModal()" id="btnEmergency" class="hidden bg-red-900/80 w-11 h-11 flex items-center justify-center rounded-full shadow-[0_0_15px_rgba(239,68,68,0.5)] text-red-400 border border-red-500/50 active:bg-red-800 transition mt-2"><i class="fas fa-shield-alt text-[18px]"></i></button>
+      <button onclick="toggleMapStyle()" id="btnMapStyle" class="glass-box w-11 h-11 flex items-center justify-center rounded-full shadow-lg text-gray-300 border border-[#383d6a] hover:bg-white/10 transition" title="สลับโหมดแผนที่"><i class="fas fa-satellite text-[18px] font-normal"></i></button>
+      <button onclick="fitAllWaypoints()" id="btnOverview" class="hidden glass-box w-11 h-11 flex items-center justify-center rounded-full shadow-lg text-gray-300 border border-[#383d6a] hover:bg-white/10 transition" title="ดูเส้นทางรวม"><i class="fas fa-route text-[18px] font-normal"></i></button>
+      <button onclick="handleCrosshairClick()" id="btnCrosshair" class="hidden glass-box w-11 h-11 flex items-center justify-center rounded-full shadow-lg text-[#fae100] border border-[#383d6a] hover:bg-white/10 transition" title="พิกัดปัจจุบัน"><i class="fas fa-crosshairs text-[18px] font-normal"></i></button>
+      <button onclick="openEmergencyModal()" id="btnEmergency" class="hidden bg-red-900/80 w-11 h-11 flex items-center justify-center rounded-full shadow-[0_0_15px_rgba(239,68,68,0.5)] text-red-400 border border-red-500/50 active:bg-red-800 transition mt-2"><i class="fas fa-shield-alt text-[18px] font-normal"></i></button>
   </div>
 
+  <!-- PAGE 1: HOME -->
   <div id="page1" class="full-page flex flex-col overflow-y-auto hide-scrollbar">
     <div class="bg-[#1e234e] border-b border-[#2a2f5c] text-[#fae100] h-16 px-4 shadow-md shrink-0 flex justify-between items-center sticky top-0 z-20">
-        <h1 class="text-lg font-black tracking-wide flex items-center gap-2"><i class="fas fa-car-side"></i> F1 DRIVER</h1>
+        <h1 class="text-lg font-black tracking-wide flex items-center gap-2"><i class="fas fa-car-side font-normal"></i> F1 DRIVER</h1>
         <div class="flex items-center gap-2 text-sm text-gray-400 bg-[#2a2f5c] px-3 py-1.5 rounded-full border border-[#383d6a] cursor-pointer shadow-sm hover:text-[#fae100] transition" onclick="openProfileModal()">
             <img id="userPicSmall" class="w-6 h-6 rounded-full object-cover bg-gray-700" src="https://img.icons8.com/bubbles/150/user.png" alt="Profile">
             <span id="userNameSmall" class="font-normal truncate max-w-[90px] text-xs">...</span>
@@ -105,21 +107,22 @@
           <div class="absolute top-2 right-2 bg-black/60 px-2 py-0.5 rounded text-[10px] text-white z-10 font-normal">Ad</div>
       </div>
       
+      <!-- 3 ปุ่มหลัก -->
       <div class="w-full grid grid-cols-3 gap-2 shrink-0 mb-4 mt-2">
-          <button id="btnMainRideAction" onclick="handleMainRideClick()" class="flex flex-col items-center justify-center gap-1.5 text-[#fae100] transition active:scale-95 bg-[#2a2f5c] border border-[#383d6a] rounded-2xl p-4 outline-none">
-              <i class="fas fa-car text-[30px]" id="btnMainRideIcon"></i>
+          <button id="btnMainRideAction" onclick="handleMainRideClick()" class="flex flex-col items-center justify-center gap-1.5 text-[#fae100] transition active:scale-95 bg-transparent outline-none">
+              <i class="fas fa-car text-[30px] font-normal" id="btnMainRideIcon"></i>
               <span class="font-normal text-xs text-center leading-tight tracking-wide" id="btnMainRideText">เรียกรถ</span>
           </button>
           
-          <button onclick="openNewsModal()" class="flex flex-col items-center justify-center gap-1.5 text-[#fae100] transition active:scale-95 relative bg-[#2a2f5c] border border-[#383d6a] rounded-2xl p-4 outline-none">
-              <div id="newsBadge" class="hidden absolute top-1 right-2 bg-red-500 text-white text-[8px] font-bold px-1.5 py-0.5 rounded-full shadow animate-pulse">New</div>
-              <i class="fas fa-bullhorn text-[30px]"></i>
+          <button onclick="openNewsModal()" class="flex flex-col items-center justify-center gap-1.5 text-[#fae100] transition active:scale-95 relative bg-transparent outline-none">
+              <div id="newsBadge" class="hidden absolute top-0 right-3 bg-red-500 text-white text-[9px] font-normal px-1.5 py-0.5 rounded-full shadow animate-pulse">New</div>
+              <i class="fas fa-bullhorn text-[30px] font-normal"></i>
               <span class="font-normal text-xs text-center leading-tight tracking-wide">ข่าวสาร<br>&โปรโมชั่น</span>
           </button>
 
-          <button onclick="openCommunityModal()" class="flex flex-col items-center justify-center gap-1.5 text-[#fae100] transition active:scale-95 relative bg-[#2a2f5c] border border-[#383d6a] rounded-2xl p-4 outline-none">
-              <div id="chatBadge" class="hidden absolute top-1 right-2 bg-red-500 text-white text-[8px] font-bold px-1.5 py-0.5 rounded-full shadow">0</div>
-              <i class="fas fa-users text-[30px]"></i>
+          <button onclick="openCommunityModal()" class="flex flex-col items-center justify-center gap-1.5 text-[#fae100] transition active:scale-95 relative bg-transparent outline-none">
+              <div id="chatBadge" class="hidden absolute top-0 right-3 bg-red-500 text-white text-[9px] font-normal px-1.5 py-0.5 rounded-full shadow">0</div>
+              <i class="fas fa-users text-[30px] font-normal"></i>
               <span class="font-normal text-xs text-center leading-tight tracking-wide">คอมมูนิตี้</span>
           </button>
       </div>
@@ -132,6 +135,7 @@
     </div>
   </div>
 
+  <!-- Vehicle Selection Modal -->
   <div id="vehicleSelectionModal" class="hidden fixed inset-0 z-[150] bg-black/80 flex items-center justify-center p-4 pointer-events-auto transition-opacity">
       <div class="bg-[#1e234e] border border-[#fae100]/30 rounded-3xl p-6 w-full max-w-sm text-center shadow-2xl transform scale-100 max-h-[90vh] flex flex-col">
           <h3 class="text-xl font-black text-[#fae100] mb-2 shrink-0">เลือกประเภทรถ</h3>
@@ -139,22 +143,22 @@
           
           <div class="grid grid-cols-2 gap-3 overflow-y-auto slim-scroll pr-1 pb-2 flex-1">
               <button id="btnSelectCar" onclick="selectVehicleAndStart('car')" class="w-full py-4 bg-[#fae100] text-[#1e234e] font-black rounded-2xl shadow-md hover:bg-[#e5ce00] transition flex flex-col items-center justify-center gap-2 active:scale-95 shrink-0">
-                  <i class="fas fa-car-side text-3xl"></i> 
+                  <i class="fas fa-car-side text-3xl font-normal"></i> 
                   <span class="text-sm font-bold text-center leading-tight">รถยนต์</span>
               </button>
               
               <button id="btnSelectPremiumCar" onclick="selectVehicleAndStart('premium_car')" class="w-full py-4 bg-[#fae100] text-[#1e234e] font-black rounded-2xl shadow-md hover:bg-[#e5ce00] transition flex flex-col items-center justify-center gap-2 active:scale-95 shrink-0">
-                  <i class="fas fa-car text-3xl"></i> 
+                  <i class="fas fa-car text-3xl font-normal"></i> 
                   <span class="text-sm font-bold text-center leading-tight">รถยนต์พรีเมียม</span>
               </button>
 
               <button id="btnSelectBike" onclick="selectVehicleAndStart('bike')" class="w-full py-4 bg-[#fae100] text-[#1e234e] font-black rounded-2xl shadow-md hover:bg-[#e5ce00] transition flex flex-col items-center justify-center gap-2 active:scale-95 shrink-0">
-                  <i class="fas fa-motorcycle text-3xl text-blue-600"></i> 
+                  <i class="fas fa-motorcycle text-3xl font-normal text-blue-600"></i> 
                   <span class="text-sm font-bold text-center leading-tight">รถมอเตอร์ไซค์</span>
               </button>
 
               <button id="btnSelectPremiumBike" onclick="selectVehicleAndStart('premium_bike')" class="w-full py-4 bg-[#fae100] text-[#1e234e] font-black rounded-2xl shadow-md hover:bg-[#e5ce00] transition flex flex-col items-center justify-center gap-2 active:scale-95 shrink-0">
-                  <i class="fas fa-motorcycle text-3xl text-purple-600"></i> 
+                  <i class="fas fa-motorcycle text-3xl font-normal text-purple-600"></i> 
                   <span class="text-sm font-bold text-center leading-tight">รถมอเตอร์ไซค์<br>พรีเมียม</span>
               </button>
           </div>
@@ -163,11 +167,12 @@
       </div>
   </div>
 
+  <!-- News Modal -->
   <div id="newsModal" class="hidden fixed inset-0 z-[200] bg-[#1e234e] transition-opacity flex flex-col">
       <div class="sticky top-0 bg-[#1e234e] border-b border-[#2a2f5c] h-16 px-4 flex items-center justify-between z-10 shadow-md shrink-0">
           <div class="flex items-center gap-3">
-              <button onclick="closeNewsModal()" class="w-10 h-10 shrink-0 bg-[#2a2f5c] text-gray-400 rounded-full flex items-center justify-center border border-[#383d6a] hover:text-[#fae100] transition"><i class="fas fa-arrow-left"></i></button>
-              <h2 class="text-lg font-black text-[#fae100]"><i class="fas fa-bullhorn mr-1"></i> ข่าวสาร & โปรโมชั่น</h2>
+              <button onclick="closeNewsModal()" class="w-10 h-10 shrink-0 bg-[#2a2f5c] text-gray-400 rounded-full flex items-center justify-center border border-[#383d6a] hover:text-[#fae100] transition font-normal"><i class="fas fa-arrow-left"></i></button>
+              <h2 class="text-lg font-black text-[#fae100]"><i class="fas fa-bullhorn mr-1 font-normal"></i> ข่าวสาร & โปรโมชั่น</h2>
           </div>
       </div>
       
@@ -188,16 +193,18 @@
       </div>
   </div>
 
+  <!-- Community Modal -->
   <div id="communityModal" class="hidden fixed inset-0 z-[200] bg-[#1e234e] flex flex-col pointer-events-auto transition-transform">
       <div class="bg-[#2a2f5c] border-b border-[#383d6a] h-16 px-4 flex items-center gap-3 shadow-md shrink-0">
-          <button onclick="closeCommunityModal()" class="w-10 h-10 bg-[#383d6a] text-gray-400 rounded-full flex items-center justify-center hover:text-[#fae100] transition"><i class="fas fa-arrow-left"></i></button>
-          <h2 class="text-lg font-black text-[#fae100]"><i class="fas fa-users mr-2"></i> แชทคอมมูนิตี้ส่วนกลาง</h2>
+          <button onclick="closeCommunityModal()" class="w-10 h-10 bg-[#383d6a] text-gray-400 rounded-full flex items-center justify-center hover:text-[#fae100] transition font-normal"><i class="fas fa-arrow-left"></i></button>
+          <h2 class="text-lg font-black text-[#fae100]"><i class="fas fa-users mr-2 font-normal"></i> แชทคอมมูนิตี้ส่วนกลาง</h2>
       </div>
       
+      <!-- ช่องค้นหาแชท -->
       <div class="p-3 bg-[#1e234e] border-b border-[#383d6a] shrink-0">
           <div class="relative w-full shadow-sm rounded-xl bg-[#2a2f5c] border border-[#383d6a] overflow-hidden">
-              <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none z-10"><i class="fas fa-search text-gray-400"></i></div>
-              <input type="text" id="chatSearchInput" onkeyup="filterCommunityChat()" class="w-full py-2.5 pl-9 pr-3 bg-transparent outline-none font-normal text-[13px] text-white placeholder-gray-500" placeholder="ค้นหาข้อความ หรือวันที่ (เช่น 11/06)...">
+              <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none z-10"><i class="fas fa-search text-gray-400 font-normal"></i></div>
+              <input type="text" id="chatSearchInput" onkeyup="window.filterCommunityChat()" class="w-full py-2.5 pl-9 pr-3 bg-transparent outline-none font-normal text-[13px] text-white placeholder-gray-500" placeholder="ค้นหาข้อความ หรือวันที่ (เช่น 11/06)...">
           </div>
       </div>
 
@@ -208,98 +215,101 @@
       </div>
       <div class="bg-[#2a2f5c] p-3 flex gap-2 shrink-0 shadow-[0_-5px_15px_rgba(0,0,0,0.3)] border-t border-[#383d6a]">
           <input type="text" id="globalChatInput" class="flex-1 rounded-xl bg-[#383d6a] text-white px-4 py-3 text-sm font-normal outline-none focus:border-[#fae100] border border-transparent transition shadow-inner" placeholder="พิมพ์ข้อความพูดคุย...">
-          <button onclick="sendGlobalChat()" class="bg-[#fae100] text-[#1e234e] font-black px-5 rounded-xl hover:bg-[#e5ce00] transition shadow-md active:scale-95"><i class="fas fa-paper-plane"></i></button>
+          <button onclick="window.sendGlobalChat()" class="bg-[#fae100] text-[#1e234e] font-black px-5 rounded-xl hover:bg-[#e5ce00] transition shadow-md active:scale-95"><i class="fas fa-paper-plane font-normal"></i></button>
       </div>
   </div>
 
+  <!-- PAGE 2: PICKUP -->
   <div id="page2" class="hidden">
     <div class="ui-panel border-t-[4px] border-[#fae100] h-auto pb-6 pt-4">
       <div class="flex justify-between items-center mb-2">
-        <div><p class="text-[10px] font-black text-[#fae100] mb-0.5 tracking-widest"><i class="fas fa-circle"></i> STEP 1</p><p class="text-base font-black text-white">เลื่อนแผนที่เพื่อกำหนดจุดรับ</p></div>
+        <div><p class="text-[10px] font-black text-[#fae100] mb-0.5 tracking-widest"><i class="fas fa-circle font-normal"></i> STEP 1</p><p class="text-base font-black text-white">เลื่อนแผนที่เพื่อกำหนดจุดรับ</p></div>
         <div class="flex gap-1.5">
-            <button onclick="openRecentPlacesModal()" class="text-[10px] font-normal bg-[#2a2f5c] border border-[#383d6a] text-gray-300 px-2.5 py-1.5 rounded-lg hover:bg-[#383d6a] transition shadow-sm flex items-center gap-1.5"><i class="fas fa-history"></i> ประวัติ</button>
-            <button onclick="useCurrentLocation()" class="text-[10px] font-normal bg-[#fae100]/20 border border-[#fae100]/30 text-[#fae100] px-2.5 py-1.5 rounded-lg hover:bg-[#fae100]/40 transition shadow-sm flex items-center gap-1.5"><i class="fas fa-crosshairs"></i> ปัจจุบัน</button>
+            <button onclick="openRecentPlacesModal()" class="text-[10px] font-normal bg-[#2a2f5c] border border-[#383d6a] text-gray-300 px-2.5 py-1.5 rounded-lg hover:bg-[#383d6a] transition shadow-sm flex items-center gap-1.5"><i class="fas fa-history font-normal"></i> ประวัติ</button>
+            <button onclick="window.useCurrentLocation()" class="text-[10px] font-normal bg-[#fae100]/20 border border-[#fae100]/30 text-[#fae100] px-2.5 py-1.5 rounded-lg hover:bg-[#fae100]/40 transition shadow-sm flex items-center gap-1.5"><i class="fas fa-crosshairs font-normal"></i> ปัจจุบัน</button>
         </div>
       </div>
       
       <div class="flex gap-2 overflow-x-auto pb-2 hide-scrollbar mb-1 items-center w-full">
           <div class="flex shrink-0 bg-[#2a2f5c] border border-[#383d6a] rounded-full overflow-hidden shadow-sm items-center">
-              <button onclick="handleSavedPlace('home')" class="px-2.5 py-1 flex items-center gap-1.5 hover:bg-[#383d6a] transition"><i class="fas fa-home text-blue-400 text-[10px]"></i><span class="label-home text-[11px] font-normal text-gray-200">บ้าน</span></button>
+              <button onclick="window.handleSavedPlace('home')" class="px-2.5 py-1 flex items-center gap-1.5 hover:bg-[#383d6a] transition"><i class="fas fa-home text-blue-400 text-[10px] font-normal"></i><span class="label-home text-[11px] font-normal text-gray-200">บ้าน</span></button>
               <div class="w-[1px] h-3 bg-[#383d6a]"></div>
-              <button onclick="editSavedPlace('home', event)" class="px-2 py-1 text-gray-400 hover:text-[#fae100] hover:bg-[#383d6a] transition flex items-center"><i class="fas fa-cog text-[10px]"></i></button>
+              <button onclick="window.editSavedPlace('home', event)" class="px-2 py-1 text-gray-400 hover:text-[#fae100] hover:bg-[#383d6a] transition flex items-center"><i class="fas fa-cog text-[10px] font-normal"></i></button>
           </div>
           <div class="flex shrink-0 bg-[#2a2f5c] border border-[#383d6a] rounded-full overflow-hidden shadow-sm items-center">
-              <button onclick="handleSavedPlace('favorite1')" class="px-2.5 py-1 flex items-center gap-1.5 hover:bg-[#383d6a] transition"><i class="fas fa-heart text-pink-500 text-[10px]"></i><span class="label-favorite1 text-[11px] font-normal text-gray-200">รายการโปรด 1</span></button>
+              <button onclick="window.handleSavedPlace('favorite1')" class="px-2.5 py-1 flex items-center gap-1.5 hover:bg-[#383d6a] transition"><i class="fas fa-heart text-pink-500 text-[10px] font-normal"></i><span class="label-favorite1 text-[11px] font-normal text-gray-200">รายการโปรด 1</span></button>
               <div class="w-[1px] h-3 bg-[#383d6a]"></div>
-              <button onclick="editSavedPlace('favorite1', event)" class="px-2 py-1 text-gray-400 hover:text-[#fae100] hover:bg-[#383d6a] transition flex items-center"><i class="fas fa-cog text-[10px]"></i></button>
+              <button onclick="window.editSavedPlace('favorite1', event)" class="px-2 py-1 text-gray-400 hover:text-[#fae100] hover:bg-[#383d6a] transition flex items-center"><i class="fas fa-cog text-[10px] font-normal"></i></button>
           </div>
           <div class="flex shrink-0 bg-[#2a2f5c] border border-[#383d6a] rounded-full overflow-hidden shadow-sm items-center">
-              <button onclick="handleSavedPlace('favorite2')" class="px-2.5 py-1 flex items-center gap-1.5 hover:bg-[#383d6a] transition"><i class="fas fa-star text-yellow-500 text-[10px]"></i><span class="label-favorite2 text-[11px] font-normal text-gray-200">รายการโปรด 2</span></button>
+              <button onclick="window.handleSavedPlace('favorite2')" class="px-2.5 py-1 flex items-center gap-1.5 hover:bg-[#383d6a] transition"><i class="fas fa-star text-yellow-500 text-[10px] font-normal"></i><span class="label-favorite2 text-[11px] font-normal text-gray-200">รายการโปรด 2</span></button>
               <div class="w-[1px] h-3 bg-[#383d6a]"></div>
-              <button onclick="editSavedPlace('favorite2', event)" class="px-2 py-1 text-gray-400 hover:text-[#fae100] hover:bg-[#383d6a] transition flex items-center"><i class="fas fa-cog text-[10px]"></i></button>
+              <button onclick="window.editSavedPlace('favorite2', event)" class="px-2 py-1 text-gray-400 hover:text-[#fae100] hover:bg-[#383d6a] transition flex items-center"><i class="fas fa-cog text-[10px] font-normal"></i></button>
           </div>
       </div>
       
       <div id="pickupWaypointsList" class="flex flex-col gap-1.5 mb-1 max-h-[110px] overflow-y-auto slim-scroll"></div>
 
       <div class="flex gap-2 mt-2">
-          <button onclick="addWaypointFromCenter('pick')" class="flex-[1] bg-[#2a2f5c] border border-[#fae100]/50 text-[#fae100] py-3 rounded-xl font-normal text-[14px] shadow-sm hover:bg-[#383d6a] transition flex justify-center items-center gap-1.5">
-              <i class="fas fa-plus"></i> จุดรับ
+          <button onclick="window.addWaypointFromCenter('pick')" class="flex-[1] bg-[#2a2f5c] border border-[#fae100]/50 text-[#fae100] py-3 rounded-xl font-normal text-[14px] shadow-sm hover:bg-[#383d6a] transition flex justify-center items-center gap-1.5">
+              <i class="fas fa-plus font-normal"></i> จุดรับ
           </button>
-          <button id="btnConfirmPick" onclick="confirmPickup()" disabled class="flex-[2] bg-[#2a2f5c] text-gray-400 border border-[#383d6a] py-3 rounded-xl font-black text-[14px] shadow-md transition flex justify-center items-center gap-1.5 cursor-not-allowed opacity-50">
-              เลือกจุดหมาย <i class="fas fa-arrow-right"></i>
+          <button id="btnConfirmPick" onclick="window.confirmPickup()" disabled class="flex-[2] bg-[#2a2f5c] text-gray-400 border border-[#383d6a] py-3 rounded-xl font-black text-[14px] shadow-md transition flex justify-center items-center gap-1.5 cursor-not-allowed opacity-50">
+              เลือกจุดหมาย <i class="fas fa-arrow-right font-normal"></i>
           </button>
       </div>
     </div>
   </div>
 
+  <!-- PAGE 3: DROPOFF -->
   <div id="page3" class="hidden">
     <div class="ui-panel border-t-[4px] border-red-500 h-auto pb-6 pt-4">
       <div class="flex justify-between items-center mb-2">
-        <div><p class="text-[10px] font-black text-red-500 mb-0.5 tracking-widest"><i class="fas fa-circle"></i> STEP 2</p><p class="text-base font-black text-white">เลื่อนแผนที่เพื่อกำหนดจุดส่ง</p></div>
+        <div><p class="text-[10px] font-black text-red-500 mb-0.5 tracking-widest"><i class="fas fa-circle font-normal"></i> STEP 2</p><p class="text-base font-black text-white">เลื่อนแผนที่เพื่อกำหนดจุดส่ง</p></div>
         <div class="flex gap-1.5">
-            <button onclick="openRecentPlacesModal()" class="text-[10px] font-normal bg-[#2a2f5c] border border-[#383d6a] text-gray-300 px-2.5 py-1.5 rounded-lg hover:bg-[#383d6a] transition shadow-sm flex items-center gap-1.5"><i class="fas fa-history"></i> ประวัติ</button>
-            <button onclick="useCurrentLocation()" class="text-[10px] font-normal bg-red-900/30 border border-red-500/30 text-red-400 px-2.5 py-1.5 rounded-lg hover:bg-red-800/50 transition shadow-sm flex items-center gap-1.5"><i class="fas fa-crosshairs"></i> ปัจจุบัน</button>
+            <button onclick="openRecentPlacesModal()" class="text-[10px] font-normal bg-[#2a2f5c] border border-[#383d6a] text-gray-300 px-2.5 py-1.5 rounded-lg hover:bg-[#383d6a] transition shadow-sm flex items-center gap-1.5"><i class="fas fa-history font-normal"></i> ประวัติ</button>
+            <button onclick="window.useCurrentLocation()" class="text-[10px] font-normal bg-red-900/30 border border-red-500/30 text-red-400 px-2.5 py-1.5 rounded-lg hover:bg-red-800/50 transition shadow-sm flex items-center gap-1.5"><i class="fas fa-crosshairs font-normal"></i> ปัจจุบัน</button>
         </div>
       </div>
       
       <div class="flex gap-2 overflow-x-auto pb-2 hide-scrollbar mb-1 items-center w-full">
           <div class="flex shrink-0 bg-[#2a2f5c] border border-[#383d6a] rounded-full overflow-hidden shadow-sm items-center">
-              <button onclick="handleSavedPlace('home')" class="px-2.5 py-1 flex items-center gap-1.5 hover:bg-[#383d6a] transition"><i class="fas fa-home text-blue-400 text-[10px]"></i><span class="label-home text-[11px] font-normal text-gray-200">บ้าน</span></button>
+              <button onclick="window.handleSavedPlace('home')" class="px-2.5 py-1 flex items-center gap-1.5 hover:bg-[#383d6a] transition"><i class="fas fa-home text-blue-400 text-[10px] font-normal"></i><span class="label-home text-[11px] font-normal text-gray-200">บ้าน</span></button>
               <div class="w-[1px] h-3 bg-[#383d6a]"></div>
-              <button onclick="editSavedPlace('home', event)" class="px-2 py-1 text-gray-400 hover:text-[#fae100] hover:bg-[#383d6a] transition flex items-center"><i class="fas fa-cog text-[10px]"></i></button>
+              <button onclick="window.editSavedPlace('home', event)" class="px-2 py-1 text-gray-400 hover:text-[#fae100] hover:bg-[#383d6a] transition flex items-center"><i class="fas fa-cog text-[10px] font-normal"></i></button>
           </div>
           <div class="flex shrink-0 bg-[#2a2f5c] border border-[#383d6a] rounded-full overflow-hidden shadow-sm items-center">
-              <button onclick="handleSavedPlace('favorite1')" class="px-2.5 py-1 flex items-center gap-1.5 hover:bg-[#383d6a] transition"><i class="fas fa-heart text-pink-500 text-[10px]"></i><span class="label-favorite1 text-[11px] font-normal text-gray-200">รายการโปรด 1</span></button>
+              <button onclick="window.handleSavedPlace('favorite1')" class="px-2.5 py-1 flex items-center gap-1.5 hover:bg-[#383d6a] transition"><i class="fas fa-heart text-pink-500 text-[10px] font-normal"></i><span class="label-favorite1 text-[11px] font-normal text-gray-200">รายการโปรด 1</span></button>
               <div class="w-[1px] h-3 bg-[#383d6a]"></div>
-              <button onclick="editSavedPlace('favorite1', event)" class="px-2 py-1 text-gray-400 hover:text-[#fae100] hover:bg-[#383d6a] transition flex items-center"><i class="fas fa-cog text-[10px]"></i></button>
+              <button onclick="window.editSavedPlace('favorite1', event)" class="px-2 py-1 text-gray-400 hover:text-[#fae100] hover:bg-[#383d6a] transition flex items-center"><i class="fas fa-cog text-[10px] font-normal"></i></button>
           </div>
           <div class="flex shrink-0 bg-[#2a2f5c] border border-[#383d6a] rounded-full overflow-hidden shadow-sm items-center">
-              <button onclick="handleSavedPlace('favorite2')" class="px-2.5 py-1 flex items-center gap-1.5 hover:bg-[#383d6a] transition"><i class="fas fa-star text-yellow-500 text-[10px]"></i><span class="label-favorite2 text-[11px] font-normal text-gray-200">รายการโปรด 2</span></button>
+              <button onclick="window.handleSavedPlace('favorite2')" class="px-2.5 py-1 flex items-center gap-1.5 hover:bg-[#383d6a] transition"><i class="fas fa-star text-yellow-500 text-[10px] font-normal"></i><span class="label-favorite2 text-[11px] font-normal text-gray-200">รายการโปรด 2</span></button>
               <div class="w-[1px] h-3 bg-[#383d6a]"></div>
-              <button onclick="editSavedPlace('favorite2', event)" class="px-2 py-1 text-gray-400 hover:text-[#fae100] hover:bg-[#383d6a] transition flex items-center"><i class="fas fa-cog text-[10px]"></i></button>
+              <button onclick="window.editSavedPlace('favorite2', event)" class="px-2 py-1 text-gray-400 hover:text-[#fae100] hover:bg-[#383d6a] transition flex items-center"><i class="fas fa-cog text-[10px] font-normal"></i></button>
           </div>
       </div>
 
       <div id="dropoffWaypointsList" class="flex flex-col gap-1.5 mb-1 max-h-[110px] overflow-y-auto slim-scroll"></div>
 
       <div class="flex gap-2 mt-2">
-          <button onclick="addWaypointFromCenter('drop')" class="flex-[1] bg-[#2a2f5c] border border-red-500/50 text-red-400 py-3 rounded-xl font-normal text-[14px] shadow-sm hover:bg-[#383d6a] transition flex justify-center items-center gap-1.5">
-              <i class="fas fa-plus"></i> จุดส่ง
+          <button onclick="window.addWaypointFromCenter('drop')" class="flex-[1] bg-[#2a2f5c] border border-red-500/50 text-red-400 py-3 rounded-xl font-normal text-[14px] shadow-sm hover:bg-[#383d6a] transition flex justify-center items-center gap-1.5">
+              <i class="fas fa-plus font-normal"></i> จุดส่ง
           </button>
-          <button id="btnConfirmDrop" onclick="confirmDropoff()" disabled class="flex-[2] bg-[#2a2f5c] text-gray-400 border border-[#383d6a] py-3 rounded-xl font-black text-[14px] shadow-md transition flex justify-center items-center gap-1.5 cursor-not-allowed opacity-50">
-              สรุปการเดินทาง <i class="fas fa-check-circle"></i>
+          <button id="btnConfirmDrop" onclick="window.confirmDropoff()" disabled class="flex-[2] bg-[#2a2f5c] text-gray-400 border border-[#383d6a] py-3 rounded-xl font-black text-[14px] shadow-md transition flex justify-center items-center gap-1.5 cursor-not-allowed opacity-50">
+              สรุปการเดินทาง <i class="fas fa-check-circle font-normal"></i>
           </button>
       </div>
     </div>
   </div>
 
+  <!-- PAGE 4: SUMMARY -->
   <div id="page4" class="hidden">
     <div id="page4Panel" class="ui-panel border-t-[4px] border-blue-500 h-auto pb-6 pt-3 transition-transform duration-300">
-      <div class="w-full flex justify-center pb-3 cursor-pointer" onclick="togglePage4Panel()"><div class="w-12 h-1.5 bg-[#4b507d] rounded-full"></div></div>
+      <div class="w-full flex justify-center pb-3 cursor-pointer" onclick="window.togglePage4Panel()"><div class="w-12 h-1.5 bg-[#4b507d] rounded-full"></div></div>
       <div class="flex justify-between items-center mb-2">
         <div>
-            <p class="text-[10px] font-black text-blue-400 mb-0.5 tracking-widest flex items-center gap-1" id="serviceLabelIndicator"><i class="fas fa-car-side"></i> รถยนต์</p>
+            <p class="text-[10px] font-black text-blue-400 mb-0.5 tracking-widest flex items-center gap-1" id="serviceLabelIndicator"><i class="fas fa-car-side font-normal"></i> รถยนต์</p>
             <p class="text-base font-black text-white">ตรวจสอบความถูกต้อง</p>
         </div>
       </div>
@@ -324,29 +334,30 @@
               </div>
             </div>
           </div>
-          <button id="btnUsePromo" onclick="openPromoModal()" class="shrink-0 w-[4rem] bg-[#2a2f5c] border border-[#383d6a] text-[#fae100] rounded-xl text-[10px] font-normal hover:bg-[#383d6a] transition flex flex-col items-center justify-center gap-1 shadow-sm">
-              <i class="fas fa-ticket-alt text-base"></i><span>ใช้โค้ด</span>
+          <button id="btnUsePromo" onclick="window.openPromoModal()" class="shrink-0 w-[4rem] bg-[#2a2f5c] border border-[#383d6a] text-[#fae100] rounded-xl text-[10px] font-normal hover:bg-[#383d6a] transition flex flex-col items-center justify-center gap-1 shadow-sm">
+              <i class="fas fa-ticket-alt text-base font-normal"></i><span>ใช้โค้ด</span>
           </button>
       </div>
 
-      <form onsubmit="event.preventDefault(); submitBooking();" class="flex gap-2 w-full mt-1 shrink-0 pb-2">
+      <form onsubmit="event.preventDefault(); window.submitBooking();" class="flex gap-2 w-full mt-1 shrink-0 pb-2">
           <div class="relative flex-[1.2] min-w-[140px]">
-              <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-400"><i class="fas fa-phone-alt text-[13px]"></i></div>
-              <input type="tel" id="userPhone" name="tel" autocomplete="tel" inputmode="tel" oninput="formatPhone(this)" placeholder="เบอร์ติดต่อ" class="w-full py-3 pl-9 pr-2 bg-[#2a2f5c] border border-[#383d6a] focus:border-[#fae100] focus:bg-[#1e234e] text-white placeholder-gray-500 rounded-xl text-[13px] font-normal outline-none transition-colors h-full">
+              <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-400"><i class="fas fa-phone-alt text-[13px] font-normal"></i></div>
+              <input type="tel" id="userPhone" name="tel" autocomplete="tel" inputmode="tel" oninput="window.formatPhone(this)" placeholder="เบอร์ติดต่อ" class="w-full py-3 pl-9 pr-2 bg-[#2a2f5c] border border-[#383d6a] focus:border-[#fae100] focus:bg-[#1e234e] text-white placeholder-gray-500 rounded-xl text-[13px] font-normal outline-none transition-colors h-full">
           </div>
           <button type="submit" class="flex-1 bg-[#fae100] text-[#1e234e] py-3 rounded-xl font-black text-sm shadow-[0_0_15px_rgba(250,225,0,0.3)] hover:bg-[#e5ce00] active:scale-[0.98] transition flex justify-center items-center gap-1.5 whitespace-nowrap h-full shrink-0">
-              ยืนยันเรียกรถ <i class="fas fa-check"></i>
+              ยืนยันเรียกรถ <i class="fas fa-check font-normal"></i>
           </button>
       </form>
     </div>
   </div>
 
+  <!-- TRACKING -->
   <div id="pageTracking" class="hidden">
     <div id="trackingPanel" class="ui-panel border-t-[4px] border-[#fae100] h-auto pb-5 pt-3 transition-transform duration-300"> 
-      <div class="w-full flex justify-center pb-3 cursor-pointer" onclick="toggleTrackingPanel()"><div class="w-12 h-1.5 bg-[#4b507d] rounded-full"></div></div>
+      <div class="w-full flex justify-center pb-3 cursor-pointer" onclick="window.toggleTrackingPanel()"><div class="w-12 h-1.5 bg-[#4b507d] rounded-full"></div></div>
       <div id="unifiedStatusBox" class="mb-3 flex justify-between items-center w-full relative overflow-hidden pb-1">
           <div class="min-w-0 flex-1 pr-2">
-              <p class="text-[10px] font-black text-gray-400 mb-0.5 tracking-widest flex items-center gap-1.5" id="unifiedStatusLabel"><i class="fas fa-spinner fa-spin text-blue-400 text-[12px]"></i> STATUS</p>
+              <p class="text-[10px] font-black text-gray-400 mb-0.5 tracking-widest flex items-center gap-1.5" id="unifiedStatusLabel"><i class="fas fa-spinner fa-spin text-blue-400 text-[12px] font-normal"></i> STATUS</p>
               <h2 class="font-black text-[15px] leading-tight text-white truncate" id="unifiedStatusText">กำลังค้นหาคนขับ...</h2>
               <p class="text-[11px] font-normal mt-0.5 text-blue-400 hidden truncate" id="unifiedEtaText">ระยะทาง -- กม. • -- นาที • ถึง --:-- น.</p>
           </div>
@@ -366,60 +377,47 @@
 
       <div id="driverInfoBox" class="hidden mb-3 bg-[#2a2f5c] border border-[#383d6a] p-2.5 rounded-xl flex justify-between items-center shadow-sm w-full">
           <div class="flex items-center gap-3 w-full min-w-0">
-              <div class="w-10 h-10 bg-[#1e234e] rounded-full flex items-center justify-center text-[#fae100] text-xl border border-[#383d6a] shrink-0"><i class="fas fa-user-tie"></i></div>
+              <div class="w-10 h-10 bg-[#1e234e] rounded-full flex items-center justify-center text-[#fae100] text-xl border border-[#383d6a] shrink-0"><i class="fas fa-user-tie font-normal"></i></div>
               <div class="flex flex-col w-full min-w-0">
                   <p class="text-[12px] text-white font-bold truncate" id="trackDriverPlate">กำลังดึงข้อมูล...</p>
                   <p class="text-[11px] text-gray-400 font-normal truncate" id="trackDriverCar">-</p>
                   <div class="flex justify-between items-center w-full mt-0.5">
                       <p class="text-[11px] text-gray-300 font-normal truncate pr-1" id="trackDriverName">-</p>
-                      <div class="text-[9px] font-bold text-[#1e234e] bg-[#fae100] px-2 py-0.5 rounded border border-[#fae100]/50 shrink-0"><i class="fas fa-shield-alt"></i> ยืนยัน</div>
+                      <div class="text-[9px] font-bold text-[#1e234e] bg-[#fae100] px-2 py-0.5 rounded border border-[#fae100]/50 shrink-0"><i class="fas fa-shield-alt font-normal"></i> ยืนยัน</div>
                   </div>
               </div>
           </div>
       </div>
 
       <div id="actionButtonsBox" class="hidden gap-2 mb-1 shrink-0 w-full flex-row">
-          <button id="btnChat" onclick="openInAppChatModal()" class="flex-1 w-full bg-blue-900/40 text-blue-400 py-3 rounded-xl font-normal border border-blue-500/30 text-sm shadow-sm hover:bg-blue-800 transition flex justify-center items-center gap-1.5"><i class="fas fa-comments text-[16px]"></i> แชท</button>
-          <button id="btnAddWaypt" onclick="openWaypointSearchModal()" class="flex-1 w-full bg-yellow-900/30 text-yellow-400 py-3 rounded-xl font-normal border border-yellow-500/30 text-sm shadow-sm hover:bg-yellow-600/50 transition flex justify-center items-center gap-1.5"><i class="fas fa-plus"></i> แวะเพิ่ม</button>
-          <button id="btnCall" onclick="openCallConfirmModal()" class="flex-1 w-full bg-[#fae100] text-[#1e234e] py-3 rounded-xl font-black text-sm shadow-sm hover:bg-[#e5ce00] transition flex justify-center items-center gap-1.5"><i class="fas fa-phone-alt"></i> โทร</button>
-          <button id="btnCancel" onclick="openCancelModal()" class="flex-1 w-full bg-red-900/40 text-red-400 py-3 rounded-xl font-normal border border-red-500/30 text-sm hover:bg-red-900/60 transition flex justify-center items-center gap-1.5"><i class="fas fa-times"></i> ยกเลิก</button>
+          <button id="btnChat" onclick="openInAppChatModal()" class="flex-1 w-full bg-blue-900/40 text-blue-400 py-3 rounded-xl font-normal border border-blue-500/30 text-sm shadow-sm hover:bg-blue-800 transition flex justify-center items-center gap-1.5"><i class="fas fa-comments text-[16px] font-normal"></i> แชท</button>
+          <button id="btnAddWaypt" onclick="window.openWaypointSearchModal()" class="flex-1 w-full bg-yellow-900/30 text-yellow-400 py-3 rounded-xl font-normal border border-yellow-500/30 text-sm shadow-sm hover:bg-yellow-600/50 transition flex justify-center items-center gap-1.5"><i class="fas fa-plus font-normal"></i> แวะเพิ่ม</button>
+          <button id="btnCall" onclick="window.openCallConfirmModal()" class="flex-1 w-full bg-[#fae100] text-[#1e234e] py-3 rounded-xl font-black text-sm shadow-sm hover:bg-[#e5ce00] transition flex justify-center items-center gap-1.5"><i class="fas fa-phone-alt font-normal"></i> โทร</button>
+          <button id="btnCancel" onclick="window.openCancelModal()" class="flex-1 w-full bg-red-900/40 text-red-400 py-3 rounded-xl font-normal border border-red-500/30 text-sm hover:bg-red-900/60 transition flex justify-center items-center gap-1.5"><i class="fas fa-times font-normal"></i> ยกเลิก</button>
       </div>
     </div>
   </div>
 
-  <div id="inAppChatModal" class="hidden fixed inset-0 z-[250] bg-[#1e234e] flex flex-col pointer-events-auto transition-transform">
-      <div class="bg-[#2a2f5c] border-b border-[#383d6a] p-4 flex items-center gap-3 shadow-md shrink-0">
-          <button onclick="closeInAppChatModal()" class="w-10 h-10 bg-[#383d6a] text-white rounded-full flex items-center justify-center hover:bg-[#4b507d]"><i class="fas fa-arrow-left"></i></button>
-          <h2 class="text-lg font-black text-white"><i class="fas fa-comments text-[#fae100] mr-2"></i>ข้อความถึงคนขับ</h2>
-      </div>
-      <div id="inAppChatMessages" class="flex-1 overflow-y-auto p-4 space-y-3 bg-[#1e234e]/80 hide-scrollbar flex flex-col">
-          <p class="text-center text-xs text-gray-500 my-4">เริ่มต้นการสนทนากับคนขับที่นี่</p>
-      </div>
-      <div class="bg-[#2a2f5c] p-3 flex gap-2 shrink-0 shadow-[0_-5px_15px_rgba(0,0,0,0.3)]">
-          <input type="text" id="inAppChatInput" class="flex-1 rounded-xl bg-[#383d6a] text-white px-4 py-3 text-sm outline-none focus:border-[#fae100] border border-transparent transition" placeholder="พิมพ์ข้อความส่งหาคนขับ...">
-          <button onclick="sendInAppChatMessage()" class="bg-[#fae100] text-[#1e234e] font-black px-5 rounded-xl hover:bg-[#e5ce00] transition shadow-md"><i class="fas fa-paper-plane"></i></button>
-      </div>
-  </div>
-
+  <!-- Modals -->
   <div id="driverRatingModal" class="hidden fixed inset-0 z-[260] bg-black/80 flex items-center justify-center p-4 pointer-events-auto">
       <div class="bg-[#1e234e] border border-[#fae100]/30 rounded-3xl p-6 w-full max-w-sm text-center shadow-2xl">
-          <div class="w-16 h-16 bg-[#fae100]/20 text-[#fae100] border border-[#fae100]/30 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl"><i class="fas fa-star-half-alt"></i></div>
+          <div class="w-16 h-16 bg-[#fae100]/20 text-[#fae100] border border-[#fae100]/30 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl"><i class="fas fa-star-half-alt font-normal"></i></div>
           <h3 class="text-xl font-black text-white mb-2">ให้คะแนนคนขับ</h3>
           <p class="text-sm font-normal text-gray-400 mb-6 leading-relaxed">กรุณาประเมินความพึงพอใจการให้บริการของคนขับในรอบนี้ครับ</p>
           <div class="flex justify-center gap-2 mb-6" id="starRatingBox">
-              <i class="fas fa-star text-3xl text-gray-600 cursor-pointer transition hover:text-[#fae100]" onclick="updateSelectedRatingScore(1)"></i>
-              <i class="fas fa-star text-3xl text-gray-600 cursor-pointer transition hover:text-[#fae100]" onclick="updateSelectedRatingScore(2)"></i>
-              <i class="fas fa-star text-3xl text-gray-600 cursor-pointer transition hover:text-[#fae100]" onclick="updateSelectedRatingScore(3)"></i>
-              <i class="fas fa-star text-3xl text-gray-600 cursor-pointer transition hover:text-[#fae100]" onclick="updateSelectedRatingScore(4)"></i>
-              <i class="fas fa-star text-3xl text-gray-600 cursor-pointer transition hover:text-[#fae100]" onclick="updateSelectedRatingScore(5)"></i>
+              <i class="fas fa-star text-3xl font-normal text-gray-600 cursor-pointer transition hover:text-[#fae100]" onclick="window.updateSelectedRatingScore(1)"></i>
+              <i class="fas fa-star text-3xl font-normal text-gray-600 cursor-pointer transition hover:text-[#fae100]" onclick="window.updateSelectedRatingScore(2)"></i>
+              <i class="fas fa-star text-3xl font-normal text-gray-600 cursor-pointer transition hover:text-[#fae100]" onclick="window.updateSelectedRatingScore(3)"></i>
+              <i class="fas fa-star text-3xl font-normal text-gray-600 cursor-pointer transition hover:text-[#fae100]" onclick="window.updateSelectedRatingScore(4)"></i>
+              <i class="fas fa-star text-3xl font-normal text-gray-600 cursor-pointer transition hover:text-[#fae100]" onclick="window.updateSelectedRatingScore(5)"></i>
           </div>
-          <button onclick="submitDriverRatingScore()" class="w-full py-3.5 bg-[#fae100] text-[#1e234e] font-black rounded-xl shadow-md hover:bg-[#e5ce00] transition">ยืนยันคะแนน</button>
+          <button onclick="window.submitDriverRatingScore()" class="w-full py-3.5 bg-[#fae100] text-[#1e234e] font-black rounded-xl shadow-md hover:bg-[#e5ce00] transition">ยืนยันคะแนน</button>
       </div>
   </div>
 
   <div id="profileModal" class="hidden fixed inset-0 z-[190] bg-[#1e234e] pointer-events-auto transition-transform flex flex-col">
       <div class="bg-[#2a2f5c] border-b border-[#383d6a] h-16 px-4 flex items-center gap-3 shadow-md shrink-0">
-          <button onclick="closeProfileModal()" class="w-10 h-10 shrink-0 bg-[#383d6a] text-gray-400 rounded-full flex items-center justify-center hover:text-white transition"><i class="fas fa-arrow-left"></i></button>
+          <button onclick="window.closeProfileModal()" class="w-10 h-10 shrink-0 bg-[#383d6a] text-gray-400 rounded-full flex items-center justify-center hover:text-white transition font-normal"><i class="fas fa-arrow-left"></i></button>
           <h2 class="text-lg font-black text-white">โปรไฟล์ส่วนตัว</h2>
       </div>
       <div class="p-6 flex flex-col items-center border-b border-[#383d6a] shrink-0">
@@ -427,24 +425,24 @@
           <h2 class="text-2xl font-black text-white" id="profileNameLarge">กำลังโหลด...</h2>
           <div class="flex items-center gap-2 mt-1">
               <p class="text-gray-400 font-normal" id="profilePhoneLarge">เบอร์โทร: ยังไม่ระบุ</p>
-              <button onclick="editProfilePhone()" class="text-gray-500 hover:text-[#fae100] transition w-8 h-8 flex items-center justify-center bg-[#2a2f5c] rounded-full border border-[#383d6a] shadow-sm"><i class="fas fa-edit text-xs"></i></button>
+              <button onclick="window.editProfilePhone()" class="text-gray-500 hover:text-[#fae100] transition w-8 h-8 flex items-center justify-center bg-[#2a2f5c] rounded-full border border-[#383d6a] shadow-sm"><i class="fas fa-edit text-xs font-normal"></i></button>
           </div>
       </div>
       <div class="p-4 space-y-3 flex-1 overflow-y-auto">
-          <button onclick="openPassengerHistory()" class="w-full bg-[#2a2f5c] border border-[#383d6a] p-4 rounded-2xl shadow-sm flex items-center justify-between hover:bg-[#383d6a] transition">
-              <div class="flex items-center gap-3"><div class="w-8 h-8 rounded-full bg-blue-900/30 flex items-center justify-center"><i class="fas fa-history text-blue-400"></i></div> <span class="text-gray-200 font-normal text-sm">ประวัติการเดินทาง</span></div>
-              <i class="fas fa-chevron-right text-gray-500"></i>
+          <button onclick="window.openPassengerHistory()" class="w-full bg-[#2a2f5c] border border-[#383d6a] p-4 rounded-2xl shadow-sm flex items-center justify-between hover:bg-[#383d6a] transition">
+              <div class="flex items-center gap-3"><div class="w-8 h-8 rounded-full bg-blue-900/30 flex items-center justify-center"><i class="fas fa-history text-blue-400 font-normal"></i></div> <span class="text-gray-200 font-normal text-sm">ประวัติการเดินทาง</span></div>
+              <i class="fas fa-chevron-right text-gray-500 font-normal"></i>
           </button>
-          <button onclick="openBlockedDrivers()" class="w-full bg-[#2a2f5c] border border-[#383d6a] p-4 rounded-2xl shadow-sm flex items-center justify-between hover:bg-[#383d6a] transition">
-              <div class="flex items-center gap-3"><div class="w-8 h-8 rounded-full bg-red-900/30 flex items-center justify-center"><i class="fas fa-user-slash text-red-400"></i></div> <span class="text-gray-200 font-normal text-sm">จัดการการบล็อกคนขับ</span></div>
-              <i class="fas fa-chevron-right text-gray-500"></i>
+          <button onclick="window.openBlockedDrivers()" class="w-full bg-[#2a2f5c] border border-[#383d6a] p-4 rounded-2xl shadow-sm flex items-center justify-between hover:bg-[#383d6a] transition">
+              <div class="flex items-center gap-3"><div class="w-8 h-8 rounded-full bg-red-900/30 flex items-center justify-center"><i class="fas fa-user-slash text-red-400 font-normal"></i></div> <span class="text-gray-200 font-normal text-sm">จัดการการบล็อกคนขับ</span></div>
+              <i class="fas fa-chevron-right text-gray-500 font-normal"></i>
           </button>
       </div>
   </div>
 
   <div id="recentPlacesModal" class="hidden fixed inset-0 z-[250] bg-[#1e234e] pointer-events-auto transition-transform flex flex-col">
       <div class="bg-[#2a2f5c] border-b border-[#383d6a] h-16 px-4 flex items-center gap-3 shadow-md shrink-0">
-          <button onclick="closeRecentPlacesModal()" class="w-10 h-10 shrink-0 bg-[#383d6a] text-gray-400 rounded-full flex items-center justify-center hover:text-[#fae100] transition"><i class="fas fa-arrow-left"></i></button>
+          <button onclick="window.closeRecentPlacesModal()" class="w-10 h-10 shrink-0 bg-[#383d6a] text-gray-400 rounded-full flex items-center justify-center hover:text-[#fae100] transition font-normal"><i class="fas fa-arrow-left"></i></button>
           <h2 class="text-lg font-black text-white">ประวัติสถานที่ (ล่าสุด)</h2>
       </div>
       <div class="p-4 space-y-2 flex-1 overflow-y-auto" id="recentPlacesModalList"></div>
@@ -452,12 +450,12 @@
 
   <div id="waypointSearchModal" class="hidden fixed inset-0 z-[150] bg-[#1e234e] pointer-events-auto transition-transform duration-300 flex flex-col">
       <div class="bg-[#2a2f5c] border-b border-[#383d6a] h-16 px-4 flex items-center gap-3 shadow-md shrink-0">
-          <button onclick="closeWaypointSearchModal()" class="w-10 h-10 shrink-0 bg-[#383d6a] text-gray-400 rounded-full flex items-center justify-center hover:text-white transition"><i class="fas fa-arrow-left"></i></button>
+          <button onclick="window.closeWaypointSearchModal()" class="w-10 h-10 shrink-0 bg-[#383d6a] text-gray-400 rounded-full flex items-center justify-center hover:text-white transition font-normal"><i class="fas fa-arrow-left"></i></button>
           <h2 class="text-lg font-black text-white">ค้นหาสถานที่จุดแวะ</h2>
       </div>
       <div class="p-4 flex-1">
           <div class="relative w-full shadow-sm rounded-2xl bg-[#2a2f5c] border border-[#383d6a] overflow-visible mb-4">
-              <div class="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none z-10"><i class="fas fa-search text-gray-400"></i></div>
+              <div class="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none z-10"><i class="fas fa-search text-gray-400 font-normal"></i></div>
               <input type="text" id="waypointSearchInput" class="w-full py-4 pl-11 pr-4 bg-transparent outline-none font-normal text-[14px] text-white placeholder-gray-500" placeholder="พิมพ์ชื่อสถานที่...">
           </div>
           <p class="text-xs font-normal text-gray-500 text-center mt-10">ระบบจะคำนวณราคาใหม่ และส่งให้คุณยืนยันก่อนเพิ่มลงในเส้นทาง</p>
@@ -467,28 +465,28 @@
   <div id="historyModal" class="hidden fixed inset-0 z-[200] bg-[#1e234e] overflow-y-auto pb-10 transition-opacity">
       <div class="sticky top-0 bg-[#2a2f5c] border-b border-[#383d6a] h-16 px-4 flex items-center justify-between z-10 shadow-md">
           <div class="flex items-center gap-3">
-              <button onclick="closePassengerHistory()" class="w-10 h-10 shrink-0 bg-[#383d6a] text-gray-400 rounded-full flex items-center justify-center hover:text-[#fae100] transition"><i class="fas fa-arrow-left"></i></button>
+              <button onclick="window.closePassengerHistory()" class="w-10 h-10 shrink-0 bg-[#383d6a] text-gray-400 rounded-full flex items-center justify-center hover:text-[#fae100] transition font-normal"><i class="fas fa-arrow-left"></i></button>
               <h2 class="text-lg font-black text-white">ประวัติการเดินทาง</h2>
           </div>
       </div>
-      <div class="p-4" id="historyListContainer"><div class="flex justify-center py-10"><i class="fas fa-spinner fa-spin text-3xl text-blue-500"></i></div></div>
+      <div class="p-4" id="historyListContainer"><div class="flex justify-center py-10"><i class="fas fa-spinner fa-spin text-3xl text-blue-500 font-normal"></i></div></div>
   </div>
 
   <div id="blockedDriversModal" class="hidden fixed inset-0 z-[220] bg-[#1e234e] overflow-y-auto pb-10 transition-opacity">
       <div class="sticky top-0 bg-[#2a2f5c] border-b border-[#383d6a] h-16 px-4 flex items-center justify-between z-10 shadow-md">
           <div class="flex items-center gap-3">
-              <button onclick="closeBlockedDrivers()" class="w-10 h-10 shrink-0 bg-[#383d6a] text-gray-400 rounded-full flex items-center justify-center hover:text-[#fae100] transition"><i class="fas fa-arrow-left"></i></button>
+              <button onclick="window.closeBlockedDrivers()" class="w-10 h-10 shrink-0 bg-[#383d6a] text-gray-400 rounded-full flex items-center justify-center hover:text-[#fae100] transition font-normal"><i class="fas fa-arrow-left"></i></button>
               <h2 class="text-lg font-black text-white">จัดการการบล็อก</h2>
           </div>
       </div>
-      <div class="p-4" id="blockedListContainer"><div class="flex justify-center py-10"><i class="fas fa-spinner fa-spin text-3xl text-red-500"></i></div></div>
+      <div class="p-4" id="blockedListContainer"><div class="flex justify-center py-10"><i class="fas fa-spinner fa-spin text-3xl text-red-500 font-normal"></i></div></div>
   </div>
 
   <div id="historyDetailModal" class="hidden fixed inset-0 z-[210] bg-[#1e234e]/95 flex flex-col justify-end transition-transform">
       <div class="bg-[#1e234e] rounded-t-[24px] w-full mx-auto shadow-[0_-20px_50px_rgba(0,0,0,0.8)] flex flex-col h-[85vh] border-t border-[#383d6a]">
           <div class="h-16 px-4 flex justify-between items-center border-b border-[#383d6a] shrink-0">
               <h3 class="text-lg font-black text-[#fae100]">รายละเอียด</h3>
-              <button onclick="closeHistoryDetail()" class="text-gray-400 hover:text-[#fae100] bg-[#2a2f5c] rounded-full w-8 h-8 flex items-center justify-center transition-colors"><i class="fas fa-times"></i></button>
+              <button onclick="window.closeHistoryDetail()" class="text-gray-400 hover:text-[#fae100] bg-[#2a2f5c] rounded-full w-8 h-8 flex items-center justify-center transition-colors font-normal"><i class="fas fa-times"></i></button>
           </div>
           <div class="p-4 overflow-y-auto flex-1 space-y-4 text-white">
               <div class="flex justify-between items-center bg-[#2a2f5c] p-3 rounded-xl border border-[#383d6a] shadow-sm">
@@ -499,14 +497,14 @@
                   <div class="absolute left-[1.35rem] top-6 bottom-6 w-0.5 border-l-[1.5px] border-dashed border-[#4b507d]"></div>
                   <div id="historyDetailWaypointsContainer" class="flex flex-col w-full relative z-10 gap-2"></div>
               </div>
-              <button id="btnBlockDriver" onclick="blockCurrentHistoryDriver()" class="w-full mt-2 bg-red-900/40 border border-red-500/30 text-red-400 font-normal py-3.5 rounded-xl shadow-sm hover:bg-red-800 hover:text-white transition flex items-center justify-center gap-2"><i class="fas fa-ban"></i> บล็อกคนขับคนนี้</button>
+              <button id="btnBlockDriver" onclick="window.blockCurrentHistoryDriver()" class="w-full mt-2 bg-red-900/40 border border-red-500/30 text-red-400 font-normal py-3.5 rounded-xl shadow-sm hover:bg-red-800 hover:text-white transition flex items-center justify-center gap-2"><i class="fas fa-ban font-normal"></i> บล็อกคนขับคนนี้</button>
           </div>
       </div>
   </div>
 
   <div id="routeChangeModal" class="hidden fixed inset-0 z-[200] bg-black/80 flex items-center justify-center p-4 pointer-events-auto transition-opacity">
       <div class="bg-[#1e234e] rounded-3xl p-6 w-full max-w-sm text-center shadow-xl text-gray-100 border border-[#383d6a]">
-          <div class="w-16 h-16 bg-[#fae100]/20 text-[#fae100] border border-[#fae100]/30 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl"><i class="fas fa-route"></i></div>
+          <div class="w-16 h-16 bg-[#fae100]/20 text-[#fae100] border border-[#fae100]/30 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl"><i class="fas fa-route font-normal"></i></div>
           <h3 class="text-xl font-bold mb-2" id="rcTitle">ตรวจสอบราคาใหม่</h3>
           <p class="text-sm font-normal text-gray-300 mb-2 leading-relaxed" id="rcAddress">ระบบกำลังเพิ่มจุดแวะ...</p>
           <div class="bg-[#2a2f5c] rounded-xl p-3 mb-6 border border-[#383d6a] inline-block shadow-inner">
@@ -514,86 +512,145 @@
               <p class="text-lg font-black text-[#fae100]" id="rcPrice">฿0</p>
           </div>
           <div class="flex gap-3">
-              <button onclick="rejectRouteChange()" class="flex-1 py-3 bg-[#2a2f5c] text-gray-200 font-normal rounded-xl hover:bg-[#383d6a] transition shadow-sm border border-[#383d6a]">ยกเลิก</button>
-              <button onclick="acceptRouteChange()" class="flex-[2] py-3 bg-[#fae100] text-[#1e234e] font-black rounded-xl shadow-md hover:bg-[#e5ce00] transition">ยืนยัน</button>
+              <button onclick="window.rejectRouteChange()" class="flex-1 py-3 bg-[#2a2f5c] text-gray-200 font-normal rounded-xl hover:bg-[#383d6a] transition shadow-sm border border-[#383d6a]">ยกเลิก</button>
+              <button onclick="window.acceptRouteChange()" class="flex-[2] py-3 bg-[#fae100] text-[#1e234e] font-black rounded-xl shadow-md hover:bg-[#e5ce00] transition">ยืนยัน</button>
           </div>
       </div>
   </div>
 
   <div id="promoModal" class="hidden fixed inset-0 z-[140] bg-black/80 flex items-center justify-center p-4 pointer-events-auto">
       <div class="bg-[#1e234e] border border-[#383d6a] rounded-3xl p-6 w-full max-w-sm text-center shadow-2xl">
-          <div class="w-14 h-14 bg-[#2a2f5c] rounded-full flex items-center justify-center mx-auto mb-4 text-2xl shadow-inner border border-[#383d6a]"><i class="fas fa-ticket-alt text-[#fae100]"></i></div>
+          <div class="w-14 h-14 bg-[#2a2f5c] rounded-full flex items-center justify-center mx-auto mb-4 text-2xl shadow-inner border border-[#383d6a]"><i class="fas fa-ticket-alt text-[#fae100] font-normal"></i></div>
           <h3 class="text-xl font-black text-white mb-1">โค้ดส่วนลด</h3>
           <p class="text-[13px] font-normal text-gray-400 mb-5 leading-relaxed">กรุณากรอกรหัสโปรโมชั่นเพื่อรับส่วนลด</p>
           <input type="text" id="promoInput" placeholder="ใส่รหัสโค้ดที่นี่" class="w-full p-3.5 mb-5 bg-[#2a2f5c] border border-[#383d6a] focus:border-[#fae100] text-white rounded-xl text-center font-normal uppercase outline-none transition placeholder-gray-500 text-sm">
           <div class="flex gap-3">
-              <button onclick="closePromoModal()" class="flex-[0.8] py-3.5 bg-[#2a2f5c] text-gray-300 font-normal rounded-xl hover:bg-[#383d6a] transition text-sm">ปิด</button>
-              <button onclick="applyPromoCode()" class="flex-1 py-3.5 bg-[#fae100] text-[#1e234e] font-black rounded-xl shadow-md hover:bg-[#e5ce00] transition text-sm">ยืนยัน</button>
+              <button onclick="window.closePromoModal()" class="flex-[0.8] py-3.5 bg-[#2a2f5c] text-gray-300 font-normal rounded-xl hover:bg-[#383d6a] transition text-sm">ปิด</button>
+              <button onclick="window.applyPromoCode()" class="flex-1 py-3.5 bg-[#fae100] text-[#1e234e] font-black rounded-xl shadow-md hover:bg-[#e5ce00] transition text-sm">ยืนยัน</button>
           </div>
-      </div>
-  </div>
-
-  <div id="confirmActionModal" class="hidden fixed inset-0 z-[9990] bg-black/80 flex items-center justify-center p-4 pointer-events-auto">
-      <div class="bg-[#1e234e] border border-[#383d6a] rounded-3xl p-6 w-full max-w-sm text-center shadow-2xl">
-          <div class="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl" id="confirmActionIcon"><i class="fas fa-map-marked-alt"></i></div>
-          <h3 id="confirmActionTitle" class="text-xl font-black text-white mb-2">...</h3>
-          <p id="confirmActionMessage" class="text-sm font-normal text-gray-400 mb-6 leading-relaxed">...</p>
-          <div class="flex gap-3">
-              <button onclick="closeConfirmActionModal()" class="flex-1 py-3 bg-[#2a2f5c] text-gray-200 font-normal rounded-xl hover:bg-[#383d6a] transition border border-[#383d6a]">ยกเลิก</button>
-              <button id="confirmActionButton" onclick="submitConfirmAction()" class="flex-1 py-3 text-[#1e234e] font-black rounded-xl shadow-md transition">ตกลง</button>
-          </div>
-      </div>
-  </div>
-
-  <div id="callConfirmModal" class="hidden fixed inset-0 z-[130] bg-black/80 flex items-center justify-center p-4 pointer-events-auto">
-      <div class="bg-[#1e234e] border border-[#fae100]/30 rounded-3xl p-6 w-full max-w-sm text-center shadow-2xl">
-          <div class="w-16 h-16 bg-[#fae100]/20 text-[#fae100] border border-[#fae100]/30 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl"><i class="fas fa-phone-volume"></i></div>
-          <h3 class="text-xl font-black text-white mb-2">โทรหาคนขับ?</h3>
-          <p class="text-sm font-normal text-gray-400 mb-6 leading-relaxed">คุณต้องการโทรหาคนขับผ่านเบอร์โทรศัพท์มือถือ ใช่หรือไม่?</p>
-          <div class="flex gap-3">
-              <button onclick="closeCallConfirmModal()" class="flex-1 py-3 bg-[#2a2f5c] text-gray-200 font-normal rounded-xl hover:bg-[#383d6a] transition border border-[#383d6a]">ยกเลิก</button>
-              <a id="confirmCallBtn" href="#" onclick="closeCallConfirmModal()" class="flex-1 py-3 bg-[#fae100] text-[#1e234e] font-black rounded-xl shadow-md hover:bg-[#e5ce00] transition flex items-center justify-center gap-2"><i class="fas fa-phone-alt"></i> โทรเลย</a>
-          </div>
-      </div>
-  </div>
-
-  <div id="emergencyModal" class="hidden fixed inset-0 z-[120] bg-black/80 flex items-center justify-center p-4 pointer-events-auto">
-      <div class="bg-[#1e234e] border border-red-500/50 rounded-3xl p-6 w-full max-w-sm text-center shadow-[0_0_30px_rgba(239,68,68,0.2)]">
-          <div class="w-16 h-16 bg-red-900/30 text-red-500 border border-red-500/30 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl"><i class="fas fa-exclamation-triangle"></i></div>
-          <h3 class="text-xl font-black text-white mb-2">แจ้งเหตุฉุกเฉิน?</h3>
-          <p class="text-sm font-normal text-gray-400 mb-6 leading-relaxed">คุณต้องการโทรออกไปยังสายด่วนตำรวจ (191) เพื่อแจ้งเหตุฉุกเฉินใช่หรือไม่?</p>
-          <div class="flex gap-3">
-              <button onclick="closeEmergencyModal()" class="flex-1 py-3 bg-[#2a2f5c] text-gray-200 font-normal rounded-xl hover:bg-[#383d6a] transition border border-[#383d6a]">ยกเลิก</button>
-              <a href="tel:191" onclick="closeEmergencyModal()" class="flex-1 py-3 bg-red-600 text-white font-bold rounded-xl shadow-md hover:bg-red-700 transition flex items-center justify-center gap-2"><i class="fas fa-phone-alt"></i> โทร 191</a>
-          </div>
-      </div>
-  </div>
-
-  <div id="cancelModal" class="hidden fixed inset-0 z-[100] bg-black/80 flex items-center justify-center p-4 pointer-events-auto">
-      <div class="bg-[#1e234e] border border-[#383d6a] rounded-3xl p-6 w-full max-w-sm text-center shadow-2xl">
-          <div class="w-16 h-16 bg-[#2a2f5c] text-gray-400 border border-[#383d6a] rounded-full flex items-center justify-center mx-auto mb-4 text-3xl"><i class="fas fa-question-circle"></i></div>
-          <h3 class="text-xl font-black text-white mb-2">ยืนยันยกเลิกการเรียกรถ?</h3>
-          <p class="text-sm font-normal text-gray-400 mb-6 leading-relaxed">หากยกเลิกแล้ว งานนี้จะถูกลบทิ้ง และคุณจะต้องทำการเรียกรถใหม่อีกครั้ง</p>
-          <div class="flex gap-3">
-              <button onclick="closeCancelModal()" class="flex-1 py-3 bg-[#2a2f5c] text-gray-200 font-normal rounded-xl hover:bg-[#383d6a] transition border border-[#383d6a]">กลับไปรอรถ</button>
-              <button onclick="confirmCancelBooking()" class="flex-1 py-3 bg-red-900/80 text-red-400 font-bold rounded-xl border border-red-500/30 hover:bg-red-800 hover:text-white transition w-full">ยืนยันยกเลิก</button>
-          </div>
-      </div>
-  </div>
-
-  <div id="alertModal" class="hidden fixed inset-0 z-[9999] bg-black/80 flex items-center justify-center p-4 pointer-events-auto">
-      <div class="bg-[#1e234e] border border-[#383d6a] rounded-3xl p-6 w-full max-w-sm text-center shadow-2xl transform transition-all">
-          <div id="alertIcon" class="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl"></div>
-          <h3 id="alertTitle" class="text-xl font-black text-white mb-2">...</h3>
-          <p id="alertMessage" class="text-sm font-normal text-gray-400 mb-6 whitespace-pre-line leading-relaxed">...</p>
-          <button onclick="closeAlertModal()" class="w-full py-3.5 bg-[#fae100] text-[#1e234e] font-black rounded-xl shadow-md hover:bg-[#e5ce00] transition">ตกลง</button>
       </div>
   </div>
 
   <script>
-    window.initMap = initMap;
-    window.unreadChatCount = 0;
-    window.activeGlobalChatListenerRef = null;
+    window.initMap = function() {
+      if (typeof google === 'undefined' || typeof google.maps === 'undefined') return;
+      if (map) return; 
+      
+      map = new google.maps.Map(document.getElementById('map'), { 
+        zoom: 16, center: {lat: driverData.lat, lng: driverData.lng}, mapTypeId: 'roadmap', styles: detailedDarkMapStyle,
+        disableDefaultUI: true, gestureHandling: 'greedy', zoomControl: false
+      });
+
+      crosshairMarker = new google.maps.Marker({ map: null, zIndex: 1, clickable: false });
+      crosshairMarker.bindTo('position', map, 'center');
+
+      map.addListener('dragstart', () => { if (currentStep === 'Tracking') { isTrackingMode = false; } });
+      map.addListener('idle', () => { if (crosshairMarker && (currentStep === 2 || currentStep === 3)) { updateAddressBox(true); } });
+      map.addListener('click', (event) => {
+        if (event.placeId) {
+          event.stop(); 
+          if (placesService && (currentStep === 2 || currentStep === 3)) {
+            placesService.getDetails({ placeId: event.placeId, fields: ['name', 'geometry', 'formatted_address'] }, (place, status) => {
+              if (status === 'OK' && place.geometry) {
+                  let finalAddr = place.name;
+                  if (place.formatted_address) {
+                      let cleanAddr = place.formatted_address.replace(/,?\s*ประเทศไทย/g, '').replace(/Unnamed Road,?\s*/g, '').trim();
+                      if(!cleanAddr.includes(place.name)) finalAddr += " (" + cleanAddr + ")";
+                  }
+                  window.panAndConfirmPlace(finalAddr, place.geometry.location.lat(), place.geometry.location.lng());
+              }
+            });
+          }
+        }
+      });
+
+      directionsService = new google.maps.DirectionsService();
+      directionsRenderer = new google.maps.DirectionsRenderer({ map: map, suppressMarkers: true, suppressPolylines: true, preserveViewport: true });
+      geocoder = new google.maps.Geocoder();
+      placesService = new google.maps.places.PlacesService(map);
+      
+      markerDriver = new google.maps.Marker({ 
+          map: null, 
+          icon: { url: "https://img.icons8.com/color/48/car-top-view.png", scaledSize: new google.maps.Size(40, 40), anchor: new google.maps.Point(20, 20) }, 
+          zIndex: 9999 
+      });
+
+      window.initSearchBox('pickupSearch', true);
+      window.initSearchBox('dropoffSearch', false);
+      
+      const wpInput = document.getElementById('waypointSearchInput');
+      if (wpInput) {
+          const chiangRaiBounds = new google.maps.LatLngBounds(new google.maps.LatLng(18.91, 99.16), new google.maps.LatLng(20.46, 100.56));
+          const autoWp = new google.maps.places.Autocomplete(wpInput, { bounds: chiangRaiBounds, strictBounds: true, componentRestrictions: {country: 'th'} });
+          autoWp.addListener('place_changed', () => {
+              const place = autoWp.getPlace();
+              if(place.geometry) {
+                  let finalAddr = place.name;
+                  if (place.formatted_address) {
+                      let cleanAddr = place.formatted_address.replace(/,?\s*ประเทศไทย/g, '').replace(/Unnamed Road,?\s*/g, '').trim();
+                      if(!cleanAddr.includes(place.name)) finalAddr += " (" + cleanAddr + ")";
+                  }
+                  window.closeWaypointSearchModal();
+                  calculateNewRoutePriceForTracking(place.geometry.location.lat(), place.geometry.location.lng(), finalAddr);
+              }
+          });
+      }
+
+      if (currentStep === 4) { renderWaypointsUI(); calculatePrice(); } 
+      else if (currentStep === 'Tracking') { renderWaypointsUI(); drawTrackingRoute(bookData.status); updateRealtimeMap(); } 
+      else if (currentStep === 2 || currentStep === 3) { renderWaypointsUI(); renderSavedPlaceMarkersOnMap(); }
+    };
+
+    window.openCommunityModal = function() {
+        document.getElementById('communityModal').classList.remove('hidden');
+        localStorage.setItem('lastSeenChatTime', Date.now());
+        updateChatBadge();
+        
+        const messagesDiv = document.getElementById('globalChatMessages');
+        const chatBox = document.getElementById('globalChatBox');
+        
+        if(!window.activeGlobalChatListenerRef) {
+            messagesDiv.innerHTML = '';
+            
+            window.activeGlobalChatListenerRef = db.ref('community_chat').limitToLast(50);
+            window.activeGlobalChatListenerRef.on('child_added', snap => {
+                let messageData = snap.val();
+                let isSenderMe = messageData.pin === lineUserId;
+                let align = isSenderMe ? 'justify-end' : 'justify-start';
+                let bg = isSenderMe ? 'bg-[#fae100] text-[#1e234e]' : 'bg-[#2a2f5c] border border-[#383d6a] text-white';
+                let senderName = isSenderMe ? 'คุณ' : (messageData.name || 'Unknown');
+                let timeStr = messageData.timestamp ? new Date(messageData.timestamp).toLocaleTimeString('th-TH', {hour: '2-digit', minute:'2-digit'}) : '';
+
+                let messageHtml = `
+                <div class="chat-msg-item flex w-full ${align} animate-fade-in items-start gap-2 ${isSenderMe ? 'flex-row-reverse' : ''}">
+                    <div class="flex flex-col ${isSenderMe ? 'items-end' : 'items-start'} max-w-[75%]">
+                        ${!isSenderMe ? `<span class="text-[10px] text-gray-500 font-normal mb-0.5 ml-2">${senderName}</span>` : ''}
+                        <div class="${bg} px-4 py-2.5 rounded-2xl text-[13px] font-normal shadow-sm break-words w-full">${messageData.text}</div>
+                        <span class="text-[9px] text-gray-600 mt-1 ${isSenderMe ? 'mr-2' : 'ml-2'} font-normal">${timeStr}</span>
+                    </div>
+                </div>`;
+                
+                messagesDiv.insertAdjacentHTML('beforeend', messageHtml);
+                chatBox.scrollTop = chatBox.scrollHeight;
+            });
+        }
+        document.getElementById('globalChatInput').focus();
+    }
+    
+    window.closeCommunityModal = function() { document.getElementById('communityModal').classList.add('hidden'); }
+    
+    window.sendGlobalChat = function() {
+        let inputEl = document.getElementById('globalChatInput');
+        let textVal = inputEl.value.trim();
+        if(!textVal) return;
+        
+        db.ref('community_chat').push({
+            pin: lineUserId,
+            name: lineName || 'ผู้โดยสาร',
+            text: textVal,
+            timestamp: firebase.database.ServerValue.TIMESTAMP
+        }).then(() => { inputEl.value = ''; });
+    }
 
     const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwwdopAPESHRrHEYTSa-CzFMbh0JX9WHUa37PMEJmxDkah7ui67cVtOn68cnM-2DtmR/exec"; 
     const MY_LIFF_ID = "2010188449-b9Yq1R2L";
@@ -641,7 +698,9 @@
     let selectedHistoryJobId = null;
     let myBlockedDrivers = {};
     let activeChatListenerRef = null;
+    
     let currentSelectedRatingScore = 0;
+    window.unreadChatCount = 0;
 
     const detailedDarkMapStyle = [
       { elementType: "geometry", stylers: [{ color: "#1e234e" }] },
@@ -731,11 +790,11 @@
             if (isAvail) {
                 btn.disabled = false;
                 btn.className = "w-full py-4 bg-[#fae100] text-[#1e234e] font-black rounded-2xl shadow-md hover:bg-[#e5ce00] transition flex flex-col items-center justify-center gap-2 active:scale-95 shrink-0";
-                btn.innerHTML = `<i class="${iconClass} text-3xl"></i> <span class="text-sm font-bold text-center leading-tight">${title}</span>`;
+                btn.innerHTML = `<i class="${iconClass} text-3xl font-normal"></i> <span class="text-sm font-bold text-center leading-tight">${title}</span>`;
             } else {
                 btn.disabled = true;
                 btn.className = "w-full py-4 bg-[#2a2f5c] text-gray-500 font-black rounded-2xl transition flex flex-col items-center justify-center gap-2 opacity-50 cursor-not-allowed border border-[#383d6a] shrink-0";
-                btn.innerHTML = `<i class="${iconClass} text-3xl"></i> <div class="flex flex-col items-center"><span class="text-sm font-bold text-center leading-tight">${title}</span><span class="text-[10px] font-normal mt-0.5 text-red-400">(ไม่มีรถว่าง)</span></div>`;
+                btn.innerHTML = `<i class="${iconClass} text-3xl font-normal"></i> <div class="flex flex-col items-center"><span class="text-sm font-bold text-center leading-tight">${title}</span><span class="text-[10px] font-normal mt-0.5 text-red-400">(ไม่มีรถว่าง)</span></div>`;
             }
         };
 
@@ -758,7 +817,7 @@
         if(type === 'premium_bike') { labelIcon = 'fa-motorcycle'; labelText = 'มอไซค์พรีเมียม'; }
         
         let indicator = document.getElementById('serviceLabelIndicator');
-        if(indicator) indicator.innerHTML = `<i class="fas ${labelIcon}"></i> ${labelText}`;
+        if(indicator) indicator.innerHTML = `<i class="fas ${labelIcon} font-normal"></i> ${labelText}`;
         window.closeVehicleModal(); window.showPage(2);
     }
 
@@ -776,7 +835,7 @@
         let container = document.getElementById('newsListContainer');
         db.ref('news_promotions').once('value', snap => {
             if (!snap.exists()) {
-                container.innerHTML = `<div class="bg-[#2a2f5c] rounded-2xl p-6 text-center border border-[#383d6a] shadow-sm"><i class="fas fa-box-open text-4xl text-gray-600 mb-3"></i><p class="text-gray-400 font-bold text-sm">ยังไม่มีข่าวสารหรือโปรโมชั่นในขณะนี้</p></div>`;
+                container.innerHTML = `<div class="bg-[#2a2f5c] rounded-2xl p-6 text-center border border-[#383d6a] shadow-sm"><i class="fas fa-box-open text-4xl text-gray-600 mb-3 font-normal"></i><p class="text-gray-400 font-bold text-sm">ยังไม่มีข่าวสารหรือโปรโมชั่นในขณะนี้</p></div>`;
                 return;
             }
             let items = [];
@@ -847,6 +906,7 @@
         return now >= start && now <= end;
     }
 
+    // Banner Sync
     db.ref('config/banners').on('value', snap => {
         let hContainer = document.getElementById('homeBannerContainer');
         let hSlider = document.getElementById('bannerSlider');
@@ -976,7 +1036,6 @@
         }
     }
 
-    // ✅ Splash Screen
     document.addEventListener("DOMContentLoaded", () => {
         let savedPhone = localStorage.getItem('passengerPhone');
         if(savedPhone) { let pInp = document.getElementById('userPhone'); if(pInp) pInp.value = savedPhone; }
@@ -1134,7 +1193,7 @@
         if(places.length === 0) { container.innerHTML = '<p class="text-center text-gray-500 mt-10 font-normal">ยังไม่มีประวัติสถานที่</p>'; return; }
         let html = '';
         places.forEach(p => {
-            html += `<button onclick="closeRecentPlacesModal(); panAndConfirmPlace('${p.name}', ${p.lat}, ${p.lng});" class="w-full text-left bg-[#2a2f5c] border border-[#383d6a] p-3.5 rounded-xl shadow-sm flex items-center gap-3 hover:bg-[#383d6a] transition"><div class="w-8 h-8 rounded-full bg-[#1e234e] flex items-center justify-center shrink-0"><i class="fas fa-history text-gray-400"></i></div><span class="text-gray-200 font-normal text-sm truncate">${p.name}</span></button>`;
+            html += `<button onclick="window.closeRecentPlacesModal(); window.panAndConfirmPlace('${p.name}', ${p.lat}, ${p.lng});" class="w-full text-left bg-[#2a2f5c] border border-[#383d6a] p-3.5 rounded-xl shadow-sm flex items-center gap-3 hover:bg-[#383d6a] transition"><div class="w-8 h-8 rounded-full bg-[#1e234e] flex items-center justify-center shrink-0"><i class="fas fa-history text-gray-400 font-normal"></i></div><span class="text-gray-200 font-normal text-sm truncate">${p.name}</span></button>`;
         });
         container.innerHTML = html;
     }
@@ -1154,9 +1213,9 @@
     function showAlert(title, message, type = 'info', callback = null) {
         document.getElementById('alertTitle').innerText = title; document.getElementById('alertMessage').innerText = message;
         let iconHtml = ''; let iconBg = ''; let iconColor = '';
-        if (type === 'error') { iconHtml = '<i class="fas fa-times"></i>'; iconBg = 'bg-red-900/30 border border-red-500/30'; iconColor = 'text-red-500'; } 
-        else if (type === 'success') { iconHtml = '<i class="fas fa-check"></i>'; iconBg = 'bg-[#fae100]/20 border border-[#fae100]/30'; iconColor = 'text-[#fae100]'; } 
-        else { iconHtml = '<i class="fas fa-info"></i>'; iconBg = 'bg-[#fae100]/20 border border-[#fae100]/30'; iconColor = 'text-[#fae100]'; }
+        if (type === 'error') { iconHtml = '<i class="fas fa-times font-normal"></i>'; iconBg = 'bg-red-900/30 border border-red-500/30'; iconColor = 'text-red-500'; } 
+        else if (type === 'success') { iconHtml = '<i class="fas fa-check font-normal"></i>'; iconBg = 'bg-[#fae100]/20 border border-[#fae100]/30'; iconColor = 'text-[#fae100]'; } 
+        else { iconHtml = '<i class="fas fa-info font-normal"></i>'; iconBg = 'bg-[#fae100]/20 border border-[#fae100]/30'; iconColor = 'text-[#fae100]'; }
         
         const iconDiv = document.getElementById('alertIcon');
         if(iconDiv) { iconDiv.innerHTML = iconHtml; iconDiv.className = `w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl ${iconBg} ${iconColor}`; }
@@ -1168,8 +1227,8 @@
     window.toggleMapStyle = function() {
         if(!map) return; isSatelliteMode = !isSatelliteMode;
         let btnMapStyle = document.getElementById('btnMapStyle');
-        if(isSatelliteMode) { map.setMapTypeId('hybrid'); if(btnMapStyle) btnMapStyle.innerHTML = '<i class="fas fa-layer-group text-[18px]"></i>'; } 
-        else { map.setMapTypeId('roadmap'); map.setOptions({ styles: detailedDarkMapStyle }); if(btnMapStyle) btnMapStyle.innerHTML = '<i class="fas fa-satellite text-[18px]"></i>'; }
+        if(isSatelliteMode) { map.setMapTypeId('hybrid'); if(btnMapStyle) btnMapStyle.innerHTML = '<i class="fas fa-layer-group text-[18px] font-normal"></i>'; } 
+        else { map.setMapTypeId('roadmap'); map.setOptions({ styles: detailedDarkMapStyle }); if(btnMapStyle) btnMapStyle.innerHTML = '<i class="fas fa-satellite text-[18px] font-normal"></i>'; }
     }
 
     function updateMapControlsPosition(page) {
@@ -1393,7 +1452,6 @@
         }
     });
 
-    // แจ้งเตือนข้อความแชทคอมมูนิตี้
     db.ref('community_chat').limitToLast(50).once('value', snap => {
         let lastSeenChat = parseInt(localStorage.getItem('lastSeenChatTime') || '0');
         window.unreadChatCount = 0;
@@ -1522,10 +1580,10 @@
         if (btnConfirmPick) {
             if (picks.length > 0) { 
                 btnConfirmPick.disabled = false; btnConfirmPick.className = "flex-[2] bg-[#fae100] text-[#1e234e] py-3 rounded-xl font-black text-[14px] shadow-md transition flex justify-center items-center gap-1.5 hover:bg-[#e5ce00]";
-                btnConfirmPick.innerHTML = 'เลือกจุดหมาย <i class="fas fa-arrow-right"></i>';
+                btnConfirmPick.innerHTML = 'เลือกจุดหมาย <i class="fas fa-arrow-right font-normal"></i>';
             } else { 
                 btnConfirmPick.disabled = true; btnConfirmPick.className = "flex-[2] bg-[#2a2f5c] text-gray-400 py-3 rounded-xl font-bold text-[14px] shadow-md transition flex justify-center items-center gap-1.5 cursor-not-allowed opacity-50 border border-[#383d6a]";
-                btnConfirmPick.innerHTML = 'เลือกจุดหมาย <i class="fas fa-arrow-right"></i>';
+                btnConfirmPick.innerHTML = 'เลือกจุดหมาย <i class="fas fa-arrow-right font-normal"></i>';
             }
         }
 
@@ -1567,19 +1625,19 @@
             let bgItem = isFocused ? 'bg-[#383d6a] border-[#fae100]/50' : 'bg-[#2a2f5c] border-[#383d6a]';
             
             let iconAddonPrefix = '';
-            if (wp.iconType === 'home') iconAddonPrefix = '<i class="fas fa-home text-blue-400 mr-1.5" title="บ้าน"></i>';
-            else if (wp.iconType === 'favorite1') iconAddonPrefix = '<i class="fas fa-heart text-pink-500 mr-1.5" title="รายการโปรด 1"></i>';
-            else if (wp.iconType === 'favorite2') iconAddonPrefix = '<i class="fas fa-star text-[#fae100] mr-1.5" title="รายการโปรด 2"></i>';
+            if (wp.iconType === 'home') iconAddonPrefix = '<i class="fas fa-home text-blue-400 mr-1.5 font-normal" title="บ้าน"></i>';
+            else if (wp.iconType === 'favorite1') iconAddonPrefix = '<i class="fas fa-heart text-pink-500 mr-1.5 font-normal" title="รายการโปรด 1"></i>';
+            else if (wp.iconType === 'favorite2') iconAddonPrefix = '<i class="fas fa-star text-[#fae100] mr-1.5 font-normal" title="รายการโปรด 2"></i>';
 
             let itemHtml = `<div class="flex items-center gap-2.5 py-1.5 px-2.5 rounded-lg border relative z-10 shadow-sm mb-1.5 cursor-pointer hover:bg-[#383d6a] transition ${bgItem}" onclick="window.focusLocationToggle(${wp.lat}, ${wp.lng}, ${index})">
                 <div class="w-[20px] h-[20px] ${colorClass} rounded-full flex items-center justify-center text-[10px] font-bold shrink-0 shadow-inner">${globalCount}</div>
-                <p class="text-[11px] ${textItem} truncate flex-1 leading-tight flex items-center font-normal">${iconAddonPrefix}${wp.name}</p>
-                <button onclick="event.stopPropagation(); window.removeWaypoint(${index})" class="text-red-400 hover:text-red-300 text-[12px] px-2 shrink-0 transition active:scale-90"><i class="fas fa-times"></i></button>
+                <p class="text-[11px] ${textItem} truncate font-normal flex-1 leading-tight flex items-center">${iconAddonPrefix}${wp.name}</p>
+                <button onclick="event.stopPropagation(); window.removeWaypoint(${index})" class="text-red-400 hover:text-red-300 text-[12px] px-2 shrink-0 transition active:scale-90 font-normal"><i class="fas fa-times"></i></button>
             </div>`;
             
             let sumItemHtml = `<div class="flex items-center gap-2.5 relative z-10 py-0.5 cursor-pointer hover:bg-[#383d6a] rounded transition px-1" onclick="window.focusLocationToggle(${wp.lat}, ${wp.lng}, ${index})">
                 <div class="w-5 h-5 ${colorClass} rounded-full flex items-center justify-center text-[10px] font-bold shrink-0 shadow-inner">${globalCount}</div>
-                <p class="text-[12px] ${textItem} truncate flex-1 leading-tight flex items-center font-normal">${iconAddonPrefix}${wp.name}</p>
+                <p class="text-[12px] ${textItem} truncate font-normal flex-1 leading-tight flex items-center">${iconAddonPrefix}${wp.name}</p>
             </div>`;
 
             if (wp.type === 'pick') { pickHtml += itemHtml; } else { dropHtml += itemHtml; }
@@ -1634,7 +1692,7 @@
         if(navBar) navBar.classList.remove('hidden'); if(mapEl) mapEl.classList.remove('hidden'); if(mapControls) mapControls.classList.remove('hidden'); 
         
         if (!map) {
-            initMap(); 
+            window.initMap(); 
         } else {
             updateMapPadding(); 
             if (typeof google !== 'undefined') google.maps.event.trigger(map, 'resize');
@@ -1931,8 +1989,6 @@
       });
     }
 
-    // Keep global variable definitions explicit
-    window.initMap = initMap;
   </script>
   <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDsZ_tbFhH6fUXRz3I6C-tMshNwwrSevd4&libraries=places,geometry&callback=initMap" async defer></script>
 </body>
