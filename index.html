@@ -11,37 +11,39 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;700&display=swap');
-    body{font-family:'Kanit',sans-serif;background-color:#1e234e;color:#f3f4f6;font-weight:400}
-    .map-container{position:fixed;inset:0;width:100vw;height:100vh;z-index:0;background:#1e234e}
-    #splashScreen{position:fixed;inset:0;z-index:999999;background-color:#1e234e;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity 0.5s ease,visibility 0.5s}
-    .splash-logo{font-size:4rem;color:#fae100;margin-bottom:15px}
-    .splash-text{color:white;font-size:1.8rem;font-weight:900;letter-spacing:2px}
-    .ui-panel{position:fixed;bottom:0;left:0;right:0;background:#1e234e;border-top-left-radius:24px;border-top-right-radius:24px;box-shadow:0 -10px 30px rgba(0,0,0,0.6);z-index:10;display:flex;flex-direction:column;padding:20px;max-height:85vh;overflow-y:hidden}
-    .glass-box{background:rgba(42,47,92,0.85);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,0.1);box-shadow:0 4px 15px rgba(0,0,0,0.3)}
-    #trackingPanel,#page4Panel{transition:transform 0.3s cubic-bezier(0.4,0,0.2,1);padding-top:12px}
-    .panel-collapsed,.panel-collapsed-page4{transform:translateY(calc(100% - 110px))!important}
-    .full-page{position:fixed;inset:0;z-index:30;background:#1e234e;flex-direction:column}
-    .pac-container{z-index:100000!important;font-family:'Kanit'!important;border-radius:0 0 16px 16px!important;border:1px solid #383d6a!important;border-top:none!important;background-color:#2a2f5c!important;box-shadow:0 15px 30px rgba(0,0,0,0.8)!important;margin-top:-10px!important;max-height:40vh!important;overflow-y:auto!important}
-    .pac-item{padding:10px 14px;border-top:1px solid #383d6a;cursor:pointer;color:#d1d5db;font-size:13px;font-weight:400}
-    .pac-item:first-child{border-top:none}
-    .pac-item-query{color:#fae100;font-weight:bold}
-    .pac-icon{filter:invert(70%) sepia(50%) saturate(400%) hue-rotate(80deg)}
-    .hide-scrollbar::-webkit-scrollbar{display:none}
-    .hide-scrollbar{-ms-overflow-style:none;scrollbar-width:none}
-    .slim-scroll::-webkit-scrollbar{width:4px}
-    .slim-scroll::-webkit-scrollbar-thumb{background:#4b507d;border-radius:4px}
-    @keyframes fadeIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
-    .animate-fade-in{animation:fadeIn 0.2s ease-out forwards}
-    @keyframes loading-scan{0%{transform:translateX(-100%)}100%{transform:translateX(300%)}}
-    .animate-loading-scan{animation:loading-scan 1.5s infinite ease-in-out}
+    body { font-family: 'Kanit', sans-serif; background-color: #1e234e; color: #f3f4f6; font-weight: 400; }
+    .map-container { position: fixed; inset: 0; width: 100vw; height: 100vh; z-index: 0; background: #1e234e; }
+    #splashScreen { position: fixed; inset: 0; z-index: 999999; background-color: #1e234e; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 0.5s ease, visibility 0.5s; }
+    .splash-logo { font-size: 4rem; color: #fae100; margin-bottom: 15px; }
+    .splash-text { color: white; font-size: 1.8rem; font-weight: 900; letter-spacing: 2px; }
+    .ui-panel { position: fixed; bottom: 0; left: 0; right: 0; background: #1e234e; border-top-left-radius: 24px; border-top-right-radius: 24px; box-shadow: 0 -10px 30px rgba(0,0,0,0.6); z-index: 10; display: flex; flex-direction: column; padding: 20px; max-height: 85vh; overflow-y: hidden; }
+    .glass-box { background: rgba(42, 47, 92, 0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1); box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3); }
+    #trackingPanel, #page4Panel { transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); padding-top: 12px; }
+    .panel-collapsed, .panel-collapsed-page4 { transform: translateY(calc(100% - 110px)) !important; }
+    .full-page { position: fixed; inset: 0; z-index: 30; background: #1e234e; flex-direction: column; }
+    .pac-container { z-index: 100000 !important; font-family: 'Kanit' !important; border-radius: 0 0 16px 16px !important; border: 1px solid #383d6a !important; border-top: none !important; background-color: #2a2f5c !important; box-shadow: 0 15px 30px rgba(0,0,0,0.8) !important; margin-top: -10px !important; max-height: 40vh !important; overflow-y: auto !important; }
+    .pac-item { padding: 10px 14px; border-top: 1px solid #383d6a; cursor: pointer; color: #d1d5db; font-size: 13px; font-weight: 400; }
+    .pac-item:first-child { border-top: none; }
+    .pac-item-query { color: #fae100; font-weight: bold; } 
+    .pac-icon { filter: invert(70%) sepia(50%) saturate(400%) hue-rotate(80deg); }
+    .hide-scrollbar::-webkit-scrollbar { display: none; }
+    .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    .slim-scroll::-webkit-scrollbar { width: 4px; }
+    .slim-scroll::-webkit-scrollbar-thumb { background: #4b507d; border-radius: 4px; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+    .animate-fade-in { animation: fadeIn 0.2s ease-out forwards; }
+    @keyframes loading-scan { 0% { transform: translateX(-100%); } 100% { transform: translateX(300%); } }
+    .animate-loading-scan { animation: loading-scan 1.5s infinite ease-in-out; }
   </style>
 </head>
 <body class="h-screen w-screen m-0 overflow-hidden">
+
   <div id="splashScreen">
       <i class="fas fa-car-side splash-logo animate-pulse"></i>
       <h1 class="splash-text">F1 DRIVER</h1>
       <p class="text-[#fae100] text-sm mt-3 font-normal tracking-widest"><i class="fas fa-spinner fa-spin"></i> กำลังเชื่อมต่อระบบ...</p>
   </div>
+
   <audio id="notiSound" src="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3" preload="auto"></audio>
   <div id="map" class="map-container hidden"></div>
 
@@ -80,28 +82,33 @@
             <span id="userNameSmall" class="font-normal truncate max-w-[90px] text-xs">...</span>
         </div>
     </div>
+
     <div class="p-4 flex-1 flex flex-col items-center w-full max-w-sm mx-auto">
       <div id="homeBannerContainer" class="w-full aspect-video bg-black rounded-none mb-6 shadow-md overflow-hidden relative hidden shrink-0">
           <div id="bannerSlider" class="flex overflow-x-auto snap-x snap-mandatory hide-scrollbar w-full h-full relative scroll-smooth items-center"></div>
           <div id="bannerDots" class="absolute bottom-3 left-1/2 transform -translate-x-1/2 flex gap-1.5 z-10 bg-black/40 px-2 py-1 rounded-full"></div>
           <div class="absolute top-2 right-2 bg-black/60 px-2 py-0.5 rounded text-[10px] text-white z-10 font-normal">Ad</div>
       </div>
+      
       <div class="w-full grid grid-cols-3 gap-2 shrink-0 mb-4 mt-2">
           <button id="btnMainRideAction" onclick="handleMainRideClick()" class="flex flex-col items-center justify-center gap-1.5 text-[#fae100] transition active:scale-95 bg-transparent outline-none">
               <i class="fas fa-car text-[30px]" id="btnMainRideIcon"></i>
-              <span class="font-normal text-xs text-center leading-tight tracking-wide" id="btnMainRideText">รอสถานะ...</span>
+              <span class="font-normal text-xs text-center leading-tight tracking-wide" id="btnMainRideText">เรียกรถ</span>
           </button>
+          
           <button onclick="openNewsModal()" class="flex flex-col items-center justify-center gap-1.5 text-[#fae100] transition active:scale-95 relative bg-transparent outline-none">
               <div id="newsBadge" class="hidden absolute top-0 right-3 bg-red-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full shadow animate-pulse">New</div>
               <i class="fas fa-bullhorn text-[30px]"></i>
               <span class="font-normal text-xs text-center leading-tight tracking-wide">ข่าวสาร<br>&โปรโมชั่น</span>
           </button>
+
           <button onclick="openCommunityModal()" class="flex flex-col items-center justify-center gap-1.5 text-[#fae100] transition active:scale-95 relative bg-transparent outline-none">
               <div id="chatBadge" class="hidden absolute top-0 right-3 bg-red-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full shadow">0</div>
               <i class="fas fa-users text-[30px]"></i>
               <span class="font-normal text-xs text-center leading-tight tracking-wide">คอมมูนิตี้</span>
           </button>
       </div>
+
       <div class="mt-auto w-full flex flex-col gap-3">
           <div id="bottomBannerContainer" class="w-full h-[70px] bg-[#2a2f5c] rounded-none overflow-hidden hidden relative shadow-md shrink-0">
               <div id="bottomBannerSlider" class="flex overflow-x-auto snap-x snap-mandatory hide-scrollbar w-full h-full scroll-smooth items-center"></div>
@@ -114,19 +121,23 @@
       <div class="bg-[#1e234e] border border-[#fae100]/30 rounded-3xl p-6 w-full max-w-sm text-center shadow-2xl transform scale-100 max-h-[90vh] flex flex-col">
           <h3 class="text-xl font-black text-[#fae100] mb-2 shrink-0">เลือกประเภทรถ</h3>
           <p class="text-sm font-normal text-gray-400 mb-4 leading-relaxed shrink-0">ระบบรองรับบริการหลายรูปแบบ ราคาประเมินจะแตกต่างกัน</p>
+          
           <div class="grid grid-cols-2 gap-3 overflow-y-auto slim-scroll pr-1 pb-2 flex-1">
               <button id="btnSelectCar" onclick="selectVehicleAndStart('car')" class="w-full py-4 bg-[#fae100] text-[#1e234e] font-black rounded-2xl shadow-md hover:bg-[#e5ce00] transition flex flex-col items-center justify-center gap-2 active:scale-95 shrink-0">
                   <i class="fas fa-car-side text-3xl"></i> 
                   <span class="text-sm font-bold text-center leading-tight">รถยนต์</span>
               </button>
+              
               <button id="btnSelectPremiumCar" onclick="selectVehicleAndStart('premium_car')" class="w-full py-4 bg-[#fae100] text-[#1e234e] font-black rounded-2xl shadow-md hover:bg-[#e5ce00] transition flex flex-col items-center justify-center gap-2 active:scale-95 shrink-0">
                   <i class="fas fa-car text-3xl"></i> 
                   <span class="text-sm font-bold text-center leading-tight">รถยนต์พรีเมียม</span>
               </button>
+
               <button id="btnSelectBike" onclick="selectVehicleAndStart('bike')" class="w-full py-4 bg-[#fae100] text-[#1e234e] font-black rounded-2xl shadow-md hover:bg-[#e5ce00] transition flex flex-col items-center justify-center gap-2 active:scale-95 shrink-0">
                   <i class="fas fa-motorcycle text-3xl text-blue-600"></i> 
                   <span class="text-sm font-bold text-center leading-tight">รถมอเตอร์ไซค์</span>
               </button>
+
               <button id="btnSelectPremiumBike" onclick="selectVehicleAndStart('premium_bike')" class="w-full py-4 bg-[#fae100] text-[#1e234e] font-black rounded-2xl shadow-md hover:bg-[#e5ce00] transition flex flex-col items-center justify-center gap-2 active:scale-95 shrink-0">
                   <i class="fas fa-motorcycle text-3xl text-purple-600"></i> 
                   <span class="text-sm font-bold text-center leading-tight">รถมอเตอร์ไซค์<br>พรีเมียม</span>
@@ -377,14 +388,22 @@
           <button onclick="closeProfileModal()" class="w-10 h-10 shrink-0 bg-[#383d6a] text-gray-400 rounded-full flex items-center justify-center hover:text-white transition"><i class="fas fa-arrow-left"></i></button>
           <h2 class="text-lg font-black text-white">โปรไฟล์ส่วนตัว</h2>
       </div>
+      
       <div class="p-6 flex flex-col items-center border-b border-[#383d6a] shrink-0">
           <img id="profilePicLarge" class="w-24 h-24 rounded-full border-4 border-[#fae100] object-cover bg-[#2a2f5c] mb-4 shadow-[0_0_15px_rgba(250,225,0,0.3)]" src="https://img.icons8.com/bubbles/150/user.png" alt="Profile">
           <h2 class="text-2xl font-black text-white" id="profileNameLarge">กำลังโหลด...</h2>
-          <div class="flex items-center gap-2 mt-1">
-              <p class="text-gray-400 font-normal" id="profilePhoneLarge">เบอร์โทร: ยังไม่ระบุ</p>
-              <button onclick="editProfilePhone()" class="text-gray-500 hover:text-[#fae100] transition w-8 h-8 flex items-center justify-center bg-[#2a2f5c] rounded-full border border-[#383d6a] shadow-sm"><i class="fas fa-edit text-xs"></i></button>
+          <div class="flex items-center gap-3 mt-2">
+              <div class="bg-[#2a2f5c] px-3 py-1 rounded-full border border-[#383d6a] flex items-center gap-1.5 shadow-sm">
+                  <i class="fas fa-star text-[#fae100] text-xs"></i>
+                  <span class="text-[#fae100] font-bold text-sm" id="profileRatingLarge">5.0</span>
+              </div>
+              <div class="flex items-center gap-1.5">
+                  <p class="text-gray-400 font-normal text-sm" id="profilePhoneLarge">ยังไม่ระบุ</p>
+                  <button onclick="editProfilePhone()" class="text-gray-500 hover:text-[#fae100] transition w-6 h-6 flex items-center justify-center bg-[#2a2f5c] rounded-full border border-[#383d6a] shadow-sm"><i class="fas fa-edit text-[10px]"></i></button>
+              </div>
           </div>
       </div>
+      
       <div class="p-4 space-y-3 flex-1 overflow-y-auto">
           <button onclick="openPassengerHistory()" class="w-full bg-[#2a2f5c] border border-[#383d6a] p-4 rounded-2xl shadow-sm flex items-center justify-between hover:bg-[#383d6a] transition">
               <div class="flex items-center gap-3"><div class="w-8 h-8 rounded-full bg-blue-900/30 flex items-center justify-center"><i class="fas fa-history text-blue-400"></i></div> <span class="text-gray-200 font-normal text-sm">ประวัติการเดินทาง</span></div>
@@ -563,19 +582,42 @@
     });
     const db = firebase.database();
 
-    let bannerInterval = null, bottomBannerInterval = null, notiAudio = null;
+    let bannerInterval = null; 
+    let bottomBannerInterval = null;
+    let notiAudio = null;
+
     let map, directionsService, directionsRenderer, geocoder, placesService;
-    let crosshairMarker = null, markerDriver = null, markerHome = null, markerFavorite1 = null, markerFavorite2 = null, polylineRoute = null; 
-    let localWaypoints = [], focusedWaypointIndex = -1; 
+    let crosshairMarker = null; 
+    let markerDriver = null; 
+    let markerHome = null;
+    let markerFavorite1 = null;
+    let markerFavorite2 = null;
+    let polylineRoute = null; 
+
+    let localWaypoints = []; 
+    let focusedWaypointIndex = -1; 
+
     let lineUserId = "", lineName = "";
     let driverData = { lat: 19.910479, lng: 99.840576, status: "ออฟไลน์" };
     let bookData = { pLat:0, pLng:0, pName:"", dLat:0, dLng:0, dName:"", originalPrice:0, price:0, priceEstimate:"", distance:0, duration:0, status:"", promoCode: "", discount: 0, waypoints: [], serviceType: 'car' };
-    let currentStep = 1, currentRouteStatus = "", currentRouteBounds = null;
-    let isTrackingMode = true, isSatelliteMode = false; 
-    let lastNotifiedStatus = "", wakeLock = null;
-    let loadedHistoryJobs = {}, selectedHistoryJobId = null, myBlockedDrivers = {};
-    let activeChatListenerRef = null, activeGlobalChatListenerRef = null;
-    let currentSelectedRatingScore = 0, unreadChatCount = 0, isCompleting = false;
+    let currentStep = 1;
+    let currentRouteStatus = ""; 
+
+    let currentRouteBounds = null;
+    let isTrackingMode = true;
+    let isSatelliteMode = false; 
+    
+    let lastNotifiedStatus = "";
+    let wakeLock = null;
+
+    let loadedHistoryJobs = {}; 
+    let selectedHistoryJobId = null;
+    let myBlockedDrivers = {};
+    let activeChatListenerRef = null;
+    
+    let currentSelectedRatingScore = 0;
+    let unreadChatCount = 0;
+    let activeGlobalChatListenerRef = null;
 
     const detailedDarkMapStyle = [
       { elementType: "geometry", stylers: [{ color: "#1e234e" }] },
@@ -597,15 +639,23 @@
     let onlineDrivers = [];
     db.ref('active_drivers').on('value', snap => {
         let drivers = [];
-        if(snap.exists()) { snap.forEach(child => { let d = child.val(); if(d.status === 'ออนไลน์' && d.lat) { drivers.push(d); } }); }
-        onlineDrivers = drivers; updateRideButtonState();
+        if(snap.exists()) {
+            snap.forEach(child => {
+                let d = child.val();
+                if(d.status === 'ออนไลน์' && d.lat) { drivers.push(d); }
+            });
+        }
+        onlineDrivers = drivers;
+        updateRideButtonState();
     });
 
     db.ref('driver').on('value', snap => {
         const d = snap.val();
         if(d) {
             driverData = d;
-            if(d.status === 'ออนไลน์' && d.lat && onlineDrivers.length === 0) { onlineDrivers = [d]; }
+            if(d.status === 'ออนไลน์' && d.lat && onlineDrivers.length === 0) {
+                onlineDrivers = [d];
+            }
             if(currentStep === 'Tracking' && markerDriver) { markerDriver.setPosition({lat: d.lat, lng: d.lng}); }
             updateRideButtonState();
         }
@@ -614,137 +664,316 @@
     let currentServiceType = 'car';
 
     function updateRideButtonState() {
-        let btnMainRide = document.getElementById('btnMainRideAction'), btnMainRideIcon = document.getElementById('btnMainRideIcon'), btnMainRideText = document.getElementById('btnMainRideText');
+        let btnMainRide = document.getElementById('btnMainRideAction');
+        let btnMainRideIcon = document.getElementById('btnMainRideIcon');
+        let btnMainRideText = document.getElementById('btnMainRideText');
         if(!btnMainRide) return;
+
         let hasActiveJob = bookData && bookData.status && bookData.status !== "เสร็จสิ้น" && !bookData.status.includes("ยกเลิก") && bookData.status !== "รอผู้ขับขี่ตอบรับ";
+
         if (hasActiveJob) {
-            btnMainRide.disabled = false; btnMainRide.className = "flex flex-col items-center justify-center gap-1.5 text-[#fae100] transition active:scale-95 bg-transparent outline-none animate-pulse";
+            btnMainRide.disabled = false;
+            btnMainRide.className = "flex flex-col items-center justify-center gap-1.5 text-[#fae100] transition active:scale-95 bg-transparent outline-none animate-pulse";
             if(btnMainRideIcon) btnMainRideIcon.className = "fas fa-route text-[30px]";
             if(btnMainRideText) btnMainRideText.innerText = "ดูสถานะ";
         } else {
-            btnMainRide.disabled = false; btnMainRide.className = "flex flex-col items-center justify-center gap-1.5 text-[#fae100] transition active:scale-95 bg-transparent outline-none";
+            btnMainRide.disabled = false;
+            btnMainRide.className = "flex flex-col items-center justify-center gap-1.5 text-[#fae100] transition active:scale-95 bg-transparent outline-none";
             if(btnMainRideIcon) btnMainRideIcon.className = "fas fa-car text-[30px]";
             if(btnMainRideText) btnMainRideText.innerText = "เรียกรถ";
         }
     }
 
-    function handleMainRideClick() { if(bookData && bookData.status && bookData.status !== "เสร็จสิ้น" && !bookData.status.includes("ยกเลิก")) { showPage('Tracking'); } else { openVehicleModal(); } }
+    function handleMainRideClick() {
+        if(bookData && bookData.status && bookData.status !== "เสร็จสิ้น" && !bookData.status.includes("ยกเลิก")) {
+            showPage('Tracking');
+        } else { openVehicleModal(); }
+    }
 
     function openVehicleModal() { 
         let available = { car: false, premium_car: false, van: false, bike: false, premium_bike: false };
-        onlineDrivers.forEach(d => { let sType = d.serviceType || 'car'; if(available[sType] !== undefined) available[sType] = true; });
+
+        onlineDrivers.forEach(d => {
+            let sType = d.serviceType || 'car';
+            if(available[sType] !== undefined) available[sType] = true;
+        });
 
         const setupBtn = (id, type, iconClass, title, isAvail) => {
-            let btn = document.getElementById(id); if(!btn) return;
+            let btn = document.getElementById(id);
+            if(!btn) return;
             if (isAvail) {
-                btn.disabled = false; btn.className = "w-full py-4 bg-[#fae100] text-[#1e234e] font-black rounded-2xl shadow-md hover:bg-[#e5ce00] transition flex flex-col items-center justify-center gap-2 active:scale-95 shrink-0";
+                btn.disabled = false;
+                btn.className = "w-full py-4 bg-[#fae100] text-[#1e234e] font-black rounded-2xl shadow-md hover:bg-[#e5ce00] transition flex flex-col items-center justify-center gap-2 active:scale-95 shrink-0";
                 btn.innerHTML = `<i class="${iconClass} text-3xl"></i> <span class="text-sm font-bold text-center leading-tight">${title}</span>`;
             } else {
-                btn.disabled = true; btn.className = "w-full py-4 bg-[#2a2f5c] text-gray-500 font-black rounded-2xl transition flex flex-col items-center justify-center gap-2 opacity-50 cursor-not-allowed border border-[#383d6a] shrink-0";
+                btn.disabled = true;
+                btn.className = "w-full py-4 bg-[#2a2f5c] text-gray-500 font-black rounded-2xl transition flex flex-col items-center justify-center gap-2 opacity-50 cursor-not-allowed border border-[#383d6a] shrink-0";
                 btn.innerHTML = `<i class="${iconClass} text-3xl"></i> <div class="flex flex-col items-center"><span class="text-sm font-bold text-center leading-tight">${title}</span><span class="text-[10px] mt-0.5 text-red-400 font-normal">(ไม่มีรถว่าง)</span></div>`;
             }
         };
 
-        setupBtn('btnSelectCar', 'car', 'fas fa-car-side', 'รถยนต์', available.car); setupBtn('btnSelectPremiumCar', 'premium_car', 'fas fa-car', 'รถยนต์พรีเมียม', available.premium_car); setupBtn('btnSelectBike', 'bike', 'fas fa-motorcycle text-blue-400', 'รถมอเตอร์ไซค์', available.bike); setupBtn('btnSelectPremiumBike', 'premium_bike', 'fas fa-motorcycle text-purple-400', 'รถมอเตอร์ไซค์<br>พรีเมียม', available.premium_bike);
+        setupBtn('btnSelectCar', 'car', 'fas fa-car-side', 'รถยนต์', available.car);
+        setupBtn('btnSelectPremiumCar', 'premium_car', 'fas fa-car', 'รถยนต์พรีเมียม', available.premium_car);
+        setupBtn('btnSelectBike', 'bike', 'fas fa-motorcycle text-blue-400', 'รถมอเตอร์ไซค์', available.bike);
+        setupBtn('btnSelectPremiumBike', 'premium_bike', 'fas fa-motorcycle text-purple-400', 'รถมอเตอร์ไซค์<br>พรีเมียม', available.premium_bike);
+
         document.getElementById('vehicleSelectionModal').classList.remove('hidden'); 
     }
 
     function closeVehicleModal() { document.getElementById('vehicleSelectionModal').classList.add('hidden'); }
 
     function selectVehicleAndStart(type) {
-        currentServiceType = type; let labelIcon = 'fa-car-side'; let labelText = 'รถยนต์';
-        if(type === 'bike') { labelIcon = 'fa-motorcycle'; labelText = 'มอเตอร์ไซค์'; } if(type === 'premium_car') { labelIcon = 'fa-car'; labelText = 'รถพรีเมียม'; } if(type === 'premium_bike') { labelIcon = 'fa-motorcycle'; labelText = 'มอไซค์พรีเมียม'; }
-        let indicator = document.getElementById('serviceLabelIndicator'); if(indicator) indicator.innerHTML = `<i class="fas ${labelIcon}"></i> ${labelText}`;
+        currentServiceType = type;
+        let labelIcon = 'fa-car-side';
+        let labelText = 'รถยนต์';
+        if(type === 'bike') { labelIcon = 'fa-motorcycle'; labelText = 'มอเตอร์ไซค์'; }
+        if(type === 'premium_car') { labelIcon = 'fa-car'; labelText = 'รถพรีเมียม'; }
+        if(type === 'premium_bike') { labelIcon = 'fa-motorcycle'; labelText = 'มอไซค์พรีเมียม'; }
+        
+        let indicator = document.getElementById('serviceLabelIndicator');
+        if(indicator) indicator.innerHTML = `<i class="fas ${labelIcon}"></i> ${labelText}`;
         closeVehicleModal(); showPage(2);
     }
 
-    function openNewsModal() { document.getElementById('newsModal').classList.remove('hidden'); renderNewsAndPromotions(); let badge = document.getElementById('newsBadge'); if(badge) badge.classList.add('hidden'); localStorage.setItem('lastSeenNewsTime', Date.now()); }
+    function openNewsModal() { 
+        document.getElementById('newsModal').classList.remove('hidden'); 
+        renderNewsAndPromotions(); 
+        
+        let badge = document.getElementById('newsBadge');
+        if(badge) badge.classList.add('hidden');
+        localStorage.setItem('lastSeenNewsTime', Date.now());
+    }
+    
     function closeNewsModal() { document.getElementById('newsModal').classList.add('hidden'); }
 
     function renderNewsAndPromotions() {
         let container = document.getElementById('newsListContainer');
         db.ref('news_promotions').once('value', snap => {
-            if (!snap.exists()) { container.innerHTML = `<div class="bg-[#2a2f5c] rounded-2xl p-6 text-center border border-[#383d6a] shadow-sm"><i class="fas fa-box-open text-4xl text-gray-600 mb-3"></i><p class="text-gray-400 font-bold text-sm">ยังไม่มีข่าวสารหรือโปรโมชั่นในขณะนี้</p></div>`; return; }
-            let items = []; let lastSeen = parseInt(localStorage.getItem('lastSeenNewsTime') || '0');
-            snap.forEach(child => { items.push({ id: child.key, ...child.val() }); }); items.sort((a,b) => (b.timestamp || 0) - (a.timestamp || 0));
+            if (!snap.exists()) {
+                container.innerHTML = `<div class="bg-[#2a2f5c] rounded-2xl p-6 text-center border border-[#383d6a] shadow-sm"><i class="fas fa-box-open text-4xl text-gray-600 mb-3"></i><p class="text-gray-400 font-bold text-sm">ยังไม่มีข่าวสารหรือโปรโมชั่นในขณะนี้</p></div>`;
+                return;
+            }
+            let items = [];
+            let lastSeen = parseInt(localStorage.getItem('lastSeenNewsTime') || '0');
+
+            snap.forEach(child => { items.push({ id: child.key, ...child.val() }); });
+            items.sort((a,b) => (b.timestamp || 0) - (a.timestamp || 0));
+
             let html = '';
             items.forEach(item => {
-                let isNew = (item.timestamp || 0) > lastSeen; let badge = item.isPromo ? `<span class="bg-red-500 text-white text-[10px] font-black px-2 py-0.5 rounded shadow">PROMO</span>` : `<span class="bg-blue-500 text-white text-[10px] font-black px-2 py-0.5 rounded shadow">NEWS</span>`; let newTag = isNew ? `<span class="bg-red-500 text-white text-[9px] font-black px-1.5 py-0.5 rounded ml-2 shadow">NEW</span>` : '';
+                let isNew = (item.timestamp || 0) > lastSeen;
+                let badge = item.isPromo ? `<span class="bg-red-500 text-white text-[10px] font-black px-2 py-0.5 rounded shadow">PROMO</span>` : `<span class="bg-blue-500 text-white text-[10px] font-black px-2 py-0.5 rounded shadow">NEWS</span>`;
+                let newTag = isNew ? `<span class="bg-red-500 text-white text-[9px] font-black px-1.5 py-0.5 rounded ml-2 shadow">NEW</span>` : '';
+
                 html += `<div class="bg-[#2a2f5c] rounded-2xl p-5 border border-[#383d6a] shadow-sm relative overflow-hidden mb-4"><div class="flex justify-between items-start mb-2">${badge}<span class="text-[10px] text-gray-500 font-bold">${item.dateStr || ''}</span></div><h3 class="text-base font-black text-white mb-2 leading-tight">${item.title}${newTag}</h3><p class="text-sm text-gray-400 leading-relaxed font-normal">${item.content}</p></div>`;
-            }); container.innerHTML = html;
+            });
+            container.innerHTML = html;
         });
     }
 
     db.ref('news_promotions').on('value', snap => {
         let badge = document.getElementById('newsBadge');
-        if(snap.exists() && badge) { let hasNew = false; let lastSeen = parseInt(localStorage.getItem('lastSeenNewsTime') || '0'); snap.forEach(child => { let item = child.val(); if ((item.timestamp || 0) > lastSeen) hasNew = true; }); if (hasNew) badge.classList.remove('hidden'); else badge.classList.add('hidden'); }
+        if(snap.exists() && badge) {
+            let hasNew = false;
+            let lastSeen = parseInt(localStorage.getItem('lastSeenNewsTime') || '0');
+            snap.forEach(child => {
+                let item = child.val();
+                if ((item.timestamp || 0) > lastSeen) hasNew = true;
+            });
+            if (hasNew) badge.classList.remove('hidden');
+            else badge.classList.add('hidden');
+        }
     });
 
     function getDynamicBottomPadding() {
-        if(!document.getElementById('page4Panel')) return 0; let pBottom = 0;
-        if (currentStep === 4) { const panel = document.getElementById('page4Panel'); pBottom = (panel && panel.classList.contains('panel-collapsed-page4')) ? 120 : panel.offsetHeight; } else if (currentStep === 'Tracking') { const panel = document.getElementById('trackingPanel'); pBottom = (panel && panel.classList.contains('panel-collapsed')) ? 120 : panel.offsetHeight; } else if (currentStep === 2) { const panel = document.querySelector('#page2 .ui-panel'); pBottom = panel ? panel.offsetHeight : 0; } else if (currentStep === 3) { const panel = document.querySelector('#page3 .ui-panel'); pBottom = panel ? panel.offsetHeight : 0; }
+        if(!document.getElementById('page4Panel')) return 0;
+        let pBottom = 0;
+        if (currentStep === 4) {
+            const panel = document.getElementById('page4Panel');
+            pBottom = (panel && panel.classList.contains('panel-collapsed-page4')) ? 120 : panel.offsetHeight;
+        } else if (currentStep === 'Tracking') {
+            const panel = document.getElementById('trackingPanel');
+            pBottom = (panel && panel.classList.contains('panel-collapsed')) ? 120 : panel.offsetHeight;
+        } else if (currentStep === 2) {
+            const panel = document.querySelector('#page2 .ui-panel');
+            pBottom = panel ? panel.offsetHeight : 0;
+        } else if (currentStep === 3) {
+            const panel = document.querySelector('#page3 .ui-panel');
+            pBottom = panel ? panel.offsetHeight : 0;
+        }
         return pBottom + 20;
     }
 
     function updateMapPadding() {
-        if(!map) return; let pTop = (currentStep === 2 || currentStep === 3) ? 140 : 70; let pBottom = getDynamicBottomPadding();
+        if(!map) return;
+        let pTop = (currentStep === 2 || currentStep === 3) ? 140 : 70;
+        let pBottom = getDynamicBottomPadding();
         map.setOptions({ padding: { top: pTop, bottom: pBottom, left: 0, right: 0 } });
     }
 
-    let pricingConfig = { base: 50, km: 10, pick: 5 }; db.ref('config/pricing').on('value', snap => { if(snap.exists()) pricingConfig = snap.val(); });
+    let pricingConfig = { base: 50, km: 10, pick: 5 }; 
+    db.ref('config/pricing').on('value', snap => { if(snap.exists()) pricingConfig = snap.val(); });
 
-    function checkBannerSchedule(b) { let now = Date.now(); let start = b.startTime ? new Date(b.startTime).getTime() : 0; let end = b.endTime ? new Date(b.endTime).getTime() : Infinity; return now >= start && now <= end; }
+    function checkBannerSchedule(b) {
+        let now = Date.now();
+        let start = b.startTime ? new Date(b.startTime).getTime() : 0;
+        let end = b.endTime ? new Date(b.endTime).getTime() : Infinity;
+        return now >= start && now <= end;
+    }
 
     db.ref('config/banners').on('value', snap => {
-        let hContainer = document.getElementById('homeBannerContainer'); let hSlider = document.getElementById('bannerSlider'); let hDots = document.getElementById('bannerDots'); let nContainerTop = document.getElementById('newsTopBannerContainer'); let nSliderTop = document.getElementById('newsTopBannerSlider');
-        clearInterval(bannerInterval); if(hSlider) hSlider.innerHTML = ''; if(hDots) hDots.innerHTML = ''; if(nSliderTop) nSliderTop.innerHTML = '';
+        let hContainer = document.getElementById('homeBannerContainer');
+        let hSlider = document.getElementById('bannerSlider');
+        let hDots = document.getElementById('bannerDots');
+        
+        let nContainerTop = document.getElementById('newsTopBannerContainer');
+        let nSliderTop = document.getElementById('newsTopBannerSlider');
+        
+        clearInterval(bannerInterval);
+        if(hSlider) hSlider.innerHTML = '';
+        if(hDots) hDots.innerHTML = '';
+        if(nSliderTop) nSliderTop.innerHTML = '';
+        
         if(snap.exists()) {
-            let banners = []; snap.forEach(child => { let b = child.val(); if (checkBannerSchedule(b)) banners.push(b); });
+            let banners = [];
+            snap.forEach(child => { 
+                let b = child.val();
+                if (checkBannerSchedule(b)) banners.push(b);
+            });
+            
             if (banners.length > 0) {
-                if(hContainer) hContainer.classList.remove('hidden'); if(nContainerTop) nContainerTop.classList.remove('hidden');
-                banners.forEach((b, idx) => { let target = b.linkUrl ? '_blank' : '_self'; let href = b.linkUrl ? b.linkUrl : '#'; let slideHtml = `<a href="${href}" target="${target}" class="w-full h-full flex-shrink-0 snap-center relative block"><img src="${b.imageUrl}" class="w-full h-full object-cover"></a>`; if(hSlider) hSlider.innerHTML += slideHtml; if(nSliderTop) nSliderTop.innerHTML += slideHtml; if(hDots) hDots.innerHTML += `<span class="banner-dot h-1.5 rounded-full transition-all duration-300 ${idx === 0 ? 'bg-[#fae100] w-4' : 'bg-white/50 w-1.5'}"></span>`; });
-                if (banners.length > 1 && hSlider) { let currentSlide = 0; bannerInterval = setInterval(() => { currentSlide = (currentSlide + 1) % banners.length; hSlider.scrollTo({ left: currentSlide * hSlider.clientWidth, behavior: 'smooth' }); if(nSliderTop) nSliderTop.scrollTo({ left: currentSlide * nSliderTop.clientWidth, behavior: 'smooth' }); let activeIndex = currentSlide; if(hDots) { let allDots = hDots.querySelectorAll('.banner-dot'); allDots.forEach((d, idx) => { d.className = `banner-dot h-1.5 rounded-full transition-all duration-300 ${idx === activeIndex ? 'bg-[#fae100] w-4' : 'bg-white/50 w-1.5'}`; }); } }, 4000); }
-            } else { if(hContainer) hContainer.classList.add('hidden'); if(nContainerTop) nContainerTop.classList.add('hidden'); }
-        } else { if(hContainer) hContainer.classList.add('hidden'); if(nContainerTop) nContainerTop.classList.add('hidden'); }
+                if(hContainer) hContainer.classList.remove('hidden');
+                if(nContainerTop) nContainerTop.classList.remove('hidden');
+                
+                banners.forEach((b, idx) => {
+                    let target = b.linkUrl ? '_blank' : '_self';
+                    let href = b.linkUrl ? b.linkUrl : '#';
+                    let slideHtml = `<a href="${href}" target="${target}" class="w-full h-full flex-shrink-0 snap-center relative block"><img src="${b.imageUrl}" class="w-full h-full object-cover"></a>`;
+                    
+                    if(hSlider) hSlider.innerHTML += slideHtml;
+                    if(nSliderTop) nSliderTop.innerHTML += slideHtml;
+                    if(hDots) hDots.innerHTML += `<span class="banner-dot h-1.5 rounded-full transition-all duration-300 ${idx === 0 ? 'bg-[#fae100] w-4' : 'bg-white/50 w-1.5'}"></span>`;
+                });
+
+                if (banners.length > 1 && hSlider) {
+                    let currentSlide = 0;
+                    bannerInterval = setInterval(() => {
+                        currentSlide = (currentSlide + 1) % banners.length;
+                        hSlider.scrollTo({ left: currentSlide * hSlider.clientWidth, behavior: 'smooth' });
+                        if(nSliderTop) nSliderTop.scrollTo({ left: currentSlide * nSliderTop.clientWidth, behavior: 'smooth' });
+                        
+                        let activeIndex = currentSlide;
+                        if(hDots) {
+                            let allDots = hDots.querySelectorAll('.banner-dot');
+                            allDots.forEach((d, idx) => { d.className = `banner-dot h-1.5 rounded-full transition-all duration-300 ${idx === activeIndex ? 'bg-[#fae100] w-4' : 'bg-white/50 w-1.5'}`; });
+                        }
+                    }, 4000); 
+                }
+            } else { 
+                if(hContainer) hContainer.classList.add('hidden'); 
+                if(nContainerTop) nContainerTop.classList.add('hidden'); 
+            }
+        } else { 
+            if(hContainer) hContainer.classList.add('hidden'); 
+            if(nContainerTop) nContainerTop.classList.add('hidden'); 
+        }
     });
 
     db.ref('config/bottom_banners').on('value', snap => {
-        let container = document.getElementById('bottomBannerContainer'); let slider = document.getElementById('bottomBannerSlider'); let nContainerBot = document.getElementById('newsBottomBannerContainer'); let nSliderBot = document.getElementById('newsBottomBannerSlider');
-        clearInterval(bottomBannerInterval); if(slider) slider.innerHTML = ''; if(nSliderBot) nSliderBot.innerHTML = '';
+        let container = document.getElementById('bottomBannerContainer');
+        let slider = document.getElementById('bottomBannerSlider');
+        
+        let nContainerBot = document.getElementById('newsBottomBannerContainer');
+        let nSliderBot = document.getElementById('newsBottomBannerSlider');
+        
+        clearInterval(bottomBannerInterval);
+        if(slider) slider.innerHTML = '';
+        if(nSliderBot) nSliderBot.innerHTML = '';
+        
         if(snap.exists()) {
-            let banners = []; snap.forEach(child => { let b = child.val(); if (checkBannerSchedule(b)) banners.push(b); });
+            let banners = [];
+            snap.forEach(child => { let b = child.val(); if (checkBannerSchedule(b)) banners.push(b); });
             if(banners.length > 0) {
-                if(container) container.classList.remove('hidden'); if(nContainerBot) nContainerBot.classList.remove('hidden');
-                banners.forEach(b => { let target = b.linkUrl ? '_blank' : '_self'; let href = b.linkUrl ? b.linkUrl : '#'; let slideHtml = `<a href="${href}" target="${target}" class="w-full h-full flex-shrink-0 snap-center block"><img src="${b.imageUrl}" class="w-full h-full object-cover"></a>`; if(slider) slider.innerHTML += slideHtml; if(nSliderBot) nSliderBot.innerHTML += slideHtml; });
-                if(banners.length > 1 && slider) { let currentSlide = 0; bottomBannerInterval = setInterval(() => { currentSlide = (currentSlide + 1) % banners.length; slider.scrollTo({ left: currentSlide * slider.clientWidth, behavior: 'smooth' }); if(nSliderBot) nSliderBot.scrollTo({ left: currentSlide * nSliderBot.clientWidth, behavior: 'smooth' }); }, 4500); }
-            } else { if(container) container.classList.add('hidden'); if(nContainerBot) nContainerBot.classList.add('hidden'); }
-        } else { if(container) container.classList.add('hidden'); if(nContainerBot) nContainerBot.classList.add('hidden'); }
+                if(container) container.classList.remove('hidden');
+                if(nContainerBot) nContainerBot.classList.remove('hidden');
+                
+                banners.forEach(b => {
+                    let target = b.linkUrl ? '_blank' : '_self'; let href = b.linkUrl ? b.linkUrl : '#';
+                    let slideHtml = `<a href="${href}" target="${target}" class="w-full h-full flex-shrink-0 snap-center block"><img src="${b.imageUrl}" class="w-full h-full object-cover"></a>`;
+                    if(slider) slider.innerHTML += slideHtml;
+                    if(nSliderBot) nSliderBot.innerHTML += slideHtml;
+                });
+                if(banners.length > 1 && slider) {
+                    let currentSlide = 0;
+                    bottomBannerInterval = setInterval(() => {
+                        currentSlide = (currentSlide + 1) % banners.length;
+                        slider.scrollTo({ left: currentSlide * slider.clientWidth, behavior: 'smooth' });
+                        if(nSliderBot) nSliderBot.scrollTo({ left: currentSlide * nSliderBot.clientWidth, behavior: 'smooth' });
+                    }, 4500); 
+                }
+            } else { 
+                if(container) container.classList.add('hidden'); 
+                if(nContainerBot) nContainerBot.classList.add('hidden'); 
+            }
+        } else { 
+            if(container) container.classList.add('hidden'); 
+            if(nContainerBot) nContainerBot.classList.add('hidden'); 
+        }
     });
 
     function resetTrackingFlags() {
-        hasSpokenAccept = false; hasSpokenArrivePick = false; hasSpokenAtPickup = false; hasSpokenDepart = false; hasSpokenArriveDrop = false; hasSpokenFinish = false; hasSpokenCancel = false; hasNotifiedLinePick = false; hasNotifiedLineDrop = false; isShowingRouteChange = false; lastNotifiedStatus = "";
+        hasSpokenAccept = false; hasSpokenArrivePick = false; hasSpokenAtPickup = false;
+        hasSpokenDepart = false; hasSpokenArriveDrop = false; hasSpokenFinish = false;
+        hasSpokenCancel = false; hasShownFinish = false; hasShownCancel = false;
+        hasNotifiedLinePick = false; hasNotifiedLineDrop = false; isShowingRouteChange = false;
+        lastNotifiedStatus = "";
     }
 
     async function requestWakeLock() { if ('wakeLock' in navigator) { try { wakeLock = await navigator.wakeLock.request('screen'); } catch (err) {} } }
     document.addEventListener('visibilitychange', () => { if (wakeLock !== null && document.visibilityState === 'visible') requestWakeLock(); });
 
-    function playSoundAlert() { if(!notiAudio) notiAudio = document.getElementById('notiSound'); if(notiAudio) { notiAudio.currentTime = 0; notiAudio.play().catch(e => console.log('Audio playback prevented')); } }
+    function playSoundAlert() {
+        if(!notiAudio) notiAudio = document.getElementById('notiSound');
+        if(notiAudio) { notiAudio.currentTime = 0; notiAudio.play().catch(e => console.log('Audio playback prevented')); }
+    }
 
-    function speakText(text) { if ('speechSynthesis' in window) { window.speechSynthesis.cancel(); let msg = new SpeechSynthesisUtterance(text); msg.lang = 'th-TH'; msg.rate = 1.0; window.speechSynthesis.speak(msg); } }
+    function speakText(text) {
+        if ('speechSynthesis' in window) {
+            window.speechSynthesis.cancel(); 
+            let msg = new SpeechSynthesisUtterance(text); msg.lang = 'th-TH'; msg.rate = 1.0;     
+            window.speechSynthesis.speak(msg);
+        }
+    }
 
     document.addEventListener("DOMContentLoaded", () => {
-        let savedPhone = localStorage.getItem('passengerPhone'); if(savedPhone) { let pInp = document.getElementById('userPhone'); if(pInp) pInp.value = savedPhone; }
-        renderSavedPlacesUI(); notiAudio = document.getElementById('notiSound');
-        setTimeout(() => { const splash = document.getElementById('splashScreen'); if(splash) { splash.style.opacity = '0'; setTimeout(() => { splash.style.visibility = 'hidden'; splash.style.display = 'none'; }, 500); } }, 2000);
+        let savedPhone = localStorage.getItem('passengerPhone');
+        if(savedPhone) { let pInp = document.getElementById('userPhone'); if(pInp) pInp.value = savedPhone; }
+        renderSavedPlacesUI();
+        notiAudio = document.getElementById('notiSound');
+        
+        setTimeout(() => {
+            const splash = document.getElementById('splashScreen');
+            if(splash) {
+                splash.style.opacity = '0';
+                setTimeout(() => { splash.style.visibility = 'hidden'; splash.style.display = 'none'; }, 500);
+            }
+        }, 2000);
     });
 
+    let currentConfirmCallback = null;
     function openConfirmActionModal(title, message, callback, theme = 'blue') {
-        document.getElementById('confirmActionTitle').innerText = title; document.getElementById('confirmActionMessage').innerHTML = message; currentConfirmCallback = callback; const iconDiv = document.getElementById('confirmActionIcon'); const btn = document.getElementById('confirmActionButton'); iconDiv.className = "w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl border"; btn.className = "flex-1 py-3 font-black rounded-xl shadow-md transition";
-        if (theme === 'green') { iconDiv.classList.add('bg-[#fae100]/20', 'text-[#fae100]', 'border-[#fae100]/30'); btn.classList.add('bg-[#fae100]', 'text-[#1e234e]', 'hover:bg-[#e5ce00]'); } else if (theme === 'red') { iconDiv.classList.add('bg-red-900/30', 'text-red-500', 'border-red-500/30'); btn.classList.add('bg-red-600', 'text-white', 'hover:bg-red-700'); } else { iconDiv.classList.add('bg-[#fae100]/20', 'text-[#fae100]', 'border-[#fae100]/30'); btn.classList.add('bg-[#fae100]', 'text-[#1e234e]', 'hover:bg-[#e5ce00]'); }
+        document.getElementById('confirmActionTitle').innerText = title; document.getElementById('confirmActionMessage').innerHTML = message;
+        currentConfirmCallback = callback;
+        const iconDiv = document.getElementById('confirmActionIcon'); const btn = document.getElementById('confirmActionButton');
+        iconDiv.className = "w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl border"; btn.className = "flex-1 py-3 font-black rounded-xl shadow-md transition";
+        if (theme === 'green') { iconDiv.classList.add('bg-[#fae100]/20', 'text-[#fae100]', 'border-[#fae100]/30'); btn.classList.add('bg-[#fae100]', 'text-[#1e234e]', 'hover:bg-[#e5ce00]'); } 
+        else if (theme === 'red') { iconDiv.classList.add('bg-red-900/30', 'text-red-500', 'border-red-500/30'); btn.classList.add('bg-red-600', 'text-white', 'hover:bg-red-700'); } 
+        else { iconDiv.classList.add('bg-[#fae100]/20', 'text-[#fae100]', 'border-[#fae100]/30'); btn.classList.add('bg-[#fae100]', 'text-[#1e234e]', 'hover:bg-[#e5ce00]'); }
         document.getElementById('confirmActionModal').classList.remove('hidden');
     }
     function closeConfirmActionModal() { document.getElementById('confirmActionModal').classList.add('hidden'); currentConfirmCallback = null; }
     function submitConfirmAction() { if(currentConfirmCallback) currentConfirmCallback(); closeConfirmActionModal(); }
+
     function openCallConfirmModal() { document.getElementById('callConfirmModal').classList.remove('hidden'); }
     function closeCallConfirmModal() { document.getElementById('callConfirmModal').classList.add('hidden'); }
     function openCancelModal() { document.getElementById('cancelModal').classList.remove('hidden'); }
@@ -753,294 +982,514 @@
     function closePromoModal() { document.getElementById('promoModal').classList.add('hidden'); }
 
     function openProfileModal() {
-        document.getElementById('profileModal').classList.remove('hidden'); let pNameL = document.getElementById('profileNameLarge'); if(pNameL) pNameL.innerText = lineName || 'ไม่ทราบชื่อ'; let picSrc = 'https://img.icons8.com/bubbles/150/user.png'; let uPic = document.getElementById('userPic'); let uPicSmall = document.getElementById('userPicSmall'); if(uPic && uPic.src) picSrc = uPic.src; else if (uPicSmall && uPicSmall.src) picSrc = uPicSmall.src; let pPicL = document.getElementById('profilePicLarge'); if(pPicL) pPicL.src = picSrc; let savedPhone = localStorage.getItem('passengerPhone'); let pPhoneL = document.getElementById('profilePhoneLarge'); if(pPhoneL) pPhoneL.innerText = savedPhone ? 'เบอร์โทร: ' + savedPhone : 'เบอร์โทร: ยังไม่ระบุ';
+        document.getElementById('profileModal').classList.remove('hidden');
+        let pNameL = document.getElementById('profileNameLarge');
+        if(pNameL) pNameL.innerText = lineName || 'ไม่ทราบชื่อ';
+        
+        let picSrc = 'https://img.icons8.com/bubbles/150/user.png';
+        let uPic = document.getElementById('userPic'); let uPicSmall = document.getElementById('userPicSmall');
+        if(uPic && uPic.src) picSrc = uPic.src; else if (uPicSmall && uPicSmall.src) picSrc = uPicSmall.src;
+        
+        let pPicL = document.getElementById('profilePicLarge');
+        if(pPicL) pPicL.src = picSrc;
+        
+        let savedPhone = localStorage.getItem('passengerPhone');
+        let pPhoneL = document.getElementById('profilePhoneLarge');
+        if(pPhoneL) pPhoneL.innerText = savedPhone ? 'เบอร์โทร: ' + savedPhone : 'เบอร์โทร: ยังไม่ระบุ';
     }
+
     function closeProfileModal() { document.getElementById('profileModal').classList.add('hidden'); }
     function editProfilePhone() {
-        let current = localStorage.getItem('passengerPhone') || ''; let newVal = prompt('กรุณากรอกเบอร์โทรศัพท์ใหม่ของคุณ:', current);
-        if(newVal !== null) { let cleanVal = newVal.replace(/\D/g, ''); if(cleanVal.length > 0) { localStorage.setItem('passengerPhone', cleanVal); let pPhoneL = document.getElementById('profilePhoneLarge'); if(pPhoneL) pPhoneL.innerText = 'เบอร์โทร: ' + cleanVal; let pInp = document.getElementById('userPhone'); if(pInp) pInp.value = cleanVal; showAlert('สำเร็จ', 'อัปเดตเบอร์โทรศัพท์เรียบร้อยแล้ว', 'success'); } else { showAlert('ผิดพลาด', 'กรุณากรอกเฉพาะตัวเลข', 'error'); } }
+        let current = localStorage.getItem('passengerPhone') || '';
+        let newVal = prompt('กรุณากรอกเบอร์โทรศัพท์ใหม่ของคุณ:', current);
+        if(newVal !== null) {
+            let cleanVal = newVal.replace(/\D/g, '');
+            if(cleanVal.length > 0) {
+                localStorage.setItem('passengerPhone', cleanVal);
+                let pPhoneL = document.getElementById('profilePhoneLarge');
+                if(pPhoneL) pPhoneL.innerText = 'เบอร์โทร: ' + cleanVal;
+                let pInp = document.getElementById('userPhone');
+                if(pInp) pInp.value = cleanVal;
+                showAlert('สำเร็จ', 'อัปเดตเบอร์โทรศัพท์เรียบร้อยแล้ว', 'success');
+            } else { showAlert('ผิดพลาด', 'กรุณากรอกเฉพาะตัวเลข', 'error'); }
+        }
     }
+
     function confirmCancelBooking() {
         document.getElementById('cancelModal').classList.add('hidden'); isCompleting = true;
-        db.ref('bookings/' + lineUserId).remove().then(() => { if(APPS_SCRIPT_URL) fetch(`${APPS_SCRIPT_URL}?action=notify&type=cancel&name=${lineName}`, {mode:'no-cors'}); showAlert('ยกเลิกสำเร็จ', 'ระบบได้ทำการยกเลิกการเรียกรถเรียบร้อยแล้ว', 'success', () => { resetTrackingFlags(); isCompleting = false; showPage(4); }); });
+        db.ref('bookings/' + lineUserId).remove().then(() => {
+            if(APPS_SCRIPT_URL) fetch(`${APPS_SCRIPT_URL}?action=notify&type=cancel&name=${lineName}`, {mode:'no-cors'});
+            showAlert('ยกเลิกสำเร็จ', 'ระบบได้ทำการยกเลิกการเรียกรถเรียบร้อยแล้ว', 'success', () => { resetTrackingFlags(); isCompleting = false; showPage(4); });
+        });
     }
 
     function renderSavedPlaceMarkersOnMap() {
         if (!map) return;
         let hData = localStorage.getItem('saved_home'); let f1Data = localStorage.getItem('saved_favorite1'); let f2Data = localStorage.getItem('saved_favorite2');
         if (markerHome) markerHome.setMap(null); if (markerFavorite1) markerFavorite1.setMap(null); if (markerFavorite2) markerFavorite2.setMap(null);
-        if (hData && (currentStep === 2 || currentStep === 3)) { let p = JSON.parse(hData); markerHome = new google.maps.Marker({ position: {lat: p.lat, lng: p.lng}, map: map, zIndex: 2, icon: { path: "M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z", fillColor: '#3b82f6', fillOpacity: 1, strokeWeight: 2, strokeColor: '#ffffff', scale: 1.5, anchor: typeof google !== 'undefined' && google.maps ? new google.maps.Point(12, 20) : null } }); }
-        if (f1Data && (currentStep === 2 || currentStep === 3)) { let p = JSON.parse(f1Data); markerFavorite1 = new google.maps.Marker({ position: {lat: p.lat, lng: p.lng}, map: map, zIndex: 2, icon: { path: "M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z", fillColor: '#ec4899', fillOpacity: 1, strokeWeight: 2, strokeColor: '#ffffff', scale: 1.2, anchor: typeof google !== 'undefined' && google.maps ? new google.maps.Point(12, 20) : null } }); }
-        if (f2Data && (currentStep === 2 || currentStep === 3)) { let p = JSON.parse(f2Data); markerFavorite2 = new google.maps.Marker({ position: {lat: p.lat, lng: p.lng}, map: map, zIndex: 2, icon: { path: "M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z", fillColor: '#eab308', fillOpacity: 1, strokeWeight: 2, strokeColor: '#ffffff', scale: 1.2, anchor: typeof google !== 'undefined' && google.maps ? new google.maps.Point(12, 20) : null } }); }
+
+        if (hData && (currentStep === 2 || currentStep === 3)) {
+            let p = JSON.parse(hData);
+            markerHome = new google.maps.Marker({ position: {lat: p.lat, lng: p.lng}, map: map, zIndex: 2, icon: { path: "M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z", fillColor: '#3b82f6', fillOpacity: 1, strokeWeight: 2, strokeColor: '#ffffff', scale: 1.5, anchor: typeof google !== 'undefined' && google.maps ? new google.maps.Point(12, 20) : null } });
+        }
+        if (f1Data && (currentStep === 2 || currentStep === 3)) {
+            let p = JSON.parse(f1Data);
+            markerFavorite1 = new google.maps.Marker({ position: {lat: p.lat, lng: p.lng}, map: map, zIndex: 2, icon: { path: "M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z", fillColor: '#ec4899', fillOpacity: 1, strokeWeight: 2, strokeColor: '#ffffff', scale: 1.2, anchor: typeof google !== 'undefined' && google.maps ? new google.maps.Point(12, 20) : null } });
+        }
+        if (f2Data && (currentStep === 2 || currentStep === 3)) {
+            let p = JSON.parse(f2Data);
+            markerFavorite2 = new google.maps.Marker({ position: {lat: p.lat, lng: p.lng}, map: map, zIndex: 2, icon: { path: "M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z", fillColor: '#eab308', fillOpacity: 1, strokeWeight: 2, strokeColor: '#ffffff', scale: 1.2, anchor: typeof google !== 'undefined' && google.maps ? new google.maps.Point(12, 20) : null } });
+        }
     }
 
     function panAndConfirmPlace(name, lat, lng, iconType = null) {
         if(map) { updateMapPadding(); map.panTo({lat: lat, lng: lng}); if(map.getZoom() < 16) { setTimeout(() => { map.setZoom(17); }, 300); } }
         let type = currentStep === 2 ? 'pick' : 'drop'; let typeName = currentStep === 2 ? 'จุดรับ' : 'จุดส่ง'; let theme = currentStep === 2 ? 'green' : 'red';
-        setTimeout(() => { openConfirmActionModal(`ยืนยันสถานที่`, `คุณต้องการเลือก <b>${name}</b> เป็น <b>${typeName}</b> ใช่หรือไม่?`, () => { addWaypointFromLocation(lat, lng, name, type, iconType); }, theme); }, 600); 
+        
+        setTimeout(() => {
+            openConfirmActionModal(`ยืนยันสถานที่`, `คุณต้องการเลือก <b>${name}</b> เป็น <b>${typeName}</b> ใช่หรือไม่?`, () => { addWaypointFromLocation(lat, lng, name, type, iconType); }, theme);
+        }, 600); 
     }
 
     function handleSavedPlace(type) {
         let saved = localStorage.getItem('saved_' + type); let iconType = type; 
         if (saved) { 
             let p = JSON.parse(saved); let typeName = type === 'home' ? 'บ้าน' : (type === 'favorite1' ? 'รายการโปรด 1' : 'รายการโปรด 2'); let pos = {lat: p.lat, lng: p.lng};
-            if (geocoder) { geocoder.geocode({location: pos}, (res, status) => { let finalAddr = typeName; if(status === 'OK' && res[0]) { let validResults = res.filter(r => !r.types.includes('plus_code') && !r.formatted_address.match(/^[A-Z0-9]{2,8}\+/)); let bestRes = validResults.length > 0 ? validResults[0] : res[0]; let fullAddress = bestRes.formatted_address.replace(/,?\s*ประเทศไทย/g, '').replace(/Unnamed Road,?\s*/g, '').replace(/^[A-Z0-9]{2,8}\+.*?\s/g, '').trim(); finalAddr = `${typeName} (${fullAddress})`; } panAndConfirmPlace(finalAddr, p.lat, p.lng, iconType); }); } else { panAndConfirmPlace(typeName, p.lat, p.lng, iconType); }
+            if (geocoder) {
+                geocoder.geocode({location: pos}, (res, status) => {
+                    let finalAddr = typeName;
+                    if(status === 'OK' && res[0]) {
+                        let validResults = res.filter(r => !r.types.includes('plus_code') && !r.formatted_address.match(/^[A-Z0-9]{2,8}\+/));
+                        let bestRes = validResults.length > 0 ? validResults[0] : res[0];
+                        let fullAddress = bestRes.formatted_address.replace(/,?\s*ประเทศไทย/g, '').replace(/Unnamed Road,?\s*/g, '').replace(/^[A-Z0-9]{2,8}\+.*?\s/g, '').trim();
+                        finalAddr = `${typeName} (${fullAddress})`;
+                    }
+                    panAndConfirmPlace(finalAddr, p.lat, p.lng, iconType);
+                });
+            } else { panAndConfirmPlace(typeName, p.lat, p.lng, iconType); }
         } else { editSavedPlace(type, {stopPropagation: function(){}}); }
     }
 
     function editSavedPlace(type, event) { 
         event.stopPropagation(); 
         let typeName = type === 'home' ? 'บ้าน' : (type === 'favorite1' ? 'รายการโปรด 1' : 'รายการโปรด 2'); let theme = (currentStep === 2) ? 'green' : 'red'; let pos = map.getCenter();
-        openConfirmActionModal(`ตั้งค่า "${typeName}"`, `คุณต้องการบันทึกพิกัดกลางจอขณะนี้ให้เป็น "${typeName}" ใช่หรือไม่?`, () => { localStorage.setItem('saved_' + type, JSON.stringify({name: typeName, lat: pos.lat(), lng: pos.lng()})); showAlert('บันทึกสำเร็จ', `อัปเดตพิกัด "${typeName}" เรียบร้อยแล้ว!`, 'success'); renderSavedPlacesUI(); renderWaypointsUI(); renderSavedPlaceMarkersOnMap(); }, theme);
+        openConfirmActionModal(`ตั้งค่า "${typeName}"`, `คุณต้องการบันทึกพิกัดกลางจอขณะนี้ให้เป็น "${typeName}" ใช่หรือไม่?`, () => {
+            localStorage.setItem('saved_' + type, JSON.stringify({name: typeName, lat: pos.lat(), lng: pos.lng()}));
+            showAlert('บันทึกสำเร็จ', `อัปเดตพิกัด "${typeName}" เรียบร้อยแล้ว!`, 'success');
+            renderSavedPlacesUI(); renderWaypointsUI(); renderSavedPlaceMarkersOnMap();
+        }, theme);
     }
 
     function renderSavedPlacesUI() {
         let h = localStorage.getItem('saved_home'); let f1 = localStorage.getItem('saved_favorite1'); let f2 = localStorage.getItem('saved_favorite2');
-        document.querySelectorAll('.label-home').forEach(el => el.innerText = h ? 'บ้าน' : 'ตั้งค่า (บ้าน)'); document.querySelectorAll('.label-favorite1').forEach(el => el.innerText = f1 ? 'รายการโปรด 1' : 'ตั้งค่า (โปรด 1)'); document.querySelectorAll('.label-favorite2').forEach(el => el.innerText = f2 ? 'รายการโปรด 2' : 'ตั้งค่า (โปรด 2)'); renderSavedPlaceMarkersOnMap();
+        document.querySelectorAll('.label-home').forEach(el => el.innerText = h ? 'บ้าน' : 'ตั้งค่า (บ้าน)');
+        document.querySelectorAll('.label-favorite1').forEach(el => el.innerText = f1 ? 'รายการโปรด 1' : 'ตั้งค่า (โปรด 1)');
+        document.querySelectorAll('.label-favorite2').forEach(el => el.innerText = f2 ? 'รายการโปรด 2' : 'ตั้งค่า (โปรด 2)');
+        renderSavedPlaceMarkersOnMap();
     }
 
-    function saveRecentPlace(name, lat, lng) { if(!name || name === '') return; let places = JSON.parse(localStorage.getItem('recentPlaces') || '[]'); places = places.filter(p => p.name !== name); places.unshift({name, lat, lng}); if(places.length > 10) places.pop(); localStorage.setItem('recentPlaces', JSON.stringify(places)); }
+    function saveRecentPlace(name, lat, lng) {
+        if(!name || name === '') return;
+        let places = JSON.parse(localStorage.getItem('recentPlaces') || '[]');
+        places = places.filter(p => p.name !== name); places.unshift({name, lat, lng}); if(places.length > 10) places.pop(); 
+        localStorage.setItem('recentPlaces', JSON.stringify(places));
+    }
 
     function openRecentPlacesModal() {
-        document.getElementById('recentPlacesModal').classList.remove('hidden'); let places = JSON.parse(localStorage.getItem('recentPlaces') || '[]'); let container = document.getElementById('recentPlacesModalList');
+        document.getElementById('recentPlacesModal').classList.remove('hidden');
+        let places = JSON.parse(localStorage.getItem('recentPlaces') || '[]');
+        let container = document.getElementById('recentPlacesModalList');
         if(places.length === 0) { container.innerHTML = '<p class="text-center text-gray-500 mt-10 font-normal">ยังไม่มีประวัติสถานที่</p>'; return; }
-        let html = ''; places.forEach(p => { html += `<button onclick="closeRecentPlacesModal(); panAndConfirmPlace('${p.name}', ${p.lat}, ${p.lng});" class="w-full text-left bg-[#2a2f5c] border border-[#383d6a] p-3.5 rounded-xl shadow-sm flex items-center gap-3 hover:bg-[#383d6a] transition"><div class="w-8 h-8 rounded-full bg-[#1e234e] flex items-center justify-center shrink-0"><i class="fas fa-history text-gray-400"></i></div><span class="text-gray-200 text-sm truncate">${p.name}</span></button>`; }); container.innerHTML = html;
+        let html = '';
+        places.forEach(p => {
+            html += `<button onclick="closeRecentPlacesModal(); panAndConfirmPlace('${p.name}', ${p.lat}, ${p.lng});" class="w-full text-left bg-[#2a2f5c] border border-[#383d6a] p-3.5 rounded-xl shadow-sm flex items-center gap-3 hover:bg-[#383d6a] transition"><div class="w-8 h-8 rounded-full bg-[#1e234e] flex items-center justify-center shrink-0"><i class="fas fa-history text-gray-400 font-normal"></i></div><span class="text-gray-200 font-normal text-sm truncate">${p.name}</span></button>`;
+        });
+        container.innerHTML = html;
     }
+
     function closeRecentPlacesModal() { document.getElementById('recentPlacesModal').classList.add('hidden'); }
-    function togglePage4Panel() { const panel = document.getElementById('page4Panel'); if(!panel) return; panel.classList.toggle('panel-collapsed-page4'); updateMapPadding(); }
-    function toggleTrackingPanel() { const panel = document.getElementById('trackingPanel'); if(!panel) return; panel.classList.toggle('panel-collapsed'); updateMapPadding(); }
+
+    function togglePage4Panel() {
+        const panel = document.getElementById('page4Panel'); if(!panel) return;
+        panel.classList.toggle('panel-collapsed-page4'); updateMapPadding();
+    }
+
+    function toggleTrackingPanel() {
+        const panel = document.getElementById('trackingPanel'); if(!panel) return;
+        panel.classList.toggle('panel-collapsed'); updateMapPadding();
+    }
 
     function showAlert(title, message, type = 'info', callback = null) {
-        document.getElementById('alertTitle').innerText = title; document.getElementById('alertMessage').innerText = message; let iconHtml = ''; let iconBg = ''; let iconColor = '';
-        if (type === 'error') { iconHtml = '<i class="fas fa-times"></i>'; iconBg = 'bg-red-900/30 border border-red-500/30'; iconColor = 'text-red-500'; } else if (type === 'success') { iconHtml = '<i class="fas fa-check"></i>'; iconBg = 'bg-[#fae100]/20 border border-[#fae100]/30'; iconColor = 'text-[#fae100]'; } else { iconHtml = '<i class="fas fa-info"></i>'; iconBg = 'bg-[#fae100]/20 border border-[#fae100]/30'; iconColor = 'text-[#fae100]'; }
-        const iconDiv = document.getElementById('alertIcon'); if(iconDiv) { iconDiv.innerHTML = iconHtml; iconDiv.className = `w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl ${iconBg} ${iconColor}`; }
-        document.getElementById('alertModal').classList.remove('hidden'); alertCloseCallback = typeof callback === 'function' ? callback : null;
+        document.getElementById('alertTitle').innerText = title; document.getElementById('alertMessage').innerText = message;
+        let iconHtml = ''; let iconBg = ''; let iconColor = '';
+        if (type === 'error') { iconHtml = '<i class="fas fa-times font-normal"></i>'; iconBg = 'bg-red-900/30 border border-red-500/30'; iconColor = 'text-red-500'; } 
+        else if (type === 'success') { iconHtml = '<i class="fas fa-check font-normal"></i>'; iconBg = 'bg-[#fae100]/20 border border-[#fae100]/30'; iconColor = 'text-[#fae100]'; } 
+        else { iconHtml = '<i class="fas fa-info font-normal"></i>'; iconBg = 'bg-[#fae100]/20 border border-[#fae100]/30'; iconColor = 'text-[#fae100]'; }
+        
+        const iconDiv = document.getElementById('alertIcon');
+        if(iconDiv) { iconDiv.innerHTML = iconHtml; iconDiv.className = `w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl ${iconBg} ${iconColor}`; }
+        document.getElementById('alertModal').classList.remove('hidden');
+        window.alertCloseCallback = typeof callback === 'function' ? callback : null;
     }
-    function closeAlertModal() { document.getElementById('alertModal').classList.add('hidden'); if (typeof alertCloseCallback === 'function') alertCloseCallback(); }
-    function toggleMapStyle() { if(!map) return; isSatelliteMode = !isSatelliteMode; let btnMapStyle = document.getElementById('btnMapStyle'); if(isSatelliteMode) { map.setMapTypeId('hybrid'); if(btnMapStyle) btnMapStyle.innerHTML = '<i class="fas fa-layer-group text-[18px]"></i>'; } else { map.setMapTypeId('roadmap'); map.setOptions({ styles: detailedDarkMapStyle }); if(btnMapStyle) btnMapStyle.innerHTML = '<i class="fas fa-satellite text-[18px]"></i>'; } }
-    function updateMapControlsPosition(page) { const controls = document.getElementById('mapControls'); if (!controls) return; controls.classList.remove('top-[76px]', 'top-[170px]', 'top-[140px]'); if (page === 2 || page === 3) controls.classList.add('top-[140px]'); else controls.classList.add('top-[76px]'); let btnC = document.getElementById('btnCrosshair'); if (page !== 'Tracking') { if(btnC) btnC.classList.add('hidden'); } }
+    function closeAlertModal() { document.getElementById('alertModal').classList.add('hidden'); if (window.alertCloseCallback) window.alertCloseCallback(); }
+
+    function toggleMapStyle() {
+        if(!map) return; isSatelliteMode = !isSatelliteMode;
+        let btnMapStyle = document.getElementById('btnMapStyle');
+        if(isSatelliteMode) { map.setMapTypeId('hybrid'); if(btnMapStyle) btnMapStyle.innerHTML = '<i class="fas fa-layer-group text-[18px] font-normal"></i>'; } 
+        else { map.setMapTypeId('roadmap'); map.setOptions({ styles: detailedDarkMapStyle }); if(btnMapStyle) btnMapStyle.innerHTML = '<i class="fas fa-satellite text-[18px] font-normal"></i>'; }
+    }
+
+    function updateMapControlsPosition(page) {
+        const controls = document.getElementById('mapControls'); if (!controls) return;
+        controls.classList.remove('top-[76px]', 'top-[170px]', 'top-[140px]');
+        if (page === 2 || page === 3) controls.classList.add('top-[140px]'); else controls.classList.add('top-[76px]');
+        let btnC = document.getElementById('btnCrosshair'); if (page !== 'Tracking') { if(btnC) btnC.classList.add('hidden'); }
+    }
+
     function formatPhone(input) { let val = input.value.replace(/\D/g, ''); if (val.startsWith('66')) val = '0' + val.substring(2); if (val.length > 10) val = val.substring(0, 10); input.value = val; }
+
     function handleCrosshairClick() { if (currentStep === 2 || currentStep === 3) { useCurrentLocation(); } else { centerToFocus(); } };
-    function focusLocationToggle(lat, lng, index) { if(!map) return; if (focusedWaypointIndex === index) { focusedWaypointIndex = -1; fitAllWaypoints(); } else { focusedWaypointIndex = index; updateMapPadding(); map.panTo({lat: lat, lng: lng}); setTimeout(() => { map.panBy(0, 150); }, 100); } renderWaypointsUI(); };
-    function centerToFocus() { if(!map) return; if(currentStep === 'Tracking' && markerDriver && markerDriver.getMap()) { isTrackingMode = true; const panel = document.getElementById('trackingPanel'); const doPanToCar = () => { updateMapPadding(); map.panTo(markerDriver.getPosition()); map.setZoom(18); }; if(panel && !panel.classList.contains('panel-collapsed')) { panel.classList.add('panel-collapsed'); setTimeout(doPanToCar, 350); } else { doPanToCar(); } return; } useCurrentLocation(); }
+
+    function focusLocationToggle(lat, lng, index) {
+        if(!map) return;
+        if (focusedWaypointIndex === index) { focusedWaypointIndex = -1; fitAllWaypoints(); } 
+        else { focusedWaypointIndex = index; updateMapPadding(); map.panTo({lat: lat, lng: lng}); setTimeout(() => { map.panBy(0, 150); }, 100); }
+        renderWaypointsUI();
+    };
+
+    function centerToFocus() {
+        if(!map) return;
+        if(currentStep === 'Tracking' && markerDriver && markerDriver.getMap()) {
+            isTrackingMode = true; const panel = document.getElementById('trackingPanel');
+            const doPanToCar = () => { updateMapPadding(); map.panTo(markerDriver.getPosition()); map.setZoom(18); };
+            if(panel && !panel.classList.contains('panel-collapsed')) { panel.classList.add('panel-collapsed'); setTimeout(doPanToCar, 350); } else { doPanToCar(); }
+            return;
+        }
+        useCurrentLocation();
+    }
 
     function fitAllWaypoints() {
         if (!map || localWaypoints.length === 0) return;
         focusedWaypointIndex = -1; isTrackingMode = false;
         const panel = document.getElementById('trackingPanel'); if(panel && panel.classList.contains('panel-collapsed')) { panel.classList.remove('panel-collapsed'); }
-        updateMapPadding(); let bounds = new google.maps.LatLngBounds();
+        updateMapPadding();
+
+        let bounds = new google.maps.LatLngBounds();
         if (driverData && driverData.lat && driverData.status === "ออนไลน์" && bookData.status !== "รอผู้ขับขี่ตอบรับ") { bounds.extend(new google.maps.LatLng(driverData.lat, driverData.lng)); }
-        let activeWaypoints = localWaypoints.filter(w => !w.passed); activeWaypoints.forEach(wp => bounds.extend({lat: wp.lat, lng: wp.lng}));
-        let pb = getDynamicBottomPadding(); map.fitBounds(bounds, { top: 140, right: 50, bottom: pb, left: 50 }); renderWaypointsUI();
+        let activeWaypoints = localWaypoints.filter(w => !w.passed);
+        activeWaypoints.forEach(wp => bounds.extend({lat: wp.lat, lng: wp.lng}));
+
+        let pb = getDynamicBottomPadding();
+        map.fitBounds(bounds, { top: 140, right: 50, bottom: pb, left: 50 });
+        renderWaypointsUI();
     };
 
-    function createNumberedMarkerIcon(text, colorHex, textColor = "white") { return { path: "M 0,0 C -12,-16 -18,-22 -18,-32 A 18,18 0 1,1 18,-32 C 18,-22 12,-16 0,0 Z M -8,-32 A 8,8 0 1,0 8,-32 A 8,8 0 1,0 -8,-32 Z", fillColor: colorHex, fillOpacity: 1, strokeWeight: 2, strokeColor: '#ffffff', scale: 1.1, labelOrigin: typeof google !== 'undefined' && google.maps ? new google.maps.Point(0, -17) : null, anchor: typeof google !== 'undefined' && google.maps ? new google.maps.Point(0, 0) : null }; }
-    function updateCrosshairColor(colorHex) { if(crosshairMarker) { crosshairMarker.setIcon({ path: "M 0,0 C -12,-16 -18,-22 -18,-32 A 18,18 0 1,1 18,-32 C 18,-22 12,-16 0,0 Z M -8,-32 A 8,8 0 1,0 8,-32 A 8,8 0 1,0 -8,-32 Z", fillColor: colorHex, fillOpacity: 1, strokeWeight: 2, strokeColor: '#ffffff', scale: 1.1, anchor: typeof google !== 'undefined' && google.maps ? new google.maps.Point(0, 0) : null }); } }
+    function createNumberedMarkerIcon(text, colorHex, textColor = "white") {
+        return { path: "M 0,0 C -12,-16 -18,-22 -18,-32 A 18,18 0 1,1 18,-32 C 18,-22 12,-16 0,0 Z M -8,-32 A 8,8 0 1,0 8,-32 A 8,8 0 1,0 -8,-32 Z", fillColor: colorHex, fillOpacity: 1, strokeWeight: 2, strokeColor: '#ffffff', scale: 1.1, labelOrigin: typeof google !== 'undefined' && google.maps ? new google.maps.Point(0, -17) : null, anchor: typeof google !== 'undefined' && google.maps ? new google.maps.Point(0, 0) : null };
+    }
+
+    function updateCrosshairColor(colorHex) {
+        if(crosshairMarker) { crosshairMarker.setIcon({ path: "M 0,0 C -12,-16 -18,-22 -18,-32 A 18,18 0 1,1 18,-32 C 18,-22 12,-16 0,0 Z M -8,-32 A 8,8 0 1,0 8,-32 A 8,8 0 1,0 -8,-32 Z", fillColor: colorHex, fillOpacity: 1, strokeWeight: 2, strokeColor: '#ffffff', scale: 1.1, anchor: typeof google !== 'undefined' && google.maps ? new google.maps.Point(0, 0) : null }); }
+    }
 
     function initSearchBox(inputId, isPick) {
-      const input = document.getElementById(inputId); if(!input) return; if (typeof google === 'undefined' || !google.maps.places) return;
+      const input = document.getElementById(inputId); if(!input) return;
+      if (typeof google === 'undefined' || !google.maps.places) return;
+      
       const chiangRaiBounds = new google.maps.LatLngBounds(new google.maps.LatLng(18.91, 99.16), new google.maps.LatLng(20.46, 100.56));
       const auto = new google.maps.places.Autocomplete(input, { bounds: chiangRaiBounds, strictBounds: true, componentRestrictions: {country: 'th'} });
-      input.addEventListener('focus', function() { if(this.value.trim() !== '') this.dataset.oldValue = this.value; this.value = ''; }); input.addEventListener('blur', function() { setTimeout(() => { if(this.value.trim() === '') this.value = this.dataset.oldValue || ''; }, 150); });
-      auto.addListener('place_changed', () => { const place = auto.getPlace(); if(place.geometry && map) { input.blur(); let finalAddr = place.name; if (place.formatted_address) { let cleanAddr = place.formatted_address.replace(/,?\s*ประเทศไทย/g, '').replace(/Unnamed Road,?\s*/g, '').trim(); if(!cleanAddr.includes(place.name)) finalAddr += " (" + cleanAddr + ")"; } input.dataset.oldValue = finalAddr; input.value = finalAddr; panAndConfirmPlace(finalAddr, place.geometry.location.lat(), place.geometry.location.lng()); } });
+
+      input.addEventListener('focus', function() { if(this.value.trim() !== '') this.dataset.oldValue = this.value; this.value = ''; });
+      input.addEventListener('blur', function() { setTimeout(() => { if(this.value.trim() === '') this.value = this.dataset.oldValue || ''; }, 150); });
+
+      auto.addListener('place_changed', () => {
+        const place = auto.getPlace();
+        if(place.geometry && map) {
+          input.blur(); 
+          let finalAddr = place.name;
+          if (place.formatted_address) {
+              let cleanAddr = place.formatted_address.replace(/,?\s*ประเทศไทย/g, '').replace(/Unnamed Road,?\s*/g, '').trim();
+              if(!cleanAddr.includes(place.name)) finalAddr += " (" + cleanAddr + ")";
+          }
+          input.dataset.oldValue = finalAddr; input.value = finalAddr;
+          panAndConfirmPlace(finalAddr, place.geometry.location.lat(), place.geometry.location.lng());
+        }
+      });
     };
 
     function initMap() {
-      if (typeof google === 'undefined' || typeof google.maps === 'undefined') return; if (map) return; 
-      map = new google.maps.Map(document.getElementById('map'), { zoom: 16, center: {lat: driverData.lat, lng: driverData.lng}, mapTypeId: 'roadmap', styles: detailedDarkMapStyle, disableDefaultUI: true, gestureHandling: 'greedy', zoomControl: false });
-      crosshairMarker = new google.maps.Marker({ map: null, zIndex: 1, clickable: false }); crosshairMarker.bindTo('position', map, 'center');
+      if (typeof google === 'undefined' || typeof google.maps === 'undefined') return;
+      if (map) return; 
+      
+      map = new google.maps.Map(document.getElementById('map'), { 
+        zoom: 16, center: {lat: driverData.lat, lng: driverData.lng}, mapTypeId: 'roadmap', styles: detailedDarkMapStyle,
+        disableDefaultUI: true, gestureHandling: 'greedy', zoomControl: false
+      });
+
+      crosshairMarker = new google.maps.Marker({ map: null, zIndex: 1, clickable: false });
+      crosshairMarker.bindTo('position', map, 'center');
+
       map.addListener('dragstart', () => { if (currentStep === 'Tracking') { isTrackingMode = false; } });
       map.addListener('idle', () => { if (crosshairMarker && (currentStep === 2 || currentStep === 3)) { updateAddressBox(true); } });
-      map.addListener('click', (event) => { if (event.placeId) { event.stop(); if (placesService && (currentStep === 2 || currentStep === 3)) { placesService.getDetails({ placeId: event.placeId, fields: ['name', 'geometry', 'formatted_address'] }, (place, status) => { if (status === 'OK' && place.geometry) { let finalAddr = place.name; if (place.formatted_address) { let cleanAddr = place.formatted_address.replace(/,?\s*ประเทศไทย/g, '').replace(/Unnamed Road,?\s*/g, '').trim(); if(!cleanAddr.includes(place.name)) finalAddr += " (" + cleanAddr + ")"; } panAndConfirmPlace(finalAddr, place.geometry.location.lat(), place.geometry.location.lng()); } }); } } });
-      directionsService = new google.maps.DirectionsService(); directionsRenderer = new google.maps.DirectionsRenderer({ map: map, suppressMarkers: true, suppressPolylines: true, preserveViewport: true }); geocoder = new google.maps.Geocoder(); placesService = new google.maps.places.PlacesService(map);
-      markerDriver = new google.maps.Marker({ map: null, icon: { url: "https://img.icons8.com/color/48/car-top-view.png", scaledSize: new google.maps.Size(40, 40), anchor: new google.maps.Point(20, 20) }, zIndex: 9999 });
-      initSearchBox('pickupSearch', true); initSearchBox('dropoffSearch', false);
+      map.addListener('click', (event) => {
+        if (event.placeId) {
+          event.stop(); 
+          if (placesService && (currentStep === 2 || currentStep === 3)) {
+            placesService.getDetails({ placeId: event.placeId, fields: ['name', 'geometry', 'formatted_address'] }, (place, status) => {
+              if (status === 'OK' && place.geometry) {
+                  let finalAddr = place.name;
+                  if (place.formatted_address) {
+                      let cleanAddr = place.formatted_address.replace(/,?\s*ประเทศไทย/g, '').replace(/Unnamed Road,?\s*/g, '').trim();
+                      if(!cleanAddr.includes(place.name)) finalAddr += " (" + cleanAddr + ")";
+                  }
+                  panAndConfirmPlace(finalAddr, place.geometry.location.lat(), place.geometry.location.lng());
+              }
+            });
+          }
+        }
+      });
+
+      directionsService = new google.maps.DirectionsService();
+      directionsRenderer = new google.maps.DirectionsRenderer({ map: map, suppressMarkers: true, suppressPolylines: true, preserveViewport: true });
+      geocoder = new google.maps.Geocoder();
+      placesService = new google.maps.places.PlacesService(map);
+      
+      markerDriver = new google.maps.Marker({ 
+          map: null, 
+          icon: { url: "https://img.icons8.com/color/48/car-top-view.png", scaledSize: new google.maps.Size(40, 40), anchor: new google.maps.Point(20, 20) }, 
+          zIndex: 9999 
+      });
+
+      initSearchBox('pickupSearch', true);
+      initSearchBox('dropoffSearch', false);
+      
       const wpInput = document.getElementById('waypointSearchInput');
-      if (wpInput) { const chiangRaiBounds = new google.maps.LatLngBounds(new google.maps.LatLng(18.91, 99.16), new google.maps.LatLng(20.46, 100.56)); const autoWp = new google.maps.places.Autocomplete(wpInput, { bounds: chiangRaiBounds, strictBounds: true, componentRestrictions: {country: 'th'} }); autoWp.addListener('place_changed', () => { const place = autoWp.getPlace(); if(place.geometry) { let finalAddr = place.name; if (place.formatted_address) { let cleanAddr = place.formatted_address.replace(/,?\s*ประเทศไทย/g, '').replace(/Unnamed Road,?\s*/g, '').trim(); if(!cleanAddr.includes(place.name)) finalAddr += " (" + cleanAddr + ")"; } closeWaypointSearchModal(); calculateNewRoutePriceForTracking(place.geometry.location.lat(), place.geometry.location.lng(), finalAddr); } }); }
-      if (currentStep === 4) { renderWaypointsUI(); calculatePrice(); } else if (currentStep === 'Tracking') { renderWaypointsUI(); drawTrackingRoute(bookData.status); updateRealtimeMap(); } else if (currentStep === 2 || currentStep === 3) { renderWaypointsUI(); renderSavedPlaceMarkersOnMap(); }
+      if (wpInput) {
+          const chiangRaiBounds = new google.maps.LatLngBounds(new google.maps.LatLng(18.91, 99.16), new google.maps.LatLng(20.46, 100.56));
+          const autoWp = new google.maps.places.Autocomplete(wpInput, { bounds: chiangRaiBounds, strictBounds: true, componentRestrictions: {country: 'th'} });
+          autoWp.addListener('place_changed', () => {
+              const place = autoWp.getPlace();
+              if(place.geometry) {
+                  let finalAddr = place.name;
+                  if (place.formatted_address) {
+                      let cleanAddr = place.formatted_address.replace(/,?\s*ประเทศไทย/g, '').replace(/Unnamed Road,?\s*/g, '').trim();
+                      if(!cleanAddr.includes(place.name)) finalAddr += " (" + cleanAddr + ")";
+                  }
+                  closeWaypointSearchModal();
+                  calculateNewRoutePriceForTracking(place.geometry.location.lat(), place.geometry.location.lng(), finalAddr);
+              }
+          });
+      }
+
+      if (currentStep === 4) { renderWaypointsUI(); calculatePrice(); } 
+      else if (currentStep === 'Tracking') { renderWaypointsUI(); drawTrackingRoute(bookData.status); updateRealtimeMap(); } 
+      else if (currentStep === 2 || currentStep === 3) { renderWaypointsUI(); renderSavedPlaceMarkersOnMap(); }
     };
 
-    function mockLoginForBrowser() { lineUserId = "U" + Math.random().toString(36).substr(2, 9); lineName = "ลูกค้าทดสอบ (Browser)"; let un = document.getElementById('userName'); if(un) un.innerText = lineName; let usm = document.getElementById('userNameSmall'); if(usm) usm.innerText = lineName; initApp(); }
+    function mockLoginForBrowser() {
+        lineUserId = "U" + Math.random().toString(36).substr(2, 9); lineName = "ลูกค้าทดสอบ (Browser)";
+        let un = document.getElementById('userName'); if(un) un.innerText = lineName;
+        let usm = document.getElementById('userNameSmall'); if(usm) usm.innerText = lineName;
+        initApp();
+    }
 
     if (typeof liff !== 'undefined') {
-        liff.init({ liffId: MY_LIFF_ID }).then(() => { if(liff.isLoggedIn()){ liff.getProfile().then(p => { lineUserId = p.userId; lineName = p.displayName; let un = document.getElementById('userName'); if(un) un.innerText = lineName; let usm = document.getElementById('userNameSmall'); if(usm) usm.innerText = lineName; if(p.pictureUrl) { let pic = document.getElementById('userPic'); if(pic) pic.src = p.pictureUrl; let picSm = document.getElementById('userPicSmall'); if(picSm) picSm.src = p.pictureUrl; } initApp(); }).catch(err => { mockLoginForBrowser(); }); } else { liff.login(); } }).catch(e => { mockLoginForBrowser(); });
+        liff.init({ liffId: MY_LIFF_ID }).then(() => {
+          if(liff.isLoggedIn()){
+            liff.getProfile().then(p => {
+              lineUserId = p.userId; lineName = p.displayName;
+              let un = document.getElementById('userName'); if(un) un.innerText = lineName;
+              let usm = document.getElementById('userNameSmall'); if(usm) usm.innerText = lineName;
+              if(p.pictureUrl) { 
+                  let pic = document.getElementById('userPic'); if(pic) pic.src = p.pictureUrl; 
+                  let picSm = document.getElementById('userPicSmall'); if(picSm) picSm.src = p.pictureUrl; 
+              }
+              initApp();
+            }).catch(err => { mockLoginForBrowser(); });
+          } else { liff.login(); }
+        }).catch(e => { mockLoginForBrowser(); });
     } else { mockLoginForBrowser(); }
 
     function initApp() {
       requestWakeLock();
       db.ref('passenger_blocks/' + lineUserId).on('value', snap => { myBlockedDrivers = snap.val() || {}; });
+
+      // แก้ไข: เพิ่มการดึงคะแนนเรตติ้งผู้โดยสาร
+      db.ref('passengers_profile/' + lineUserId).on('value', snap => {
+          if(snap.exists() && snap.val().rating) {
+              let r = snap.val().rating;
+              if (r.count > 0) {
+                  let avg = (r.totalScore / r.count).toFixed(1);
+                  let ratingEl = document.getElementById('profileRatingLarge');
+                  if(ratingEl) ratingEl.innerText = avg;
+              }
+          }
+      });
+
       db.ref('bookings/' + lineUserId).on('value', snap => {
         const b = snap.val();
         if(b) { 
-            if(b.driverPin && b.status === "รับงานแล้ว" && (myBlockedDrivers[b.driverPin] || myBlockedDrivers[b.driverPhone])) { db.ref('bookings/' + lineUserId).update({ driverPin: null, driverPhone: null, status: "รอผู้ขับขี่ตอบรับ" }); return; }
+            if(b.driverPin && b.status === "รับงานแล้ว" && (myBlockedDrivers[b.driverPin] || myBlockedDrivers[b.driverPhone])) {
+                db.ref('bookings/' + lineUserId).update({ driverPin: null, driverPhone: null, status: "รอผู้ขับขี่ตอบรับ" });
+                return; 
+            }
             bookData = b; 
-            if (b.waypoints) { localWaypoints.forEach(w => { if(w.marker) w.marker.setMap(null); }); localWaypoints = b.waypoints.map(w => ({ lat: w.lat, lng: w.lng, name: w.name, type: w.type, iconType: w.iconType || null, passed: w.passed || false })); } else { localWaypoints = []; }
-            updateRideButtonState(); handleTracking(); 
+
+            if (b.waypoints) {
+                localWaypoints.forEach(w => { if(w.marker) w.marker.setMap(null); });
+                localWaypoints = b.waypoints.map(w => ({ lat: w.lat, lng: w.lng, name: w.name, type: w.type, iconType: w.iconType || null, passed: w.passed || false }));
+            } else {
+                localWaypoints = [];
+            }
+            
+            updateRideButtonState();
+            handleTracking(); 
         } 
         else if (currentStep === 'Tracking' && !isCompleting) {
             isCompleting = true;
             db.ref('completed_jobs').orderByChild('userId').equalTo(lineUserId).limitToLast(1).once('value', cSnap => {
-                let isCompleted = false; if(cSnap.exists()){ cSnap.forEach(child => { let cData = child.val(); if (Date.now() - (cData.completedAt || cData.timestamp || 0) < 180000) { isCompleted = true; } }); }
-                if (isCompleted || bookData.status.includes("ถึงที่หมาย") || bookData.status.includes("เสร็จสิ้น")) { let finalMessage = `จุดรับ: ${bookData.pName}\nจุดส่ง: ${bookData.dName}\nราคา: ${bookData.price} บาท\n\nขอบคุณที่ใช้บริการ F1 Driver ครับ!`; showAlert('เดินทางถึงที่หมายเรียบร้อย!', finalMessage, 'success', () => { document.getElementById('driverRatingModal').classList.remove('hidden'); }); } else { showAlert('แจ้งเตือน', 'ขออภัยในความไม่สะดวกครับ งานนี้ถูกยกเลิก รบกวนคุณลูกค้ากดยืนยันเพื่อเรียกรถใหม่อีกครั้งนะครับ', 'error', () => { resetTrackingFlags(); isCompleting = false; showPage(4); }); }
+                let isCompleted = false;
+                if(cSnap.exists()){
+                    cSnap.forEach(child => {
+                        let cData = child.val();
+                        if (Date.now() - (cData.completedAt || cData.timestamp || 0) < 180000) { isCompleted = true; }
+                    });
+                }
+
+                if (isCompleted || bookData.status.includes("ถึงที่หมาย") || bookData.status.includes("เสร็จสิ้น")) {
+                    let finalMessage = `จุดรับ: ${bookData.pName}\nจุดส่ง: ${bookData.dName}\nราคา: ${bookData.price} บาท\n\nขอบคุณที่ใช้บริการ F1 Driver ครับ!`;
+                    showAlert('เดินทางถึงที่หมายเรียบร้อย!', finalMessage, 'success', () => { 
+                        document.getElementById('driverRatingModal').classList.remove('hidden');
+                    });
+                } else {
+                    showAlert('แจ้งเตือน', 'ขออภัยในความไม่สะดวกครับ งานนี้ถูกยกเลิก รบกวนคุณลูกค้ากดยืนยันเพื่อเรียกรถใหม่อีกครั้งนะครับ', 'error', () => { 
+                        resetTrackingFlags(); isCompleting = false; showPage(4); 
+                    });
+                }
             });
         }
       });
+
       activeGlobalChatListenerRef = db.ref('community_chat').limitToLast(50);
       activeGlobalChatListenerRef.on('child_added', snap => {
-          let messageData = snap.val(); let modal = document.getElementById('communityModal');
-          if(!modal.classList.contains('hidden')) { localStorage.setItem('lastSeenChatTime', Date.now()); unreadChatCount = 0; } else { let lastSeenChat = parseInt(localStorage.getItem('lastSeenChatTime') || '0'); if (messageData.timestamp > lastSeenChat) { unreadChatCount++; } }
+          let messageData = snap.val();
+          let modal = document.getElementById('communityModal');
+          
+          if(!modal.classList.contains('hidden')) {
+              localStorage.setItem('lastSeenChatTime', Date.now());
+              unreadChatCount = 0;
+          } else {
+              let lastSeenChat = parseInt(localStorage.getItem('lastSeenChatTime') || '0');
+              if (messageData.timestamp > lastSeenChat) {
+                  unreadChatCount++;
+              }
+          }
           updateChatBadge();
-          const messagesDiv = document.getElementById('globalChatMessages'); const chatBox = document.getElementById('globalChatBox');
+
+          const messagesDiv = document.getElementById('globalChatMessages');
+          const chatBox = document.getElementById('globalChatBox');
           if (messagesDiv) {
-              let isSenderMe = messageData.pin === lineUserId; let align = isSenderMe ? 'justify-end' : 'justify-start'; let bg = isSenderMe ? 'bg-[#fae100] text-[#1e234e]' : 'bg-[#2a2f5c] border border-[#383d6a] text-white'; let senderName = isSenderMe ? 'คุณ' : (messageData.name || 'ผู้โดยสาร'); let timeStr = "";
-              if (messageData.timestamp) { let d = new Date(messageData.timestamp); let day = String(d.getDate()).padStart(2, '0'); let month = String(d.getMonth() + 1).padStart(2, '0'); let hrs = String(d.getHours()).padStart(2, '0'); let mins = String(d.getMinutes()).padStart(2, '0'); timeStr = `${day}/${month} ${hrs}:${mins}`; }
-              let messageHtml = `<div class="chat-msg-item flex w-full ${align} animate-fade-in mb-3"><div class="flex flex-col ${isSenderMe ? 'items-end' : 'items-start'} max-w-[85%]">${!isSenderMe ? `<span class="text-[10px] text-gray-500 mb-1 ml-1">${senderName}</span>` : ''}<div class="${bg} px-4 py-2.5 rounded-2xl text-[13px] shadow-sm break-words w-full font-normal">${messageData.text}</div><span class="text-[9px] text-gray-600 mt-1 ${isSenderMe ? 'mr-1' : 'ml-1'}">${timeStr}</span></div></div>`;
+              let isSenderMe = messageData.pin === lineUserId;
+              let align = isSenderMe ? 'justify-end' : 'justify-start';
+              let bg = isSenderMe ? 'bg-[#fae100] text-[#1e234e]' : 'bg-[#2a2f5c] border border-[#383d6a] text-white';
+              let senderName = isSenderMe ? 'คุณ' : (messageData.name || 'ผู้โดยสาร');
+              
+              let timeStr = "";
+              if (messageData.timestamp) {
+                  let d = new Date(messageData.timestamp);
+                  let day = String(d.getDate()).padStart(2, '0');
+                  let month = String(d.getMonth() + 1).padStart(2, '0');
+                  let hrs = String(d.getHours()).padStart(2, '0');
+                  let mins = String(d.getMinutes()).padStart(2, '0');
+                  timeStr = `${day}/${month} ${hrs}:${mins}`;
+              }
+
+              let messageHtml = `
+              <div class="chat-msg-item flex w-full ${align} animate-fade-in mb-3">
+                  <div class="flex flex-col ${isSenderMe ? 'items-end' : 'items-start'} max-w-[85%]">
+                      ${!isSenderMe ? `<span class="text-[10px] text-gray-500 mb-1 ml-1 font-normal">${senderName}</span>` : ''}
+                      <div class="${bg} px-4 py-2.5 rounded-2xl text-[13px] shadow-sm break-words w-full font-normal">
+                          ${messageData.text}
+                      </div>
+                      <span class="text-[9px] text-gray-600 mt-1 ${isSenderMe ? 'mr-1' : 'ml-1'} font-normal">${timeStr}</span>
+                  </div>
+              </div>`;
+              
               messagesDiv.insertAdjacentHTML('beforeend', messageHtml);
-              if(!modal.classList.contains('hidden')) { chatBox.scrollTop = chatBox.scrollHeight; }
+              if(!modal.classList.contains('hidden')) {
+                  chatBox.scrollTop = chatBox.scrollHeight;
+              }
           }
       });
     }
 
-    function addWaypointFromLocation(lat, lng, name, type, iconType = null) { let marker = new google.maps.Marker({ position: {lat: lat, lng: lng}, map: map, animation: google.maps.Animation.DROP, zIndex: 4 }); localWaypoints.push({ lat, lng, name: name, type, marker, iconType, passed: false }); focusedWaypointIndex = -1; renderWaypointsUI(); }
-    function updateChatBadge() { let badge = document.getElementById('chatBadge'); if(badge) { if(unreadChatCount > 0) { badge.innerText = unreadChatCount; badge.classList.remove('hidden'); } else { badge.classList.add('hidden'); } } }
-    function openCommunityModal() { document.getElementById('communityModal').classList.remove('hidden'); localStorage.setItem('lastSeenChatTime', Date.now()); unreadChatCount = 0; updateChatBadge(); const chatBox = document.getElementById('globalChatBox'); setTimeout(() => { chatBox.scrollTop = chatBox.scrollHeight; }, 100); setTimeout(() => { document.getElementById('globalChatInput').focus(); }, 300); }
-    function closeCommunityModal() { document.getElementById('communityModal').classList.add('hidden'); }
-    function sendGlobalChat() { let inputEl = document.getElementById('globalChatInput'); let textVal = inputEl.value.trim(); if(!textVal) return; db.ref('community_chat').push({ pin: lineUserId, name: lineName || 'ผู้โดยสาร', text: textVal, timestamp: firebase.database.ServerValue.TIMESTAMP }).then(() => { inputEl.value = ''; }); }
-    function filterCommunityChat() { let keyword = document.getElementById('chatSearchInput').value.toLowerCase(); let messages = document.querySelectorAll('.chat-msg-item'); messages.forEach(msg => { let text = msg.innerText.toLowerCase(); if(text.includes(keyword)) { msg.style.display = 'flex'; } else { msg.style.display = 'none'; } }); }
-
-    function calculatePrice() {
-      if(!directionsService || !map || localWaypoints.length < 2) return;
-      let origin = new google.maps.LatLng(localWaypoints[0].lat, localWaypoints[0].lng); let dest = new google.maps.LatLng(localWaypoints[localWaypoints.length - 1].lat, localWaypoints[localWaypoints.length - 1].lng); let waypts = localWaypoints.slice(1, -1).map(w => ({location: new google.maps.LatLng(w.lat, w.lng), stopover: true}));
-      directionsService.route({origin: origin, destination: dest, waypoints: waypts, travelMode: 'DRIVING'}, (resRide, stat1) => {
-        if(stat1 === 'OK') {
-          if(polylineRoute) polylineRoute.setMap(null); polylineRoute = new google.maps.Polyline({ path: resRide.routes[0].legs.flatMap(leg => leg.steps.flatMap(step => step.path)), strokeColor: '#3b82f6', strokeWeight: 6, map: map });
-          let distMeters = 0; let waitMins = 0; resRide.routes[0].legs.forEach(leg => { distMeters += leg.distance.value; waitMins += leg.duration.value; }); let distRideKm = distMeters / 1000; waitMins = Math.ceil(waitMins / 60); currentRouteBounds = resRide.routes[0].bounds;
-          bookData.distance = distRideKm.toFixed(1); bookData.duration = waitMins; const sDist = document.getElementById('sumDist'); const sWait = document.getElementById('sumWait'); if(sDist) sDist.innerText = bookData.distance; if(sWait) sWait.innerText = bookData.duration;
-          let baseFare = parseInt(pricingConfig[currentServiceType]?.base || pricingConfig.base || 50); let kmRate = parseInt(pricingConfig[currentServiceType]?.km || pricingConfig.km || 10); let pickRate = parseInt(pricingConfig[currentServiceType]?.pick || pricingConfig.pick || 5);
-          let baseRidePrice = baseFare + (distRideKm * kmRate); let minDriverDist = 0; let maxDriverDist = 0;
-          if (onlineDrivers && onlineDrivers.length > 0 && typeof google.maps.geometry !== 'undefined') { let distances = onlineDrivers.map(d => { let dLoc = new google.maps.LatLng(d.lat, d.lng); return google.maps.geometry.spherical.computeDistanceBetween(dLoc, origin) / 1000; }); minDriverDist = Math.min(...distances); maxDriverDist = Math.max(...distances); } else if (driverData && driverData.lat && driverData.lng && typeof google.maps.geometry !== 'undefined') { let driverLatLng = new google.maps.LatLng(driverData.lat, driverData.lng); minDriverDist = maxDriverDist = google.maps.geometry.spherical.computeDistanceBetween(driverLatLng, origin) / 1000; }
-          let minPrice = Math.floor((baseRidePrice + (minDriverDist * pickRate)) / 10) * 10; let maxPrice = Math.ceil((baseRidePrice + (maxDriverDist * pickRate)) / 10) * 10;
-          if(minPrice < baseFare) minPrice = baseFare; if(maxPrice <= minPrice) maxPrice = minPrice + 10; 
-          let priceRangeStr = `~฿${minPrice} - ${maxPrice}`; if (minDriverDist === 0 && maxDriverDist === 0) { priceRangeStr = `~฿${minPrice} - ${minPrice + 20}`; document.getElementById('sumPriceLabel').innerText = "ราคาประเมิน (ไม่มีรถออนไลน์)"; } else { document.getElementById('sumPriceLabel').innerText = "ราคาประเมิน"; }
-          bookData.originalPrice = minPrice; bookData.price = minPrice; bookData.priceEstimate = priceRangeStr;
-          const sPrice = document.getElementById('sumPrice'); if(sPrice) sPrice.innerText = bookData.priceEstimate;
-          setTimeout(() => { if(map) { let pb = getDynamicBottomPadding(); map.fitBounds(currentRouteBounds, { top: 120, right: 50, bottom: pb, left: 50 }); } }, 200);
-        }
-      });
-    }
-
-    function drawTrackingRoute(statusText) {
-        if(!directionsService || !map || localWaypoints.length === 0) return; let activeWaypoints = localWaypoints.filter(w => !w.passed); if(activeWaypoints.length === 0) return; let rOrigin, rDest, rWaypts = [];
-        if (statusText.includes("กำลังเดินทางไปหา") || statusText.includes("รับงานแล้ว") || statusText.includes("มาถึงจุดรับ") || statusText.includes("ออกเดินทาง") || statusText.includes("ไปยังจุดส่ง")) { if(!driverData || !driverData.lat) return; rOrigin = new google.maps.LatLng(driverData.lat, driverData.lng); rDest = new google.maps.LatLng(activeWaypoints[activeWaypoints.length - 1].lat, activeWaypoints[activeWaypoints.length - 1].lng); if(activeWaypoints.length > 1) { rWaypts = activeWaypoints.slice(0, -1).map(w => ({location: new google.maps.LatLng(w.lat, w.lng), stopover: true})); } } else { if(activeWaypoints.length < 2) return; rOrigin = new google.maps.LatLng(activeWaypoints[0].lat, activeWaypoints[0].lng); rDest = new google.maps.LatLng(activeWaypoints[activeWaypoints.length - 1].lat, activeWaypoints[activeWaypoints.length - 1].lng); if(activeWaypoints.length > 2) { rWaypts = activeWaypoints.slice(1, -1).map(w => ({location: new google.maps.LatLng(w.lat, w.lng), stopover: true})); } }
-        directionsService.route({origin: rOrigin, destination: rDest, waypoints: rWaypts, travelMode: 'DRIVING'}, (res, stat) => { if(stat === 'OK') { if(polylineRoute) polylineRoute.setMap(null); polylineRoute = new google.maps.Polyline({ path: res.routes[0].legs.flatMap(leg => leg.steps.flatMap(step => step.path)), strokeColor: '#3b82f6', strokeWeight: 6, map: map }); currentRouteBounds = res.routes[0].bounds; updateRealtimeMap(); } });
-    }
-
-    function applyPromoCode() {
-        let codeInput = document.getElementById('promoInput'); if(!codeInput) return; let val = codeInput.value.trim().toUpperCase(); if(!val) { showAlert('ข้อผิดพลาด', 'กรุณากรอกโค้ดส่วนลดก่อนครับ', 'error'); return; }
-        let isNewUser = false; db.ref('completed_jobs').orderByChild('userId').equalTo(lineUserId).once('value', userSnap => { if(!userSnap.exists() || Object.keys(userSnap.val() || {}).length === 0) { isNewUser = true; } db.ref('promotions/' + val).once('value', snap => { let p = snap.val(); if (!p || p.isActive === false) return resetPromoError('โค้ดส่วนลดนี้ไม่ถูกต้อง หรือถูกปิดการใช้งานไปแล้วครับ', codeInput); if (p.isSingleUse && p.usageCount >= 1) return resetPromoError('โค้ดนี้ถูกใช้งานไปแล้วครับ (สิทธิ์การใช้ 1 ครั้ง)', codeInput); if (p.target === 'new_user' && !isNewUser) return resetPromoError('ขออภัย โค้ดนี้สงวนสิทธิ์เฉพาะผู้ใช้ใหม่เท่านั้นครับ', codeInput); bookData.promoCode = p.code; bookData.discount = p.value; bookData.price = Math.max(0, bookData.originalPrice - p.value); let maxPrice = Math.max(0, (bookData.originalPrice + 20) - p.value); bookData.priceEstimate = `~฿${bookData.price} - ${maxPrice}`; const oldP = document.getElementById('sumPriceOld'); const newP = document.getElementById('sumPrice'); const dTag = document.getElementById('discountTag'); if(oldP) { oldP.innerText = `฿${bookData.originalPrice}`; oldP.classList.remove('hidden'); } if(newP) newP.innerText = bookData.priceEstimate; if(dTag) { dTag.innerText = `ประหยัด ฿${p.value}`; dTag.classList.remove('hidden'); } closePromoModal(); showAlert('สำเร็จ!', `ใช้โค้ดส่วนลด ${p.code} ได้รับส่วนลด ${p.value} บาทเรียบร้อยแล้ว`, 'success'); }); });
-    }
-
-    function resetPromoError(msg, codeInput) { showAlert('ขออภัย', msg, 'error'); codeInput.value = ''; bookData.promoCode = ''; bookData.discount = 0; bookData.price = bookData.originalPrice; bookData.priceEstimate = `~฿${bookData.originalPrice} - ${bookData.originalPrice + 20}`; const oldP = document.getElementById('sumPriceOld'); const newP = document.getElementById('sumPrice'); const dTag = document.getElementById('discountTag'); if(oldP) oldP.classList.add('hidden'); if(newP) newP.innerText = bookData.priceEstimate; if(dTag) dTag.classList.add('hidden'); }
-
-    function submitBooking() {
-      if ('speechSynthesis' in window) { let unlockMsg = new SpeechSynthesisUtterance(''); window.speechSynthesis.speak(unlockMsg); }
-      let telInput = document.getElementById('userPhone'); if(!telInput) return; let tel = telInput.value.replace(/\D/g, ''); if(tel.length === 0) { showAlert('แจ้งเตือน', 'กรุณากรอกเบอร์ติดต่อก่อนกดยืนยันงานครับ', 'error'); return; } if(tel.length < 10) { showAlert('แจ้งเตือน', 'กรุณากรอกเบอร์โทรศัพท์ให้ครบ 10 หลักครับ', 'error'); return; } localStorage.setItem('passengerPhone', tel);
-      bookData.serviceType = currentServiceType; bookData.charterDetails = null; 
-      db.ref('blacklist/' + tel).once('value', snap => { if (snap.exists()) { showAlert('ระงับบริการ', 'ขออภัย เบอร์โทรศัพท์นี้ถูกระงับการให้บริการจากระบบชั่วคราว\nเหตุผล: ' + snap.val().reason, 'error'); return; } bookData.userId = lineUserId; bookData.name = lineName; bookData.phone = tel; bookData.status = "รอผู้ขับขี่ตอบรับ"; bookData.timestamp = firebase.database.ServerValue.TIMESTAMP; let dbWaypoints = localWaypoints.map(w => ({ lat: w.lat, lng: w.lng, name: w.name, type: w.type, iconType: w.iconType || null, passed: false })); bookData.waypoints = dbWaypoints; db.ref('bookings/' + lineUserId).set(bookData).then(() => { if(bookData.promoCode) { let histRef = db.ref('promotions/' + bookData.promoCode + '/history').push(); histRef.set({ date: new Date().toLocaleString('th-TH'), userName: lineName, phone: tel, discount: bookData.discount }); db.ref('promotions/' + bookData.promoCode + '/usageCount').set(firebase.database.ServerValue.increment(1)); } if(APPS_SCRIPT_URL) fetch(`${APPS_SCRIPT_URL}?action=notify&type=new_ride&name=${lineName}&pick=${bookData.pName}`, {mode: 'no-cors'}); showPage('Tracking'); }); });
-    }
-
-    function handleTracking() {
-      if(currentStep !== 'Tracking') { showPage('Tracking'); const btnO = document.getElementById('btnOverview'); if(btnO) btnO.classList.remove('hidden'); }
-      const mapControls = document.getElementById('mapControls'); if(mapControls) mapControls.classList.remove('hidden');
-      const bottomStatusBox = document.getElementById('unifiedStatusBox'); const driverBox = document.getElementById('driverInfoBox'); const actionButtonsBox = document.getElementById('actionButtonsBox');
-      const statusBottom = document.getElementById('unifiedStatusText'); const priceBottom = document.getElementById('unifiedPriceText'); const priceLabelBottom = document.getElementById('priceLabelTracking'); const labelBottom = document.getElementById('unifiedStatusLabel'); const etaBottom = document.getElementById('unifiedEtaText'); const searchProgress = document.getElementById('searchProgressBar');
-      if(driverBox) driverBox.classList.add('hidden'); if(actionButtonsBox) actionButtonsBox.classList.add('hidden');
-      let displayStatus = bookData.status; let nextWp = localWaypoints.find(w => !w.passed);
-      if (nextWp) { let shortName = nextWp.name.length > 25 ? nextWp.name.substring(0, 25) + '...' : nextWp.name; if (bookData.status.includes("กำลังเดินทางไปหา") || bookData.status.includes("รับงานแล้ว")) { displayStatus = `กำลังไปจุดรับ: ${shortName}`; } else if (bookData.status.includes("ออกเดินทาง") || bookData.status.includes("ไปยังจุดส่ง") || bookData.status.includes("รับผู้โดยสารแล้ว")) { if (nextWp.type === 'pick') displayStatus = `กำลังไปจุดรับถัดไป: ${shortName}`; else if (nextWp.type === 'waypoint') displayStatus = `กำลังไปจุดแวะ: ${shortName}`; else if (nextWp.type === 'drop') displayStatus = `กำลังไปจุดส่ง: ${shortName}`; } } else { if(bookData.status.includes("ถึงที่หมาย")) displayStatus = "ถึงที่หมายเรียบร้อยแล้ว"; }
-      if(statusBottom) statusBottom.innerText = displayStatus;
-      if(bookData.status === "รอผู้ขับขี่ตอบรับ") { if(priceLabelBottom) priceLabelBottom.innerText = "ราคาประเมิน"; if(priceBottom) priceBottom.innerText = bookData.priceEstimate || "~฿" + bookData.price; } else { if(priceLabelBottom) priceLabelBottom.innerText = "ราคา (คำนวณจริง)"; if(priceBottom) priceBottom.innerText = "฿" + bookData.price; }
-      if(bottomStatusBox) bottomStatusBox.classList.remove('hidden');
-      if (bookData.routeChangeRequest && bookData.routeChangeRequest.status === 'pending' && !isShowingRouteChange) { isShowingRouteChange = true; showRouteChangeModal(bookData.routeChangeRequest); } else if (!bookData.routeChangeRequest) { isShowingRouteChange = false; }
-      if(bookData.status === "รอผู้ขับขี่ตอบรับ" || bookData.status.includes("ยกเลิก")) { if(statusBottom) { if (bookData.status.includes("ยกเลิก")) { if(labelBottom) labelBottom.innerHTML = '<i class="fas fa-times-circle text-red-500"></i> STATUS'; statusBottom.className = "font-black text-[15px] leading-tight text-red-500 truncate"; } else { if(labelBottom) labelBottom.innerHTML = '<i class="fas fa-spinner fa-spin text-blue-500 text-[12px]"></i> STATUS'; statusBottom.className = "font-black text-[15px] leading-tight text-white truncate"; } } } else { if(bookData.driverPin && driverBox) driverBox.classList.remove('hidden'); if(statusBottom) { if(labelBottom) labelBottom.innerHTML = '<i class="fas fa-info-circle text-blue-400"></i> STATUS'; if (bookData.status.includes("กำลังเดินทางไปหา") || bookData.status.includes("รับงานแล้ว") || bookData.status.includes("มาถึงจุดรับ")) { statusBottom.className = "font-black text-[15px] leading-tight text-green-400 truncate"; } else if (bookData.status.includes("ออกเดินทาง") || bookData.status.includes("ไปยังจุดส่ง") || bookData.status.includes("รับผู้โดยสารแล้ว")) { statusBottom.className = "font-black text-[15px] leading-tight text-blue-400 truncate"; } else { statusBottom.className = "font-black text-[15px] leading-tight text-white truncate"; } } }
-      renderWaypointsUI();
-      if (currentRouteStatus !== bookData.status && typeof google !== 'undefined' && map) { drawTrackingRoute(bookData.status); currentRouteStatus = bookData.status; }
-      if(bookData.driverPin && bookData.status !== "รอผู้ขับขี่ตอบรับ" && !bookData.status.includes("ยกเลิก")) { db.ref('drivers_profile/' + bookData.driverPin).once('value', snap => { let pEl = document.getElementById('trackDriverPlate'); let cEl = document.getElementById('trackDriverCar'); let nEl = document.getElementById('trackDriverName'); if(snap.exists()) { let p = snap.val(); if(pEl) pEl.innerHTML = `<span class="text-gray-400 font-normal">ทะเบียน:</span> ${p.plate || '-'}`; if(cEl) cEl.innerHTML = `<span class="text-gray-400 font-normal">รถยี่ห้อ:</span> ${p.brand || '-'} <span class="text-gray-400 font-normal ml-1">สี:</span> ${p.color || '-'}`; if(nEl) nEl.innerHTML = `<span class="text-gray-400 font-normal">คนขับชื่อ:</span> ${p.name || '-'}`; } else { if(pEl) pEl.innerHTML = `<span class="text-gray-400 font-normal">ทะเบียน:</span> -`; if(cEl) cEl.innerHTML = `<span class="text-gray-400 font-normal">รถยี่ห้อ:</span> ไม่ระบุ <span class="text-gray-400 font-normal ml-1">สี:</span> -`; if(nEl) nEl.innerHTML = `<span class="text-gray-400 font-normal">คนขับชื่อ:</span> ไม่ระบุ`; } }); }
-      if (lastNotifiedStatus !== bookData.status) { playSoundAlert(); if ((bookData.status.includes("กำลังเดินทางไปหา") || bookData.status.includes("รับงานแล้ว")) && !hasSpokenAccept) { speakText("คนขับตอบรับแล้ว ราคาค่าโดยสารได้ถูกกำหนดแล้ว"); hasSpokenAccept = true; } else if (bookData.status.includes("มาถึงจุดรับ") && !hasSpokenAtPickup) { speakText("คนขับมาถึงแล้ว"); hasSpokenAtPickup = true; } else if ((bookData.status.includes("ออกเดินทาง") || bookData.status.includes("ไปยังจุดส่ง")) && !hasSpokenDepart) { speakText("กำลังออกเดินทางไปยังจุดหมาย"); hasSpokenDepart = true; } else if (bookData.status.includes("ถึงที่หมาย") && !hasSpokenFinish) { speakText("ถึงจุดหมายแล้ว ขอบคุณที่ใช้บริการ"); hasSpokenFinish = true; } else if (bookData.status.includes("ยกเลิก") && !hasSpokenCancel) { speakText("งานถูกยกเลิก"); hasSpokenCancel = true; } lastNotifiedStatus = bookData.status; }
-      let btnE = document.getElementById('btnEmergency'); let btnCh = document.getElementById('btnChat'); let btnCa = document.getElementById('btnCall'); let btnCancel = document.getElementById('btnCancel'); let btnAddWp = document.getElementById('btnAddWaypt'); let tAddressBox = document.getElementById('trackAddressBox');
-      if (bookData.status === "รอผู้ขับขี่ตอบรับ") { if(btnE) btnE.classList.add('hidden'); if(actionButtonsBox) { actionButtonsBox.classList.remove('hidden'); actionButtonsBox.classList.add('flex'); } if(btnCancel) btnCancel.classList.remove('hidden'); if(btnCh) btnCh.classList.add('hidden'); if(btnCa) btnCa.classList.add('hidden'); if(btnAddWp) btnAddWp.classList.add('hidden'); if(tAddressBox) { tAddressBox.classList.remove('flex-1'); tAddressBox.classList.add('w-full'); } } else if (bookData.status.includes("กำลังเดินทางไปหา") || bookData.status.includes("มาถึงจุดรับ") || bookData.status.includes("รับงานแล้ว")) { if(btnE) btnE.classList.add('hidden'); if(actionButtonsBox) { actionButtonsBox.classList.remove('hidden'); actionButtonsBox.classList.add('flex'); } if(btnCancel) btnCancel.classList.remove('hidden'); if(btnCh) btnCh.classList.remove('hidden'); if(btnCa) btnCa.classList.remove('hidden'); if(btnAddWp) btnAddWp.classList.add('hidden'); if(tAddressBox) { tAddressBox.classList.remove('w-full'); tAddressBox.classList.add('flex-1'); } let callBtn = document.getElementById('confirmCallBtn'); if(bookData.driverPhone && callBtn) callBtn.href = "tel:" + bookData.driverPhone; } else if (bookData.status.includes("ออกเดินทาง") || bookData.status.includes("ไปยังจุดส่ง") || bookData.status.includes("รับผู้โดยสารแล้ว")) { if(btnE) btnE.classList.remove('hidden'); if(actionButtonsBox) { actionButtonsBox.classList.add('hidden'); actionButtonsBox.classList.remove('flex'); } if(btnCancel) btnCancel.classList.add('hidden'); if(btnCh) btnCh.classList.remove('hidden'); if(btnCa) btnCa.classList.add('hidden'); if(btnAddWp) btnAddWp.classList.remove('hidden'); if(tAddressBox) { tAddressBox.classList.remove('w-full'); tAddressBox.classList.add('flex-1'); } } else { if(btnE) btnE.classList.add('hidden'); if(actionButtonsBox) { actionButtonsBox.classList.add('hidden'); actionButtonsBox.classList.remove('flex'); } if(tAddressBox) { tAddressBox.classList.remove('flex-1'); tAddressBox.classList.add('w-full'); } }
-      let btnC = document.getElementById('btnCrosshair'); if (bookData.status.includes("ออกเดินทาง") || bookData.status.includes("ไปยังจุดส่ง") || bookData.status.includes("ถึงที่หมาย") || bookData.status.includes("รับผู้โดยสารแล้ว")) { if(btnC) btnC.classList.remove('hidden'); } else { if(btnC) btnC.classList.add('hidden'); }
-      updateRealtimeMap(); updateMapControlsPosition('Tracking');
-    }
-
-    function updateRealtimeMap() {
-        if(!map) return;
-        if(currentStep === 'Tracking') {
-            if (bookData.status === "รอผู้ขับขี่ตอบรับ" || bookData.status.includes("ยกเลิก")) { if(markerDriver) markerDriver.setMap(null); } else { if(markerDriver) { markerDriver.setPosition({lat: driverData.lat, lng: driverData.lng}); markerDriver.setMap(map); } }
-            if(isTrackingMode) { let dynamicBounds = new google.maps.LatLngBounds(); let paddingBottom = getDynamicBottomPadding(); if (driverData && driverData.lat) { dynamicBounds.extend(new google.maps.LatLng(driverData.lat, driverData.lng)); } let nextWp = localWaypoints.find(w => !w.passed); if (nextWp) { dynamicBounds.extend(new google.maps.LatLng(nextWp.lat, nextWp.lng)); } map.fitBounds(dynamicBounds, { top: 120, right: 50, bottom: paddingBottom, left: 50 }); let listener = google.maps.event.addListenerOnce(map, "idle", function() { if (map.getZoom() > 18) map.setZoom(18); }); }
-        }
-    }
-
-    function openInAppChatModal() { document.getElementById('inAppChatModal').classList.remove('hidden'); const box = document.getElementById('inAppChatMessages'); if(!activeChatListenerRef) { activeChatListenerRef = db.ref('bookings/' + lineUserId + '/chats'); activeChatListenerRef.on('child_added', snap => { let messageData = snap.val(); let isSenderMe = messageData.sender === 'passenger'; let align = isSenderMe ? 'justify-end' : 'justify-start'; let bg = isSenderMe ? 'bg-[#fae100] text-[#1e234e]' : 'bg-[#2a2f5c] border border-[#383d6a] text-white'; let messageDiv = document.createElement('div'); messageDiv.className = `flex w-full ${align} animate-fade-in`; messageDiv.innerHTML = `<div class="${bg} px-4 py-2.5 rounded-2xl max-w-[75%] text-[13px] font-normal shadow-sm">${messageData.text}</div>`; box.appendChild(messageDiv); box.scrollTop = box.scrollHeight; }); } }
-    function closeInAppChatModal() { document.getElementById('inAppChatModal').classList.add('hidden'); }
-    function sendInAppChatMessage() { let inputEl = document.getElementById('inAppChatInput'); let textVal = inputEl.value.trim(); if(!textVal) return; db.ref('bookings/' + lineUserId + '/chats').push({ sender: 'passenger', text: textVal, timestamp: firebase.database.ServerValue.TIMESTAMP }).then(() => { inputEl.value = ''; }); }
-
-    function updateSelectedRatingScore(score) { currentSelectedRatingScore = score; let stars = document.getElementById('starRatingBox').children; for(let i=0; i<5; i++) { if(i < score) stars[i].className = "fas fa-star text-3xl text-[#fae100] cursor-pointer transition scale-110"; else stars[i].className = "fas fa-star text-3xl text-gray-600 cursor-pointer transition hover:text-[#fae100]"; } }
-    function submitDriverRatingScore() { if(currentSelectedRatingScore === 0) { showAlert('แจ้งเตือน', 'กรุณากดเลือกคะแนนดาวก่อนกดยืนยันครับ', 'error'); return; } if(bookData.driverPin) { db.ref('drivers_profile/' + bookData.driverPin + '/ratings').push({ passengerName: lineName, score: currentSelectedRatingScore, timestamp: firebase.database.ServerValue.TIMESTAMP }); } document.getElementById('driverRatingModal').classList.add('hidden'); showAlert('สำเร็จ', 'ขอบคุณสำหรับคะแนนการประเมินความพึงพอใจครับ', 'success', () => { window.location.reload(); }); }
-
-    function showRouteChangeModal(req) { tempNewPrice = req.newPrice; tempNewDist = req.newDist; tempNewWp = {lat: req.lat, lng: req.lng, name: req.name, type: req.type === 'waypoint' ? 'waypoint' : 'drop'}; document.getElementById('rcTitle').innerText = req.type === 'waypoint' ? 'เพิ่มจุดแวะใหม่' : 'เปลี่ยนจุดหมายปลายทาง'; document.getElementById('rcAddress').innerText = req.name; document.getElementById('rcPrice').innerText = `฿${req.newPrice}`; document.getElementById('routeChangeModal').classList.remove('hidden'); }
-    function acceptRouteChange() { let req = bookData.routeChangeRequest; if(!req) return; let updates = { price: tempNewPrice, originalPrice: tempNewPrice + (bookData.discount || 0), priceEstimate: `฿${tempNewPrice}`, distance: tempNewDist, routeChangeRequest: null }; if (req.type === 'destination') { updates.dLat = req.lat; updates.dLng = req.lng; updates.dName = req.name; localWaypoints[localWaypoints.length - 1] = {lat: req.lat, lng: req.lng, name: req.name, type: 'drop', passed: false}; } else { localWaypoints.splice(localWaypoints.length - 1, 0, {lat: req.lat, lng: req.lng, name: req.name, type: 'waypoint', passed: false}); } updates.waypoints = localWaypoints.map(w => ({ lat: w.lat, lng: w.lng, name: w.name, type: w.type, iconType: w.iconType || null, passed: w.passed || false })); db.ref('bookings/' + lineUserId).update(updates).then(() => { document.getElementById('routeChangeModal').classList.add('hidden'); isShowingRouteChange = false; showAlert("สำเร็จ", "อัปเดตเส้นทางและราคาใหม่เรียบร้อยแล้ว", "success"); }); }
-    function rejectRouteChange() { db.ref('bookings/' + lineUserId + '/routeChangeRequest').remove().then(() => { document.getElementById('routeChangeModal').classList.add('hidden'); isShowingRouteChange = false; }); }
-
-    function openPassengerHistory() { document.getElementById('historyModal').classList.remove('hidden'); renderPassengerHistory(); }
-    function closePassengerHistory() { document.getElementById('historyModal').classList.add('hidden'); }
-    function renderPassengerHistory() { let container = document.getElementById('historyListContainer'); db.ref('completed_jobs').orderByChild('userId').equalTo(lineUserId).once('value', snap => { let jobs = []; snap.forEach(child => { jobs.push({id: child.key, data: child.val()}); }); jobs.sort((a,b) => (b.data.completedAt || 0) - (a.data.completedAt || 0)); if(jobs.length === 0) { container.innerHTML = `<div class="text-center py-10"><i class="fas fa-history text-4xl text-gray-600 mb-3"></i><p class="text-gray-400 font-bold">ยังไม่มีประวัติการเดินทาง</p></div>`; return; } let html = '<div class="space-y-3">'; jobs.forEach(job => { let d = job.data; let dateStr = new Date(d.completedAt || d.timestamp).toLocaleString('th-TH', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }); loadedHistoryJobs[job.id] = d; html += `<div onclick="openPassengerHistoryDetail('${job.id}')" class="bg-[#2a2f5c] border border-[#383d6a] p-4 rounded-2xl shadow-sm cursor-pointer hover:bg-[#383d6a] transition"><div class="flex justify-between items-center mb-3"><p class="text-[10px] text-gray-400 font-bold"><i class="far fa-clock"></i> ${dateStr}</p><span class="font-black text-[#4ade80] text-sm bg-[#1e234e] px-2 py-0.5 rounded border border-[#383d6a]">฿${d.price}</span></div><div class="flex items-center gap-2 mb-1.5"><i class="fas fa-circle text-[8px] text-[#22c55e] w-3"></i><p class="text-[11px] text-gray-300 truncate">${d.pName}</p></div><div class="flex items-center gap-2"><i class="fas fa-circle text-[8px] text-[#ef4444] w-3"></i><p class="text-[11px] text-gray-300 truncate">${d.dName}</p></div></div>`; }); html += '</div>'; container.innerHTML = html; }); }
-
-    function drawHistoryDetailMap(waypoints) {
-        if (typeof google === 'undefined' || !waypoints || waypoints.length < 2) return;
-        const mapOptions = { zoom: 14, center: { lat: waypoints[0].lat, lng: waypoints[0].lng }, styles: detailedDarkMapStyle, disableDefaultUI: true, gestureHandling: 'cooperative' };
-        const historyMap = new google.maps.Map(document.getElementById('historyDetailMap'), mapOptions);
-        const histDirectionsService = new google.maps.DirectionsService(); const histDirectionsRenderer = new google.maps.DirectionsRenderer({ map: historyMap, suppressMarkers: true, polylineOptions: { strokeColor: '#3b82f6', strokeWeight: 5 } });
-        let bounds = new google.maps.LatLngBounds();
-        waypoints.forEach((wp, index) => {
-            let isPickup = wp.type === 'pick'; let colorHex = isPickup ? '#22c55e' : '#ef4444'; let textColor = isPickup ? '#1e234e' : '#ffffff'; let labelNum = (index + 1).toString();
-            let marker = new google.maps.Marker({ position: { lat: wp.lat, lng: wp.lng }, map: historyMap, icon: createNumberedMarkerIcon(labelNum, colorHex, textColor), label: { text: labelNum, color: textColor, fontWeight: 'bold', fontSize: '12px' }, zIndex: 10 });
-            bounds.extend(marker.getPosition());
-        });
-        const origin = new google.maps.LatLng(waypoints[0].lat, waypoints[0].lng); const destination = new google.maps.LatLng(waypoints[waypoints.length - 1].lat, waypoints[waypoints.length - 1].lng); const histWaypts = waypoints.slice(1, -1).map(w => ({ location: new google.maps.LatLng(w.lat, w.lng), stopover: true }));
-        histDirectionsService.route({ origin: origin, destination: destination, waypoints: histWaypts, travelMode: 'DRIVING' }, (res, status) => { if (status === 'OK') { histDirectionsRenderer.setDirections(res); historyMap.fitBounds(bounds); google.maps.event.addListenerOnce(historyMap, "idle", function() { if (historyMap.getZoom() > 16) historyMap.setZoom(16); }); } else { historyMap.fitBounds(bounds); } });
-    }
-
-    function openPassengerHistoryDetail(jobId) {
-        let job = loadedHistoryJobs[jobId]; if(!job) return; selectedHistoryJobId = jobId;
-        document.getElementById('histDetDate').innerText = "วันที่ " + new Date(job.completedAt || job.timestamp).toLocaleString('th-TH'); document.getElementById('histDetPrice').innerText = "฿" + job.price; 
-        if(job.driverPin) { db.ref('drivers_profile/' + job.driverPin).once('value', snap => { if(snap.exists()){ document.getElementById('histDetDriver').innerText = `คนขับ: ${snap.val().name || '-'} (${snap.val().plate || '-'})`; } else document.getElementById('histDetDriver').innerText = `คนขับ: ไม่ทราบชื่อ`; }); } else document.getElementById('histDetDriver').innerText = `คนขับ: ไม่ทราบชื่อ`;
-        let wpContainer = document.getElementById('historyDetailWaypointsContainer');
-        if (wpContainer) {
-            let wpHtml = ''; let waypoints = job.waypoints || []; let globalCount = 1;
-            waypoints.forEach((wp) => { let isPickup = wp.type === 'pick'; let bgClass = isPickup ? 'bg-[#22c55e]' : 'bg-[#ef4444]'; wpHtml += `<div class="flex items-start gap-2 relative z-10 w-full mb-1"><div class="shrink-0 mt-0.5"><div class="w-4 h-4 rounded-full ${bgClass} text-white flex items-center justify-center text-[9px] font-bold">${globalCount}</div></div><div class="flex-1 overflow-hidden min-w-0"><p class="text-[12px] text-gray-200 truncate font-normal leading-tight">${wp.name}</p></div></div>`; globalCount++; });
-            wpContainer.innerHTML = wpHtml; document.getElementById('historyDetailModal').classList.remove('hidden'); setTimeout(() => { drawHistoryDetailMap(waypoints); }, 100);
-        }
-    }
-    function closeHistoryDetail() { document.getElementById('historyDetailModal').classList.add('hidden'); selectedHistoryJobId = null; }
-    function blockCurrentHistoryDriver() {
-        let job = loadedHistoryJobs[selectedHistoryJobId]; if(!job || !job.driverPin) { showAlert("ผิดพลาด", "ไม่สามารถบล็อกได้ เนื่องจากไม่พบข้อมูลรหัสคนขับสำหรับงานนี้", "error"); return; }
-        openConfirmActionModal("บล็อกคนขับ?", "หากยืนยัน คุณจะไม่ถูกจับคู่กับคนขับคนนี้อีกต่อไป คุณสามารถจัดการรายการบล็อกได้ในภายหลัง", () => { let updates = {}; updates[job.driverPin] = { driverPin: job.driverPin, driverPhone: job.driverPhone || null, timestamp: firebase.database.ServerValue.TIMESTAMP }; db.ref('passenger_blocks/' + lineUserId).update(updates).then(() => { showAlert("บล็อกสำเร็จ", "คุณจะไม่ได้รับงานจากคนขับท่านนี้อีก", "success"); closeHistoryDetail(); }); }, "red");
-    }
-
-    function openBlockedDrivers() { document.getElementById('blockedDriversModal').classList.remove('hidden'); renderBlockedDrivers(); }
-    function closeBlockedDrivers() { document.getElementById('blockedDriversModal').classList.add('hidden'); }
-    function renderBlockedDrivers() {
-        let container = document.getElementById('blockedListContainer'); if (Object.keys(myBlockedDrivers).length === 0) { container.innerHTML = `<div class="text-center py-10"><i class="fas fa-user-shield text-4xl text-gray-600 mb-3"></i><p class="text-gray-400 font-bold">ไม่มีรายการบล็อก</p></div>`; return; }
-        let uniqueBlocks = {}; Object.keys(myBlockedDrivers).forEach(key => { let item = myBlockedDrivers[key]; let realPin = (item && item.driverPin) ? item.driverPin : null; let realPhone = (item && item.driverPhone) ? item.driverPhone : null; if (realPin) { if (!uniqueBlocks[realPin]) uniqueBlocks[realPin] = { pin: realPin, phone: realPhone }; else if (realPhone) uniqueBlocks[realPin].phone = realPhone; } else if (realPhone || (key.length === 10 && !key.startsWith('U'))) { let pk = realPhone || key; let found = Object.values(uniqueBlocks).find(b => b.phone === pk); if (!found && !uniqueBlocks[pk]) { uniqueBlocks[pk] = { pin: null, phone: pk }; } } else { if (!uniqueBlocks[key]) uniqueBlocks[key] = { pin: key, phone: null }; } });
-        let promises = Object.keys(uniqueBlocks).map(k => { let block = uniqueBlocks[k]; if (block.pin) { return db.ref('drivers_profile/' + block.pin).once('value').then(snap => { return { pin: block.pin, phone: block.phone, name: snap.exists() ? snap.val().name + ' (' + snap.val().plate + ')' : 'รหัส: ' + block.pin }; }); } else { return Promise.resolve({ pin: null, phone: block.phone, name: 'ผู้ขับขี่ (ไม่ระบุข้อมูล)' }); } });
-        Promise.all(promises).then(results => { let html = '<div class="space-y-3">'; results.forEach(res => { let args = `'${res.pin || ''}', '${res.phone || ''}'`; html += `<div class="flex justify-between items-center bg-[#2a2f5c] border border-[#383d6a] p-3.5 rounded-2xl shadow-sm"><div class="flex items-center gap-3"><div class="w-10 h-10 bg-red-900/30 text-red-500 rounded-full flex items-center justify-center text-lg"><i class="fas fa-user-slash"></i></div><div><p class="text-gray-200 font-bold text-sm">${res.name}</p></div></div><button onclick="unblockDriver(${args})" class="bg-[#383d6a] text-gray-300 px-3 py-1.5 rounded-lg text-xs font-normal hover:bg-[#4b507d] transition">ปลดบล็อก</button></div>`; }); html += '</div>'; container.innerHTML = html; });
-    }
-    function unblockDriver(pin, phone) { let updates = {}; if(pin) updates[pin] = null; if(phone) updates[phone] = null; db.ref('passenger_blocks/' + lineUserId).update(updates).then(() => { showAlert('สำเร็จ', 'ปลดบล็อกคนขับเรียบร้อยแล้ว', 'success'); if(pin) delete myBlockedDrivers[pin]; if(phone) delete myBlockedDrivers[phone]; renderBlockedDrivers(); }); }
-
-    // ผูกฟังก์ชันทั้งหมดไว้ที่ window (Global) ป้องกันการถูกเรียกไม่เจอจาก onClick ใน HTML
-    window.handleMainRideClick = handleMainRideClick; window.openVehicleModal = openVehicleModal; window.closeVehicleModal = closeVehicleModal; window.selectVehicleAndStart = selectVehicleAndStart; window.openNewsModal = openNewsModal; window.closeNewsModal = closeNewsModal; window.openCommunityModal = openCommunityModal; window.closeCommunityModal = closeCommunityModal; window.sendGlobalChat = sendGlobalChat; window.filterCommunityChat = filterCommunityChat; window.goBack = goBack; window.goHome = goHome; window.useCurrentLocation = useCurrentLocation; window.confirmPickup = confirmPickup; window.confirmDropoff = confirmDropoff; window.addWaypointFromCenter = addWaypointFromCenter; window.removeWaypoint = removeWaypoint; window.openWaypointSearchModal = openWaypointSearchModal; window.closeWaypointSearchModal = closeWaypointSearchModal; window.showPage = showPage; window.togglePage4Panel = togglePage4Panel; window.toggleTrackingPanel = toggleTrackingPanel; window.toggleMapStyle = toggleMapStyle; window.handleCrosshairClick = handleCrosshairClick; window.focusLocationToggle = focusLocationToggle; window.centerToFocus = centerToFocus; window.fitAllWaypoints = fitAllWaypoints; window.openInAppChatModal = openInAppChatModal; window.closeInAppChatModal = closeInAppChatModal; window.sendInAppChatMessage = sendInAppChatMessage; window.updateSelectedRatingScore = updateSelectedRatingScore; window.submitDriverRatingScore = submitDriverRatingScore; window.rejectRouteChange = rejectRouteChange; window.acceptRouteChange = acceptRouteChange; window.openPassengerHistory = openPassengerHistory; window.closePassengerHistory = closePassengerHistory; window.openBlockedDrivers = openBlockedDrivers; window.closeBlockedDrivers = closeBlockedDrivers; window.unblockDriver = unblockDriver; window.closeAlertModal = closeAlertModal; window.closeConfirmActionModal = closeConfirmActionModal; window.submitConfirmAction = submitConfirmAction; window.openCallConfirmModal = openCallConfirmModal; window.closeCallConfirmModal = closeCallConfirmModal; window.openCancelModal = openCancelModal; window.closeCancelModal = closeCancelModal; window.openPromoModal = openPromoModal; window.closePromoModal = closePromoModal; window.openProfileModal = openProfileModal; window.closeProfileModal = closeProfileModal; window.editProfilePhone = editProfilePhone; window.confirmCancelBooking = confirmCancelBooking; window.handleSavedPlace = handleSavedPlace; window.editSavedPlace = editSavedPlace; window.openRecentPlacesModal = openRecentPlacesModal; window.closeRecentPlacesModal = closeRecentPlacesModal; window.openEmergencyModal = openEmergencyModal; window.closeEmergencyModal = closeEmergencyModal; window.applyPromoCode = applyPromoCode; window.submitBooking = submitBooking; window.openPassengerHistoryDetail = openPassengerHistoryDetail; window.closeHistoryDetail = closeHistoryDetail; window.blockCurrentHistoryDriver = blockCurrentHistoryDriver; window.initMap = initMap;
+    // Explicitly mapping functions to window to avoid scope issues in HTML
+    window.handleMainRideClick = handleMainRideClick;
+    window.openVehicleModal = openVehicleModal;
+    window.closeVehicleModal = closeVehicleModal;
+    window.selectVehicleAndStart = selectVehicleAndStart;
+    window.openNewsModal = openNewsModal;
+    window.closeNewsModal = closeNewsModal;
+    window.openCommunityModal = openCommunityModal;
+    window.closeCommunityModal = closeCommunityModal;
+    window.sendGlobalChat = sendGlobalChat;
+    window.filterCommunityChat = filterCommunityChat;
+    window.goBack = goBack;
+    window.goHome = goHome;
+    window.useCurrentLocation = useCurrentLocation;
+    window.confirmPickup = confirmPickup;
+    window.confirmDropoff = confirmDropoff;
+    window.addWaypointFromCenter = addWaypointFromCenter;
+    window.removeWaypoint = removeWaypoint;
+    window.openWaypointSearchModal = openWaypointSearchModal;
+    window.closeWaypointSearchModal = closeWaypointSearchModal;
+    window.showPage = showPage;
+    window.togglePage4Panel = togglePage4Panel;
+    window.toggleTrackingPanel = toggleTrackingPanel;
+    window.toggleMapStyle = toggleMapStyle;
+    window.handleCrosshairClick = handleCrosshairClick;
+    window.focusLocationToggle = focusLocationToggle;
+    window.centerToFocus = centerToFocus;
+    window.fitAllWaypoints = fitAllWaypoints;
+    window.openInAppChatModal = openInAppChatModal;
+    window.closeInAppChatModal = closeInAppChatModal;
+    window.sendInAppChatMessage = sendInAppChatMessage;
+    window.updateSelectedRatingScore = updateSelectedRatingScore;
+    window.submitDriverRatingScore = submitDriverRatingScore;
+    window.rejectRouteChange = rejectRouteChange;
+    window.acceptRouteChange = acceptRouteChange;
+    window.openPassengerHistory = openPassengerHistory;
+    window.closePassengerHistory = closePassengerHistory;
+    window.openBlockedDrivers = openBlockedDrivers;
+    window.closeBlockedDrivers = closeBlockedDrivers;
+    window.unblockDriver = unblockDriver;
+    window.closeAlertModal = closeAlertModal;
+    window.closeConfirmActionModal = closeConfirmActionModal;
+    window.submitConfirmAction = submitConfirmAction;
+    window.openCallConfirmModal = openCallConfirmModal;
+    window.closeCallConfirmModal = closeCallConfirmModal;
+    window.openCancelModal = openCancelModal;
+    window.closeCancelModal = closeCancelModal;
+    window.openPromoModal = openPromoModal;
+    window.closePromoModal = closePromoModal;
+    window.openProfileModal = openProfileModal;
+    window.closeProfileModal = closeProfileModal;
+    window.editProfilePhone = editProfilePhone;
+    window.confirmCancelBooking = confirmCancelBooking;
+    window.handleSavedPlace = handleSavedPlace;
+    window.editSavedPlace = editSavedPlace;
+    window.openRecentPlacesModal = openRecentPlacesModal;
+    window.closeRecentPlacesModal = closeRecentPlacesModal;
+    window.openEmergencyModal = openEmergencyModal;
+    window.closeEmergencyModal = closeEmergencyModal;
+    window.applyPromoCode = applyPromoCode;
+    window.submitBooking = submitBooking;
+    window.openPassengerHistoryDetail = openPassengerHistoryDetail;
+    window.closeHistoryDetail = closeHistoryDetail;
+    window.blockCurrentHistoryDriver = blockCurrentHistoryDriver;
+    window.initMap = initMap;
 
   </script>
-  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDsZ_tbFhH6fUXRz3I6C-tMshNwwrSevd4&libraries=places,geometry&callback=initMap" async defer></script>
 </body>
 </html>
