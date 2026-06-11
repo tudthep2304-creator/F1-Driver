@@ -2054,4 +2054,133 @@
     }
 
     windowContext.openPassengerHistory = function() { document.getElementById('historyModal').classList.remove('hidden'); renderPassengerHistory(); }
-    windowContext.closePassengerHistory = function() { document.getElementById('historyModal').classList.add('hidden');
+    windowContext.closePassengerHistory = function() { document.getElementById('historyModal').classList.add('hidden'); }
+    function renderPassengerHistory() {
+        let container = document.getElementById('historyListContainer');
+        db.ref('completed_jobs').orderByChild('userId').equalTo(lineUserId).once('value', snap => {
+            let jobs = []; snap.forEach(child => { jobs.push({id: child.key, data: child.val()}); }); jobs.sort((a,b) => (b.data.completedAt || 0) - (a.data.completedAt || 0));
+            if(jobs.length === 0) { container.innerHTML = `<div class="text-center py-10"><i class="fas fa-history text-4xl text-gray-600 mb-3"></i><p class="text-gray-400 font-bold">ยังไม่มีประวัติการเดินทาง</p></div>`; return; }
+            let html = '<div class="space-y-3">';
+            jobs.forEach(job => {
+                let d = job.data; let dateStr = new Date(d.completedAt || d.timestamp).toLocaleString('th-TH', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }); loadedHistoryJobs[job.id] = d;
+                html += `<div onclick="openPassengerHistoryDetail('${job.id}')" class="bg-[#2a2f5c] border border-[#383d6a] p-4 rounded-2xl shadow-sm cursor-pointer hover:bg-[#383d6a] transition"><div class="flex justify-between items-center mb-3"><p class="text-[10px] text-gray-400 font-bold"><i class="far fa-clock"></i> ${dateStr}</p><span class="font-black text-[#4ade80] text-sm bg-[#1e234e] px-2 py-0.5 rounded border border-[#383d6a]">฿${d.price}</span></div><div class="flex items-center gap-2 mb-1.5"><i class="fas fa-circle text-[8px] text-[#22c55e] w-3"></i><p class="text-[11px] text-gray-300 truncate">${d.pName}</p></div><div class="flex items-center gap-2"><i class="fas fa-circle text-[8px] text-[#ef4444] w-3"></i><p class="text-[11px] text-gray-300 truncate">${d.dName}</p></div></div>`;
+            }); html += '</div>'; container.innerHTML = html;
+        });
+    }
+    windowContext.openPassengerHistoryDetail = function(jobId) {
+        let job = loadedHistoryJobs[jobId]; if(!job) return; selectedHistoryJobId = jobId;
+        document.getElementById('histDetDate').innerText = "วันที่ " + new Date(job.completedAt || job.timestamp).toLocaleString('th-TH'); document.getElementById('histDetPrice').innerText = "฿" + job.price; 
+        if(job.driverPin) { db.ref('drivers_profile/' + job.driverPin).once('value', snap => { if(snap.exists()){ document.getElementById('histDetDriver').innerText = `คนขับ: ${snap.val().name || '-'} (${snap.val().plate || '-'})`; } else document.getElementById('histDetDriver').innerText = `คนขับ: ไม่ทราบชื่อ`; }); } else document.getElementById('histDetDriver').innerText = `คนขับ: ไม่ทราบชื่อ`;
+        
+        let wpContainer = document.getElementById('historyDetailWaypointsContainer');
+        if (wpContainer) {
+            let wpHtml = '';
+            let waypoints = job.waypoints || [];
+            let globalCount = 1;
+            waypoints.forEach((wp) => {
+                let isPickup = wp.type === 'pick';
+                let colorClass = isPickup ? 'text-[#22c55e]' : 'text-[#ef4444]'; 
+                let bgClass = isPickup ? 'bg-[#22c55e]' : 'bg-[#ef4444]';
+                
+                wpHtml += `<div class="flex items-start gap-2 relative z-10 w-full mb-1">
+                    <div class="shrink-0 mt-0.5"><div class="w-4 h-4 rounded-full ${bgClass} text-white flex items-center justify-center text-[9px] font-bold">${globalCount}</div></div>
+                    <div class="flex-1 overflow-hidden min-w-0"><p class="text-[12px] text-gray-200 truncate font-medium leading-tight">${wp.name}</p></div>
+                </div>`; 
+                globalCount++;
+            });
+            wpContainer.innerHTML = wpHtml;
+        }
+
+        document.getElementById('historyDetailModal').classList.remove('hidden');
+    }
+    windowContext.closeHistoryDetail = function() { document.getElementById('historyDetailModal').classList.add('hidden'); selectedHistoryJobId = null; }
+    
+    windowContext.blockCurrentHistoryDriver = function() {
+        let job = loadedHistoryJobs[selectedHistoryJobId]; 
+        if(!job || !job.driverPin) { showAlert("ผิดพลาด", "ไม่สามารถบล็อกได้ เนื่องจากไม่พบข้อมูลรหัสคนขับสำหรับงานนี้", "error"); return; }
+        openConfirmActionModal("บล็อกคนขับ?", "หากยืนยัน คุณจะไม่ถูกจับคู่กับคนขับคนนี้อีกต่อไป คุณสามารถจัดการรายการบล็อกได้ในภายหลัง", () => {
+            let updates = {}; 
+            updates[job.driverPin] = { driverPin: job.driverPin, driverPhone: job.driverPhone || null, timestamp: firebase.database.ServerValue.TIMESTAMP };
+            db.ref('passenger_blocks/' + lineUserId).update(updates).then(() => { showAlert("บล็อกสำเร็จ", "คุณจะไม่ได้รับงานจากคนขับท่านนี้อีก", "success"); closeHistoryDetail(); });
+        }, "red");
+    }
+
+    windowContext.openBlockedDrivers = function() {
+        document.getElementById('blockedDriversModal').classList.remove('hidden');
+        renderBlockedDrivers();
+    }
+    windowContext.closeBlockedDrivers = function() {
+        document.getElementById('blockedDriversModal').classList.add('hidden');
+    }
+    
+    function renderBlockedDrivers() {
+        let container = document.getElementById('blockedListContainer');
+        if (Object.keys(myBlockedDrivers).length === 0) {
+            container.innerHTML = `<div class="text-center py-10"><i class="fas fa-user-shield text-4xl text-gray-600 mb-3"></i><p class="text-gray-400 font-bold">ไม่มีรายการบล็อก</p></div>`;
+            return;
+        }
+
+        let uniqueBlocks = {};
+        Object.keys(myBlockedDrivers).forEach(key => {
+            let item = myBlockedDrivers[key];
+            let realPin = (item && item.driverPin) ? item.driverPin : null;
+            let realPhone = (item && item.driverPhone) ? item.driverPhone : null;
+            
+            if (realPin) {
+                if (!uniqueBlocks[realPin]) uniqueBlocks[realPin] = { pin: realPin, phone: realPhone };
+                else if (realPhone) uniqueBlocks[realPin].phone = realPhone;
+            } else if (realPhone || (key.length === 10 && !key.startsWith('U'))) {
+                let pk = realPhone || key;
+                let found = Object.values(uniqueBlocks).find(b => b.phone === pk);
+                if (!found && !uniqueBlocks[pk]) { uniqueBlocks[pk] = { pin: null, phone: pk }; }
+            } else {
+                 if (!uniqueBlocks[key]) uniqueBlocks[key] = { pin: key, phone: null };
+            }
+        });
+
+        let promises = Object.keys(uniqueBlocks).map(k => {
+            let block = uniqueBlocks[k];
+            if (block.pin) {
+                return db.ref('drivers_profile/' + block.pin).once('value').then(snap => {
+                    return { pin: block.pin, phone: block.phone, name: snap.exists() ? snap.val().name + ' (' + snap.val().plate + ')' : 'รหัส: ' + block.pin };
+                });
+            } else {
+                return Promise.resolve({ pin: null, phone: block.phone, name: 'ผู้ขับขี่ (ไม่ระบุข้อมูล)' });
+            }
+        });
+
+        Promise.all(promises).then(results => {
+            let html = '<div class="space-y-3">';
+            results.forEach(res => {
+                let args = `'${res.pin || ''}', '${res.phone || ''}'`;
+                html += `
+                <div class="flex justify-between items-center bg-[#2a2f5c] border border-[#383d6a] p-3.5 rounded-2xl shadow-sm">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 bg-red-900/30 text-red-500 rounded-full flex items-center justify-center text-lg"><i class="fas fa-user-slash"></i></div>
+                        <div><p class="text-gray-200 font-bold text-sm">${res.name}</p></div>
+                    </div>
+                    <button onclick="unblockDriver(${args})" class="bg-[#383d6a] text-gray-300 px-3 py-1.5 rounded-lg text-xs font-bold hover:bg-[#4b507d] transition">ปลดบล็อก</button>
+                </div>`;
+            });
+            html += '</div>';
+            container.innerHTML = html;
+        });
+    }
+
+    windowContext.unblockDriver = function(pin, phone) {
+        let updates = {};
+        if(pin) updates[pin] = null;
+        if(phone) updates[phone] = null;
+        db.ref('passenger_blocks/' + lineUserId).update(updates).then(() => {
+            showAlert('สำเร็จ', 'ปลดบล็อกคนขับเรียบร้อยแล้ว', 'success');
+            if(pin) delete myBlockedDrivers[pin];
+            if(phone) delete myBlockedDrivers[phone];
+            renderBlockedDrivers(); 
+        });
+    }
+
+    window.initMap = initMap;
+  </script>
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDsZ_tbFhH6fUXRz3I6C-tMshNwwrSevd4&libraries=places,geometry&callback=initMap" async defer></script>
+</body>
+</html>
