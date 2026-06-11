@@ -63,9 +63,9 @@
   <div id="map" class="map-container hidden"></div>
 
   <div id="navBar" class="hidden fixed top-0 w-full h-16 bg-[#1e234e] border-b border-[#2a2f5c] flex items-center justify-between px-4 z-20 text-white shadow-md pointer-events-auto">
-    <button onclick="window.goBack()" class="p-2 text-2xl active:opacity-50 hover:text-[#fae100] transition"><i class="fas fa-chevron-left"></i></button>
+    <button onclick="goBack()" class="p-2 text-2xl active:opacity-50 hover:text-[#fae100] transition"><i class="fas fa-chevron-left"></i></button>
     <h1 id="navTitle" class="text-lg font-black text-[#fae100] tracking-wide"><i class="fas fa-car-side"></i> F1 Fast and Furious</h1>
-    <button onclick="window.goHome()" class="p-2 text-xl active:opacity-50 hover:text-[#fae100] transition"><i class="fas fa-home"></i></button>
+    <button onclick="goHome()" class="p-2 text-xl active:opacity-50 hover:text-[#fae100] transition"><i class="fas fa-home"></i></button>
   </div>
 
   <div id="topSearchPick" class="hidden fixed top-[76px] left-4 right-4 z-40 pointer-events-auto transition-transform duration-300">
@@ -83,16 +83,16 @@
   </div>
 
   <div id="mapControls" class="hidden fixed top-[140px] right-4 z-30 flex-col gap-3 pointer-events-auto transition-all duration-300">
-      <button onclick="window.toggleMapStyle()" id="btnMapStyle" class="glass-box w-11 h-11 flex items-center justify-center rounded-full shadow-lg text-gray-300 border border-[#383d6a] hover:bg-white/10 transition" title="สลับโหมดแผนที่"><i class="fas fa-satellite text-[18px]"></i></button>
-      <button onclick="window.fitAllWaypoints()" id="btnOverview" class="hidden glass-box w-11 h-11 flex items-center justify-center rounded-full shadow-lg text-gray-300 border border-[#383d6a] hover:bg-white/10 transition" title="ดูเส้นทางรวม"><i class="fas fa-route text-[18px]"></i></button>
-      <button onclick="window.handleCrosshairClick()" id="btnCrosshair" class="hidden glass-box w-11 h-11 flex items-center justify-center rounded-full shadow-lg text-[#fae100] border border-[#383d6a] hover:bg-white/10 transition" title="พิกัดปัจจุบัน"><i class="fas fa-crosshairs text-[18px]"></i></button>
-      <button onclick="window.openEmergencyModal()" id="btnEmergency" class="hidden bg-red-900/80 w-11 h-11 flex items-center justify-center rounded-full shadow-[0_0_15px_rgba(239,68,68,0.5)] text-red-400 border border-red-500/50 active:bg-red-800 transition mt-2"><i class="fas fa-shield-alt text-[18px]"></i></button>
+      <button onclick="toggleMapStyle()" id="btnMapStyle" class="glass-box w-11 h-11 flex items-center justify-center rounded-full shadow-lg text-gray-300 border border-[#383d6a] hover:bg-white/10 transition" title="สลับโหมดแผนที่"><i class="fas fa-satellite text-[18px]"></i></button>
+      <button onclick="fitAllWaypoints()" id="btnOverview" class="hidden glass-box w-11 h-11 flex items-center justify-center rounded-full shadow-lg text-gray-300 border border-[#383d6a] hover:bg-white/10 transition" title="ดูเส้นทางรวม"><i class="fas fa-route text-[18px]"></i></button>
+      <button onclick="handleCrosshairClick()" id="btnCrosshair" class="hidden glass-box w-11 h-11 flex items-center justify-center rounded-full shadow-lg text-[#fae100] border border-[#383d6a] hover:bg-white/10 transition" title="พิกัดปัจจุบัน"><i class="fas fa-crosshairs text-[18px]"></i></button>
+      <button onclick="openEmergencyModal()" id="btnEmergency" class="hidden bg-red-900/80 w-11 h-11 flex items-center justify-center rounded-full shadow-[0_0_15px_rgba(239,68,68,0.5)] text-red-400 border border-red-500/50 active:bg-red-800 transition mt-2"><i class="fas fa-shield-alt text-[18px]"></i></button>
   </div>
 
   <div id="page1" class="full-page flex flex-col overflow-y-auto hide-scrollbar">
     <div class="bg-[#1e234e] border-b border-[#2a2f5c] text-[#fae100] h-16 px-4 shadow-md shrink-0 flex justify-between items-center sticky top-0 z-20 w-full">
         <h1 class="text-lg font-black tracking-wide flex items-center gap-2"><i class="fas fa-car-side"></i> F1 DRIVER</h1>
-        <div class="flex items-center gap-2 text-sm text-gray-400 bg-[#2a2f5c] px-3 py-1.5 rounded-full border border-[#383d6a] cursor-pointer shadow-sm hover:text-[#fae100] transition" onclick="window.openProfileModal()">
+        <div class="flex items-center gap-2 text-sm text-gray-400 bg-[#2a2f5c] px-3 py-1.5 rounded-full border border-[#383d6a] cursor-pointer shadow-sm hover:text-[#fae100] transition" onclick="openProfileModal()">
             <img id="userPicSmall" class="w-6 h-6 rounded-full object-cover bg-gray-700" src="https://img.icons8.com/bubbles/150/user.png" alt="Profile">
             <span id="userNameSmall" class="font-normal truncate max-w-[90px] text-xs">...</span>
         </div>
@@ -106,12 +106,12 @@
       </div>
       
       <div class="w-full grid grid-cols-3 gap-2 shrink-0 mb-4 mt-2">
-          <button id="btnMainRideAction" onclick="window.handleMainRideClick()" class="flex flex-col items-center justify-center gap-1.5 text-[#fae100] transition active:scale-95 bg-transparent outline-none">
+          <button id="btnMainRideAction" onclick="handleMainRideClick()" class="flex flex-col items-center justify-center gap-1.5 text-[#fae100] transition active:scale-95 bg-transparent outline-none">
               <i class="fas fa-car text-[30px]" id="btnMainRideIcon"></i>
               <span class="font-normal text-xs text-center leading-tight tracking-wide" id="btnMainRideText">รอสถานะ...</span>
           </button>
           
-          <button onclick="window.openNewsModal()" class="flex flex-col items-center justify-center gap-1.5 text-[#fae100] transition active:scale-95 relative bg-transparent outline-none">
+          <button onclick="openNewsModal()" class="flex flex-col items-center justify-center gap-1.5 text-[#fae100] transition active:scale-95 relative bg-transparent outline-none">
               <div id="newsBadge" class="hidden absolute top-0 right-3 bg-red-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full shadow animate-pulse">New</div>
               <i class="fas fa-bullhorn text-[30px]"></i>
               <span class="font-normal text-xs text-center leading-tight tracking-wide">ข่าวสาร<br>&โปรโมชั่น</span>
@@ -138,35 +138,35 @@
           <p class="text-sm font-normal text-gray-400 mb-4 leading-relaxed shrink-0">ระบบรองรับบริการหลายรูปแบบ ราคาประเมินจะแตกต่างกัน</p>
           
           <div class="grid grid-cols-2 gap-3 overflow-y-auto slim-scroll pr-1 pb-2 flex-1">
-              <button id="btnSelectCar" onclick="window.selectVehicleAndStart('car')" class="w-full py-4 bg-[#fae100] text-[#1e234e] font-black rounded-2xl shadow-md hover:bg-[#e5ce00] transition flex flex-col items-center justify-center gap-2 active:scale-95 shrink-0">
+              <button id="btnSelectCar" onclick="selectVehicleAndStart('car')" class="w-full py-4 bg-[#fae100] text-[#1e234e] font-black rounded-2xl shadow-md hover:bg-[#e5ce00] transition flex flex-col items-center justify-center gap-2 active:scale-95 shrink-0">
                   <i class="fas fa-car-side text-3xl"></i> 
                   <span class="text-sm font-bold text-center leading-tight">รถยนต์</span>
               </button>
               
-              <button id="btnSelectPremiumCar" onclick="window.selectVehicleAndStart('premium_car')" class="w-full py-4 bg-[#fae100] text-[#1e234e] font-black rounded-2xl shadow-md hover:bg-[#e5ce00] transition flex flex-col items-center justify-center gap-2 active:scale-95 shrink-0">
+              <button id="btnSelectPremiumCar" onclick="selectVehicleAndStart('premium_car')" class="w-full py-4 bg-[#fae100] text-[#1e234e] font-black rounded-2xl shadow-md hover:bg-[#e5ce00] transition flex flex-col items-center justify-center gap-2 active:scale-95 shrink-0">
                   <i class="fas fa-car text-3xl"></i> 
                   <span class="text-sm font-bold text-center leading-tight">รถยนต์พรีเมียม</span>
               </button>
 
-              <button id="btnSelectBike" onclick="window.selectVehicleAndStart('bike')" class="w-full py-4 bg-[#fae100] text-[#1e234e] font-black rounded-2xl shadow-md hover:bg-[#e5ce00] transition flex flex-col items-center justify-center gap-2 active:scale-95 shrink-0">
+              <button id="btnSelectBike" onclick="selectVehicleAndStart('bike')" class="w-full py-4 bg-[#fae100] text-[#1e234e] font-black rounded-2xl shadow-md hover:bg-[#e5ce00] transition flex flex-col items-center justify-center gap-2 active:scale-95 shrink-0">
                   <i class="fas fa-motorcycle text-3xl text-blue-600"></i> 
                   <span class="text-sm font-bold text-center leading-tight">รถมอเตอร์ไซค์</span>
               </button>
 
-              <button id="btnSelectPremiumBike" onclick="window.selectVehicleAndStart('premium_bike')" class="w-full py-4 bg-[#fae100] text-[#1e234e] font-black rounded-2xl shadow-md hover:bg-[#e5ce00] transition flex flex-col items-center justify-center gap-2 active:scale-95 shrink-0">
+              <button id="btnSelectPremiumBike" onclick="selectVehicleAndStart('premium_bike')" class="w-full py-4 bg-[#fae100] text-[#1e234e] font-black rounded-2xl shadow-md hover:bg-[#e5ce00] transition flex flex-col items-center justify-center gap-2 active:scale-95 shrink-0">
                   <i class="fas fa-motorcycle text-3xl text-purple-600"></i> 
                   <span class="text-sm font-bold text-center leading-tight">รถมอเตอร์ไซค์<br>พรีเมียม</span>
               </button>
           </div>
           
-          <button onclick="window.closeVehicleModal()" class="mt-4 text-sm font-normal text-gray-400 hover:text-white transition shrink-0">ยกเลิก</button>
+          <button onclick="closeVehicleModal()" class="mt-4 text-sm font-normal text-gray-400 hover:text-white transition shrink-0">ยกเลิก</button>
       </div>
   </div>
 
   <div id="newsModal" class="hidden fixed inset-0 z-[200] bg-[#1e234e] transition-opacity flex flex-col">
       <div class="sticky top-0 bg-[#1e234e] border-b border-[#2a2f5c] h-16 px-4 flex items-center justify-between z-10 shadow-md shrink-0 w-full">
           <div class="flex items-center gap-3">
-              <button onclick="window.closeNewsModal()" class="w-10 h-10 shrink-0 bg-[#2a2f5c] text-gray-400 rounded-full flex items-center justify-center border border-[#383d6a] hover:text-[#fae100] transition"><i class="fas fa-arrow-left"></i></button>
+              <button onclick="closeNewsModal()" class="w-10 h-10 shrink-0 bg-[#2a2f5c] text-gray-400 rounded-full flex items-center justify-center border border-[#383d6a] hover:text-[#fae100] transition"><i class="fas fa-arrow-left"></i></button>
               <h2 class="text-lg font-black text-[#fae100]"><i class="fas fa-bullhorn mr-1"></i> ข่าวสาร & โปรโมชั่น</h2>
           </div>
       </div>
@@ -191,7 +191,7 @@
   <div id="communityModal" class="hidden fixed inset-0 z-[200] bg-[#1e234e] flex flex-col pointer-events-auto transition-transform">
       <div class="bg-[#2a2f5c] border-b border-[#383d6a] h-16 px-4 flex items-center gap-3 shadow-md shrink-0 w-full">
           <button onclick="window.closeCommunityModal()" class="w-10 h-10 bg-[#383d6a] text-gray-400 rounded-full flex items-center justify-center hover:text-[#fae100] transition"><i class="fas fa-arrow-left"></i></button>
-          <h2 class="text-lg font-black text-[#fae100]"><i class="fas fa-users mr-2"></i> แชทคอมมูนิตี้</h2>
+          <h2 class="text-lg font-black text-[#fae100]"><i class="fas fa-users mr-2"></i> แชทคอมมูนิตี้ส่วนกลาง</h2>
       </div>
       
       <div class="p-3 bg-[#1e234e] border-b border-[#383d6a] shrink-0">
@@ -217,36 +217,36 @@
       <div class="flex justify-between items-center mb-2">
         <div><p class="text-[10px] font-black text-[#fae100] mb-0.5 tracking-widest"><i class="fas fa-circle"></i> STEP 1</p><p class="text-base font-black text-white">เลื่อนแผนที่เพื่อกำหนดจุดรับ</p></div>
         <div class="flex gap-1.5">
-            <button onclick="window.openRecentPlacesModal()" class="text-[10px] font-normal bg-[#2a2f5c] border border-[#383d6a] text-gray-300 px-2.5 py-1.5 rounded-lg hover:bg-[#383d6a] transition shadow-sm flex items-center gap-1.5"><i class="fas fa-history"></i> ประวัติ</button>
-            <button onclick="window.useCurrentLocation()" class="text-[10px] font-normal bg-[#fae100]/20 border border-[#fae100]/30 text-[#fae100] px-2.5 py-1.5 rounded-lg hover:bg-[#fae100]/40 transition shadow-sm flex items-center gap-1.5"><i class="fas fa-crosshairs"></i> ปัจจุบัน</button>
+            <button onclick="openRecentPlacesModal()" class="text-[10px] font-normal bg-[#2a2f5c] border border-[#383d6a] text-gray-300 px-2.5 py-1.5 rounded-lg hover:bg-[#383d6a] transition shadow-sm flex items-center gap-1.5"><i class="fas fa-history"></i> ประวัติ</button>
+            <button onclick="useCurrentLocation()" class="text-[10px] font-normal bg-[#fae100]/20 border border-[#fae100]/30 text-[#fae100] px-2.5 py-1.5 rounded-lg hover:bg-[#fae100]/40 transition shadow-sm flex items-center gap-1.5"><i class="fas fa-crosshairs"></i> ปัจจุบัน</button>
         </div>
       </div>
       
       <div class="flex gap-2 overflow-x-auto pb-2 hide-scrollbar mb-1 items-center w-full">
           <div class="flex shrink-0 bg-[#2a2f5c] border border-[#383d6a] rounded-full overflow-hidden shadow-sm items-center">
-              <button onclick="window.handleSavedPlace('home')" class="px-2.5 py-1 flex items-center gap-1.5 hover:bg-[#383d6a] transition"><i class="fas fa-home text-blue-400 text-[10px]"></i><span class="label-home text-[11px] font-normal text-gray-200">บ้าน</span></button>
+              <button onclick="handleSavedPlace('home')" class="px-2.5 py-1 flex items-center gap-1.5 hover:bg-[#383d6a] transition"><i class="fas fa-home text-blue-400 text-[10px]"></i><span class="label-home text-[11px] font-normal text-gray-200">บ้าน</span></button>
               <div class="w-[1px] h-3 bg-[#383d6a]"></div>
-              <button onclick="window.editSavedPlace('home', event)" class="px-2 py-1 text-gray-400 hover:text-[#fae100] hover:bg-[#383d6a] transition flex items-center"><i class="fas fa-cog text-[10px]"></i></button>
+              <button onclick="editSavedPlace('home', event)" class="px-2 py-1 text-gray-400 hover:text-[#fae100] hover:bg-[#383d6a] transition flex items-center"><i class="fas fa-cog text-[10px]"></i></button>
           </div>
           <div class="flex shrink-0 bg-[#2a2f5c] border border-[#383d6a] rounded-full overflow-hidden shadow-sm items-center">
-              <button onclick="window.handleSavedPlace('favorite1')" class="px-2.5 py-1 flex items-center gap-1.5 hover:bg-[#383d6a] transition"><i class="fas fa-heart text-pink-500 text-[10px]"></i><span class="label-favorite1 text-[11px] font-normal text-gray-200">รายการโปรด 1</span></button>
+              <button onclick="handleSavedPlace('favorite1')" class="px-2.5 py-1 flex items-center gap-1.5 hover:bg-[#383d6a] transition"><i class="fas fa-heart text-pink-500 text-[10px]"></i><span class="label-favorite1 text-[11px] font-normal text-gray-200">รายการโปรด 1</span></button>
               <div class="w-[1px] h-3 bg-[#383d6a]"></div>
-              <button onclick="window.editSavedPlace('favorite1', event)" class="px-2 py-1 text-gray-400 hover:text-[#fae100] hover:bg-[#383d6a] transition flex items-center"><i class="fas fa-cog text-[10px]"></i></button>
+              <button onclick="editSavedPlace('favorite1', event)" class="px-2 py-1 text-gray-400 hover:text-[#fae100] hover:bg-[#383d6a] transition flex items-center"><i class="fas fa-cog text-[10px]"></i></button>
           </div>
           <div class="flex shrink-0 bg-[#2a2f5c] border border-[#383d6a] rounded-full overflow-hidden shadow-sm items-center">
-              <button onclick="window.handleSavedPlace('favorite2')" class="px-2.5 py-1 flex items-center gap-1.5 hover:bg-[#383d6a] transition"><i class="fas fa-star text-yellow-500 text-[10px]"></i><span class="label-favorite2 text-[11px] font-normal text-gray-200">รายการโปรด 2</span></button>
+              <button onclick="handleSavedPlace('favorite2')" class="px-2.5 py-1 flex items-center gap-1.5 hover:bg-[#383d6a] transition"><i class="fas fa-star text-yellow-500 text-[10px]"></i><span class="label-favorite2 text-[11px] font-normal text-gray-200">รายการโปรด 2</span></button>
               <div class="w-[1px] h-3 bg-[#383d6a]"></div>
-              <button onclick="window.editSavedPlace('favorite2', event)" class="px-2 py-1 text-gray-400 hover:text-[#fae100] hover:bg-[#383d6a] transition flex items-center"><i class="fas fa-cog text-[10px]"></i></button>
+              <button onclick="editSavedPlace('favorite2', event)" class="px-2 py-1 text-gray-400 hover:text-[#fae100] hover:bg-[#383d6a] transition flex items-center"><i class="fas fa-cog text-[10px]"></i></button>
           </div>
       </div>
       
       <div id="pickupWaypointsList" class="flex flex-col gap-1.5 mb-1 max-h-[110px] overflow-y-auto slim-scroll"></div>
 
       <div class="flex gap-2 mt-2">
-          <button onclick="window.addWaypointFromCenter('pick')" class="flex-[1] bg-[#2a2f5c] border border-[#fae100]/50 text-[#fae100] py-3 rounded-xl font-normal text-[14px] shadow-sm hover:bg-[#383d6a] transition flex justify-center items-center gap-1.5">
+          <button onclick="addWaypointFromCenter('pick')" class="flex-[1] bg-[#2a2f5c] border border-[#fae100]/50 text-[#fae100] py-3 rounded-xl font-normal text-[14px] shadow-sm hover:bg-[#383d6a] transition flex justify-center items-center gap-1.5">
               <i class="fas fa-plus"></i> จุดรับ
           </button>
-          <button id="btnConfirmPick" onclick="window.confirmPickup()" disabled class="flex-[2] bg-[#2a2f5c] text-gray-400 border border-[#383d6a] py-3 rounded-xl font-black text-[14px] shadow-md transition flex justify-center items-center gap-1.5 cursor-not-allowed opacity-50">
+          <button id="btnConfirmPick" onclick="confirmPickup()" disabled class="flex-[2] bg-[#2a2f5c] text-gray-400 border border-[#383d6a] py-3 rounded-xl font-black text-[14px] shadow-md transition flex justify-center items-center gap-1.5 cursor-not-allowed opacity-50">
               เลือกจุดหมาย <i class="fas fa-arrow-right"></i>
           </button>
       </div>
@@ -258,36 +258,36 @@
       <div class="flex justify-between items-center mb-2">
         <div><p class="text-[10px] font-black text-red-500 mb-0.5 tracking-widest"><i class="fas fa-circle"></i> STEP 2</p><p class="text-base font-black text-white">เลื่อนแผนที่เพื่อกำหนดจุดส่ง</p></div>
         <div class="flex gap-1.5">
-            <button onclick="window.openRecentPlacesModal()" class="text-[10px] font-normal bg-[#2a2f5c] border border-[#383d6a] text-gray-300 px-2.5 py-1.5 rounded-lg hover:bg-[#383d6a] transition shadow-sm flex items-center gap-1.5"><i class="fas fa-history"></i> ประวัติ</button>
-            <button onclick="window.useCurrentLocation()" class="text-[10px] font-normal bg-red-900/30 border border-red-500/30 text-red-400 px-2.5 py-1.5 rounded-lg hover:bg-red-800/50 transition shadow-sm flex items-center gap-1.5"><i class="fas fa-crosshairs"></i> ปัจจุบัน</button>
+            <button onclick="openRecentPlacesModal()" class="text-[10px] font-normal bg-[#2a2f5c] border border-[#383d6a] text-gray-300 px-2.5 py-1.5 rounded-lg hover:bg-[#383d6a] transition shadow-sm flex items-center gap-1.5"><i class="fas fa-history"></i> ประวัติ</button>
+            <button onclick="useCurrentLocation()" class="text-[10px] font-normal bg-red-900/30 border border-red-500/30 text-red-400 px-2.5 py-1.5 rounded-lg hover:bg-red-800/50 transition shadow-sm flex items-center gap-1.5"><i class="fas fa-crosshairs"></i> ปัจจุบัน</button>
         </div>
       </div>
       
       <div class="flex gap-2 overflow-x-auto pb-2 hide-scrollbar mb-1 items-center w-full">
           <div class="flex shrink-0 bg-[#2a2f5c] border border-[#383d6a] rounded-full overflow-hidden shadow-sm items-center">
-              <button onclick="window.handleSavedPlace('home')" class="px-2.5 py-1 flex items-center gap-1.5 hover:bg-[#383d6a] transition"><i class="fas fa-home text-blue-400 text-[10px]"></i><span class="label-home text-[11px] font-normal text-gray-200">บ้าน</span></button>
+              <button onclick="handleSavedPlace('home')" class="px-2.5 py-1 flex items-center gap-1.5 hover:bg-[#383d6a] transition"><i class="fas fa-home text-blue-400 text-[10px]"></i><span class="label-home text-[11px] font-normal text-gray-200">บ้าน</span></button>
               <div class="w-[1px] h-3 bg-[#383d6a]"></div>
-              <button onclick="window.editSavedPlace('home', event)" class="px-2 py-1 text-gray-400 hover:text-[#fae100] hover:bg-[#383d6a] transition flex items-center"><i class="fas fa-cog text-[10px]"></i></button>
+              <button onclick="editSavedPlace('home', event)" class="px-2 py-1 text-gray-400 hover:text-[#fae100] hover:bg-[#383d6a] transition flex items-center"><i class="fas fa-cog text-[10px]"></i></button>
           </div>
           <div class="flex shrink-0 bg-[#2a2f5c] border border-[#383d6a] rounded-full overflow-hidden shadow-sm items-center">
-              <button onclick="window.handleSavedPlace('favorite1')" class="px-2.5 py-1 flex items-center gap-1.5 hover:bg-[#383d6a] transition"><i class="fas fa-heart text-pink-500 text-[10px]"></i><span class="label-favorite1 text-[11px] font-normal text-gray-200">รายการโปรด 1</span></button>
+              <button onclick="handleSavedPlace('favorite1')" class="px-2.5 py-1 flex items-center gap-1.5 hover:bg-[#383d6a] transition"><i class="fas fa-heart text-pink-500 text-[10px]"></i><span class="label-favorite1 text-[11px] font-normal text-gray-200">รายการโปรด 1</span></button>
               <div class="w-[1px] h-3 bg-[#383d6a]"></div>
-              <button onclick="window.editSavedPlace('favorite1', event)" class="px-2 py-1 text-gray-400 hover:text-[#fae100] hover:bg-[#383d6a] transition flex items-center"><i class="fas fa-cog text-[10px]"></i></button>
+              <button onclick="editSavedPlace('favorite1', event)" class="px-2 py-1 text-gray-400 hover:text-[#fae100] hover:bg-[#383d6a] transition flex items-center"><i class="fas fa-cog text-[10px]"></i></button>
           </div>
           <div class="flex shrink-0 bg-[#2a2f5c] border border-[#383d6a] rounded-full overflow-hidden shadow-sm items-center">
-              <button onclick="window.handleSavedPlace('favorite2')" class="px-2.5 py-1 flex items-center gap-1.5 hover:bg-[#383d6a] transition"><i class="fas fa-star text-yellow-500 text-[10px]"></i><span class="label-favorite2 text-[11px] font-normal text-gray-200">รายการโปรด 2</span></button>
+              <button onclick="handleSavedPlace('favorite2')" class="px-2.5 py-1 flex items-center gap-1.5 hover:bg-[#383d6a] transition"><i class="fas fa-star text-yellow-500 text-[10px]"></i><span class="label-favorite2 text-[11px] font-normal text-gray-200">รายการโปรด 2</span></button>
               <div class="w-[1px] h-3 bg-[#383d6a]"></div>
-              <button onclick="window.editSavedPlace('favorite2', event)" class="px-2 py-1 text-gray-400 hover:text-[#fae100] hover:bg-[#383d6a] transition flex items-center"><i class="fas fa-cog text-[10px]"></i></button>
+              <button onclick="editSavedPlace('favorite2', event)" class="px-2 py-1 text-gray-400 hover:text-[#fae100] hover:bg-[#383d6a] transition flex items-center"><i class="fas fa-cog text-[10px]"></i></button>
           </div>
       </div>
 
       <div id="dropoffWaypointsList" class="flex flex-col gap-1.5 mb-1 max-h-[110px] overflow-y-auto slim-scroll"></div>
 
       <div class="flex gap-2 mt-2">
-          <button onclick="window.addWaypointFromCenter('drop')" class="flex-[1] bg-[#2a2f5c] border border-red-500/50 text-red-400 py-3 rounded-xl font-normal text-[14px] shadow-sm hover:bg-[#383d6a] transition flex justify-center items-center gap-1.5">
+          <button onclick="addWaypointFromCenter('drop')" class="flex-[1] bg-[#2a2f5c] border border-red-500/50 text-red-400 py-3 rounded-xl font-normal text-[14px] shadow-sm hover:bg-[#383d6a] transition flex justify-center items-center gap-1.5">
               <i class="fas fa-plus"></i> จุดส่ง
           </button>
-          <button id="btnConfirmDrop" onclick="window.confirmDropoff()" disabled class="flex-[2] bg-[#2a2f5c] text-gray-400 border border-[#383d6a] py-3 rounded-xl font-black text-[14px] shadow-md transition flex justify-center items-center gap-1.5 cursor-not-allowed opacity-50">
+          <button id="btnConfirmDrop" onclick="confirmDropoff()" disabled class="flex-[2] bg-[#2a2f5c] text-gray-400 border border-[#383d6a] py-3 rounded-xl font-black text-[14px] shadow-md transition flex justify-center items-center gap-1.5 cursor-not-allowed opacity-50">
               สรุปการเดินทาง <i class="fas fa-check-circle"></i>
           </button>
       </div>
@@ -296,7 +296,7 @@
 
   <div id="page4" class="hidden">
     <div id="page4Panel" class="ui-panel border-t-[4px] border-blue-500 h-auto pb-6 pt-3 transition-transform duration-300">
-      <div class="w-full flex justify-center pb-3 cursor-pointer" onclick="window.togglePage4Panel()"><div class="w-12 h-1.5 bg-[#4b507d] rounded-full"></div></div>
+      <div class="w-full flex justify-center pb-3 cursor-pointer" onclick="togglePage4Panel()"><div class="w-12 h-1.5 bg-[#4b507d] rounded-full"></div></div>
       <div class="flex justify-between items-center mb-2">
         <div>
             <p class="text-[10px] font-black text-blue-400 mb-0.5 tracking-widest flex items-center gap-1" id="serviceLabelIndicator"><i class="fas fa-car-side"></i> รถยนต์</p>
@@ -324,15 +324,15 @@
               </div>
             </div>
           </div>
-          <button id="btnUsePromo" onclick="window.openPromoModal()" class="shrink-0 w-[4rem] bg-[#2a2f5c] border border-[#383d6a] text-[#fae100] rounded-xl text-[10px] font-normal hover:bg-[#383d6a] transition flex flex-col items-center justify-center gap-1 shadow-sm">
+          <button id="btnUsePromo" onclick="openPromoModal()" class="shrink-0 w-[4rem] bg-[#2a2f5c] border border-[#383d6a] text-[#fae100] rounded-xl text-[10px] font-normal hover:bg-[#383d6a] transition flex flex-col items-center justify-center gap-1 shadow-sm">
               <i class="fas fa-ticket-alt text-base"></i><span>ใช้โค้ด</span>
           </button>
       </div>
 
-      <form onsubmit="event.preventDefault(); window.submitBooking();" class="flex gap-2 w-full mt-1 shrink-0 pb-2">
+      <form onsubmit="event.preventDefault(); submitBooking();" class="flex gap-2 w-full mt-1 shrink-0 pb-2">
           <div class="relative flex-[1.2] min-w-[140px]">
               <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-400"><i class="fas fa-phone-alt text-[13px]"></i></div>
-              <input type="tel" id="userPhone" name="tel" autocomplete="tel" inputmode="tel" oninput="window.formatPhone(this)" placeholder="เบอร์ติดต่อ" class="w-full py-3 pl-9 pr-2 bg-[#2a2f5c] border border-[#383d6a] focus:border-[#fae100] focus:bg-[#1e234e] text-white placeholder-gray-500 rounded-xl text-[13px] font-normal outline-none transition-colors h-full">
+              <input type="tel" id="userPhone" name="tel" autocomplete="tel" inputmode="tel" oninput="formatPhone(this)" placeholder="เบอร์ติดต่อ" class="w-full py-3 pl-9 pr-2 bg-[#2a2f5c] border border-[#383d6a] focus:border-[#fae100] focus:bg-[#1e234e] text-white placeholder-gray-500 rounded-xl text-[13px] font-normal outline-none transition-colors h-full">
           </div>
           <button type="submit" class="flex-1 bg-[#fae100] text-[#1e234e] py-3 rounded-xl font-black text-sm shadow-[0_0_15px_rgba(250,225,0,0.3)] hover:bg-[#e5ce00] active:scale-[0.98] transition flex justify-center items-center gap-1.5 whitespace-nowrap h-full shrink-0">
               ยืนยันเรียกรถ <i class="fas fa-check"></i>
@@ -343,7 +343,7 @@
 
   <div id="pageTracking" class="hidden">
     <div id="trackingPanel" class="ui-panel border-t-[4px] border-[#fae100] h-auto pb-5 pt-3 transition-transform duration-300"> 
-      <div class="w-full flex justify-center pb-3 cursor-pointer" onclick="window.toggleTrackingPanel()"><div class="w-12 h-1.5 bg-[#4b507d] rounded-full"></div></div>
+      <div class="w-full flex justify-center pb-3 cursor-pointer" onclick="toggleTrackingPanel()"><div class="w-12 h-1.5 bg-[#4b507d] rounded-full"></div></div>
       <div id="unifiedStatusBox" class="mb-3 flex justify-between items-center w-full relative overflow-hidden pb-1">
           <div class="min-w-0 flex-1 pr-2">
               <p class="text-[10px] font-black text-gray-400 mb-0.5 tracking-widest flex items-center gap-1.5" id="unifiedStatusLabel"><i class="fas fa-spinner fa-spin text-blue-400 text-[12px]"></i> STATUS</p>
@@ -379,26 +379,12 @@
       </div>
 
       <div id="actionButtonsBox" class="hidden gap-2 mb-1 shrink-0 w-full flex-row">
-          <button id="btnChat" onclick="window.openInAppChatModal()" class="flex-1 w-full bg-blue-900/40 text-blue-400 py-3 rounded-xl font-normal border border-blue-500/30 text-sm shadow-sm hover:bg-blue-800 transition flex justify-center items-center gap-1.5"><i class="fas fa-comments text-[16px]"></i> แชท</button>
-          <button id="btnAddWaypt" onclick="window.openWaypointSearchModal()" class="flex-1 w-full bg-yellow-900/30 text-yellow-400 py-3 rounded-xl font-normal border border-yellow-500/30 text-sm shadow-sm hover:bg-yellow-600/50 transition flex justify-center items-center gap-1.5"><i class="fas fa-plus"></i> แวะเพิ่ม</button>
-          <button id="btnCall" onclick="window.openCallConfirmModal()" class="flex-1 w-full bg-[#fae100] text-[#1e234e] py-3 rounded-xl font-black text-sm shadow-sm hover:bg-[#e5ce00] transition flex justify-center items-center gap-1.5"><i class="fas fa-phone-alt"></i> โทร</button>
-          <button id="btnCancel" onclick="window.openCancelModal()" class="flex-1 w-full bg-red-900/40 text-red-400 py-3 rounded-xl font-normal border border-red-500/30 text-sm hover:bg-red-900/60 transition flex justify-center items-center gap-1.5"><i class="fas fa-times"></i> ยกเลิก</button>
+          <button id="btnChat" onclick="openInAppChatModal()" class="flex-1 w-full bg-blue-900/40 text-blue-400 py-3 rounded-xl font-normal border border-blue-500/30 text-sm shadow-sm hover:bg-blue-800 transition flex justify-center items-center gap-1.5"><i class="fas fa-comments text-[16px]"></i> แชท</button>
+          <button id="btnAddWaypt" onclick="openWaypointSearchModal()" class="flex-1 w-full bg-yellow-900/30 text-yellow-400 py-3 rounded-xl font-normal border border-yellow-500/30 text-sm shadow-sm hover:bg-yellow-600/50 transition flex justify-center items-center gap-1.5"><i class="fas fa-plus"></i> แวะเพิ่ม</button>
+          <button id="btnCall" onclick="openCallConfirmModal()" class="flex-1 w-full bg-[#fae100] text-[#1e234e] py-3 rounded-xl font-black text-sm shadow-sm hover:bg-[#e5ce00] transition flex justify-center items-center gap-1.5"><i class="fas fa-phone-alt"></i> โทร</button>
+          <button id="btnCancel" onclick="openCancelModal()" class="flex-1 w-full bg-red-900/40 text-red-400 py-3 rounded-xl font-normal border border-red-500/30 text-sm hover:bg-red-900/60 transition flex justify-center items-center gap-1.5"><i class="fas fa-times"></i> ยกเลิก</button>
       </div>
     </div>
-  </div>
-
-  <div id="inAppChatModal" class="hidden fixed inset-0 z-[250] bg-[#1e234e] flex flex-col pointer-events-auto transition-transform">
-      <div class="bg-[#2a2f5c] border-b border-[#383d6a] h-16 px-4 flex items-center gap-3 shadow-md shrink-0 w-full">
-          <button onclick="window.closeInAppChatModal()" class="w-10 h-10 bg-[#383d6a] text-white rounded-full flex items-center justify-center hover:bg-[#4b507d]"><i class="fas fa-arrow-left"></i></button>
-          <h2 class="text-lg font-black text-white"><i class="fas fa-comments text-[#fae100] mr-2"></i>ข้อความถึงคนขับ</h2>
-      </div>
-      <div id="inAppChatMessages" class="flex-1 overflow-y-auto p-4 space-y-3 bg-[#1e234e]/80 hide-scrollbar flex flex-col">
-          <p class="text-center text-xs text-gray-500 my-4 font-normal">เริ่มต้นการสนทนากับคนขับที่นี่</p>
-      </div>
-      <div class="bg-[#2a2f5c] p-3 flex gap-2 shrink-0 shadow-[0_-5px_15px_rgba(0,0,0,0.3)]">
-          <input type="text" id="inAppChatInput" class="flex-1 rounded-xl bg-[#383d6a] text-white px-4 py-3 text-sm font-normal outline-none focus:border-[#fae100] border border-transparent transition" placeholder="พิมพ์ข้อความส่งหาคนขับ...">
-          <button onclick="window.sendInAppChatMessage()" class="bg-[#fae100] text-[#1e234e] font-black px-5 rounded-xl hover:bg-[#e5ce00] transition shadow-md"><i class="fas fa-paper-plane"></i></button>
-      </div>
   </div>
 
   <div id="driverRatingModal" class="hidden fixed inset-0 z-[260] bg-black/80 flex items-center justify-center p-4 pointer-events-auto">
@@ -407,19 +393,19 @@
           <h3 class="text-xl font-black text-white mb-2">ให้คะแนนคนขับ</h3>
           <p class="text-sm font-normal text-gray-400 mb-6 leading-relaxed">กรุณาประเมินความพึงพอใจการให้บริการของคนขับในรอบนี้ครับ</p>
           <div class="flex justify-center gap-2 mb-6" id="starRatingBox">
-              <i class="fas fa-star text-3xl font-normal text-gray-600 cursor-pointer transition hover:text-[#fae100]" onclick="window.updateSelectedRatingScore(1)"></i>
-              <i class="fas fa-star text-3xl font-normal text-gray-600 cursor-pointer transition hover:text-[#fae100]" onclick="window.updateSelectedRatingScore(2)"></i>
-              <i class="fas fa-star text-3xl font-normal text-gray-600 cursor-pointer transition hover:text-[#fae100]" onclick="window.updateSelectedRatingScore(3)"></i>
-              <i class="fas fa-star text-3xl font-normal text-gray-600 cursor-pointer transition hover:text-[#fae100]" onclick="window.updateSelectedRatingScore(4)"></i>
-              <i class="fas fa-star text-3xl font-normal text-gray-600 cursor-pointer transition hover:text-[#fae100]" onclick="window.updateSelectedRatingScore(5)"></i>
+              <i class="fas fa-star text-3xl font-normal text-gray-600 cursor-pointer transition hover:text-[#fae100]" onclick="updateSelectedRatingScore(1)"></i>
+              <i class="fas fa-star text-3xl font-normal text-gray-600 cursor-pointer transition hover:text-[#fae100]" onclick="updateSelectedRatingScore(2)"></i>
+              <i class="fas fa-star text-3xl font-normal text-gray-600 cursor-pointer transition hover:text-[#fae100]" onclick="updateSelectedRatingScore(3)"></i>
+              <i class="fas fa-star text-3xl font-normal text-gray-600 cursor-pointer transition hover:text-[#fae100]" onclick="updateSelectedRatingScore(4)"></i>
+              <i class="fas fa-star text-3xl font-normal text-gray-600 cursor-pointer transition hover:text-[#fae100]" onclick="updateSelectedRatingScore(5)"></i>
           </div>
-          <button onclick="window.submitDriverRatingScore()" class="w-full py-3.5 bg-[#fae100] text-[#1e234e] font-black rounded-xl shadow-md hover:bg-[#e5ce00] transition">ยืนยันคะแนน</button>
+          <button onclick="submitDriverRatingScore()" class="w-full py-3.5 bg-[#fae100] text-[#1e234e] font-black rounded-xl shadow-md hover:bg-[#e5ce00] transition">ยืนยันคะแนน</button>
       </div>
   </div>
 
   <div id="profileModal" class="hidden fixed inset-0 z-[190] bg-[#1e234e] pointer-events-auto transition-transform flex flex-col">
       <div class="bg-[#2a2f5c] border-b border-[#383d6a] h-16 px-4 flex items-center gap-3 shadow-md shrink-0 w-full">
-          <button onclick="window.closeProfileModal()" class="w-10 h-10 shrink-0 bg-[#383d6a] text-gray-400 rounded-full flex items-center justify-center hover:text-white transition"><i class="fas fa-arrow-left"></i></button>
+          <button onclick="closeProfileModal()" class="w-10 h-10 shrink-0 bg-[#383d6a] text-gray-400 rounded-full flex items-center justify-center hover:text-white transition"><i class="fas fa-arrow-left"></i></button>
           <h2 class="text-lg font-black text-white">โปรไฟล์ส่วนตัว</h2>
       </div>
       <div class="p-6 flex flex-col items-center border-b border-[#383d6a] shrink-0">
@@ -427,15 +413,15 @@
           <h2 class="text-2xl font-black text-white" id="profileNameLarge">กำลังโหลด...</h2>
           <div class="flex items-center gap-2 mt-1">
               <p class="text-gray-400 font-normal" id="profilePhoneLarge">เบอร์โทร: ยังไม่ระบุ</p>
-              <button onclick="window.editProfilePhone()" class="text-gray-500 hover:text-[#fae100] transition w-8 h-8 flex items-center justify-center bg-[#2a2f5c] rounded-full border border-[#383d6a] shadow-sm"><i class="fas fa-edit text-xs"></i></button>
+              <button onclick="editProfilePhone()" class="text-gray-500 hover:text-[#fae100] transition w-8 h-8 flex items-center justify-center bg-[#2a2f5c] rounded-full border border-[#383d6a] shadow-sm"><i class="fas fa-edit text-xs"></i></button>
           </div>
       </div>
       <div class="p-4 space-y-3 flex-1 overflow-y-auto">
-          <button onclick="window.openPassengerHistory()" class="w-full bg-[#2a2f5c] border border-[#383d6a] p-4 rounded-2xl shadow-sm flex items-center justify-between hover:bg-[#383d6a] transition">
+          <button onclick="openPassengerHistory()" class="w-full bg-[#2a2f5c] border border-[#383d6a] p-4 rounded-2xl shadow-sm flex items-center justify-between hover:bg-[#383d6a] transition">
               <div class="flex items-center gap-3"><div class="w-8 h-8 rounded-full bg-blue-900/30 flex items-center justify-center"><i class="fas fa-history text-blue-400"></i></div> <span class="text-gray-200 font-normal text-sm">ประวัติการเดินทาง</span></div>
               <i class="fas fa-chevron-right text-gray-500"></i>
           </button>
-          <button onclick="window.openBlockedDrivers()" class="w-full bg-[#2a2f5c] border border-[#383d6a] p-4 rounded-2xl shadow-sm flex items-center justify-between hover:bg-[#383d6a] transition">
+          <button onclick="openBlockedDrivers()" class="w-full bg-[#2a2f5c] border border-[#383d6a] p-4 rounded-2xl shadow-sm flex items-center justify-between hover:bg-[#383d6a] transition">
               <div class="flex items-center gap-3"><div class="w-8 h-8 rounded-full bg-red-900/30 flex items-center justify-center"><i class="fas fa-user-slash text-red-400"></i></div> <span class="text-gray-200 font-normal text-sm">จัดการการบล็อกคนขับ</span></div>
               <i class="fas fa-chevron-right text-gray-500"></i>
           </button>
@@ -444,16 +430,30 @@
 
   <div id="recentPlacesModal" class="hidden fixed inset-0 z-[250] bg-[#1e234e] pointer-events-auto transition-transform flex flex-col">
       <div class="bg-[#2a2f5c] border-b border-[#383d6a] h-16 px-4 flex items-center gap-3 shadow-md shrink-0 w-full">
-          <button onclick="window.closeRecentPlacesModal()" class="w-10 h-10 shrink-0 bg-[#383d6a] text-gray-400 rounded-full flex items-center justify-center hover:text-[#fae100] transition"><i class="fas fa-arrow-left"></i></button>
+          <button onclick="closeRecentPlacesModal()" class="w-10 h-10 shrink-0 bg-[#383d6a] text-gray-400 rounded-full flex items-center justify-center hover:text-[#fae100] transition"><i class="fas fa-arrow-left"></i></button>
           <h2 class="text-lg font-black text-white">ประวัติสถานที่ (ล่าสุด)</h2>
       </div>
       <div class="p-4 space-y-2 flex-1 overflow-y-auto" id="recentPlacesModalList"></div>
   </div>
 
+  <div id="waypointSearchModal" class="hidden fixed inset-0 z-[150] bg-[#1e234e] pointer-events-auto transition-transform duration-300 flex flex-col">
+      <div class="bg-[#2a2f5c] border-b border-[#383d6a] h-16 px-4 flex items-center gap-3 shadow-md shrink-0 w-full">
+          <button onclick="closeWaypointSearchModal()" class="w-10 h-10 shrink-0 bg-[#383d6a] text-gray-400 rounded-full flex items-center justify-center hover:text-white transition"><i class="fas fa-arrow-left"></i></button>
+          <h2 class="text-lg font-black text-white">ค้นหาสถานที่จุดแวะ</h2>
+      </div>
+      <div class="p-4 flex-1">
+          <div class="relative w-full shadow-sm rounded-2xl bg-[#2a2f5c] border border-[#383d6a] overflow-visible mb-4">
+              <div class="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none z-10"><i class="fas fa-search text-gray-400"></i></div>
+              <input type="text" id="waypointSearchInput" class="w-full py-4 pl-11 pr-4 bg-transparent outline-none font-normal text-[14px] text-white placeholder-gray-500" placeholder="พิมพ์ชื่อสถานที่...">
+          </div>
+          <p class="text-xs font-normal text-gray-500 text-center mt-10">ระบบจะคำนวณราคาใหม่ และส่งให้คุณยืนยันก่อนเพิ่มลงในเส้นทาง</p>
+      </div>
+  </div>
+
   <div id="historyModal" class="hidden fixed inset-0 z-[200] bg-[#1e234e] overflow-y-auto pb-10 transition-opacity">
       <div class="sticky top-0 bg-[#2a2f5c] border-b border-[#383d6a] h-16 px-4 flex items-center justify-between z-10 shadow-md w-full">
           <div class="flex items-center gap-3">
-              <button onclick="window.closePassengerHistory()" class="w-10 h-10 shrink-0 bg-[#383d6a] text-gray-400 rounded-full flex items-center justify-center hover:text-[#fae100] transition"><i class="fas fa-arrow-left"></i></button>
+              <button onclick="closePassengerHistory()" class="w-10 h-10 shrink-0 bg-[#383d6a] text-gray-400 rounded-full flex items-center justify-center hover:text-[#fae100] transition"><i class="fas fa-arrow-left"></i></button>
               <h2 class="text-lg font-black text-white">ประวัติการเดินทาง</h2>
           </div>
       </div>
@@ -463,7 +463,7 @@
   <div id="blockedDriversModal" class="hidden fixed inset-0 z-[220] bg-[#1e234e] overflow-y-auto pb-10 transition-opacity">
       <div class="sticky top-0 bg-[#2a2f5c] border-b border-[#383d6a] h-16 px-4 flex items-center justify-between z-10 shadow-md w-full">
           <div class="flex items-center gap-3">
-              <button onclick="window.closeBlockedDrivers()" class="w-10 h-10 shrink-0 bg-[#383d6a] text-gray-400 rounded-full flex items-center justify-center hover:text-[#fae100] transition"><i class="fas fa-arrow-left"></i></button>
+              <button onclick="closeBlockedDrivers()" class="w-10 h-10 shrink-0 bg-[#383d6a] text-gray-400 rounded-full flex items-center justify-center hover:text-[#fae100] transition"><i class="fas fa-arrow-left"></i></button>
               <h2 class="text-lg font-black text-white">จัดการการบล็อก</h2>
           </div>
       </div>
@@ -474,7 +474,7 @@
       <div class="bg-[#1e234e] rounded-t-[24px] w-full mx-auto shadow-[0_-20px_50px_rgba(0,0,0,0.8)] flex flex-col h-[85vh] border-t border-[#383d6a]">
           <div class="h-16 px-4 flex justify-between items-center border-b border-[#383d6a] shrink-0 w-full">
               <h3 class="text-lg font-black text-[#fae100]">รายละเอียด</h3>
-              <button onclick="window.closeHistoryDetail()" class="text-gray-400 hover:text-[#fae100] bg-[#2a2f5c] rounded-full w-8 h-8 flex items-center justify-center transition-colors"><i class="fas fa-times"></i></button>
+              <button onclick="closeHistoryDetail()" class="text-gray-400 hover:text-[#fae100] bg-[#2a2f5c] rounded-full w-8 h-8 flex items-center justify-center transition-colors"><i class="fas fa-times"></i></button>
           </div>
           <div class="p-4 overflow-y-auto flex-1 space-y-4 text-white">
               <div class="flex justify-between items-center bg-[#2a2f5c] p-3 rounded-xl border border-[#383d6a] shadow-sm">
@@ -485,7 +485,7 @@
                   <div class="absolute left-[1.35rem] top-6 bottom-6 w-0.5 border-l-[1.5px] border-dashed border-[#4b507d]"></div>
                   <div id="historyDetailWaypointsContainer" class="flex flex-col w-full relative z-10 gap-2"></div>
               </div>
-              <button id="btnBlockDriver" onclick="window.blockCurrentHistoryDriver()" class="w-full mt-2 bg-red-900/40 border border-red-500/30 text-red-400 font-normal py-3.5 rounded-xl shadow-sm hover:bg-red-800 hover:text-white transition flex items-center justify-center gap-2"><i class="fas fa-ban"></i> บล็อกคนขับคนนี้</button>
+              <button id="btnBlockDriver" onclick="blockCurrentHistoryDriver()" class="w-full mt-2 bg-red-900/40 border border-red-500/30 text-red-400 font-normal py-3.5 rounded-xl shadow-sm hover:bg-red-800 hover:text-white transition flex items-center justify-center gap-2"><i class="fas fa-ban"></i> บล็อกคนขับคนนี้</button>
           </div>
       </div>
   </div>
@@ -500,8 +500,8 @@
               <p class="text-lg font-black text-[#fae100]" id="rcPrice">฿0</p>
           </div>
           <div class="flex gap-3">
-              <button onclick="window.rejectRouteChange()" class="flex-1 py-3 bg-[#2a2f5c] text-gray-200 font-normal rounded-xl hover:bg-[#383d6a] transition shadow-sm border border-[#383d6a]">ยกเลิก</button>
-              <button onclick="window.acceptRouteChange()" class="flex-[2] py-3 bg-[#fae100] text-[#1e234e] font-black rounded-xl shadow-md hover:bg-[#e5ce00] transition">ยืนยัน</button>
+              <button onclick="rejectRouteChange()" class="flex-1 py-3 bg-[#2a2f5c] text-gray-200 font-normal rounded-xl hover:bg-[#383d6a] transition shadow-sm border border-[#383d6a]">ยกเลิก</button>
+              <button onclick="acceptRouteChange()" class="flex-[2] py-3 bg-[#fae100] text-[#1e234e] font-black rounded-xl shadow-md hover:bg-[#e5ce00] transition">ยืนยัน</button>
           </div>
       </div>
   </div>
@@ -513,8 +513,8 @@
           <p class="text-[13px] font-normal text-gray-400 mb-5 leading-relaxed">กรุณากรอกรหัสโปรโมชั่นเพื่อรับส่วนลด</p>
           <input type="text" id="promoInput" placeholder="ใส่รหัสโค้ดที่นี่" class="w-full p-3.5 mb-5 bg-[#2a2f5c] border border-[#383d6a] focus:border-[#fae100] text-white rounded-xl text-center font-normal uppercase outline-none transition placeholder-gray-500 text-sm">
           <div class="flex gap-3">
-              <button onclick="window.closePromoModal()" class="flex-[0.8] py-3.5 bg-[#2a2f5c] text-gray-300 font-normal rounded-xl hover:bg-[#383d6a] transition text-sm">ปิด</button>
-              <button onclick="window.applyPromoCode()" class="flex-1 py-3.5 bg-[#fae100] text-[#1e234e] font-black rounded-xl shadow-md hover:bg-[#e5ce00] transition text-sm">ยืนยัน</button>
+              <button onclick="closePromoModal()" class="flex-[0.8] py-3.5 bg-[#2a2f5c] text-gray-300 font-normal rounded-xl hover:bg-[#383d6a] transition text-sm">ปิด</button>
+              <button onclick="applyPromoCode()" class="flex-1 py-3.5 bg-[#fae100] text-[#1e234e] font-black rounded-xl shadow-md hover:bg-[#e5ce00] transition text-sm">ยืนยัน</button>
           </div>
       </div>
   </div>
@@ -525,9 +525,54 @@
           <h3 id="confirmActionTitle" class="text-xl font-black text-white mb-2">...</h3>
           <p id="confirmActionMessage" class="text-sm font-normal text-gray-400 mb-6 leading-relaxed">...</p>
           <div class="flex gap-3">
-              <button onclick="window.closeConfirmActionModal()" class="flex-1 py-3 bg-[#2a2f5c] text-gray-200 font-normal rounded-xl hover:bg-[#383d6a] transition border border-[#383d6a]">ยกเลิก</button>
-              <button id="confirmActionButton" onclick="window.submitConfirmAction()" class="flex-1 py-3 text-[#1e234e] font-black rounded-xl shadow-md transition">ตกลง</button>
+              <button onclick="closeConfirmActionModal()" class="flex-1 py-3 bg-[#2a2f5c] text-gray-200 font-normal rounded-xl hover:bg-[#383d6a] transition border border-[#383d6a]">ยกเลิก</button>
+              <button id="confirmActionButton" onclick="submitConfirmAction()" class="flex-1 py-3 text-[#1e234e] font-black rounded-xl shadow-md transition">ตกลง</button>
           </div>
+      </div>
+  </div>
+
+  <div id="callConfirmModal" class="hidden fixed inset-0 z-[130] bg-black/80 flex items-center justify-center p-4 pointer-events-auto">
+      <div class="bg-[#1e234e] border border-[#fae100]/30 rounded-3xl p-6 w-full max-w-sm text-center shadow-2xl">
+          <div class="w-16 h-16 bg-[#fae100]/20 text-[#fae100] border border-[#fae100]/30 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl"><i class="fas fa-phone-volume"></i></div>
+          <h3 class="text-xl font-black text-white mb-2">โทรหาคนขับ?</h3>
+          <p class="text-sm font-normal text-gray-400 mb-6 leading-relaxed">คุณต้องการโทรหาคนขับผ่านเบอร์โทรศัพท์มือถือ ใช่หรือไม่?</p>
+          <div class="flex gap-3">
+              <button onclick="closeCallConfirmModal()" class="flex-1 py-3 bg-[#2a2f5c] text-gray-200 font-normal rounded-xl hover:bg-[#383d6a] transition border border-[#383d6a]">ยกเลิก</button>
+              <a id="confirmCallBtn" href="#" onclick="closeCallConfirmModal()" class="flex-1 py-3 bg-[#fae100] text-[#1e234e] font-black rounded-xl shadow-md hover:bg-[#e5ce00] transition flex items-center justify-center gap-2"><i class="fas fa-phone-alt"></i> โทรเลย</a>
+          </div>
+      </div>
+  </div>
+
+  <div id="emergencyModal" class="hidden fixed inset-0 z-[120] bg-black/80 flex items-center justify-center p-4 pointer-events-auto">
+      <div class="bg-[#1e234e] border border-red-500/50 rounded-3xl p-6 w-full max-w-sm text-center shadow-[0_0_30px_rgba(239,68,68,0.2)]">
+          <div class="w-16 h-16 bg-red-900/30 text-red-500 border border-red-500/30 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl"><i class="fas fa-exclamation-triangle"></i></div>
+          <h3 class="text-xl font-black text-white mb-2">แจ้งเหตุฉุกเฉิน?</h3>
+          <p class="text-sm font-normal text-gray-400 mb-6 leading-relaxed">คุณต้องการโทรออกไปยังสายด่วนตำรวจ (191) เพื่อแจ้งเหตุฉุกเฉินใช่หรือไม่?</p>
+          <div class="flex gap-3">
+              <button onclick="closeEmergencyModal()" class="flex-1 py-3 bg-[#2a2f5c] text-gray-200 font-normal rounded-xl hover:bg-[#383d6a] transition border border-[#383d6a]">ยกเลิก</button>
+              <a href="tel:191" onclick="closeEmergencyModal()" class="flex-1 py-3 bg-red-600 text-white font-bold rounded-xl shadow-md hover:bg-red-700 transition flex items-center justify-center gap-2"><i class="fas fa-phone-alt"></i> โทร 191</a>
+          </div>
+      </div>
+  </div>
+
+  <div id="cancelModal" class="hidden fixed inset-0 z-[100] bg-black/80 flex items-center justify-center p-4 pointer-events-auto">
+      <div class="bg-[#1e234e] border border-[#383d6a] rounded-3xl p-6 w-full max-w-sm text-center shadow-2xl">
+          <div class="w-16 h-16 bg-[#2a2f5c] text-gray-400 border border-[#383d6a] rounded-full flex items-center justify-center mx-auto mb-4 text-3xl"><i class="fas fa-question-circle"></i></div>
+          <h3 class="text-xl font-black text-white mb-2">ยืนยันยกเลิกการเรียกรถ?</h3>
+          <p class="text-sm font-normal text-gray-400 mb-6 leading-relaxed">หากยกเลิกแล้ว งานนี้จะถูกลบทิ้ง และคุณจะต้องทำการเรียกรถใหม่อีกครั้ง</p>
+          <div class="flex gap-3">
+              <button onclick="closeCancelModal()" class="flex-1 py-3 bg-[#2a2f5c] text-gray-200 font-normal rounded-xl hover:bg-[#383d6a] transition border border-[#383d6a]">กลับไปรอรถ</button>
+              <button onclick="confirmCancelBooking()" class="flex-1 py-3 bg-red-900/80 text-red-400 font-bold rounded-xl border border-red-500/30 hover:bg-red-800 hover:text-white transition w-full">ยืนยันยกเลิก</button>
+          </div>
+      </div>
+  </div>
+
+  <div id="alertModal" class="hidden fixed inset-0 z-[9999] bg-black/80 flex items-center justify-center p-4 pointer-events-auto">
+      <div class="bg-[#1e234e] border border-[#383d6a] rounded-3xl p-6 w-full max-w-sm text-center shadow-2xl transform transition-all">
+          <div id="alertIcon" class="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl"></div>
+          <h3 id="alertTitle" class="text-xl font-black text-white mb-2">...</h3>
+          <p id="alertMessage" class="text-sm font-normal text-gray-400 mb-6 whitespace-pre-line leading-relaxed">...</p>
+          <button onclick="closeAlertModal()" class="w-full py-3.5 bg-[#fae100] text-[#1e234e] font-black rounded-xl shadow-md hover:bg-[#e5ce00] transition">ตกลง</button>
       </div>
   </div>
 
@@ -579,9 +624,7 @@
     let myBlockedDrivers = {};
     let activeChatListenerRef = null;
     
-    window.activeGlobalChatListenerRef = null;
     let currentSelectedRatingScore = 0;
-    window.unreadChatCount = 0;
 
     const detailedDarkMapStyle = [
       { elementType: "geometry", stylers: [{ color: "#1e234e" }] },
@@ -640,24 +683,21 @@
             btnMainRide.className = "flex flex-col items-center justify-center gap-1.5 text-[#fae100] transition active:scale-95 bg-transparent outline-none animate-pulse";
             if(btnMainRideIcon) btnMainRideIcon.className = "fas fa-route text-[30px]";
             if(btnMainRideText) btnMainRideText.innerText = "ดูสถานะ";
-            btnMainRide.onclick = function() { window.showPage('Tracking'); };
         } else {
-            // ปุ่มพร้อมใช้งานเสมอ แม้จะไม่มีรถ
             btnMainRide.disabled = false;
             btnMainRide.className = "flex flex-col items-center justify-center gap-1.5 text-[#fae100] transition active:scale-95 bg-transparent outline-none";
             if(btnMainRideIcon) btnMainRideIcon.className = "fas fa-car text-[30px]";
             if(btnMainRideText) btnMainRideText.innerText = "เรียกรถ";
-            btnMainRide.onclick = function() { window.openVehicleModal(); };
         }
     }
 
-    window.handleMainRideClick = function() {
+    function handleMainRideClick() {
         if(bookData && bookData.status && bookData.status !== "เสร็จสิ้น" && !bookData.status.includes("ยกเลิก")) {
-            window.showPage('Tracking');
-        } else { window.openVehicleModal(); }
+            showPage('Tracking');
+        } else { openVehicleModal(); }
     }
 
-    window.openVehicleModal = function() { 
+    function openVehicleModal() { 
         let available = { car: false, premium_car: false, van: false, bike: false, premium_bike: false };
 
         window.onlineDrivers.forEach(d => {
@@ -687,9 +727,9 @@
         document.getElementById('vehicleSelectionModal').classList.remove('hidden'); 
     }
 
-    window.closeVehicleModal = function() { document.getElementById('vehicleSelectionModal').classList.add('hidden'); }
+    function closeVehicleModal() { document.getElementById('vehicleSelectionModal').classList.add('hidden'); }
 
-    window.selectVehicleAndStart = function(type) {
+    function selectVehicleAndStart(type) {
         window.currentServiceType = type;
         let labelIcon = 'fa-car-side';
         let labelText = 'รถยนต์';
@@ -699,10 +739,10 @@
         
         let indicator = document.getElementById('serviceLabelIndicator');
         if(indicator) indicator.innerHTML = `<i class="fas ${labelIcon}"></i> ${labelText}`;
-        window.closeVehicleModal(); window.showPage(2);
+        closeVehicleModal(); showPage(2);
     }
 
-    window.openNewsModal = function() { 
+    function openNewsModal() { 
         document.getElementById('newsModal').classList.remove('hidden'); 
         renderNewsAndPromotions(); 
         
@@ -710,7 +750,8 @@
         if(badge) badge.classList.add('hidden');
         localStorage.setItem('lastSeenNewsTime', Date.now());
     }
-    window.closeNewsModal = function() { document.getElementById('newsModal').classList.add('hidden'); }
+    
+    function closeNewsModal() { document.getElementById('newsModal').classList.add('hidden'); }
 
     function renderNewsAndPromotions() {
         let container = document.getElementById('newsListContainer');
@@ -787,7 +828,6 @@
         return now >= start && now <= end;
     }
 
-    // Banner Sync
     db.ref('config/banners').on('value', snap => {
         let hContainer = document.getElementById('homeBannerContainer');
         let hSlider = document.getElementById('bannerSlider');
@@ -815,7 +855,7 @@
                 banners.forEach((b, idx) => {
                     let target = b.linkUrl ? '_blank' : '_self';
                     let href = b.linkUrl ? b.linkUrl : '#';
-                    let slideHtml = `<a href="${href}" target="${target}" class="w-full h-full flex-shrink-0 snap-center relative block"><img src="${b.imageUrl}" class="w-full h-full object-contain bg-black"></a>`;
+                    let slideHtml = `<a href="${href}" target="${target}" class="w-full h-full flex-shrink-0 snap-center relative block"><img src="${b.imageUrl}" class="w-full h-full object-cover bg-black"></a>`;
                     
                     if(hSlider) hSlider.innerHTML += slideHtml;
                     if(nSliderTop) nSliderTop.innerHTML += slideHtml;
@@ -888,11 +928,6 @@
         }
     });
 
-    window.hasSpokenAccept = false; window.hasSpokenArrivePick = false; window.hasSpokenAtPickup = false;
-    window.hasSpokenDepart = false; window.hasSpokenArriveDrop = false; window.hasSpokenFinish = false;
-    window.hasSpokenCancel = false; window.hasNotifiedLinePick = false; window.hasNotifiedLineDrop = false;
-    window.isShowingRouteChange = false; 
-
     function resetTrackingFlags() {
         window.hasSpokenAccept = false; window.hasSpokenArrivePick = false; window.hasSpokenAtPickup = false;
         window.hasSpokenDepart = false; window.hasSpokenArriveDrop = false; window.hasSpokenFinish = false;
@@ -917,7 +952,6 @@
         }
     }
 
-    // ✅ Splash Screen
     document.addEventListener("DOMContentLoaded", () => {
         let savedPhone = localStorage.getItem('passengerPhone');
         if(savedPhone) { let pInp = document.getElementById('userPhone'); if(pInp) pInp.value = savedPhone; }
@@ -934,7 +968,7 @@
     });
 
     let currentConfirmCallback = null;
-    window.openConfirmActionModal = function(title, message, callback, theme = 'blue') {
+    function openConfirmActionModal(title, message, callback, theme = 'blue') {
         document.getElementById('confirmActionTitle').innerText = title; document.getElementById('confirmActionMessage').innerHTML = message;
         currentConfirmCallback = callback;
         const iconDiv = document.getElementById('confirmActionIcon'); const btn = document.getElementById('confirmActionButton');
@@ -944,17 +978,17 @@
         else { iconDiv.classList.add('bg-[#fae100]/20', 'text-[#fae100]', 'border-[#fae100]/30'); btn.classList.add('bg-[#fae100]', 'text-[#1e234e]', 'hover:bg-[#e5ce00]'); }
         document.getElementById('confirmActionModal').classList.remove('hidden');
     }
-    window.closeConfirmActionModal = function() { document.getElementById('confirmActionModal').classList.add('hidden'); currentConfirmCallback = null; }
-    window.submitConfirmAction = function() { if(currentConfirmCallback) currentConfirmCallback(); window.closeConfirmActionModal(); }
+    function closeConfirmActionModal() { document.getElementById('confirmActionModal').classList.add('hidden'); currentConfirmCallback = null; }
+    function submitConfirmAction() { if(currentConfirmCallback) currentConfirmCallback(); closeConfirmActionModal(); }
 
-    window.openCallConfirmModal = function() { document.getElementById('callConfirmModal').classList.remove('hidden'); }
-    window.closeCallConfirmModal = function() { document.getElementById('callConfirmModal').classList.add('hidden'); }
-    window.openCancelModal = function() { document.getElementById('cancelModal').classList.remove('hidden'); }
-    window.closeCancelModal = function() { document.getElementById('cancelModal').classList.add('hidden'); }
-    window.openPromoModal = function() { document.getElementById('promoModal').classList.remove('hidden'); }
-    window.closePromoModal = function() { document.getElementById('promoModal').classList.add('hidden'); }
+    function openCallConfirmModal() { document.getElementById('callConfirmModal').classList.remove('hidden'); }
+    function closeCallConfirmModal() { document.getElementById('callConfirmModal').classList.add('hidden'); }
+    function openCancelModal() { document.getElementById('cancelModal').classList.remove('hidden'); }
+    function closeCancelModal() { document.getElementById('cancelModal').classList.add('hidden'); }
+    function openPromoModal() { document.getElementById('promoModal').classList.remove('hidden'); }
+    function closePromoModal() { document.getElementById('promoModal').classList.add('hidden'); }
 
-    window.openProfileModal = function() {
+    function openProfileModal() {
         document.getElementById('profileModal').classList.remove('hidden');
         let pNameL = document.getElementById('profileNameLarge');
         if(pNameL) pNameL.innerText = lineName || 'ไม่ทราบชื่อ';
@@ -971,8 +1005,8 @@
         if(pPhoneL) pPhoneL.innerText = savedPhone ? 'เบอร์โทร: ' + savedPhone : 'เบอร์โทร: ยังไม่ระบุ';
     }
 
-    window.closeProfileModal = function() { document.getElementById('profileModal').classList.add('hidden'); }
-    window.editProfilePhone = function() {
+    function closeProfileModal() { document.getElementById('profileModal').classList.add('hidden'); }
+    function editProfilePhone() {
         let current = localStorage.getItem('passengerPhone') || '';
         let newVal = prompt('กรุณากรอกเบอร์โทรศัพท์ใหม่ของคุณ:', current);
         if(newVal !== null) {
@@ -988,11 +1022,11 @@
         }
     }
 
-    window.confirmCancelBooking = function() {
+    function confirmCancelBooking() {
         document.getElementById('cancelModal').classList.add('hidden'); window.isCompleting = true;
         db.ref('bookings/' + lineUserId).remove().then(() => {
             if(APPS_SCRIPT_URL) fetch(`${APPS_SCRIPT_URL}?action=notify&type=cancel&name=${lineName}`, {mode:'no-cors'});
-            showAlert('ยกเลิกสำเร็จ', 'ระบบได้ทำการยกเลิกการเรียกรถเรียบร้อยแล้ว', 'success', () => { resetTrackingFlags(); window.isCompleting = false; window.showPage(4); });
+            showAlert('ยกเลิกสำเร็จ', 'ระบบได้ทำการยกเลิกการเรียกรถเรียบร้อยแล้ว', 'success', () => { resetTrackingFlags(); window.isCompleting = false; showPage(4); });
         });
     }
 
@@ -1015,16 +1049,16 @@
         }
     }
 
-    window.panAndConfirmPlace = function(name, lat, lng, iconType = null) {
+    function panAndConfirmPlace(name, lat, lng, iconType = null) {
         if(map) { updateMapPadding(); map.panTo({lat: lat, lng: lng}); if(map.getZoom() < 16) { setTimeout(() => { map.setZoom(17); }, 300); } }
         let type = currentStep === 2 ? 'pick' : 'drop'; let typeName = currentStep === 2 ? 'จุดรับ' : 'จุดส่ง'; let theme = currentStep === 2 ? 'green' : 'red';
         
         setTimeout(() => {
-            window.openConfirmActionModal(`ยืนยันสถานที่`, `คุณต้องการเลือก <b>${name}</b> เป็น <b>${typeName}</b> ใช่หรือไม่?`, () => { addWaypointFromLocation(lat, lng, name, type, iconType); }, theme);
+            openConfirmActionModal(`ยืนยันสถานที่`, `คุณต้องการเลือก <b>${name}</b> เป็น <b>${typeName}</b> ใช่หรือไม่?`, () => { addWaypointFromLocation(lat, lng, name, type, iconType); }, theme);
         }, 600); 
     }
 
-    window.handleSavedPlace = function(type) {
+    function handleSavedPlace(type) {
         let saved = localStorage.getItem('saved_' + type); let iconType = type; 
         if (saved) { 
             let p = JSON.parse(saved); let typeName = type === 'home' ? 'บ้าน' : (type === 'favorite1' ? 'รายการโปรด 1' : 'รายการโปรด 2'); let pos = {lat: p.lat, lng: p.lng};
@@ -1037,16 +1071,16 @@
                         let fullAddress = bestRes.formatted_address.replace(/,?\s*ประเทศไทย/g, '').replace(/Unnamed Road,?\s*/g, '').replace(/^[A-Z0-9]{2,8}\+.*?\s/g, '').trim();
                         finalAddr = `${typeName} (${fullAddress})`;
                     }
-                    window.panAndConfirmPlace(finalAddr, p.lat, p.lng, iconType);
+                    panAndConfirmPlace(finalAddr, p.lat, p.lng, iconType);
                 });
-            } else { window.panAndConfirmPlace(typeName, p.lat, p.lng, iconType); }
-        } else { window.editSavedPlace(type, {stopPropagation: function(){}}); }
+            } else { panAndConfirmPlace(typeName, p.lat, p.lng, iconType); }
+        } else { editSavedPlace(type, {stopPropagation: function(){}}); }
     }
 
-    window.editSavedPlace = function(type, event) { 
+    function editSavedPlace(type, event) { 
         event.stopPropagation(); 
         let typeName = type === 'home' ? 'บ้าน' : (type === 'favorite1' ? 'รายการโปรด 1' : 'รายการโปรด 2'); let theme = (currentStep === 2) ? 'green' : 'red'; let pos = map.getCenter();
-        window.openConfirmActionModal(`ตั้งค่า "${typeName}"`, `คุณต้องการบันทึกพิกัดกลางจอขณะนี้ให้เป็น "${typeName}" ใช่หรือไม่?`, () => {
+        openConfirmActionModal(`ตั้งค่า "${typeName}"`, `คุณต้องการบันทึกพิกัดกลางจอขณะนี้ให้เป็น "${typeName}" ใช่หรือไม่?`, () => {
             localStorage.setItem('saved_' + type, JSON.stringify({name: typeName, lat: pos.lat(), lng: pos.lng()}));
             showAlert('บันทึกสำเร็จ', `อัปเดตพิกัด "${typeName}" เรียบร้อยแล้ว!`, 'success');
             renderSavedPlacesUI(); renderWaypointsUI(); renderSavedPlaceMarkersOnMap();
@@ -1068,26 +1102,26 @@
         localStorage.setItem('recentPlaces', JSON.stringify(places));
     }
 
-    window.openRecentPlacesModal = function() {
+    function openRecentPlacesModal() {
         document.getElementById('recentPlacesModal').classList.remove('hidden');
         let places = JSON.parse(localStorage.getItem('recentPlaces') || '[]');
         let container = document.getElementById('recentPlacesModalList');
         if(places.length === 0) { container.innerHTML = '<p class="text-center text-gray-500 mt-10 font-normal">ยังไม่มีประวัติสถานที่</p>'; return; }
         let html = '';
         places.forEach(p => {
-            html += `<button onclick="window.closeRecentPlacesModal(); window.panAndConfirmPlace('${p.name}', ${p.lat}, ${p.lng});" class="w-full text-left bg-[#2a2f5c] border border-[#383d6a] p-3.5 rounded-xl shadow-sm flex items-center gap-3 hover:bg-[#383d6a] transition"><div class="w-8 h-8 rounded-full bg-[#1e234e] flex items-center justify-center shrink-0"><i class="fas fa-history text-gray-400"></i></div><span class="text-gray-200 text-sm truncate">${p.name}</span></button>`;
+            html += `<button onclick="closeRecentPlacesModal(); panAndConfirmPlace('${p.name}', ${p.lat}, ${p.lng});" class="w-full text-left bg-[#2a2f5c] border border-[#383d6a] p-3.5 rounded-xl shadow-sm flex items-center gap-3 hover:bg-[#383d6a] transition"><div class="w-8 h-8 rounded-full bg-[#1e234e] flex items-center justify-center shrink-0"><i class="fas fa-history text-gray-400 font-normal"></i></div><span class="text-gray-200 font-normal text-sm truncate">${p.name}</span></button>`;
         });
         container.innerHTML = html;
     }
 
-    window.closeRecentPlacesModal = function() { document.getElementById('recentPlacesModal').classList.add('hidden'); }
+    function closeRecentPlacesModal() { document.getElementById('recentPlacesModal').classList.add('hidden'); }
 
-    window.togglePage4Panel = function() {
+    function togglePage4Panel() {
         const panel = document.getElementById('page4Panel'); if(!panel) return;
         panel.classList.toggle('panel-collapsed-page4'); updateMapPadding();
     }
 
-    window.toggleTrackingPanel = function() {
+    function toggleTrackingPanel() {
         const panel = document.getElementById('trackingPanel'); if(!panel) return;
         panel.classList.toggle('panel-collapsed'); updateMapPadding();
     }
@@ -1095,22 +1129,22 @@
     function showAlert(title, message, type = 'info', callback = null) {
         document.getElementById('alertTitle').innerText = title; document.getElementById('alertMessage').innerText = message;
         let iconHtml = ''; let iconBg = ''; let iconColor = '';
-        if (type === 'error') { iconHtml = '<i class="fas fa-times"></i>'; iconBg = 'bg-red-900/30 border border-red-500/30'; iconColor = 'text-red-500'; } 
-        else if (type === 'success') { iconHtml = '<i class="fas fa-check"></i>'; iconBg = 'bg-[#fae100]/20 border border-[#fae100]/30'; iconColor = 'text-[#fae100]'; } 
-        else { iconHtml = '<i class="fas fa-info"></i>'; iconBg = 'bg-[#fae100]/20 border border-[#fae100]/30'; iconColor = 'text-[#fae100]'; }
+        if (type === 'error') { iconHtml = '<i class="fas fa-times font-normal"></i>'; iconBg = 'bg-red-900/30 border border-red-500/30'; iconColor = 'text-red-500'; } 
+        else if (type === 'success') { iconHtml = '<i class="fas fa-check font-normal"></i>'; iconBg = 'bg-[#fae100]/20 border border-[#fae100]/30'; iconColor = 'text-[#fae100]'; } 
+        else { iconHtml = '<i class="fas fa-info font-normal"></i>'; iconBg = 'bg-[#fae100]/20 border border-[#fae100]/30'; iconColor = 'text-[#fae100]'; }
         
         const iconDiv = document.getElementById('alertIcon');
         if(iconDiv) { iconDiv.innerHTML = iconHtml; iconDiv.className = `w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl ${iconBg} ${iconColor}`; }
         document.getElementById('alertModal').classList.remove('hidden');
         window.alertCloseCallback = typeof callback === 'function' ? callback : null;
     }
-    window.closeAlertModal = function() { document.getElementById('alertModal').classList.add('hidden'); if (window.alertCloseCallback) window.alertCloseCallback(); }
+    function closeAlertModal() { document.getElementById('alertModal').classList.add('hidden'); if (window.alertCloseCallback) window.alertCloseCallback(); }
 
-    window.toggleMapStyle = function() {
+    function toggleMapStyle() {
         if(!map) return; isSatelliteMode = !isSatelliteMode;
         let btnMapStyle = document.getElementById('btnMapStyle');
-        if(isSatelliteMode) { map.setMapTypeId('hybrid'); if(btnMapStyle) btnMapStyle.innerHTML = '<i class="fas fa-layer-group text-[18px]"></i>'; } 
-        else { map.setMapTypeId('roadmap'); map.setOptions({ styles: detailedDarkMapStyle }); if(btnMapStyle) btnMapStyle.innerHTML = '<i class="fas fa-satellite text-[18px]"></i>'; }
+        if(isSatelliteMode) { map.setMapTypeId('hybrid'); if(btnMapStyle) btnMapStyle.innerHTML = '<i class="fas fa-layer-group text-[18px] font-normal"></i>'; } 
+        else { map.setMapTypeId('roadmap'); map.setOptions({ styles: detailedDarkMapStyle }); if(btnMapStyle) btnMapStyle.innerHTML = '<i class="fas fa-satellite text-[18px] font-normal"></i>'; }
     }
 
     function updateMapControlsPosition(page) {
@@ -1120,13 +1154,13 @@
         let btnC = document.getElementById('btnCrosshair'); if (page !== 'Tracking') { if(btnC) btnC.classList.add('hidden'); }
     }
 
-    window.formatPhone = function(input) { let val = input.value.replace(/\D/g, ''); if (val.startsWith('66')) val = '0' + val.substring(2); if (val.length > 10) val = val.substring(0, 10); input.value = val; }
+    function formatPhone(input) { let val = input.value.replace(/\D/g, ''); if (val.startsWith('66')) val = '0' + val.substring(2); if (val.length > 10) val = val.substring(0, 10); input.value = val; }
 
-    window.handleCrosshairClick = function() { if (currentStep === 2 || currentStep === 3) { window.useCurrentLocation(); } else { centerToFocus(); } };
+    function handleCrosshairClick() { if (currentStep === 2 || currentStep === 3) { useCurrentLocation(); } else { centerToFocus(); } };
 
-    window.focusLocationToggle = function(lat, lng, index) {
+    function focusLocationToggle(lat, lng, index) {
         if(!map) return;
-        if (focusedWaypointIndex === index) { focusedWaypointIndex = -1; window.fitAllWaypoints(); } 
+        if (focusedWaypointIndex === index) { focusedWaypointIndex = -1; fitAllWaypoints(); } 
         else { focusedWaypointIndex = index; updateMapPadding(); map.panTo({lat: lat, lng: lng}); setTimeout(() => { map.panBy(0, 150); }, 100); }
         renderWaypointsUI();
     };
@@ -1139,10 +1173,10 @@
             if(panel && !panel.classList.contains('panel-collapsed')) { panel.classList.add('panel-collapsed'); setTimeout(doPanToCar, 350); } else { doPanToCar(); }
             return;
         }
-        window.useCurrentLocation();
+        useCurrentLocation();
     }
 
-    window.fitAllWaypoints = function() {
+    function fitAllWaypoints() {
         if (!map || localWaypoints.length === 0) return;
         focusedWaypointIndex = -1; isTrackingMode = false;
         const panel = document.getElementById('trackingPanel'); if(panel && panel.classList.contains('panel-collapsed')) { panel.classList.remove('panel-collapsed'); }
@@ -1162,11 +1196,11 @@
         return { path: "M 0,0 C -12,-16 -18,-22 -18,-32 A 18,18 0 1,1 18,-32 C 18,-22 12,-16 0,0 Z M -8,-32 A 8,8 0 1,0 8,-32 A 8,8 0 1,0 -8,-32 Z", fillColor: colorHex, fillOpacity: 1, strokeWeight: 2, strokeColor: '#ffffff', scale: 1.1, labelOrigin: typeof google !== 'undefined' && google.maps ? new google.maps.Point(0, -17) : null, anchor: typeof google !== 'undefined' && google.maps ? new google.maps.Point(0, 0) : null };
     }
 
-    window.updateCrosshairColor = function(colorHex) {
+    function updateCrosshairColor(colorHex) {
         if(crosshairMarker) { crosshairMarker.setIcon({ path: "M 0,0 C -12,-16 -18,-22 -18,-32 A 18,18 0 1,1 18,-32 C 18,-22 12,-16 0,0 Z M -8,-32 A 8,8 0 1,0 8,-32 A 8,8 0 1,0 -8,-32 Z", fillColor: colorHex, fillOpacity: 1, strokeWeight: 2, strokeColor: '#ffffff', scale: 1.1, anchor: typeof google !== 'undefined' && google.maps ? new google.maps.Point(0, 0) : null }); }
     }
 
-    window.initSearchBox = function(inputId, isPick) {
+    function initSearchBox(inputId, isPick) {
       const input = document.getElementById(inputId); if(!input) return;
       if (typeof google === 'undefined' || !google.maps.places) return;
       
@@ -1186,12 +1220,12 @@
               if(!cleanAddr.includes(place.name)) finalAddr += " (" + cleanAddr + ")";
           }
           input.dataset.oldValue = finalAddr; input.value = finalAddr;
-          window.panAndConfirmPlace(finalAddr, place.geometry.location.lat(), place.geometry.location.lng());
+          panAndConfirmPlace(finalAddr, place.geometry.location.lat(), place.geometry.location.lng());
         }
       });
     };
 
-    window.initMap = function() {
+    function initMap() {
       if (typeof google === 'undefined' || typeof google.maps === 'undefined') return;
       if (map) return; 
       
@@ -1216,7 +1250,7 @@
                       let cleanAddr = place.formatted_address.replace(/,?\s*ประเทศไทย/g, '').replace(/Unnamed Road,?\s*/g, '').trim();
                       if(!cleanAddr.includes(place.name)) finalAddr += " (" + cleanAddr + ")";
                   }
-                  window.panAndConfirmPlace(finalAddr, place.geometry.location.lat(), place.geometry.location.lng());
+                  panAndConfirmPlace(finalAddr, place.geometry.location.lat(), place.geometry.location.lng());
               }
             });
           }
@@ -1234,8 +1268,8 @@
           zIndex: 9999 
       });
 
-      window.initSearchBox('pickupSearch', true);
-      window.initSearchBox('dropoffSearch', false);
+      initSearchBox('pickupSearch', true);
+      initSearchBox('dropoffSearch', false);
       
       const wpInput = document.getElementById('waypointSearchInput');
       if (wpInput) {
@@ -1249,7 +1283,7 @@
                       let cleanAddr = place.formatted_address.replace(/,?\s*ประเทศไทย/g, '').replace(/Unnamed Road,?\s*/g, '').trim();
                       if(!cleanAddr.includes(place.name)) finalAddr += " (" + cleanAddr + ")";
                   }
-                  window.closeWaypointSearchModal();
+                  closeWaypointSearchModal();
                   calculateNewRoutePriceForTracking(place.geometry.location.lat(), place.geometry.location.lng(), finalAddr);
               }
           });
@@ -1327,14 +1361,13 @@
                     });
                 } else {
                     showAlert('แจ้งเตือน', 'ขออภัยในความไม่สะดวกครับ งานนี้ถูกยกเลิก รบกวนคุณลูกค้ากดยืนยันเพื่อเรียกรถใหม่อีกครั้งนะครับ', 'error', () => { 
-                        resetTrackingFlags(); window.isCompleting = false; window.showPage(4); 
+                        resetTrackingFlags(); window.isCompleting = false; showPage(4); 
                     });
                 }
             });
         }
     });
 
-    // แจ้งเตือนข้อความแชทคอมมูนิตี้
     db.ref('community_chat').limitToLast(50).once('value', snap => {
         let lastSeenChat = parseInt(localStorage.getItem('lastSeenChatTime') || '0');
         window.unreadChatCount = 0;
@@ -1349,7 +1382,6 @@
         window.activeGlobalChatListenerRef.on('child_added', snap => {
             let messageData = snap.val();
             let modal = document.getElementById('communityModal');
-            
             if(!modal.classList.contains('hidden')) {
                 localStorage.setItem('lastSeenChatTime', Date.now());
                 window.unreadChatCount = 0;
@@ -1361,7 +1393,6 @@
             }
             updateChatBadge();
 
-            // อัปเดตกล่องแชทถ้ากำลังเปิดอยู่
             const messagesDiv = document.getElementById('globalChatMessages');
             const chatBox = document.getElementById('globalChatBox');
             if (messagesDiv && !modal.classList.contains('hidden')) {
@@ -1383,11 +1414,11 @@
                 let messageHtml = `
                 <div class="chat-msg-item flex w-full ${align} animate-fade-in mb-3">
                     <div class="flex flex-col ${isSenderMe ? 'items-end' : 'items-start'} max-w-[85%]">
-                        ${!isSenderMe ? `<span class="text-[10px] text-gray-500 mb-1 ml-1">${senderName}</span>` : ''}
-                        <div class="${bg} px-4 py-2.5 rounded-2xl text-[13px] shadow-sm break-words w-full">
+                        ${!isSenderMe ? `<span class="text-[10px] text-gray-500 font-normal mb-1 ml-1">${senderName}</span>` : ''}
+                        <div class="${bg} px-4 py-2.5 rounded-2xl text-[13px] font-normal shadow-sm break-words w-full">
                             ${messageData.text}
                         </div>
-                        <span class="text-[9px] text-gray-600 mt-1 ${isSenderMe ? 'mr-1' : 'ml-1'}">${timeStr}</span>
+                        <span class="text-[9px] text-gray-600 mt-1 ${isSenderMe ? 'mr-1' : 'ml-1'} font-normal">${timeStr}</span>
                     </div>
                 </div>`;
                 
@@ -1420,9 +1451,9 @@
         const messagesDiv = document.getElementById('globalChatMessages');
         const chatBox = document.getElementById('globalChatBox');
         
-        // ถ้าไม่เคยโหลดข้อมูล ให้บังคับเคลียร์และดึงใหม่
         if(!window.activeGlobalChatListenerRef) {
             messagesDiv.innerHTML = '';
+            
             window.activeGlobalChatListenerRef = db.ref('community_chat').limitToLast(50);
             window.activeGlobalChatListenerRef.on('child_added', snap => {
                 let messageData = snap.val();
@@ -1444,23 +1475,20 @@
                 let messageHtml = `
                 <div class="chat-msg-item flex w-full ${align} animate-fade-in mb-3">
                     <div class="flex flex-col ${isSenderMe ? 'items-end' : 'items-start'} max-w-[85%]">
-                        ${!isSenderMe ? `<span class="text-[10px] text-gray-500 mb-1 ml-1">${senderName}</span>` : ''}
-                        <div class="${bg} px-4 py-2.5 rounded-2xl text-[13px] shadow-sm break-words w-full">
+                        ${!isSenderMe ? `<span class="text-[10px] text-gray-500 font-normal mb-1 ml-1">${senderName}</span>` : ''}
+                        <div class="${bg} px-4 py-2.5 rounded-2xl text-[13px] font-normal shadow-sm break-words w-full">
                             ${messageData.text}
                         </div>
-                        <span class="text-[9px] text-gray-600 mt-1 ${isSenderMe ? 'mr-1' : 'ml-1'}">${timeStr}</span>
+                        <span class="text-[9px] text-gray-600 mt-1 ${isSenderMe ? 'mr-1' : 'ml-1'} font-normal">${timeStr}</span>
                     </div>
                 </div>`;
                 
                 messagesDiv.insertAdjacentHTML('beforeend', messageHtml);
-                setTimeout(() => { chatBox.scrollTop = chatBox.scrollHeight; }, 100);
+                chatBox.scrollTop = chatBox.scrollHeight;
             });
-        } else {
-            // โหลดมาแล้ว เลื่อนลงล่างสุดพอ
-            setTimeout(() => { chatBox.scrollTop = chatBox.scrollHeight; }, 100);
         }
-        
-        setTimeout(() => { document.getElementById('globalChatInput').focus(); }, 300);
+        setTimeout(() => { chatBox.scrollTop = chatBox.scrollHeight; }, 100);
+        document.getElementById('globalChatInput').focus();
     }
     
     window.closeCommunityModal = function() { document.getElementById('communityModal').classList.add('hidden'); }
@@ -1469,7 +1497,7 @@
         let inputEl = document.getElementById('globalChatInput');
         let textVal = inputEl.value.trim();
         if(!textVal) return;
-
+        
         db.ref('community_chat').push({
             pin: lineUserId,
             name: lineName || 'ผู้โดยสาร',
@@ -1489,6 +1517,467 @@
                 msg.style.display = 'none';
             }
         });
+    }
+
+    function addWaypointFromLocation(lat, lng, name, type, iconType = null) {
+        let marker = new google.maps.Marker({
+            position: {lat: lat, lng: lng}, map: map,
+            animation: google.maps.Animation.DROP, zIndex: 4
+        });
+        localWaypoints.push({ lat, lng, name: name, type, marker, iconType, passed: false });
+        focusedWaypointIndex = -1;
+        renderWaypointsUI();
+    }
+
+    window.addWaypointFromCenter = function(type) {
+        if(!map || !geocoder) return;
+        let pos = map.getCenter(); let lat = pos.lat(); let lng = pos.lng();
+        let listId = type === 'pick' ? 'pickupWaypointsList' : 'dropoffWaypointsList';
+        let container = document.getElementById(listId);
+        let tempId = 'wp-loading-' + Date.now();
+        
+        container.insertAdjacentHTML('beforeend', `<div id="${tempId}" class="flex items-center gap-2.5 bg-[#2a2f5c] py-1.5 px-2.5 rounded-lg border border-[#383d6a] text-[11px] text-gray-400 animate-pulse font-normal"><i class="fas fa-spinner fa-spin text-[#fae100]"></i> กำลังดึงข้อมูลสถานที่...</div>`);
+        container.scrollTop = container.scrollHeight;
+
+        geocoder.geocode({location: pos}, (res, status) => {
+            let el = document.getElementById(tempId); if(el) el.remove();
+            let finalAddr = "พิกัดที่เลือกบนแผนที่";
+            if(status === 'OK' && res[0]) {
+                let validResults = res.filter(r => !r.types.includes('plus_code') && !r.formatted_address.match(/^[A-Z0-9]{2,8}\+/));
+                let bestRes = validResults.length > 0 ? validResults[0] : res[0];
+                finalAddr = bestRes.formatted_address.replace(/,?\s*ประเทศไทย/g, '').replace(/Unnamed Road,?\s*/g, '').replace(/^[A-Z0-9]{2,8}\+.*?\s/g, '').trim();
+            }
+            addWaypointFromLocation(lat, lng, finalAddr, type);
+        });
+    }
+
+    function renderWaypointsUI() {
+        const typeOrder = { 'pick': 1, 'waypoint': 2, 'drop': 3 };
+        localWaypoints.sort((a, b) => typeOrder[a.type] - typeOrder[b.type]);
+
+        let pickHtml = ''; let dropHtml = ''; let sumHtml = '';
+        let btnConfirmPick = document.getElementById('btnConfirmPick');
+        let btnConfirmDrop = document.getElementById('btnConfirmDrop');
+        let btnOverview = document.getElementById('btnOverview');
+
+        let picks = localWaypoints.filter(w=>w.type==='pick');
+        let drops = localWaypoints.filter(w=>w.type==='drop');
+
+        if (btnOverview) {
+            if (localWaypoints.length > 0) btnOverview.classList.remove('hidden');
+            else btnOverview.classList.add('hidden');
+        }
+
+        if (btnConfirmPick) {
+            if (picks.length > 0) { 
+                btnConfirmPick.disabled = false; btnConfirmPick.className = "flex-[2] bg-[#fae100] text-[#1e234e] py-3 rounded-xl font-black text-[14px] shadow-md transition flex justify-center items-center gap-1.5 hover:bg-[#e5ce00]";
+                btnConfirmPick.innerHTML = 'เลือกจุดหมาย <i class="fas fa-arrow-right font-normal"></i>';
+            } else { 
+                btnConfirmPick.disabled = true; btnConfirmPick.className = "flex-[2] bg-[#2a2f5c] text-gray-400 py-3 rounded-xl font-bold text-[14px] shadow-md transition flex justify-center items-center gap-1.5 cursor-not-allowed opacity-50 border border-[#383d6a]";
+                btnConfirmPick.innerHTML = 'เลือกจุดหมาย <i class="fas fa-arrow-right font-normal"></i>';
+            }
+        }
+
+        if (btnConfirmDrop) {
+            if (drops.length > 0) { 
+                btnConfirmDrop.disabled = false; btnConfirmDrop.className = "flex-[2] bg-[#fae100] text-[#1e234e] py-3 rounded-xl font-black text-[14px] shadow-md transition flex justify-center items-center gap-1.5 hover:bg-[#e5ce00]";
+            } else { 
+                btnConfirmDrop.disabled = true; btnConfirmDrop.className = "flex-[2] bg-[#2a2f5c] text-gray-400 py-3 rounded-xl font-bold text-[14px] shadow-md transition flex justify-center items-center gap-1.5 cursor-not-allowed opacity-50 border border-[#383d6a]";
+            }
+        }
+
+        let globalCount = 1;
+
+        localWaypoints.forEach((wp, index) => {
+            let isFocused = (focusedWaypointIndex === index);
+            let isPickup = wp.type === 'pick';
+            
+            let colorClass = isPickup ? 'bg-[#22c55e] text-[#1e234e]' : 'bg-[#ef4444] text-white';
+            let colorHex = isPickup ? '#22c55e' : '#ef4444';
+            let textColorMap = isPickup ? '#1e234e' : '#ffffff';
+
+            let textItem = isFocused ? 'text-[#fae100]' : 'text-gray-200';
+            if (wp.passed) {
+                colorClass = 'bg-[#4b507d] text-gray-400';
+                colorHex = '#4b507d';
+                textItem = 'text-gray-500 line-through opacity-60';
+            }
+
+            if (!wp.marker && typeof google !== 'undefined' && map) {
+                wp.marker = new google.maps.Marker({ position: {lat: wp.lat, lng: wp.lng}, map: map, zIndex: 4 });
+            }
+
+            if (wp.marker) {
+                wp.marker.setMap(map); 
+                wp.marker.setIcon(createNumberedMarkerIcon(globalCount.toString(), colorHex, textColorMap));
+                wp.marker.setLabel({text: globalCount.toString(), color: textColorMap, fontWeight: 'bold', fontSize: '13px'});
+            }
+
+            let bgItem = isFocused ? 'bg-[#383d6a] border-[#fae100]/50' : 'bg-[#2a2f5c] border-[#383d6a]';
+            
+            let iconAddonPrefix = '';
+            if (wp.iconType === 'home') iconAddonPrefix = '<i class="fas fa-home text-blue-400 mr-1.5 font-normal" title="บ้าน"></i>';
+            else if (wp.iconType === 'favorite1') iconAddonPrefix = '<i class="fas fa-heart text-pink-500 mr-1.5 font-normal" title="รายการโปรด 1"></i>';
+            else if (wp.iconType === 'favorite2') iconAddonPrefix = '<i class="fas fa-star text-[#fae100] mr-1.5 font-normal" title="รายการโปรด 2"></i>';
+
+            let itemHtml = `<div class="flex items-center gap-2.5 py-1.5 px-2.5 rounded-lg border relative z-10 shadow-sm mb-1.5 cursor-pointer hover:bg-[#383d6a] transition ${bgItem}" onclick="window.focusLocationToggle(${wp.lat}, ${wp.lng}, ${index})">
+                <div class="w-[20px] h-[20px] ${colorClass} rounded-full flex items-center justify-center text-[10px] font-bold shrink-0 shadow-inner">${globalCount}</div>
+                <p class="text-[11px] ${textItem} truncate font-normal flex-1 leading-tight flex items-center">${iconAddonPrefix}${wp.name}</p>
+                <button onclick="event.stopPropagation(); window.removeWaypoint(${index})" class="text-red-400 hover:text-red-300 text-[12px] px-2 shrink-0 transition active:scale-90 font-normal"><i class="fas fa-times"></i></button>
+            </div>`;
+            
+            let sumItemHtml = `<div class="flex items-center gap-2.5 relative z-10 py-0.5 cursor-pointer hover:bg-[#383d6a] rounded transition px-1" onclick="window.focusLocationToggle(${wp.lat}, ${wp.lng}, ${index})">
+                <div class="w-5 h-5 ${colorClass} rounded-full flex items-center justify-center text-[10px] font-bold shrink-0 shadow-inner">${globalCount}</div>
+                <p class="text-[12px] ${textItem} truncate font-normal flex-1 leading-tight flex items-center">${iconAddonPrefix}${wp.name}</p>
+            </div>`;
+
+            if (wp.type === 'pick') { pickHtml += itemHtml; } else { dropHtml += itemHtml; }
+            sumHtml += sumItemHtml;
+            globalCount++;
+        });
+
+        let pickContainer = document.getElementById('pickupWaypointsList'); if(pickContainer) pickContainer.innerHTML = pickHtml;
+        let dropContainer = document.getElementById('dropoffWaypointsList'); if(dropContainer) dropContainer.innerHTML = dropHtml;
+        let sumContainer = document.getElementById('sumWaypointsContainer'); if(sumContainer) sumContainer.innerHTML = sumHtml;
+        let trackContainer = document.getElementById('trackWaypointsContainer'); if(trackContainer) trackContainer.innerHTML = sumHtml;
+    }
+
+    window.removeWaypoint = function(index) {
+        if(localWaypoints[index].marker) localWaypoints[index].marker.setMap(null);
+        localWaypoints.splice(index, 1); 
+        focusedWaypointIndex = -1;
+        renderWaypointsUI();
+        if(currentStep === 4) { bookData.waypoints = localWaypoints; calculatePrice(); }
+    }
+
+    window.openWaypointSearchModal = function() { document.getElementById('waypointSearchModal').classList.remove('hidden'); let input = document.getElementById('waypointSearchInput'); input.value = ''; input.focus(); }
+    window.closeWaypointSearchModal = function() { document.getElementById('waypointSearchModal').classList.add('hidden'); }
+
+    window.showPage = function(page) {
+      currentStep = page;
+      focusedWaypointIndex = -1; 
+      [1,2,3,4,'Tracking'].forEach(p => { const el = document.getElementById('page' + p); if (el) el.classList.add('hidden'); });
+      const targetPage = document.getElementById('page' + page); if(targetPage) targetPage.classList.remove('hidden');
+      requestWakeLock();
+
+      const topSearchPick = document.getElementById('topSearchPick'); const topSearchDrop = document.getElementById('topSearchDrop');
+
+      if (page === 2) {
+          document.body.classList.remove('theme-dropoff');
+          if(topSearchPick) topSearchPick.classList.remove('hidden'); if(topSearchDrop) topSearchDrop.classList.add('hidden');
+          if(crosshairMarker) { crosshairMarker.setMap(map); window.updateCrosshairColor('#22c55e'); }
+          renderWaypointsUI();
+      } else if (page === 3) {
+          document.body.classList.add('theme-dropoff');
+          if(topSearchPick) topSearchPick.classList.add('hidden'); if(topSearchDrop) topSearchDrop.classList.remove('hidden');
+          if(crosshairMarker) { crosshairMarker.setMap(map); window.updateCrosshairColor('#ef4444'); }
+          renderWaypointsUI();
+      } else {
+          document.body.classList.remove('theme-dropoff');
+          if(topSearchPick) topSearchPick.classList.add('hidden'); if(topSearchDrop) topSearchDrop.classList.add('hidden');
+          if(crosshairMarker) crosshairMarker.setMap(null);
+      }
+
+      const navBar = document.getElementById('navBar'); const mapControls = document.getElementById('mapControls'); const mapEl = document.getElementById('map');
+      if(page !== 1) {
+        if(navBar) navBar.classList.remove('hidden'); if(mapEl) mapEl.classList.remove('hidden'); if(mapControls) mapControls.classList.remove('hidden'); 
+        
+        if (!map) {
+            window.initMap(); 
+        } else {
+            updateMapPadding(); 
+            if (typeof google !== 'undefined') google.maps.event.trigger(map, 'resize');
+        }
+      } else {
+          if(navBar) navBar.classList.add('hidden'); if(mapControls) mapControls.classList.add('hidden');
+      }
+
+      if (page === 2 || page === 3) {
+          if (polylineRoute) { polylineRoute.setMap(null); polylineRoute = null; }
+          if (markerDriver) markerDriver.setMap(null); 
+          const bEmer = document.getElementById('btnEmergency'); 
+          if(bEmer) bEmer.classList.add('hidden'); 
+          renderSavedPlaceMarkersOnMap();
+      }
+
+      if(page === 2) {
+        if (map) {
+          if(bookData.pLat !== 0) { map.panTo({lat: bookData.pLat, lng: bookData.pLng}); } else { map.panTo({lat: driverData.lat, lng: driverData.lng}); }
+          updateAddressBox(false); renderWaypointsUI();
+        }
+      } 
+      else if(page === 3) {
+        if (map) {
+          if(bookData.dLat !== 0 && bookData.dLng !== 0) { map.panTo({lat: bookData.dLat, lng: bookData.dLng}); }
+          updateAddressBox(false); renderWaypointsUI();
+        }
+      }
+      else if(page === 4) {
+        const bEmer = document.getElementById('btnEmergency');
+        if(bEmer) bEmer.classList.add('hidden'); 
+
+        let pI = document.getElementById('promoInput'); if(pI) pI.value = '';
+        bookData.promoCode = ''; bookData.discount = 0;
+        let dT = document.getElementById('discountTag'); let sO = document.getElementById('sumPriceOld');
+        if(dT) dT.classList.add('hidden'); if(sO) sO.classList.add('hidden');
+
+        const p4Panel = document.getElementById('page4Panel'); if(p4Panel) p4Panel.classList.remove('panel-collapsed-page4');
+        bookData.waypoints = localWaypoints; renderWaypointsUI(); calculatePrice();
+      }
+
+      updateMapControlsPosition(page);
+    };
+    
+    window.goBack = function() { 
+        if(currentStep === 2) window.showPage(1); 
+        if(currentStep === 3) {
+            let dropWaypoints = localWaypoints.filter(w => w.type === 'drop');
+            if (dropWaypoints.length > 0) {
+                let lastDropIdx = localWaypoints.findIndex(w => w.type === 'drop');
+                window.removeWaypoint(lastDropIdx);
+            }
+            window.showPage(2); 
+        } 
+        if(currentStep === 4) window.showPage(3); 
+    }
+    
+    window.goHome = function() { window.showPage(1); }
+
+    function updateAddressBox(isInteraction = false) {
+      if(!map || !geocoder) return;
+      let isPick = (currentStep === 2); let pos = map.getCenter();
+
+      if (placesService && isInteraction) {
+          placesService.nearbySearch({ location: pos, radius: 25, type: 'point_of_interest' }, (pRes, pStatus) => {
+              if (pStatus === 'OK' && pRes.length > 0) geocoderFallback(pos, isPick, isInteraction, pRes[0].name);
+              else geocoderFallback(pos, isPick, isInteraction, null);
+          });
+      } else { geocoderFallback(pos, isPick, isInteraction, null); }
+    }
+
+    function geocoderFallback(pos, isPick, isInteraction, prefixName) {
+        geocoder.geocode({location: pos}, (res, status) => {
+            if(status === 'OK' && res[0]) {
+                let validResults = res.filter(r => !r.types.includes('plus_code') && !r.formatted_address.match(/^[A-Z0-9]{2,8}\+/));
+                let bestRes = validResults.length > 0 ? validResults[0] : res[0];
+                let fullAddr = bestRes.formatted_address.replace(/,?\s*ประเทศไทย/g, '').replace(/Unnamed Road,?\s*/g, '').replace(/^[A-Z0-9]{2,8}\+.*?\s/g, '').trim();
+                if (prefixName && !fullAddr.includes(prefixName)) fullAddr = prefixName + " (" + fullAddr + ")";
+                
+                if(isPick) {
+                  let el = document.getElementById('pickupSearch');
+                  if(el && isInteraction) { el.value = fullAddr; el.dataset.oldValue = fullAddr; }
+                } else {
+                  let el = document.getElementById('dropoffSearch');
+                  if(el && isInteraction) { el.value = fullAddr; el.dataset.oldValue = fullAddr; }
+                }
+            }
+        });
+    }
+
+    window.useCurrentLocation = function() {
+      if(navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(p => {
+            let pos = {lat: p.coords.latitude, lng: p.coords.longitude}; 
+            if(map) { 
+                updateMapPadding();
+                let currentZoom = map.getZoom();
+                if(currentZoom > 14) {
+                    map.setZoom(14);
+                    setTimeout(() => { map.panTo(pos); setTimeout(() => { map.setZoom(18); }, 400); }, 300);
+                } else {
+                    map.panTo(pos); setTimeout(() => { map.setZoom(18); }, 400);
+                }
+            }
+            updateAddressBox(true);
+          }, () => { showAlert('ผิดพลาด', 'ไม่สามารถดึงตำแหน่งปัจจุบันได้ กรุณาเปิด GPS', 'error'); }, { enableHighAccuracy: true });
+      }
+    }
+
+    window.confirmPickup = function() { 
+        let picks = localWaypoints.filter(w => w.type === 'pick');
+        if(picks.length > 0) { window.showPage(3); } 
+    }
+    window.confirmDropoff = function() { 
+        let drops = localWaypoints.filter(w => w.type === 'drop');
+        if(drops.length > 0) {
+            bookData.pLat = localWaypoints[0].lat; bookData.pLng = localWaypoints[0].lng; bookData.pName = localWaypoints[0].name;
+            let lastIdx = localWaypoints.length - 1;
+            bookData.dLat = localWaypoints[lastIdx].lat; bookData.dLng = localWaypoints[lastIdx].lng; bookData.dName = localWaypoints[lastIdx].name;
+            
+            saveRecentPlace(bookData.pName, bookData.pLat, bookData.pLng);
+            saveRecentPlace(bookData.dName, bookData.dLat, bookData.dLng);
+            window.showPage(4); 
+        } 
+    }
+
+    function calculatePrice() {
+      if(!directionsService || !map || localWaypoints.length < 2) return;
+
+      let origin = new google.maps.LatLng(localWaypoints[0].lat, localWaypoints[0].lng);
+      let dest = new google.maps.LatLng(localWaypoints[localWaypoints.length - 1].lat, localWaypoints[localWaypoints.length - 1].lng);
+      let waypts = localWaypoints.slice(1, -1).map(w => ({location: new google.maps.LatLng(w.lat, w.lng), stopover: true}));
+      
+      directionsService.route({origin: origin, destination: dest, waypoints: waypts, travelMode: 'DRIVING'}, (resRide, stat1) => {
+        if(stat1 === 'OK') {
+          if(polylineRoute) polylineRoute.setMap(null);
+          polylineRoute = new google.maps.Polyline({ path: resRide.routes[0].legs.flatMap(leg => leg.steps.flatMap(step => step.path)), strokeColor: '#3b82f6', strokeWeight: 6, map: map });
+
+          let distMeters = 0; let waitMins = 0;
+          resRide.routes[0].legs.forEach(leg => { distMeters += leg.distance.value; waitMins += leg.duration.value; });
+          let distRideKm = distMeters / 1000; waitMins = Math.ceil(waitMins / 60);
+          currentRouteBounds = resRide.routes[0].bounds;
+
+          bookData.distance = distRideKm.toFixed(1); bookData.duration = waitMins;
+          const sDist = document.getElementById('sumDist'); const sWait = document.getElementById('sumWait');
+          if(sDist) sDist.innerText = bookData.distance; if(sWait) sWait.innerText = bookData.duration;
+
+          let baseFare = parseInt(pricingConfig[window.currentServiceType]?.base || pricingConfig.base || 50); 
+          let kmRate = parseInt(pricingConfig[window.currentServiceType]?.km || pricingConfig.km || 10);
+          let pickRate = parseInt(pricingConfig[window.currentServiceType]?.pick || pricingConfig.pick || 5);
+
+          let baseRidePrice = baseFare + (distRideKm * kmRate);
+          let minDriverDist = 0; let maxDriverDist = 0;
+
+          if (window.onlineDrivers && window.onlineDrivers.length > 0 && typeof google.maps.geometry !== 'undefined') {
+              let distances = window.onlineDrivers.map(d => {
+                  let dLoc = new google.maps.LatLng(d.lat, d.lng);
+                  return google.maps.geometry.spherical.computeDistanceBetween(dLoc, origin) / 1000;
+              });
+              minDriverDist = Math.min(...distances); maxDriverDist = Math.max(...distances);
+          } else if (driverData && driverData.lat && driverData.lng && typeof google.maps.geometry !== 'undefined') {
+              let driverLatLng = new google.maps.LatLng(driverData.lat, driverData.lng);
+              minDriverDist = maxDriverDist = google.maps.geometry.spherical.computeDistanceBetween(driverLatLng, origin) / 1000;
+          }
+
+          let minPrice = Math.floor((baseRidePrice + (minDriverDist * pickRate)) / 10) * 10;
+          let maxPrice = Math.ceil((baseRidePrice + (maxDriverDist * pickRate)) / 10) * 10;
+          
+          if(minPrice < baseFare) minPrice = baseFare;
+          if(maxPrice <= minPrice) maxPrice = minPrice + 10; 
+
+          let priceRangeStr = `~฿${minPrice} - ${maxPrice}`;
+          if (minDriverDist === 0 && maxDriverDist === 0) {
+              priceRangeStr = `~฿${minPrice} - ${minPrice + 20}`;
+              document.getElementById('sumPriceLabel').innerText = "ราคาประเมิน (ไม่มีรถออนไลน์)";
+          } else {
+              document.getElementById('sumPriceLabel').innerText = "ราคาประเมิน";
+          }
+
+          bookData.originalPrice = minPrice; bookData.price = minPrice; bookData.priceEstimate = priceRangeStr;
+          
+          const sPrice = document.getElementById('sumPrice');
+          if(sPrice) sPrice.innerText = bookData.priceEstimate;
+
+          setTimeout(() => { if(map) { let pb = getDynamicBottomPadding(); map.fitBounds(currentRouteBounds, { top: 120, right: 50, bottom: pb, left: 50 }); } }, 200);
+        }
+      });
+    }
+
+    function drawTrackingRoute(statusText) {
+        if(!directionsService || !map || localWaypoints.length === 0) return;
+        
+        let activeWaypoints = localWaypoints.filter(w => !w.passed);
+        if(activeWaypoints.length === 0) return;
+
+        let rOrigin, rDest, rWaypts = [];
+        
+        if (statusText.includes("กำลังเดินทางไปหา") || statusText.includes("รับงานแล้ว") || statusText.includes("มาถึงจุดรับ") || statusText.includes("ออกเดินทาง") || statusText.includes("ไปยังจุดส่ง")) {
+            if(!driverData || !driverData.lat) return;
+            rOrigin = new google.maps.LatLng(driverData.lat, driverData.lng);
+            rDest = new google.maps.LatLng(activeWaypoints[activeWaypoints.length - 1].lat, activeWaypoints[activeWaypoints.length - 1].lng);
+            if(activeWaypoints.length > 1) {
+                rWaypts = activeWaypoints.slice(0, -1).map(w => ({location: new google.maps.LatLng(w.lat, w.lng), stopover: true}));
+            }
+        } else {
+            if(activeWaypoints.length < 2) return;
+            rOrigin = new google.maps.LatLng(activeWaypoints[0].lat, activeWaypoints[0].lng);
+            rDest = new google.maps.LatLng(activeWaypoints[activeWaypoints.length - 1].lat, activeWaypoints[activeWaypoints.length - 1].lng);
+            if(activeWaypoints.length > 2) {
+                rWaypts = activeWaypoints.slice(1, -1).map(w => ({location: new google.maps.LatLng(w.lat, w.lng), stopover: true}));
+            }
+        }
+
+        directionsService.route({origin: rOrigin, destination: rDest, waypoints: rWaypts, travelMode: 'DRIVING'}, (res, stat) => {
+            if(stat === 'OK') {
+                if(polylineRoute) polylineRoute.setMap(null);
+                polylineRoute = new google.maps.Polyline({
+                    path: res.routes[0].legs.flatMap(leg => leg.steps.flatMap(step => step.path)),
+                    strokeColor: '#3b82f6', strokeWeight: 6, map: map
+                });
+                currentRouteBounds = res.routes[0].bounds;
+                updateRealtimeMap();
+            }
+        });
+    }
+
+    window.applyPromoCode = function() {
+        let codeInput = document.getElementById('promoInput'); if(!codeInput) return;
+        let val = codeInput.value.trim().toUpperCase();
+        if(!val) { showAlert('ข้อผิดพลาด', 'กรุณากรอกโค้ดส่วนลดก่อนครับ', 'error'); return; }
+
+        let isNewUser = false;
+        db.ref('completed_jobs').orderByChild('userId').equalTo(lineUserId).once('value', userSnap => {
+            if(!userSnap.exists() || Object.keys(userSnap.val() || {}).length === 0) { isNewUser = true; }
+
+            db.ref('promotions/' + val).once('value', snap => {
+                let p = snap.val();
+                if (!p || p.isActive === false) return resetPromoError('โค้ดส่วนลดนี้ไม่ถูกต้อง หรือถูกปิดการใช้งานไปแล้วครับ', codeInput);
+                if (p.isSingleUse && p.usageCount >= 1) return resetPromoError('โค้ดนี้ถูกใช้งานไปแล้วครับ (สิทธิ์การใช้ 1 ครั้ง)', codeInput);
+                if (p.target === 'new_user' && !isNewUser) return resetPromoError('ขออภัย โค้ดนี้สงวนสิทธิ์เฉพาะผู้ใช้ใหม่เท่านั้นครับ', codeInput);
+
+                bookData.promoCode = p.code; bookData.discount = p.value;
+                bookData.price = Math.max(0, bookData.originalPrice - p.value);
+                let maxPrice = Math.max(0, (bookData.originalPrice + 20) - p.value);
+                bookData.priceEstimate = `~฿${bookData.price} - ${maxPrice}`;
+                
+                const oldP = document.getElementById('sumPriceOld'); const newP = document.getElementById('sumPrice'); const dTag = document.getElementById('discountTag');
+                if(oldP) { oldP.innerText = `฿${bookData.originalPrice}`; oldP.classList.remove('hidden'); }
+                if(newP) newP.innerText = bookData.priceEstimate;
+                if(dTag) { dTag.innerText = `ประหยัด ฿${p.value}`; dTag.classList.remove('hidden'); }
+                
+                window.closePromoModal(); showAlert('สำเร็จ!', `ใช้โค้ดส่วนลด ${p.code} ได้รับส่วนลด ${p.value} บาทเรียบร้อยแล้ว`, 'success');
+            });
+        });
+    }
+
+    function resetPromoError(msg, codeInput) {
+        showAlert('ขออภัย', msg, 'error'); codeInput.value = '';
+        bookData.promoCode = ''; bookData.discount = 0; bookData.price = bookData.originalPrice;
+        bookData.priceEstimate = `~฿${bookData.originalPrice} - ${bookData.originalPrice + 20}`;
+        const oldP = document.getElementById('sumPriceOld'); const newP = document.getElementById('sumPrice'); const dTag = document.getElementById('discountTag');
+        if(oldP) oldP.classList.add('hidden'); if(newP) newP.innerText = bookData.priceEstimate; if(dTag) dTag.classList.add('hidden');
+    }
+
+    window.submitBooking = function() {
+      if ('speechSynthesis' in window) { let unlockMsg = new SpeechSynthesisUtterance(''); window.speechSynthesis.speak(unlockMsg); }
+
+      let telInput = document.getElementById('userPhone'); if(!telInput) return;
+      let tel = telInput.value.replace(/\D/g, ''); 
+      if(tel.length === 0) { showAlert('แจ้งเตือน', 'กรุณากรอกเบอร์ติดต่อก่อนกดยืนยันงานครับ', 'error'); return; }
+      if(tel.length < 10) { showAlert('แจ้งเตือน', 'กรุณากรอกเบอร์โทรศัพท์ให้ครบ 10 หลักครับ', 'error'); return; }
+      localStorage.setItem('passengerPhone', tel);
+
+      bookData.serviceType = window.currentServiceType;
+      bookData.charterDetails = null; 
+
+      db.ref('blacklist/' + tel).once('value', snap => {
+          if (snap.exists()) { showAlert('ระงับบริการ', 'ขออภัย เบอร์โทรศัพท์นี้ถูกระงับการให้บริการจากระบบชั่วคราว\nเหตุผล: ' + snap.val().reason, 'error'); return; }
+          bookData.userId = lineUserId; bookData.name = lineName; bookData.phone = tel;
+          bookData.status = "รอผู้ขับขี่ตอบรับ"; bookData.timestamp = firebase.database.ServerValue.TIMESTAMP; 
+          
+          let dbWaypoints = localWaypoints.map(w => ({ lat: w.lat, lng: w.lng, name: w.name, type: w.type, iconType: w.iconType || null, passed: false }));
+          bookData.waypoints = dbWaypoints;
+          
+          db.ref('bookings/' + lineUserId).set(bookData).then(() => {
+              if(bookData.promoCode) {
+                  let histRef = db.ref('promotions/' + bookData.promoCode + '/history').push();
+                  histRef.set({ date: new Date().toLocaleString('th-TH'), userName: lineName, phone: tel, discount: bookData.discount });
+                  db.ref('promotions/' + bookData.promoCode + '/usageCount').set(firebase.database.ServerValue.increment(1));
+              }
+              if(APPS_SCRIPT_URL) fetch(`${APPS_SCRIPT_URL}?action=notify&type=new_ride&name=${lineName}&pick=${bookData.pName}`, {mode: 'no-cors'});
+              window.showPage('Tracking');
+          });
+      });
     }
 
   </script>
