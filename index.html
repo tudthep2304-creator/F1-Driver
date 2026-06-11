@@ -341,7 +341,7 @@
   <div id="inAppChatModal" class="hidden fixed inset-0 z-[250] bg-[#1e234e] flex flex-col pointer-events-auto transition-transform">
       <div class="bg-[#2a2f5c] border-b border-[#383d6a] p-4 flex items-center gap-3 shadow-md shrink-0">
           <button onclick="closeInAppChatModal()" class="w-10 h-10 bg-[#383d6a] text-white rounded-full flex items-center justify-center hover:bg-[#4b507d]"><i class="fas fa-arrow-left"></i></button>
-          <h2 class="text-lg font-black text-white"><i class="fas fa-comments text-[#fae100] mr-2"></i>ข้อความถึงคนขับ</h2>
+          <h2 class="text-lg font-black text-white"><i class="fas fa-comments text-blue-400 mr-2"></i>ข้อความถึงคนขับ</h2>
       </div>
       <div id="inAppChatMessages" class="flex-1 overflow-y-auto p-4 space-y-3 bg-[#1e234e]/80 hide-scrollbar flex flex-col">
           <p class="text-center text-xs text-gray-500 my-4">เริ่มต้นการสนทนากับคนขับที่นี่</p>
@@ -592,7 +592,7 @@
     let activeChatListenerRef = null;
     let currentSelectedRatingScore = 0;
 
-    // ✅ Dark Map แบบเห็นโครงสร้าง (แบบเดียวกับคนขับ)
+    // ✅ Dark Map แบบละเอียด
     const detailedDarkMapStyle = [
       { elementType: "geometry", stylers: [{ color: "#1e234e" }] },
       { elementType: "labels.text.stroke", stylers: [{ color: "#1e234e" }] },
@@ -904,7 +904,7 @@
             const splash = document.getElementById('splashScreen');
             if(splash) {
                 splash.style.opacity = '0';
-                setTimeout(() => splash.style.visibility = 'hidden', 500);
+                setTimeout(() => { splash.style.visibility = 'hidden'; splash.style.display = 'none'; }, 500);
             }
         }, 2000);
     });
@@ -1068,20 +1068,6 @@
         panel.classList.toggle('panel-collapsed'); updateMapPadding();
     }
 
-    function showAlert(title, message, type = 'info', callback = null) {
-        document.getElementById('alertTitle').innerText = title; document.getElementById('alertMessage').innerText = message;
-        let iconHtml = ''; let iconBg = ''; let iconColor = '';
-        if (type === 'error') { iconHtml = '<i class="fas fa-times"></i>'; iconBg = 'bg-red-900/30 border border-red-500/30'; iconColor = 'text-red-500'; } 
-        else if (type === 'success') { iconHtml = '<i class="fas fa-check"></i>'; iconBg = 'bg-[#fae100]/20 border border-[#fae100]/30'; iconColor = 'text-[#fae100]'; } 
-        else { iconHtml = '<i class="fas fa-info"></i>'; iconBg = 'bg-[#fae100]/20 border border-[#fae100]/30'; iconColor = 'text-[#fae100]'; }
-        
-        const iconDiv = document.getElementById('alertIcon');
-        if(iconDiv) { iconDiv.innerHTML = iconHtml; iconDiv.className = `w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl ${iconBg} ${iconColor}`; }
-        document.getElementById('alertModal').classList.remove('hidden');
-        windowContext.alertCloseCallback = typeof callback === 'function' ? callback : null;
-    }
-    windowContext.closeAlertModal = function() { document.getElementById('alertModal').classList.add('hidden'); if (windowContext.alertCloseCallback) windowContext.alertCloseCallback(); }
-
     windowContext.toggleMapStyle = function() {
         if(!map) return; isSatelliteMode = !isSatelliteMode;
         let btnMapStyle = document.getElementById('btnMapStyle');
@@ -1167,7 +1153,6 @@
       });
     };
 
-    // ✅ Dark Map แบบละเอียดเหมือนคนขับ
     const detailedDarkMapStyle = [
       { elementType: "geometry", stylers: [{ color: "#1e234e" }] },
       { elementType: "labels.text.stroke", stylers: [{ color: "#1e234e" }] },
@@ -1222,7 +1207,7 @@
       geocoder = new google.maps.Geocoder();
       placesService = new google.maps.places.PlacesService(map);
       
-      // ✅ เปลี่ยนรูปรถคนขับเป็นรถสีแดงท็อปวิว ให้ตรงกับฝั่งคนขับ
+      // ✅ เปลี่ยนรถเป็นรถสีแดง ให้ตรงกับคนขับ
       markerDriver = new google.maps.Marker({ 
           map: null, 
           icon: { url: "https://img.icons8.com/color/48/car-top-view.png", scaledSize: new google.maps.Size(40, 40), anchor: new google.maps.Point(20, 20) }, 
@@ -1362,7 +1347,6 @@
         });
     }
 
-    // ✅ ปรับวาดหมุดให้เรียงเลขต่อกันเลย และใช้สีตามประเภท (เขียว/แดง)
     function renderWaypointsUI() {
         const typeOrder = { 'pick': 1, 'waypoint': 2, 'drop': 3 };
         localWaypoints.sort((a, b) => typeOrder[a.type] - typeOrder[b.type]);
@@ -1398,7 +1382,7 @@
             }
         }
 
-        let globalCount = 1; // ตัวนับเลขรันต่อเนื่อง
+        let globalCount = 1;
 
         localWaypoints.forEach((wp, index) => {
             let isFocused = (focusedWaypointIndex === index);
