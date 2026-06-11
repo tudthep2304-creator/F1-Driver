@@ -107,20 +107,20 @@
       
       <div class="w-full max-w-sm mx-auto grid grid-cols-3 gap-2 shrink-0 mb-4 mt-2">
           
-          <button id="btnMainRideAction" onclick="handleMainRideClick()" class="flex flex-col items-center justify-center gap-2 text-[#fae100] transition active:scale-95 bg-transparent outline-none">
-              <i class="fas fa-car text-[36px]" id="btnMainRideIcon"></i>
-              <span class="font-black text-sm text-center leading-tight tracking-wide" id="btnMainRideText">รอสถานะ...</span>
+          <button id="btnMainRideAction" onclick="handleMainRideClick()" class="flex flex-col items-center justify-center gap-1 text-[#fae100] transition active:scale-95 bg-[#2a2f5c] border border-[#383d6a] rounded-2xl p-3 outline-none">
+              <i class="fas fa-car text-[30px]" id="btnMainRideIcon"></i>
+              <span class="font-black text-xs text-center leading-tight tracking-wide" id="btnMainRideText">เรียกรถ</span>
           </button>
           
-          <button onclick="openNewsModal()" class="flex flex-col items-center justify-center gap-2 text-[#fae100] transition active:scale-95 relative bg-transparent outline-none">
-              <div id="newsBadge" class="hidden absolute top-0 right-3 bg-red-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full shadow animate-pulse">New</div>
-              <i class="fas fa-bullhorn text-[36px]"></i>
-              <span class="font-black text-sm text-center leading-tight tracking-wide">ข่าวสาร</span>
+          <button onclick="openNewsModal()" class="flex flex-col items-center justify-center gap-1 text-[#fae100] transition active:scale-95 relative bg-[#2a2f5c] border border-[#383d6a] rounded-2xl p-3 outline-none">
+              <div id="newsBadge" class="hidden absolute top-1 right-2 bg-red-500 text-white text-[8px] font-bold px-1.5 py-0.5 rounded-full shadow animate-pulse">New</div>
+              <i class="fas fa-bullhorn text-[30px]"></i>
+              <span class="font-black text-xs text-center leading-tight tracking-wide">ข่าวสาร&โปรโมชั่น</span>
           </button>
 
-          <button onclick="openCommunityModal()" class="flex flex-col items-center justify-center gap-2 text-[#fae100] transition active:scale-95 bg-transparent outline-none">
-              <i class="fas fa-users text-[36px]"></i>
-              <span class="font-black text-sm text-center leading-tight tracking-wide">คอมมูนิตี้</span>
+          <button onclick="openCommunityModal()" class="flex flex-col items-center justify-center gap-1 text-[#fae100] transition active:scale-95 bg-[#2a2f5c] border border-[#383d6a] rounded-2xl p-3 outline-none">
+              <i class="fas fa-users text-[30px]"></i>
+              <span class="font-black text-xs text-center leading-tight tracking-wide">คอมมูนิตี้</span>
           </button>
       </div>
 
@@ -172,8 +172,10 @@
           <button onclick="closeCommunityModal()" class="w-10 h-10 bg-[#383d6a] text-gray-400 rounded-full flex items-center justify-center hover:text-[#fae100] transition"><i class="fas fa-arrow-left"></i></button>
           <h2 class="text-lg font-black text-[#fae100]"><i class="fas fa-users mr-2"></i> แชทคอมมูนิตี้ส่วนกลาง</h2>
       </div>
-      <div id="globalChatBox" class="flex-1 overflow-y-auto p-4 space-y-3 bg-[#1e234e] hide-scrollbar flex flex-col">
-          <p class="text-center text-xs text-gray-500 my-4">พูดคุยกับผู้โดยสารและคนขับในพื้นที่ได้ที่นี่</p>
+      <div id="globalChatBox" class="flex-1 overflow-y-auto p-4 space-y-3 bg-[#1e234e] hide-scrollbar flex flex-col-reverse">
+          <div id="globalChatMessages" class="space-y-3">
+              <p class="text-center text-xs text-gray-500 my-4">เริ่มต้นพูดคุยกับสมาชิก F1 DRIVER ในแชทส่วนกลางนี้ได้เลยครับ</p>
+          </div>
       </div>
       <div class="bg-[#2a2f5c] p-3 flex gap-2 shrink-0 shadow-[0_-5px_15px_rgba(0,0,0,0.3)]">
           <input type="text" id="globalChatInput" class="flex-1 rounded-xl bg-[#383d6a] text-white px-4 py-3 text-sm outline-none focus:border-[#fae100] border border-transparent transition" placeholder="พิมพ์ข้อความพูดคุย...">
@@ -593,6 +595,7 @@
     let selectedHistoryJobId = null;
     let myBlockedDrivers = {};
     let activeChatListenerRef = null;
+    let activeGlobalChatListenerRef = null; // New listener for global chat
     let currentSelectedRatingScore = 0;
 
     // ✅ Dark Map แบบละเอียด
@@ -640,7 +643,7 @@
 
     windowContext.currentServiceType = 'car';
 
-    // ✅ ปรับปุ่มให้รวมสถานะคนขับเข้าไป
+    // ✅ ปรับปุ่มให้รวมสถานะคนขับเข้าไป + ลดขนาดไอคอน/ตัวหนังสือ
     function updateRideButtonState() {
         let btnMainRide = document.getElementById('btnMainRideAction');
         let btnMainRideIcon = document.getElementById('btnMainRideIcon');
@@ -654,21 +657,23 @@
             btnMainRide.disabled = false;
             btnMainRide.classList.add('animate-pulse');
             btnMainRide.style.opacity = '1';
-            if(btnMainRideIcon) btnMainRideIcon.className = "fas fa-route text-[36px] text-[#fae100]";
-            if(btnMainRideText) btnMainRideText.innerText = "ดูสถานะรถ";
+            // ลดขนาดไอคอนในตอนสถานะเปลี่ยนด้วย
+            if(btnMainRideIcon) btnMainRideIcon.className = "fas fa-route text-[30px] text-[#fae100]";
+            if(btnMainRideText) btnMainRideText.innerText = "ดูสถานะ"; // สั้นลงให้พอดีพื้นที่
             btnMainRide.onclick = function() { showPage('Tracking'); };
         } else if (hasOnlineDrivers) {
             btnMainRide.disabled = false;
             btnMainRide.classList.remove('animate-pulse');
             btnMainRide.style.opacity = '1';
-            if(btnMainRideIcon) btnMainRideIcon.className = "fas fa-car text-[36px] text-[#fae100]";
+            // ไอคอนเรียกรถปกติ
+            if(btnMainRideIcon) btnMainRideIcon.className = "fas fa-car text-[30px] text-[#fae100]";
             if(btnMainRideText) btnMainRideText.innerText = "เรียกรถ";
             btnMainRide.onclick = function() { windowContext.openVehicleModal(); };
         } else {
             btnMainRide.disabled = true;
             btnMainRide.classList.remove('animate-pulse');
             btnMainRide.style.opacity = '0.5';
-            if(btnMainRideIcon) btnMainRideIcon.className = "fas fa-car-slash text-[36px] text-gray-400";
+            if(btnMainRideIcon) btnMainRideIcon.className = "fas fa-car-slash text-[30px] text-gray-400";
             if(btnMainRideText) btnMainRideText.innerText = "ไม่มีรถ";
             btnMainRide.onclick = null;
         }
@@ -680,7 +685,6 @@
         } else { document.getElementById('vehicleSelectionModal').classList.remove('hidden'); }
     }
 
-    // ✅ ปิดปุ่มเลือกรถ ถ้ารถประเภทนั้นไม่มีออนไลน์
     windowContext.openVehicleModal = function() { 
         let hasCar = false;
         let hasBike = false;
@@ -731,7 +735,6 @@
         closeVehicleModal(); showPage(2);
     }
 
-    // ✅ เอา New badge ออกเมื่อเปิดอ่านข่าว
     windowContext.openNewsModal = function() { 
         document.getElementById('newsModal').classList.remove('hidden'); 
         renderNewsAndPromotions(); 
@@ -812,7 +815,6 @@
         return now >= start && now <= end;
     }
 
-    // ✅ อัปเดตแบนเนอร์ให้โชว์ในหน้าข่าวสารด้วย
     db.ref('config/banners').on('value', snap => {
         let hContainer = document.getElementById('homeBannerContainer');
         let hSlider = document.getElementById('bannerSlider');
@@ -1994,6 +1996,65 @@
         if(!textVal) return;
         db.ref('bookings/' + lineUserId + '/chats').push({
             sender: 'passenger',
+            text: textVal,
+            timestamp: firebase.database.ServerValue.TIMESTAMP
+        }).then(() => { inputEl.value = ''; });
+    }
+
+    // ✅ Community Chat Functions (New)
+    windowContext.openCommunityModal = function() {
+        document.getElementById('communityModal').classList.remove('hidden');
+        const messagesDiv = document.getElementById('globalChatMessages');
+        const chatBox = document.getElementById('globalChatBox');
+        
+        // Setup listener if not already active
+        if(!activeGlobalChatListenerRef) {
+            // Keep clean: remove old placeholder
+            messagesDiv.innerHTML = '';
+            
+            // Listen to last 50 messages
+            activeGlobalChatListenerRef = db.ref('global_chats').limitToLast(50);
+            activeGlobalChatListenerRef.on('child_added', snap => {
+                let messageData = snap.val();
+                let isSenderMe = messageData.userId === lineUserId;
+                let align = isSenderMe ? 'justify-end' : 'justify-start';
+                let bg = isSenderMe ? 'bg-[#fae100] text-[#1e234e]' : 'bg-[#2a2f5c] border border-[#383d6a] text-white';
+                let senderName = isSenderMe ? 'คุณ' : (messageData.userName || 'Unknown');
+                let timeStr = messageData.timestamp ? new Date(messageData.timestamp).toLocaleTimeString('th-TH', {hour: '2-digit', minute:'2-digit'}) : '';
+
+                let messageHtml = `
+                <div class="flex w-full ${align} animate-fade-in items-start gap-2 ${isSenderMe ? 'flex-row-reverse' : ''}">
+                    ${!isSenderMe ? `<img src="${messageData.userPic || 'https://img.icons8.com/bubbles/50/user.png'}" class="w-7 h-7 rounded-full mt-1 shrink-0 bg-gray-600" />` : ''}
+                    <div class="flex flex-col ${isSenderMe ? 'items-end' : 'items-start'} max-w-[75%]">
+                        ${!isSenderMe ? `<span class="text-[10px] text-gray-500 font-bold mb-0.5 ml-2">${senderName}</span>` : ''}
+                        <div class="${bg} px-4 py-2.5 rounded-2xl text-[13px] font-bold shadow-sm break-words w-full">${messageData.text}</div>
+                        <span class="text-[9px] text-gray-600 mt-1 ${isSenderMe ? 'mr-2' : 'ml-2'}">${timeStr}</span>
+                    </div>
+                </div>`;
+                
+                messagesDiv.insertAdjacentHTML('beforeend', messageHtml);
+                
+                // Auto scroll to bottom (using reversed box trick)
+                chatBox.scrollTop = 0; 
+            });
+        }
+        
+        document.getElementById('globalChatInput').focus();
+    }
+    
+    windowContext.closeCommunityModal = function() { document.getElementById('communityModal').classList.add('hidden'); }
+    
+    windowContext.sendGlobalChat = function() {
+        let inputEl = document.getElementById('globalChatInput');
+        let textVal = inputEl.value.trim();
+        if(!textVal) return;
+        
+        let userPic = document.getElementById('userPicSmall')?.src || '';
+
+        db.ref('global_chats').push({
+            userId: lineUserId,
+            userName: lineName,
+            userPic: userPic,
             text: textVal,
             timestamp: firebase.database.ServerValue.TIMESTAMP
         }).then(() => { inputEl.value = ''; });
