@@ -219,6 +219,26 @@
           </div>
       </div>
 
+  <div id="newsDetailModal" class="hidden fixed inset-0 z-[210] bg-[#1e234e] transition-transform flex flex-col pointer-events-auto">
+      <div class="relative z-10 bg-[#2a2f5c]/90 backdrop-blur-md border-b border-[#383d6a] h-16 px-4 flex items-center gap-3 shadow-md shrink-0 w-full">
+          <button onclick="window.closeNewsDetailModal()" class="w-10 h-10 shrink-0 bg-[#383d6a]/80 text-gray-400 rounded-full flex items-center justify-center hover:text-[#fae100] transition"><i class="fas fa-arrow-left"></i></button>
+          <h2 class="text-lg font-black text-white">รายละเอียดข้อความ</h2>
+      </div>
+      
+      <div class="p-5 flex-1 overflow-y-auto w-full hide-scrollbar text-white">
+          <div class="flex justify-between items-center mb-4">
+              <span id="ndBadge" class="bg-blue-500 text-white text-[10px] font-black px-2 py-1 rounded shadow">NEWS</span>
+              <span id="ndDate" class="text-[12px] text-gray-400 font-bold"></span>
+          </div>
+          <h3 id="ndTitle" class="text-xl font-black text-white mb-4 leading-tight"></h3>
+          
+          <div id="ndImageContainer" class="mb-5 hidden">
+              <img id="ndImage" src="" class="w-full rounded-xl shadow-md object-contain border border-[#383d6a] bg-black/20">
+          </div>
+          
+          <p id="ndContent" class="text-sm text-gray-300 leading-relaxed whitespace-pre-line"></p>
+      </div>
+  </div>
 <!-- ✅ Community Modal (แชทส่วนกลาง แบบมีตัวกรอง) -->
 <div id="communityModal" class="hidden fixed inset-0 z-[200] bg-[#1e234e] flex flex-col pointer-events-auto transition-transform">
       
@@ -896,89 +916,6 @@ window.loadedNewsItems = {};
 
         if (snapshot) processSnap(snapshot);
         else db.ref('news_promotions').once('value', snap => processSnap(snap));
-    }
-
-    // 🌟 3. ระบบกดอ่านข่าว (บันทึกสถานะว่าอ่านแล้วทันที)
-    window.openNewsDetail = function(id) {
-        let item = window.loadedNewsItems[id];
-        if(!item) return;
-
-        // บันทึก ID ลงเครื่องว่า "อ่านแล้ว"
-        let readIds = JSON.parse(localStorage.getItem('readNewsIds') || '[]');
-        if(!readIds.includes(id)) {
-            readIds.push(id);
-            localStorage.setItem('readNewsIds', JSON.stringify(readIds));
-            
-            // อัปเดตตัวเลขแจ้งเตือนหน้าแรกทันที
-            window.unreadNewsCount = Math.max(0, window.unreadNewsCount - 1);
-            let badge = document.getElementById('newsBadge');
-            if(badge) {
-                if(window.unreadNewsCount > 0) badge.innerText = window.unreadNewsCount > 99 ? '99+' : window.unreadNewsCount;
-                else badge.classList.add('hidden');
-            }
-            
-            // ซ่อนจุดแดง และคำว่า NEW สลับสีตัวหนังสือให้อ่อนลงทันที โดยไม่ต้องโหลดหน้าใหม่
-            let dot = document.getElementById('dot-' + id); if(dot) dot.remove();
-            let tag = document.getElementById('tag-' + id); if(tag) tag.remove();
-            let titleEl = document.getElementById('title-' + id); if(titleEl) { titleEl.classList.remove('text-white'); titleEl.classList.add('text-gray-400'); }
-            let timeEl = document.getElementById('time-' + id); if(timeEl) { timeEl.classList.remove('text-[#fae100]'); timeEl.classList.add('text-gray-500'); }
-        }
-
-        // แสดงเนื้อหา
-        document.getElementById('ndDate').innerText = item.dateStr || '';
-        document.getElementById('ndTitle').innerText = item.title;
-        document.getElementById('ndContent').innerText = item.content;
-        
-        let badgeEl = document.getElementById('ndBadge');
-        if(item.isPromo) { badgeEl.innerText = "PROMO"; badgeEl.className = "bg-red-500 text-white text-[10px] font-black px-2 py-1 rounded shadow"; } 
-        else { badgeEl.innerText = "NEWS"; badgeEl.className = "bg-blue-500 text-white text-[10px] font-black px-2 py-1 rounded shadow"; }
-
-        let imgContainer = document.getElementById('ndImageContainer');
-        let imgEl = document.getElementById('ndImage');
-        if(item.imageUrl) { imgEl.src = item.imageUrl; imgContainer.classList.remove('hidden'); } 
-        else { imgContainer.classList.add('hidden'); imgEl.src = ""; }
-
-        document.getElementById('newsDetailModal').classList.remove('hidden');
-    }
-
-    window.closeNewsDetailModal = function() {
-        document.getElementById('newsDetailModal').classList.add('hidden');
-    }
-        // 🌟 ระบบรองรับรูปภาพแนบ (ถ้าใน Firebase มีฟิลด์ imageUrl)
-        let imgContainer = document.getElementById('ndImageContainer');
-        let imgEl = document.getElementById('ndImage');
-        if(item.imageUrl) {
-            imgEl.src = item.imageUrl;
-            imgContainer.classList.remove('hidden');
-        } else {
-            imgContainer.classList.add('hidden');
-            imgEl.src = "";
-        }
-
-        document.getElementById('newsDetailModal').classList.remove('hidden');
-    }
-
-    window.closeNewsDetailModal = function() {
-        document.getElementById('newsDetailModal').classList.add('hidden');
-    }
-      
-    function getDynamicBottomPadding() {
-        if(!document.getElementById('page4Panel')) return 0;
-        let pBottom = 0;
-        if (currentStep === 4) {
-            const panel = document.getElementById('page4Panel');
-            pBottom = (panel && panel.classList.contains('panel-collapsed-page4')) ? 120 : panel.offsetHeight;
-        } else if (currentStep === 'Tracking') {
-            const panel = document.getElementById('trackingPanel');
-            pBottom = (panel && panel.classList.contains('panel-collapsed')) ? 120 : panel.offsetHeight;
-        } else if (currentStep === 2) {
-            const panel = document.querySelector('#page2 .ui-panel');
-            pBottom = panel ? panel.offsetHeight : 0;
-        } else if (currentStep === 3) {
-            const panel = document.querySelector('#page3 .ui-panel');
-            pBottom = panel ? panel.offsetHeight : 0;
-        }
-        return pBottom + 20;
     }
 
     function updateMapPadding() {
