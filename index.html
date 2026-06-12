@@ -2248,6 +2248,68 @@ window.openProfileModal = function() {
             }
         });
     };
+    // ==========================================
+    // ระบบ Swipe to Go Back (ปัดขวาเพื่อกลับ/ปิดหน้า)
+    // ==========================================
+    function enableSwipeToClose(modalId, closeCallback) {
+        const modal = document.getElementById(modalId);
+        if (!modal) return;
+
+        let touchstartX = 0;
+        let touchstartY = 0;
+        let touchendX = 0;
+        let touchendY = 0;
+
+        // เมื่อเริ่มเอานิ้วแตะจอ
+        modal.addEventListener('touchstart', function(event) {
+            // ดักไว้: ถ้าจุดที่แตะจอ เป็นกล่องที่เลื่อนซ้ายขวาได้ (เช่น สไลด์แบนเนอร์โฆษณา) ให้ข้ามไป ไม่ต้องทำอะไร
+            if (event.target.closest('.overflow-x-auto') || event.target.closest('.pac-container')) {
+                return; 
+            }
+            touchstartX = event.changedTouches[0].screenX;
+            touchstartY = event.changedTouches[0].screenY;
+        }, { passive: true });
+
+        // เมื่อปล่อยนิ้วออกจากจอ
+        modal.addEventListener('touchend', function(event) {
+            if (event.target.closest('.overflow-x-auto') || event.target.closest('.pac-container')) {
+                return;
+            }
+            touchendX = event.changedTouches[0].screenX;
+            touchendY = event.changedTouches[0].screenY;
+            handleSwipeGesture();
+        }, { passive: true });
+
+        // คำนวณระยะการปัด
+        function handleSwipeGesture() {
+            const diffX = touchendX - touchstartX;
+            const diffY = Math.abs(touchendY - touchstartY);
+            
+            // ตรรกะ: ปัดไปทางขวามากกว่า 80px และไม่ได้เป็นการเลื่อนขึ้น/ลง (diffY ต้องน้อยกว่า 50)
+            if (diffX > 80 && diffY < 50) {
+                // เรียกใช้ฟังก์ชันปิดหน้านั้นๆ
+                if (typeof closeCallback === 'function') {
+                    closeCallback();
+                }
+            }
+        }
+    }
+
+    // ผูกระบบปัดขวาเข้ากับหน้าต่าง (Modal) ต่างๆ ทันทีที่ระบบพร้อม
+    setTimeout(() => {
+        // หน้าข่าวสาร
+        enableSwipeToClose('newsModal', window.closeNewsModal);
+        // หน้าคอมมูนิตี้
+        enableSwipeToClose('communityModal', window.closeCommunityModal);
+        // หน้าโปรไฟล์
+        enableSwipeToClose('profileModal', window.closeProfileModal);
+        // หน้าประวัติรวม
+        enableSwipeToClose('historyModal', window.closePassengerHistory);
+        // หน้ารายละเอียดประวัติแต่ละงาน (แถมให้เพื่อความลื่นไหลครับ)
+        enableSwipeToClose('historyDetailModal', window.closeHistoryDetail);
+        // หน้าจัดการแบล็กลิสต์
+        enableSwipeToClose('blockedDriversModal', window.closeBlockedDrivers);
+    }, 1000); // หน่วงเวลา 1 วิให้ UI โหลดเสร็จก่อน
   </script>
   <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDsZ_tbFhH6fUXRz3I6C-tMshNwwrSevd4&libraries=places,geometry&callback=initMap" async defer></script>
 </body>
