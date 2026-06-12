@@ -33,7 +33,7 @@
     @keyframes trackRetractF {
         0% { opacity: 0; transform: skewX(-15deg) scaleX(1); background-position: 0 0; }
         20% { opacity: 1; transform: skewX(-15deg) scaleX(1); }
-        70% { opacity: 1; transform: skewX(-15deg) scaleX(1); background-position: -40px 0; }
+        85% { opacity: 1; transform: skewX(-15deg) scaleX(1); background-position: -40px 0; }
         100% { opacity: 0; transform: skewX(-15deg) scaleX(0); background-position: -60px 0; } /* หดหายไปในตัวอักษร */
     }
 
@@ -41,7 +41,7 @@
     @keyframes trackRetractOne {
         0% { opacity: 0; transform: skewX(-15deg) scaleX(1); background-position: 0 0; }
         20% { opacity: 1; transform: skewX(-15deg) scaleX(1); }
-        70% { opacity: 1; transform: skewX(-15deg) scaleX(1); background-position: 40px 0; }
+        85% { opacity: 1; transform: skewX(-15deg) scaleX(1); background-position: 40px 0; }
         100% { opacity: 0; transform: skewX(-15deg) scaleX(0); background-position: 60px 0; } /* หดหายไปในตัวเลข */
     }
     
@@ -76,7 +76,7 @@
         clip-path: polygon(0% 25%, 100% 0%, 100% 100%, 0% 75%);
         -webkit-mask-image: linear-gradient(to right, transparent 0%, black 95%);
         mask-image: linear-gradient(to right, transparent 0%, black 95%);
-        animation: trackRetractF 1.4s ease-in-out forwards;
+        animation: trackRetractF 2.0s ease-in-out forwards;
         z-index: -1;
     }
     
@@ -113,7 +113,7 @@
         clip-path: polygon(0% 0%, 100% 25%, 100% 75%, 0% 100%);
         -webkit-mask-image: linear-gradient(to left, transparent 0%, black 95%);
         mask-image: linear-gradient(to left, transparent 0%, black 95%);
-        animation: trackRetractOne 1.4s ease-in-out forwards;
+        animation: trackRetractOne 2.0s ease-in-out forwards;
         z-index: -1;
     }
     
@@ -1282,7 +1282,7 @@ window.loadedNewsItems = {};
                 splash.style.opacity = '0';
                 setTimeout(() => { splash.style.visibility = 'hidden'; splash.style.display = 'none'; }, 500);
             }
-        }, 3000);
+        }, 2500);
     });
 
     let currentConfirmCallback = null;
