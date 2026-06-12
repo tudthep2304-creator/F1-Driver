@@ -15,20 +15,19 @@
     .map-container { position: fixed; inset: 0; width: 100vw; height: 100vh; z-index: 0; background: #1e234e; }
 
 /* Splash Screen CSS */
-    /* เติม overflow: hidden; เพื่อไม่ให้จอทะลุตอนตัวอักษรมาจากนอกจอ */
     #splashScreen { position: fixed; inset: 0; z-index: 999999; background-color: #1e234e; display: flex; align-items: center; justify-content: center; transition: opacity 0.5s ease, visibility 0.5s; overflow: hidden; }
     
-    /* เอฟเฟกต์แสงวิ่งตามและสไลด์เข้า */
-    @keyframes slideF { 
-        0% { opacity: 0; transform: translateX(-100vw); text-shadow: -80px 0 20px rgba(255,255,255,0.8), -150px 0 40px rgba(255,255,255,0.4); } 
-        70% { opacity: 1; transform: translateX(10px); text-shadow: -15px 0 10px rgba(255,255,255,0.5); }
-        100% { opacity: 1; transform: translateX(0); text-shadow: 0 0 15px rgba(255,255,255,0.2); } 
+    /* เอฟเฟกต์ยืดแบบโดนหลุมดำดูด (Warp / Spaghettification) */
+    @keyframes warpF { 
+        0% { opacity: 0; transform: translateX(-150vw) scaleX(8); } /* ยืดออก 8 เท่าจากนอกจอ */
+        70% { opacity: 1; transform: translateX(20px) scaleX(0.7); } /* เบรกตัวโก่ง หดสั้นกว่าปกตินิดนึง */
+        100% { opacity: 1; transform: translateX(0) scaleX(1); } /* ดีดกลับมาทรงเดิม */
     }
     
-    @keyframes slideOne { 
-        0% { opacity: 0; transform: translateX(100vw); text-shadow: 80px 0 20px rgba(250,225,0,0.8), 150px 0 40px rgba(250,225,0,0.4); } 
-        70% { opacity: 1; transform: translateX(-10px); text-shadow: 15px 0 10px rgba(250,225,0,0.5); }
-        100% { opacity: 1; transform: translateX(0); text-shadow: 0 0 15px rgba(250,225,0,0.2); } 
+    @keyframes warpOne { 
+        0% { opacity: 0; transform: translateX(150vw) scaleX(8); } 
+        70% { opacity: 1; transform: translateX(-20px) scaleX(0.7); } 
+        100% { opacity: 1; transform: translateX(0) scaleX(1); } 
     }
     
     /* ตัว F (พุ่งจากขอบซ้าย) */
@@ -42,8 +41,8 @@
         position: relative; 
         z-index: 2; 
         opacity: 0;
-        animation: slideF 0.6s cubic-bezier(0.25, 1, 0.5, 1) forwards; /* พุ่งมาไวๆ แล้วเบรกนิ่มๆ ตรงกลาง */
-        transform: translateZ(0); 
+        transform-origin: right center; /* ล็อกด้านหน้าให้พุ่งนำ แล้วให้หางยืดไปด้านซ้าย */
+        animation: warpF 0.6s cubic-bezier(0.25, 1, 0.5, 1) forwards; 
         -webkit-font-smoothing: antialiased; 
     }
     
@@ -60,8 +59,8 @@
         position: relative; 
         z-index: 1; 
         opacity: 0;
-        animation: slideOne 0.6s cubic-bezier(0.25, 1, 0.5, 1) forwards; 
-        transform: translateZ(0);
+        transform-origin: left center; /* ล็อกด้านหน้าให้พุ่งนำ แล้วให้หางยืดไปด้านขวา */
+        animation: warpOne 0.6s cubic-bezier(0.25, 1, 0.5, 1) forwards; 
         -webkit-font-smoothing: antialiased;
     }
     
