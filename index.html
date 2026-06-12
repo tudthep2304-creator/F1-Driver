@@ -46,19 +46,20 @@
         -webkit-font-smoothing: antialiased; 
     }
     
-    /* เลข 1 (พุ่งจากขอบขวา + ลายเส้นชัยตาหมากรุก ขาว-เหลือง) */
+    /* เลข 1 (พุ่งจากขอบขวา + ลายเส้นชัยตาหมากรุก ดำ-เหลือง ไม่มีขอบ) */
     .logo-1 { 
         display: inline-block; 
         font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
         font-size: 8.5rem; 
         
-        /* สร้างลายธงหมากรุก สีขาว และ สีเหลือง (#fae100) */
-        background: conic-gradient(#fae100 90deg, #ffffff 90deg 180deg, #ffffff 180deg 270deg, #fae100 270deg) 0 0 / 24px 24px;
+        /* สร้างลายธงหมากรุก สีดำ (#111) และ สีเหลือง (#fae100) */
+        /* ปรับขนาดกล่องลงเหลือ 16px เพื่อให้เห็นความเป็นตารางชัดเจนในตัวเลข 1 ที่แคบๆ */
+        background: conic-gradient(#111 90deg, #fae100 90deg 180deg, #fae100 180deg 270deg, #111 270deg) 0 0 / 16px 16px;
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         
-        /* ยังคงขอบสีเหลืองไว้เพื่อให้ตัวเลขดูเป็นทรงชัดเจนตัดกับพื้นหลัง */
-        -webkit-text-stroke: 2px #fae100; 
+        /* เอาเส้นขอบสีเหลืองออกตามที่ต้องการ */
+        /* -webkit-text-stroke: 2px #fae100; (ลบคำสั่งนี้ออกไปแล้ว) */
 
         line-height: 1; 
         margin-left: -20px; 
