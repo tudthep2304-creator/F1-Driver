@@ -30,12 +30,12 @@
         100% { opacity: 1; transform: translateX(0) scaleX(1); } 
     }
     
-    /* ตัว F (สลับมาใช้สีเหลือง) */
+    /* ตัว F (พุ่งจากขอบซ้าย + สีขาวล้วน) */
     .logo-f { 
         display: inline-block; 
         font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
         font-size: 8.5rem; 
-        color: #fae100; /* เปลี่ยนเป็นสีเหลือง */
+        color: white; /* กลับมาใช้สีขาว */
         line-height: 1; 
         padding-right: 15px; 
         position: relative; 
@@ -46,17 +46,12 @@
         -webkit-font-smoothing: antialiased; 
     }
     
-    /* เลข 1 (ลายเส้นชัยตาหมากรุก ขาว-ดำ) */
+    /* เลข 1 (พุ่งจากขอบขวา + สีเหลืองล้วน) */
     .logo-1 { 
         display: inline-block; 
         font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
         font-size: 8.5rem; 
-        
-        /* สร้างลายธงหมากรุก สีดำ (#111) และ สีขาว (#ffffff) สลับกัน */
-        background: conic-gradient(#111 90deg, #ffffff 90deg 180deg, #111 180deg 270deg, #ffffff 270deg) 0 0 / 16px 16px;
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-
+        color: #fae100; /* กลับมาใช้สีเหลือง */
         line-height: 1; 
         margin-left: -20px; 
         margin-top: 45px;   
@@ -2314,17 +2309,17 @@ function renderWaypointsUI() {
                     wpTimeStr = new Date(estTime).toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' });
                 }
 
-                // 🌟 เพิ่ม onclick ให้กดซูมได้ และใส่ id ให้ตัวหนังสือ
+                // 🌟 เพิ่ม onclick ให้กดซูมได้ และจัดระยะบรรทัดให้ชิดขึ้น
                 wpHtml += `
                 <div class="flex items-start gap-3 relative z-10 w-full min-w-0 cursor-pointer hover:bg-[#383d6a] p-1.5 -ml-1.5 rounded-lg transition" onclick="window.toggleHistoryWaypointFocus(${index}, ${wp.lat}, ${wp.lng})">
-                    <div class="shrink-0 mt-0.5 relative z-10"><i class="fas fa-circle text-[12px] ${colorClass} bg-[#1e234e] rounded-full border-[1.5px] border-[#383d6a]"></i></div>
-                    <div class="flex-1 min-w-0 pb-1 flex justify-between gap-2 border-b border-[#383d6a]/50">
-                        <div>
-                            <p class="text-[11px] text-gray-400 mb-0.5 font-normal">${labelText}</p>
+                    <div class="shrink-0 mt-1 relative z-10"><i class="fas fa-circle text-[12px] ${colorClass} bg-[#1e234e] rounded-full border-[1.5px] border-[#383d6a]"></i></div>
+                    <div class="flex-1 min-w-0 pb-2 flex justify-between gap-2 border-b border-[#383d6a]/50">
+                        <div class="-mt-0.5">
+                            <p class="text-[11px] text-gray-400 font-normal leading-none mb-0.5">${labelText}</p>
                             <p id="hist-wp-text-${index}" class="hist-wp-text text-[13px] text-white font-normal leading-snug break-words transition-all duration-300">${wp.name}</p>
                         </div>
                         <div class="shrink-0 text-right">
-                            <span class="text-[11px] text-gray-400 font-normal mt-3 inline-block">${wpTimeStr}</span>
+                            <span class="text-[11px] text-gray-400 font-normal inline-block mt-0.5">${wpTimeStr}</span>
                         </div>
                     </div>
                 </div>`;
