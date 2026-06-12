@@ -31,18 +31,18 @@
 
     /* 🌟 แอนิเมชันรอยตารางของตัว F: ไหลถอยหลังนิดๆ แล้ว "หดตัว" เข้าหาตัว F (scaleX จาก 1 ไป 0) */
     @keyframes trackRetractF {
-        0% { opacity: 0; transform: skewX(-15deg) scaleX(1); background-position: 0 0; }
-        20% { opacity: 1; transform: skewX(-15deg) scaleX(1); }
-        70% { opacity: 1; transform: skewX(-15deg) scaleX(1); background-position: -40px 0; }
-        100% { opacity: 0; transform: skewX(-15deg) scaleX(0); background-position: -60px 0; } /* หดหายไปในตัวอักษร */
+        0% { opacity: 0; transform: skewX(-10deg) scaleX(1); background-position: 0 0; }
+        20% { opacity: 1; transform: skewX(-10deg) scaleX(1); }
+        70% { opacity: 1; transform: skewX(-10deg) scaleX(1); background-position: -40px 0; }
+        100% { opacity: 0; transform: skewX(-10deg) scaleX(0); background-position: -60px 0; } 
     }
 
     /* 🌟 แอนิเมชันรอยตารางของเลข 1: ไหลแล้วหดเข้าหาเลข 1 */
     @keyframes trackRetractOne {
-        0% { opacity: 0; transform: skewX(-15deg) scaleX(1); background-position: 0 0; }
-        20% { opacity: 1; transform: skewX(-15deg) scaleX(1); }
-        70% { opacity: 1; transform: skewX(-15deg) scaleX(1); background-position: 40px 0; }
-        100% { opacity: 0; transform: skewX(-15deg) scaleX(0); background-position: 60px 0; } /* หดหายไปในตัวเลข */
+        0% { opacity: 0; transform: skewX(-10deg) scaleX(1); background-position: 0 0; }
+        20% { opacity: 1; transform: skewX(-10deg) scaleX(1); }
+        70% { opacity: 1; transform: skewX(-10deg) scaleX(1); background-position: 40px 0; }
+        100% { opacity: 0; transform: skewX(-10deg) scaleX(0); background-position: 60px 0; } 
     }
     
     /* ตัว F (สีขาวล้วน) */
@@ -64,18 +64,19 @@
     .logo-f::after {
         content: '';
         position: absolute;
-        right: 75%; 
-        top: 22%;    
-        bottom: 11%; 
+        /* เปลี่ยนจาก 75% เป็น 55% เพื่อดึงรอยต่อให้สอดเข้าไปซ่อนหลังแกนตัว F */
+        right: 55%; 
+        top: 20%;    
+        bottom: 12%; 
         width: 100vw;
         background-color: #111; 
         background-image: conic-gradient(rgba(255,255,255,0.9) 90deg, transparent 90deg 180deg, rgba(255,255,255,0.9) 180deg 270deg, transparent 270deg);
         background-size: 44px 44px; 
-        transform-origin: right center; /* ล็อกจุดยึดไว้ที่ฝั่งขวา (ติดตัว F) */
-        /* 🌟 สร้างรูปทรง Perspective (ซ้ายเล็ก ขวาใหญ่) */
-        clip-path: polygon(0% 25%, 100% 0%, 100% 100%, 0% 75%);
-        -webkit-mask-image: linear-gradient(to right, transparent 0%, black 95%);
-        mask-image: linear-gradient(to right, transparent 0%, black 95%);
+        transform: skewX(-10deg); /* ลดความเอียงลงนิดนึงเพื่อไม่ให้มีมุมแหลมโผล่ */
+        transform-origin: right center; 
+        clip-path: polygon(0% 20%, 100% 0%, 100% 100%, 0% 80%); /* ปรับความเรียวให้สมดุล */
+        -webkit-mask-image: linear-gradient(to right, transparent 0%, black 90%);
+        mask-image: linear-gradient(to right, transparent 0%, black 90%);
         animation: trackRetractF 1.4s ease-in-out forwards;
         z-index: -1;
     }
@@ -101,18 +102,19 @@
     .logo-1::after {
         content: '';
         position: absolute;
-        left: 65%; 
-        top: 22%; 
-        bottom: 11%;
+        /* เปลี่ยนจาก 65% เป็น 45% เพื่อดึงรอยต่อให้สอดเข้าไปซ่อนหลังแกนเลข 1 */
+        left: 45%; 
+        top: 20%; 
+        bottom: 12%;
         width: 100vw;
         background-color: #111; 
         background-image: conic-gradient(rgba(250,225,0,0.9) 90deg, transparent 90deg 180deg, rgba(250,225,0,0.9) 180deg 270deg, transparent 270deg);
         background-size: 44px 44px; 
-        transform-origin: left center; /* ล็อกจุดยึดไว้ที่ฝั่งซ้าย (ติดเลข 1) */
-        /* 🌟 สร้างรูปทรง Perspective (ซ้ายใหญ่ ขวาเล็ก) */
-        clip-path: polygon(0% 0%, 100% 25%, 100% 75%, 0% 100%);
-        -webkit-mask-image: linear-gradient(to left, transparent 0%, black 95%);
-        mask-image: linear-gradient(to left, transparent 0%, black 95%);
+        transform: skewX(-10deg); 
+        transform-origin: left center; 
+        clip-path: polygon(0% 0%, 100% 20%, 100% 80%, 0% 100%);
+        -webkit-mask-image: linear-gradient(to left, transparent 0%, black 90%);
+        mask-image: linear-gradient(to left, transparent 0%, black 90%);
         animation: trackRetractOne 1.4s ease-in-out forwards;
         z-index: -1;
     }
