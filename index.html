@@ -16,10 +16,15 @@
     
     /* Splash Screen CSS */
     #splashScreen { position: fixed; inset: 0; z-index: 999999; background-color: #1e234e; display: flex; align-items: center; justify-content: center; transition: opacity 0.5s ease, visibility 0.5s; }
-    @keyframes popF { 0% { opacity: 0; transform: scale(0.8); } 100% { opacity: 1; transform: scale(1); } }
-    @keyframes drawOne { 0% { opacity: 0; transform: translateX(-30px); } 100% { opacity: 1; transform: translateX(0); } }
-    .logo-f { font-size: 6.5rem; color: white; animation: popF 0.5s ease-out forwards; line-height: 1; }
-    .logo-1 { font-size: 6.5rem; color: #fae100; opacity: 0; animation: drawOne 0.4s ease-out 0.4s forwards; margin-left: 8px; line-height: 1; }
+    /* เพิ่มลูกเล่นเด้งดึ๋งให้ตัว F */
+    @keyframes popF { 0% { opacity: 0; transform: scale(0.5); } 100% { opacity: 1; transform: scale(1); } }
+    @keyframes drawOne { 0% { opacity: 0; transform: translateX(-40px); } 100% { opacity: 1; transform: translateX(0); } }
+    
+    /* แก้ตัวแหว่งด้วย line-height: normal และขยายขนาดเป็น 8.5rem */
+    .logo-f { font-size: 8.5rem; color: white; animation: popF 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; line-height: normal; }
+    
+    /* เพิ่ม padding-right ให้เลข 1 เพื่อเผื่อพื้นที่ให้ความเอียง ไม่ให้ขอบขวาโดนตัด */
+    .logo-1 { font-size: 8.5rem; color: #fae100; opacity: 0; animation: drawOne 0.4s ease-out 0.4s forwards; margin-left: 8px; line-height: normal; padding-right: 20px; }
 
     .ui-panel { 
         position: fixed; bottom: 0; left: 0; right: 0; background: #1e234e; 
