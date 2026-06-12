@@ -1927,58 +1927,55 @@
       });
     }
 // ==========================================
-    // ระบบแชทคอมมูนิตี้ (ดึงประวัติสมบูรณ์ + แชทเราอยู่ขวา + แจ้งเตือน)
-    // วางไว้ล่างสุดของไฟล์ เหนือแท็ก 
+    // ระบบแชทคอมมูนิตี้ (Clean Version ฉบับสมบูรณ์)
     // ==========================================
-    
-    window.unreadChatCount = 0;
-    window.isGlobalChatLoaded = false; // ตัวแปรป้องกันการดึงแชทเบิ้ลซ้ำซ้อน
+    window.unreadChatMessages = new Set(); 
+    window.isGlobalChatLoaded = false;
 
-    // เทคนิคแทรกโค้ด: สั่งให้โหลดแชทคอมมูนิตี้ "ทันที" หลังจากที่ระบบล็อกอิน LINE เสร็จ
-    // เพื่อให้มั่นใจว่าระบบรู้ ไอดีไลน์ (lineUserId) ของเราแน่นอน
+    // แทรกการโหลดแชทเข้ากับระบบตอนที่ Login LINE ผ่านแล้ว
     const originalInitApp = typeof initApp === 'function' ? initApp : null;
     initApp = function() {
-        if (originalInitApp) originalInitApp(); // ปล่อยให้ระบบเดิม (เช่น แชทในงาน) ทำงานตามปกติ
+        if (originalInitApp) originalInitApp(); 
         
         if (window.isGlobalChatLoaded) return;
         window.isGlobalChatLoaded = true;
+
+        // ปิดการเชื่อมต่อแชทชุดเก่า (ถ้ามีค้าง) ป้องกันบั๊กแชทเบิ้ล
+        db.ref('community_chat').off();
 
         const messagesDiv = document.getElementById('globalChatMessages');
         if (messagesDiv) {
             messagesDiv.innerHTML = '<p class="text-center text-xs font-normal text-gray-500 my-4">พูดคุยกับผู้โดยสารและคนขับในพื้นที่ได้ที่นี่</p>';
         }
 
-        // ดึงประวัติ 50 ข้อความล่าสุดจาก Firebase
         window.activeGlobalChatListenerRef = db.ref('community_chat').limitToLast(50);
         window.activeGlobalChatListenerRef.on('child_added', snap => {
             let messageData = snap.val();
             if (!messageData) return;
 
-            // ตรวจสอบไอดีไลน์ ว่าเป็นข้อความที่เราพิมพ์เองหรือไม่
+            // ตรวจสอบไอดีผู้ส่ง เพื่อแยกฝั่งแชทและสีพื้นหลัง
             let isSenderMe = (messageData.pin === lineUserId);
-            
-            // แยกฝั่งแชทและสีพื้นหลัง
             let align = isSenderMe ? 'justify-end' : 'justify-start';
             let bg = isSenderMe ? 'bg-[#fae100] text-[#1e234e]' : 'bg-[#2a2f5c] border border-[#383d6a] text-white';
             let senderName = isSenderMe ? 'คุณ' : (messageData.name || 'ผู้ใช้');
-            
-            // ดึงป้ายกำกับ (Role) ว่าคนส่งเป็นคนขับหรือไม่
             let isDriver = messageData.role === 'driver';
             let roleBadge = isDriver ? `<span class="bg-blue-500 text-white text-[8px] px-1 py-0.5 rounded ml-1 font-bold">DRIVER</span>` : '';
 
-            // นับการแจ้งเตือน Badge สีแดง (นับเฉพาะตอนที่ไม่ได้เปิดหน้าต่างแชทค้างไว้)
+            // ระบบนับแจ้งเตือนข้อความใหม่
             let modal = document.getElementById('communityModal');
+            let lastSeen = parseInt(localStorage.getItem('lastSeenChatTime') || '0');
+            
             if (modal && modal.classList.contains('hidden') && !isSenderMe) {
-                let lastSeen = parseInt(localStorage.getItem('lastSeenChatTime') || '0');
                 if (messageData.timestamp > lastSeen) {
-                    window.unreadChatCount++;
+                    window.unreadChatMessages.add(snap.key); 
                     updateChatBadge();
                 }
             } else if (modal && !modal.classList.contains('hidden')) {
                 localStorage.setItem('lastSeenChatTime', Date.now());
+                window.unreadChatMessages.clear(); 
+                updateChatBadge();
             }
 
-            // แปลงรูปแบบเวลาให้แสดงผลสวยงาม
             let timeStr = "";
             if (messageData.timestamp) {
                 let d = new Date(messageData.timestamp);
@@ -1989,7 +1986,6 @@
                 timeStr = `${day}/${month} ${hrs}:${mins}`;
             }
 
-            // สร้างก้อนข้อความแชท
             let messageHtml = `
             <div class="chat-msg-item flex w-full ${align} animate-fade-in mb-3">
                 <div class="flex flex-col ${isSenderMe ? 'items-end' : 'items-start'} max-w-[85%]">
@@ -2005,10 +2001,9 @@
                 messagesDiv.insertAdjacentHTML('beforeend', messageHtml);
             }
             
-            // สั่งให้จอเลื่อนลงไปล่างสุดเสมอเมื่อมีข้อความใหม่
+            // ดันแชทลงล่างสุดเวลามีข้อความใหม่
             const chatBox = document.getElementById('globalChatBox');
             if (chatBox) {
-                // หน่วงเวลาเล็กน้อยให้หน้าต่างเรนเดอร์เสร็จก่อนเลื่อน
                 setTimeout(() => { chatBox.scrollTop = chatBox.scrollHeight; }, 100);
             }
         });
@@ -2016,7 +2011,7 @@
 
     window.openCommunityModal = function() {
         document.getElementById('communityModal').classList.remove('hidden');
-        window.unreadChatCount = 0;
+        window.unreadChatMessages.clear(); 
         updateChatBadge();
         localStorage.setItem('lastSeenChatTime', Date.now());
 
@@ -2029,8 +2024,9 @@
     function updateChatBadge() {
         let badge = document.getElementById('chatBadge');
         if(badge) {
-            if(window.unreadChatCount > 0) {
-                badge.innerText = window.unreadChatCount > 99 ? '99+' : window.unreadChatCount;
+            let count = window.unreadChatMessages.size;
+            if(count > 0) {
+                badge.innerText = count > 99 ? '99+' : count;
                 badge.classList.remove('hidden');
             } else {
                 badge.classList.add('hidden');
@@ -2051,7 +2047,7 @@
         db.ref('community_chat').push({
             pin: lineUserId, 
             name: lineName || 'ผู้โดยสาร',
-            role: 'passenger', // กำหนด Role ให้ชัดเจนว่าเป็นฝั่งผู้โดยสาร
+            role: 'passenger',
             text: textVal,
             timestamp: firebase.database.ServerValue.TIMESTAMP
         }).then(() => { 
@@ -2071,8 +2067,7 @@
             }
         });
     };
-
-</script>
+  </script>
   <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDsZ_tbFhH6fUXRz3I6C-tMshNwwrSevd4&libraries=places,geometry&callback=initMap" async defer></script>
 </body>
 </html>
