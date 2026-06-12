@@ -218,6 +218,26 @@
               </div>
           </div>
       </div>
+  <div id="newsDetailModal" class="hidden fixed inset-0 z-[210] bg-[#1e234e] transition-transform flex flex-col pointer-events-auto">
+      <div class="relative z-10 bg-[#2a2f5c]/90 backdrop-blur-md border-b border-[#383d6a] h-16 px-4 flex items-center gap-3 shadow-md shrink-0 w-full">
+          <button onclick="window.closeNewsDetailModal()" class="w-10 h-10 shrink-0 bg-[#383d6a]/80 text-gray-400 rounded-full flex items-center justify-center hover:text-[#fae100] transition"><i class="fas fa-arrow-left"></i></button>
+          <h2 class="text-lg font-black text-white">รายละเอียดข้อความ</h2>
+      </div>
+      
+      <div class="p-5 flex-1 overflow-y-auto w-full hide-scrollbar text-white">
+          <div class="flex justify-between items-center mb-4">
+              <span id="ndBadge" class="bg-blue-500 text-white text-[10px] font-black px-2 py-1 rounded shadow">NEWS</span>
+              <span id="ndDate" class="text-[12px] text-gray-400 font-bold"></span>
+          </div>
+          <h3 id="ndTitle" class="text-xl font-black text-white mb-4 leading-tight"></h3>
+          
+          <div id="ndImageContainer" class="mb-5 hidden">
+              <img id="ndImage" src="" class="w-full rounded-xl shadow-md object-contain border border-[#383d6a] bg-black/20">
+          </div>
+          
+          <p id="ndContent" class="text-sm text-gray-300 leading-relaxed whitespace-pre-line"></p>
+      </div>
+  </div>
   </div>
 
 <!-- ✅ Community Modal (แชทส่วนกลาง แบบมีตัวกรอง) -->
@@ -809,67 +829,104 @@ function updateRideButtonState() {
         window.closeVehicleModal(); window.showPage(2);
     }
 
+window.loadedNewsItems = {}; // ตัวแปรสำหรับเก็บข้อมูลข่าวสารไว้โชว์ตอนคลิก
+
     window.openNewsModal = function() { 
         document.getElementById('newsModal').classList.remove('hidden'); 
         renderNewsAndPromotions(); 
-        
-        let badge = document.getElementById('newsBadge');
-        if(badge) badge.classList.add('hidden');
-        localStorage.setItem('lastSeenNewsTime', Date.now());
+        // 🌟 เอาคำสั่งล้างแจ้งเตือนออกไปจากตรงนี้ เพื่อให้มันโชว์จุดแดงก่อน
     }
-    window.closeNewsModal = function() { document.getElementById('newsModal').classList.add('hidden'); }
 
-function renderNewsAndPromotions() {
+    window.closeNewsModal = function() { 
+        document.getElementById('newsModal').classList.add('hidden'); 
+    }
+
+    function renderNewsAndPromotions() {
         let container = document.getElementById('newsListContainer');
+        // ดึงเวลาล่าสุดที่เคยเข้ามาดู "ก่อน" ที่จะเริ่มโหลดข้อมูล
+        let lastSeen = parseInt(localStorage.getItem('lastSeenNewsTime') || '0');
+
         db.ref('news_promotions').once('value', snap => {
             if (!snap.exists()) {
                 container.innerHTML = `<div class="p-8 text-center"><i class="fas fa-inbox text-4xl text-gray-600 mb-3"></i><p class="text-gray-400 font-bold text-sm">ไม่มีข้อความใหม่</p></div>`;
                 return;
             }
             let items = [];
-            let lastSeen = parseInt(localStorage.getItem('lastSeenNewsTime') || '0');
-
             snap.forEach(child => { items.push({ id: child.key, ...child.val() }); });
             items.sort((a,b) => (b.timestamp || 0) - (a.timestamp || 0));
 
             let html = '';
             items.forEach(item => {
-                let isNew = (item.timestamp || 0) > lastSeen;
+                window.loadedNewsItems[item.id] = item; // เก็บข้อมูลลงตัวแปร
+                let isNew = (item.timestamp || 0) > lastSeen; // ตรวจสอบว่าใหม่กว่าที่เคยดูไหม
                 
-                // กำหนดไอคอนและสี ตามประเภทของข่าว (โปรโมชั่น หรือ ข่าวทั่วไป)
                 let iconClass = item.isPromo ? "fas fa-tag" : "fas fa-envelope";
                 let iconBg = item.isPromo ? "bg-[#fae100]/20" : "bg-gray-500/20";
                 let iconColor = item.isPromo ? "text-[#fae100]" : "text-gray-300";
                 
-                // จุดสีแดงแจ้งเตือนว่ายังไม่ได้อ่าน
-                let newDot = isNew ? `<div class="w-2.5 h-2.5 bg-red-500 rounded-full absolute top-0 right-0 border-2 border-[#1e234e]"></div>` : '';
+                // 🌟 ระบบจุดแดง (ถ้าเป็นข่าวใหม่ จะขึ้นจุดแดง และตัวหนังสือสีสว่าง)
+                let newDot = isNew ? `<div class="w-2.5 h-2.5 bg-red-500 rounded-full absolute top-0 right-0 border-2 border-[#1e234e] shadow-sm animate-pulse"></div>` : '';
+                let textTitleColor = isNew ? 'text-white' : 'text-gray-400';
+                let textTimeColor = isNew ? 'text-[#fae100]' : 'text-gray-500';
 
-                // โครงสร้างแบบ Inbox (มีเส้นคั่นขอบล่าง, ข้อความตัดเป็นจุดไข่ปลา truncate)
                 html += `
-                <div class="flex items-center gap-3 py-3.5 border-b border-[#383d6a]/50 cursor-pointer hover:bg-[#2a2f5c]/40 transition px-2">
-                    
-                    <!-- ส่วนไอคอนด้านซ้าย -->
+                <div onclick="window.openNewsDetail('${item.id}')" class="flex items-center gap-3 py-3.5 border-b border-[#383d6a]/50 cursor-pointer hover:bg-[#2a2f5c]/40 transition px-2">
                     <div class="relative w-10 h-10 shrink-0 rounded-full flex items-center justify-center text-lg ${iconBg} ${iconColor}">
                         <i class="${iconClass}"></i>
                         ${newDot}
                     </div>
-                    
-                    <!-- ส่วนข้อความตรงกลาง (ตัดคำอัตโนมัติถ้าเกิน 1 บรรทัด) -->
                     <div class="flex-1 min-w-0">
-                        <h3 class="text-[14px] font-bold ${isNew ? 'text-white' : 'text-gray-300'} truncate leading-tight">${item.title}</h3>
-                        <p class="text-[12px] text-gray-400 truncate mt-0.5">${item.content}</p>
+                        <h3 class="text-[14px] font-bold ${textTitleColor} truncate leading-tight">${item.title}</h3>
+                        <p class="text-[12px] text-gray-500 truncate mt-0.5">${item.content}</p>
                     </div>
-                    
-                    <!-- ส่วนเวลาด้านขวา -->
                     <div class="shrink-0 text-right pl-2">
-                        <span class="text-[10px] ${isNew ? 'text-[#fae100]' : 'text-gray-500'} font-bold">${item.dateStr || ''}</span>
+                        <span class="text-[10px] ${textTimeColor} font-bold">${item.dateStr || ''}</span>
                     </div>
-                    
                 </div>`;
             });
             container.innerHTML = html;
+            
+            // 🌟 อัปเดตเวลาการดูหลังจาก "เรนเดอร์จุดแดงเสร็จแล้ว" จุดแดงจะได้ไม่หายวับไป
+            localStorage.setItem('lastSeenNewsTime', Date.now());
+            let badge = document.getElementById('newsBadge');
+            if(badge) badge.classList.add('hidden');
         });
     }
+
+    // ฟังก์ชันสำหรับเปิดหน้ารายละเอียดข่าว
+    window.openNewsDetail = function(id) {
+        let item = window.loadedNewsItems[id];
+        if(!item) return;
+
+        document.getElementById('ndDate').innerText = item.dateStr || '';
+        document.getElementById('ndTitle').innerText = item.title;
+        document.getElementById('ndContent').innerText = item.content;
+        
+        let badge = document.getElementById('ndBadge');
+        if(item.isPromo) {
+            badge.innerText = "PROMO"; badge.className = "bg-red-500 text-white text-[10px] font-black px-2 py-1 rounded shadow";
+        } else {
+            badge.innerText = "NEWS"; badge.className = "bg-blue-500 text-white text-[10px] font-black px-2 py-1 rounded shadow";
+        }
+
+        // 🌟 ระบบรองรับรูปภาพแนบ (ถ้าใน Firebase มีฟิลด์ imageUrl)
+        let imgContainer = document.getElementById('ndImageContainer');
+        let imgEl = document.getElementById('ndImage');
+        if(item.imageUrl) {
+            imgEl.src = item.imageUrl;
+            imgContainer.classList.remove('hidden');
+        } else {
+            imgContainer.classList.add('hidden');
+            imgEl.src = "";
+        }
+
+        document.getElementById('newsDetailModal').classList.remove('hidden');
+    }
+
+    window.closeNewsDetailModal = function() {
+        document.getElementById('newsDetailModal').classList.add('hidden');
+    }
+      
     function getDynamicBottomPadding() {
         if(!document.getElementById('page4Panel')) return 0;
         let pBottom = 0;
@@ -2380,6 +2437,7 @@ window.openProfileModal = function() {
         enableSmoothSwipeToClose('historyModal', window.closePassengerHistory);
         enableSmoothSwipeToClose('historyDetailModal', window.closeHistoryDetail);
         enableSmoothSwipeToClose('blockedDriversModal', window.closeBlockedDrivers);
+      enableSmoothSwipeToClose('newsDetailModal', window.closeNewsDetailModal);
     }, 1000);
 
     // ==========================================
