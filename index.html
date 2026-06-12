@@ -597,8 +597,7 @@
       <div class="flex-1 overflow-y-auto w-full hide-scrollbar flex flex-col bg-[#1e234e] relative z-10">
           <div id="historyMap" class="w-full h-[220px] bg-[#1e234e] shrink-0 border-b border-[#383d6a]"></div>
 
-          <div class="p-4 flex flex-col gap-4 text-white font-normal pb-10">
-              <div class="flex justify-between items-center border-b border-[#383d6a] pb-3">
+          <div class="p-3 flex flex-col gap-3 text-white font-normal pb-8"> <div class="flex justify-between items-center border-b border-[#383d6a] pb-2.5">
                   <div>
                       <p class="text-[11px] text-gray-400 mb-0.5 font-normal">รหัสการเดินทาง</p>
                       <p class="text-[13px] font-normal text-[#fae100]" id="histDetId">#JOB-XXXX</p>
@@ -609,47 +608,47 @@
                   </div>
               </div>
 
-              <div class="bg-[#2a2f5c] p-4 rounded-2xl border border-[#383d6a] shadow-sm flex items-center justify-between">
+              <div class="bg-[#2a2f5c] p-2.5 rounded-xl border border-[#383d6a] shadow-sm flex items-center justify-between">
                   <div class="flex items-center gap-3">
-                      <div class="w-10 h-10 bg-[#1e234e] rounded-full flex items-center justify-center text-[#fae100] text-xl border border-[#383d6a] shrink-0"><i class="fas fa-user-tie"></i></div>
+                      <div class="w-9 h-9 bg-[#1e234e] rounded-full flex items-center justify-center text-[#fae100] text-lg border border-[#383d6a] shrink-0"><i class="fas fa-user-tie"></i></div>
                       <div>
-                          <p class="text-[13px] font-normal" id="histDetDriver">คนขับ: -</p>
-                          <p class="text-[11px] text-gray-400 mt-0.5 font-normal" id="histDetDriverRating"><i class="fas fa-star text-[#fae100]"></i> 5.0</p>
+                          <p class="text-[12px] font-normal" id="histDetDriver">คนขับ: -</p>
+                          <p class="text-[11px] text-gray-400 mt-0 font-normal" id="histDetDriverRating"><i class="fas fa-star text-[#fae100]"></i> 5.0</p>
                       </div>
                   </div>
-                  <button id="btnBlockDriver" onclick="window.blockCurrentHistoryDriver()" class="w-10 h-10 bg-red-900/30 text-red-500 rounded-full border border-red-500/30 flex items-center justify-center hover:bg-red-900/50 transition shrink-0" title="บล็อกคนขับ">
-                      <i class="fas fa-ban"></i>
+                  <button id="btnBlockDriver" onclick="window.blockCurrentHistoryDriver()" class="w-9 h-9 bg-red-900/20 text-red-500 rounded-full border border-red-500/20 flex items-center justify-center hover:bg-red-900/40 transition shrink-0" title="บล็อกคนขับ">
+                      <i class="fas fa-ban text-[14px]"></i>
                   </button>
               </div>
 
-              <div class="bg-[#2a2f5c] p-4 rounded-2xl border border-[#383d6a] shadow-sm flex flex-col gap-4">
-                  <div class="flex justify-between items-center border-b border-[#383d6a] pb-4">
-                      <div class="flex gap-5">
+              <div class="bg-[#2a2f5c] p-3 rounded-xl border border-[#383d6a] shadow-sm flex flex-col gap-2.5">
+                  <div class="flex justify-between items-center border-b border-[#383d6a]/80 pb-2.5">
+                      <div class="flex gap-4">
                           <div>
-                              <p class="text-[11px] text-gray-400 mb-0.5 font-normal">ระยะทาง</p>
+                              <p class="text-[11px] text-gray-400 mb-0.5 font-normal leading-tight">ระยะทาง</p>
                               <p class="text-[13px] font-normal"><span id="histDetDist">0</span> กม.</p>
                           </div>
                           <div>
-                              <p class="text-[11px] text-gray-400 mb-0.5 font-normal">เวลา</p>
+                              <p class="text-[11px] text-gray-400 mb-0.5 font-normal leading-tight">เวลา</p>
                               <p class="text-[13px] font-normal"><span id="histDetTime">0</span> นาที</p>
                           </div>
                       </div>
                       <div class="text-right">
-                          <p class="text-[11px] text-gray-400 mb-0.5 font-normal">ราคาสุทธิ</p>
-                          <p class="text-[18px] font-bold text-[#4ade80]" id="histDetPrice">฿0</p>
+                          <p class="text-[11px] text-gray-400 mb-0.5 font-normal leading-tight">ราคาสุทธิ</p>
+                          <p class="text-[18px] font-bold text-[#4ade80] leading-none" id="histDetPrice">฿0</p>
                       </div>
                   </div>
 
-                  <div class="relative mt-1">
-                      <div class="absolute left-[0.45rem] top-4 bottom-4 w-0.5 border-l-[1.5px] border-dashed border-[#4b507d]"></div>
-                      <div id="historyDetailWaypointsContainer" class="flex flex-col relative z-10 gap-4"></div>
+                  <div class="relative mt-0.5 px-0.5">
+                      <div class="absolute left-[0.4rem] top-3 bottom-3 w-0.5 border-l-[1.5px] border-dashed border-[#4b507d]"></div>
+                      <div id="historyDetailWaypointsContainer" class="flex flex-col relative z-10 gap-3"></div>
                   </div>
               </div>
 
           </div>
       </div>
   </div>
-
+  
   <div id="routeChangeModal" class="hidden fixed inset-0 z-[200] bg-black/80 flex items-center justify-center p-4 pointer-events-auto transition-opacity">
       <div class="bg-[#1e234e] rounded-3xl p-6 w-full max-w-sm text-center shadow-xl text-gray-100 border border-[#383d6a]">
           <div class="w-16 h-16 bg-[#fae100]/20 text-[#fae100] border border-[#fae100]/30 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl"><i class="fas fa-route"></i></div>
@@ -2309,17 +2308,17 @@ function renderWaypointsUI() {
                     wpTimeStr = new Date(estTime).toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' });
                 }
 
-                // 🌟 เพิ่ม onclick ให้กดซูมได้ และจัดระยะบรรทัดให้ชิดขึ้น
+                // 🌟 เพิ่ม onclick ให้กดซูมได้ และจัดระยะให้ชิดเส้นข้างบนขึ้นอีก
                 wpHtml += `
-                <div class="flex items-start gap-3 relative z-10 w-full min-w-0 cursor-pointer hover:bg-[#383d6a] p-1.5 -ml-1.5 rounded-lg transition" onclick="window.toggleHistoryWaypointFocus(${index}, ${wp.lat}, ${wp.lng})">
-                    <div class="shrink-0 mt-1 relative z-10"><i class="fas fa-circle text-[12px] ${colorClass} bg-[#1e234e] rounded-full border-[1.5px] border-[#383d6a]"></i></div>
-                    <div class="flex-1 min-w-0 pb-2 flex justify-between gap-2 border-b border-[#383d6a]/50">
-                        <div class="-mt-0.5">
+                <div class="flex items-start gap-2.5 relative z-10 w-full min-w-0 cursor-pointer hover:bg-[#383d6a]/50 p-1 -ml-1 rounded-lg transition" onclick="window.toggleHistoryWaypointFocus(${index}, ${wp.lat}, ${wp.lng})">
+                    <div class="shrink-0 mt-1 relative z-10"><i class="fas fa-circle text-[11px] ${colorClass} bg-[#1e234e] rounded-full border-[1.5px] border-[#383d6a]"></i></div>
+                    <div class="flex-1 min-w-0 flex justify-between gap-2 border-b border-[#383d6a]/40 pb-2">
+                        <div class="-mt-1">
                             <p class="text-[11px] text-gray-400 font-normal leading-none mb-0.5">${labelText}</p>
                             <p id="hist-wp-text-${index}" class="hist-wp-text text-[13px] text-white font-normal leading-snug break-words transition-all duration-300">${wp.name}</p>
                         </div>
                         <div class="shrink-0 text-right">
-                            <span class="text-[11px] text-gray-400 font-normal inline-block mt-0.5">${wpTimeStr}</span>
+                            <span class="text-[11px] text-gray-400 font-normal inline-block mt-0">${wpTimeStr}</span>
                         </div>
                     </div>
                 </div>`;
