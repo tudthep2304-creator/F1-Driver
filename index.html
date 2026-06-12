@@ -46,20 +46,16 @@
         -webkit-font-smoothing: antialiased; 
     }
     
-    /* เลข 1 (พุ่งจากขอบขวา + ลายเส้นชัยตาหมากรุก ดำ-เหลือง ไม่มีขอบ) */
+    /* เลข 1 (ลายเส้นชัยตาหมากรุก ดำ-เหลือง แบบตารางสลับสีที่ถูกต้อง) */
     .logo-1 { 
         display: inline-block; 
         font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
         font-size: 8.5rem; 
         
-        /* สร้างลายธงหมากรุก สีดำ (#111) และ สีเหลือง (#fae100) */
-        /* ปรับขนาดกล่องลงเหลือ 16px เพื่อให้เห็นความเป็นตารางชัดเจนในตัวเลข 1 ที่แคบๆ */
-        background: conic-gradient(#111 90deg, #fae100 90deg 180deg, #fae100 180deg 270deg, #111 270deg) 0 0 / 16px 16px;
+        /* แก้ไขโค้ดตาราง: สลับ ดำ-เหลือง-ดำ-เหลือง ให้เกิดลายตารางหมากรุก */
+        background: conic-gradient(#111 90deg, #fae100 90deg 180deg, #111 180deg 270deg, #fae100 270deg) 0 0 / 16px 16px;
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
-        
-        /* เอาเส้นขอบสีเหลืองออกตามที่ต้องการ */
-        /* -webkit-text-stroke: 2px #fae100; (ลบคำสั่งนี้ออกไปแล้ว) */
 
         line-height: 1; 
         margin-left: -20px; 
