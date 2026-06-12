@@ -2006,6 +2006,9 @@
         document.getElementById('communityModal').classList.add('hidden'); 
     };
 
+// ==========================================
+    // อัปเกรดระบบแชทคอมมูนิตี้
+    // ==========================================
     window.sendGlobalChat = function() {
         let inputEl = document.getElementById('globalChatInput');
         let textVal = inputEl.value.trim();
@@ -2014,12 +2017,56 @@
         db.ref('community_chat').push({
             pin: lineUserId,
             name: lineName || 'ผู้โดยสาร',
+            role: 'passenger', // แท็กไว้ว่าส่งจากผู้โดยสาร!
             text: textVal,
             timestamp: firebase.database.ServerValue.TIMESTAMP
         }).then(() => { 
-            inputEl.value = ''; // เคลียร์ช่องพิมพ์หลังส่งเสร็จ
+            inputEl.value = ''; 
         });
     };
+
+    // เขียนทับฟังก์ชันฟังแชทเดิม เพื่อรองรับแท็ก Role
+    if(!window.activeGlobalChatListenerRef) {
+        window.activeGlobalChatListenerRef = db.ref('community_chat').limitToLast(50);
+        window.activeGlobalChatListenerRef.on('child_added', snap => {
+            let messageData = snap.val();
+            let isSenderMe = messageData.pin === lineUserId;
+            
+            // แยกสีและ Tag ถ้านี่คือคนขับตอบ
+            let isDriver = messageData.role === 'driver';
+            let roleBadge = isDriver ? `<span class="bg-blue-500 text-white text-[8px] px-1 py-0.5 rounded ml-1 font-bold">DRIVER</span>` : '';
+            
+            let align = isSenderMe ? 'justify-end' : 'justify-start';
+            let bg = isSenderMe ? 'bg-[#fae100] text-[#1e234e]' : 'bg-[#2a2f5c] border border-[#383d6a] text-white';
+            let senderName = isSenderMe ? 'คุณ' : (messageData.name || 'ผู้ใช้');
+            
+            let timeStr = "";
+            if (messageData.timestamp) {
+                let d = new Date(messageData.timestamp);
+                let day = String(d.getDate()).padStart(2, '0');
+                let month = String(d.getMonth() + 1).padStart(2, '0');
+                let hrs = String(d.getHours()).padStart(2, '0');
+                let mins = String(d.getMinutes()).padStart(2, '0');
+                timeStr = `${day}/${month} ${hrs}:${mins}`;
+            }
+
+            let messageHtml = `
+            <div class="chat-msg-item flex w-full ${align} animate-fade-in items-start gap-2 ${isSenderMe ? 'flex-row-reverse' : ''} mb-3">
+                <div class="flex flex-col ${isSenderMe ? 'items-end' : 'items-start'} max-w-[85%]">
+                    ${!isSenderMe ? `<span class="text-[10px] text-gray-400 font-normal mb-1 ml-1 flex items-center">${senderName} ${roleBadge}</span>` : ''}
+                    <div class="${bg} px-4 py-2.5 rounded-2xl text-[13px] font-normal shadow-sm break-words w-full">${messageData.text}</div>
+                    <span class="text-[9px] text-gray-500 mt-1 ${isSenderMe ? 'mr-1' : 'ml-1'} font-normal">${timeStr}</span>
+                </div>
+            </div>`;
+            
+            const messagesDiv = document.getElementById('globalChatMessages');
+            const chatBox = document.getElementById('globalChatBox');
+            if(messagesDiv) {
+                messagesDiv.insertAdjacentHTML('beforeend', messageHtml);
+                setTimeout(() => { chatBox.scrollTop = chatBox.scrollHeight; }, 100);
+            }
+        });
+    }
 
     window.filterCommunityChat = function() {
         let keyword = document.getElementById('chatSearchInput').value.toLowerCase();
@@ -2034,7 +2081,166 @@
             }
         });
     };
+// ==========================================
+    // ระบบประวัติการเดินทาง
+    // ==========================================
+    window.openPassengerHistory = function() {
+        document.getElementById('historyModal').classList.remove('hidden');
+        renderPassengerHistory();
+    }
+    
+    window.closePassengerHistory = function() {
+        document.getElementById('historyModal').classList.add('hidden');
+    }
 
+    function renderPassengerHistory() {
+        let container = document.getElementById('historyListContainer');
+        container.innerHTML = '<div class="flex justify-center py-10"><i class="fas fa-spinner fa-spin text-3xl text-[#fae100]"></i></div>';
+        
+        // ดึงจาก collection completed_jobs ที่มี userId ตรงกับผู้ใช้
+        db.ref('completed_jobs').orderByChild('userId').equalTo(lineUserId).once('value', snap => {
+            let jobs = [];
+            snap.forEach(child => { jobs.push({id: child.key, ...child.val()}); });
+            
+            // เรียงลำดับจากใหม่ไปเก่า
+            jobs.sort((a,b) => (b.completedAt || b.timestamp || 0) - (a.completedAt || a.timestamp || 0));
+            
+            if(jobs.length === 0) {
+                container.innerHTML = `<div class="text-center py-10"><i class="fas fa-history text-4xl text-gray-600 mb-3"></i><p class="text-gray-400 font-bold">ยังไม่มีประวัติการเดินทาง</p></div>`;
+                return;
+            }
+            
+            let html = '<div class="space-y-3">';
+            jobs.forEach(job => {
+                loadedHistoryJobs[job.id] = job;
+                let dateStr = new Date(job.completedAt || job.timestamp).toLocaleString('th-TH', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+                
+                html += `
+                <div onclick="window.openHistoryDetail('${job.id}')" class="bg-[#2a2f5c] border border-[#383d6a] p-4 rounded-2xl shadow-sm cursor-pointer hover:bg-[#383d6a] transition">
+                    <div class="flex justify-between items-center mb-3">
+                        <p class="text-[10px] text-gray-400 font-bold"><i class="far fa-clock"></i> ${dateStr}</p>
+                        <span class="font-black text-[#4ade80] text-sm bg-[#1e234e] px-2 py-0.5 rounded border border-[#383d6a]">฿${job.price}</span>
+                    </div>
+                    <div class="flex items-center gap-2 mb-1.5"><i class="fas fa-circle text-[8px] text-green-500 w-3"></i><p class="text-[11px] text-gray-300 truncate">${job.pName}</p></div>
+                    <div class="flex items-center gap-2"><i class="fas fa-circle text-[8px] text-red-500 w-3"></i><p class="text-[11px] text-gray-300 truncate">${job.dName}</p></div>
+                </div>`;
+            });
+            html += '</div>';
+            container.innerHTML = html;
+        });
+    }
+
+    window.openHistoryDetail = function(jobId) {
+        let job = loadedHistoryJobs[jobId]; 
+        if(!job) return; 
+        selectedHistoryJobId = jobId;
+
+        document.getElementById('histDetDate').innerText = "วันที่ " + new Date(job.completedAt || job.timestamp).toLocaleString('th-TH'); 
+        document.getElementById('histDetPrice').innerText = "฿" + job.price; 
+        
+        // ดึงชื่อคนขับมาแสดง
+        if(job.driverPin) { 
+            db.ref('drivers_profile/' + job.driverPin).once('value', snap => { 
+                if(snap.exists()) document.getElementById('histDetDriver').innerText = `คนขับ: ${snap.val().name || '-'} (${snap.val().plate || '-'})`; 
+                else document.getElementById('histDetDriver').innerText = `คนขับ: ไม่ทราบข้อมูล`; 
+            }); 
+        } else {
+            document.getElementById('histDetDriver').innerText = `คนขับ: ไม่ทราบข้อมูล`;
+        }
+
+        let wpContainer = document.getElementById('historyDetailWaypointsContainer');
+        if (wpContainer) {
+            let wpHtml = '';
+            let waypoints = job.waypoints || [];
+            waypoints.forEach(wp => {
+                let colorClass = wp.type === 'pick' ? 'text-green-500' : (wp.type === 'drop' ? 'text-red-500' : 'text-yellow-500');
+                wpHtml += `<div class="flex items-start gap-3 relative z-10 w-full min-w-0 mb-3"><div class="shrink-0 mt-1"><i class="fas fa-circle text-[10px] ${colorClass} border border-gray-800 rounded-full"></i></div><div class="flex-1 min-w-0"><p class="text-[10px] text-gray-400 font-bold mb-0.5">${wp.type === 'pick' ? 'จุดรับ' : (wp.type === 'drop' ? 'จุดส่ง' : 'จุดแวะ')}</p><p class="text-[13px] text-gray-200 font-medium leading-tight">${wp.name}</p></div></div>`;
+            });
+            wpContainer.innerHTML = wpHtml;
+        }
+
+        document.getElementById('historyDetailModal').classList.remove('hidden');
+    }
+
+    window.closeHistoryDetail = function() { 
+        document.getElementById('historyDetailModal').classList.add('hidden'); 
+        selectedHistoryJobId = null; 
+    }
+    // ==========================================
+    // ระบบจัดการแบล็กลิสต์คนขับ
+    // ==========================================
+    window.blockCurrentHistoryDriver = function() {
+        let job = loadedHistoryJobs[selectedHistoryJobId]; 
+        if(!job || !job.driverPin) { 
+            showAlert("ผิดพลาด", "ไม่สามารถบล็อกได้ เนื่องจากไม่พบรหัสคนขับสำหรับงานนี้", "error"); 
+            return; 
+        }
+        
+        window.openConfirmActionModal("บล็อกคนขับ?", "หากยืนยัน คุณจะไม่ถูกจับคู่กับคนขับคนนี้อีกต่อไป", () => {
+            let updates = {}; 
+            updates[job.driverPin] = { 
+                driverPin: job.driverPin, 
+                driverPhone: job.driverPhone || null, 
+                timestamp: firebase.database.ServerValue.TIMESTAMP 
+            };
+            
+            db.ref('passenger_blocks/' + lineUserId).update(updates).then(() => { 
+                showAlert("บล็อกสำเร็จ", "คุณจะไม่ได้รับงานจากคนขับท่านนี้อีก", "success"); 
+                window.closeHistoryDetail(); 
+            });
+        }, "red");
+    }
+
+    window.openBlockedDrivers = function() {
+        document.getElementById('blockedDriversModal').classList.remove('hidden');
+        renderBlockedDrivers();
+    }
+    
+    window.closeBlockedDrivers = function() {
+        document.getElementById('blockedDriversModal').classList.add('hidden');
+    }
+
+    function renderBlockedDrivers() {
+        let container = document.getElementById('blockedListContainer');
+        container.innerHTML = '<div class="flex justify-center py-10"><i class="fas fa-spinner fa-spin text-3xl text-red-500"></i></div>';
+        
+        db.ref('passenger_blocks/' + lineUserId).once('value', snap => {
+            let blocks = snap.val() || {};
+            if(Object.keys(blocks).length === 0) {
+                container.innerHTML = `<div class="text-center py-10"><i class="fas fa-user-shield text-4xl text-gray-600 mb-3"></i><p class="text-gray-400 font-bold">ไม่มีรายการบล็อกคนขับ</p></div>`;
+                return;
+            }
+            
+            let html = '<div class="space-y-3">';
+            let promises = Object.keys(blocks).map(pin => {
+                return db.ref('drivers_profile/' + pin).once('value').then(dSnap => {
+                    return { pin: pin, name: dSnap.exists() ? dSnap.val().name + ' (' + dSnap.val().plate + ')' : 'พนักงานรหัส: ' + pin };
+                });
+            });
+            
+            Promise.all(promises).then(results => {
+                results.forEach(res => {
+                    html += `
+                    <div class="flex justify-between items-center bg-[#2a2f5c] border border-[#383d6a] p-3.5 rounded-2xl shadow-sm">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 bg-red-900/30 text-red-500 rounded-full flex items-center justify-center text-lg"><i class="fas fa-user-slash"></i></div>
+                            <div><p class="text-gray-200 font-bold text-sm">${res.name}</p></div>
+                        </div>
+                        <button onclick="window.unblockDriver('${res.pin}')" class="bg-[#383d6a] text-gray-300 px-3 py-1.5 rounded-lg text-xs font-bold hover:bg-[#4b507d] transition shadow-sm">ปลดบล็อก</button>
+                    </div>`;
+                });
+                html += '</div>';
+                container.innerHTML = html;
+            });
+        });
+    }
+
+    window.unblockDriver = function(pin) {
+        db.ref('passenger_blocks/' + lineUserId + '/' + pin).remove().then(() => {
+            showAlert('สำเร็จ', 'ปลดบล็อกคนขับเรียบร้อยแล้ว', 'success');
+            renderBlockedDrivers(); 
+        });
+    }
   </script>
   <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDsZ_tbFhH6fUXRz3I6C-tMshNwwrSevd4&libraries=places,geometry&callback=initMap" async defer></script>
 </body>
