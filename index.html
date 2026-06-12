@@ -582,7 +582,7 @@
       </div>
 
       <div class="flex-1 overflow-y-auto w-full hide-scrollbar flex flex-col bg-[#1e234e] relative z-10">
-          <div id="historyMap" class="w-full h-[220px] bg-[#1e234e] shrink-0 border-b border-[#383d6a] pointer-events-none"></div>
+          <div id="historyMap" class="w-full h-[220px] bg-[#1e234e] shrink-0 border-b border-[#383d6a]"></div>
 
           <div class="p-4 flex flex-col gap-4 text-white font-normal pb-10">
               <div class="flex justify-between items-center border-b border-[#383d6a] pb-3">
@@ -2369,7 +2369,7 @@ function renderWaypointsUI() {
                 zoom: 13, 
                 mapTypeId: 'hybrid', 
                 disableDefaultUI: true, 
-                gestureHandling: 'cooperative' // 🌟 เปลี่ยนจาก none เป็น cooperative เพื่อให้ซูมและเลื่อนแผนที่ได้
+                gestureHandling: 'greedy' // 🌟 เปลี่ยนเป็น greedy จะซูมและเลื่อนได้คล่องมือที่สุด
             });
             historyDirectionsService = new google.maps.DirectionsService();
             historyDirectionsRenderer = new google.maps.DirectionsRenderer({
