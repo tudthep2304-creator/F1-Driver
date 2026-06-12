@@ -14,18 +14,14 @@
     body { font-family: 'Kanit', sans-serif; background-color: #1e234e; color: #f3f4f6; }
     .map-container { position: fixed; inset: 0; width: 100vw; height: 100vh; z-index: 0; background: #1e234e; }
     
-    /* Splash Screen CSS */
+/* Splash Screen CSS */
     #splashScreen { position: fixed; inset: 0; z-index: 999999; background-color: #1e234e; display: flex; align-items: center; justify-content: center; transition: opacity 0.5s ease, visibility 0.5s; }
-    /* เพิ่มลูกเล่นเด้งดึ๋งให้ตัว F */
     @keyframes popF { 0% { opacity: 0; transform: scale(0.5); } 100% { opacity: 1; transform: scale(1); } }
     @keyframes drawOne { 0% { opacity: 0; transform: translateX(-40px); } 100% { opacity: 1; transform: translateX(0); } }
     
-    /* แก้ตัวแหว่งด้วย line-height: normal และขยายขนาดเป็น 8.5rem */
-    .logo-f { font-size: 8.5rem; color: white; animation: popF 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; line-height: normal; }
-    
-    /* เพิ่ม padding-right ให้เลข 1 เพื่อเผื่อพื้นที่ให้ความเอียง ไม่ให้ขอบขวาโดนตัด */
-    .logo-1 { font-size: 8.5rem; color: #fae100; opacity: 0; animation: drawOne 0.4s ease-out 0.4s forwards; margin-left: 8px; line-height: normal; padding-right: 20px; }
-
+    /* เติม display: inline-block และ padding รอบๆ เพื่อขยายกรอบไม่ให้ตัวอักษรโดนตัดเวลามันขยายตัว */
+    .logo-f { display: inline-block; font-size: 8.5rem; color: white; animation: popF 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; line-height: 1; padding: 10px 0 10px 20px; }
+    .logo-1 { display: inline-block; font-size: 8.5rem; color: #fae100; opacity: 0; animation: drawOne 0.4s ease-out 0.4s forwards; margin-left: 5px; line-height: 1; padding: 10px 20px 10px 0; }
     .ui-panel { 
         position: fixed; bottom: 0; left: 0; right: 0; background: #1e234e; 
         border-top-left-radius: 24px; border-top-right-radius: 24px; 
