@@ -17,10 +17,9 @@
 /* Splash Screen CSS */
     #splashScreen { position: fixed; inset: 0; z-index: 999999; background-color: #1e234e; display: flex; align-items: center; justify-content: center; transition: opacity 0.5s ease, visibility 0.5s; overflow: hidden; }
     
-    /* แอนิเมชันสไลด์พุ่งเข้ามา (เอาการยืดออก เพื่อให้รอยยางคงรูปสวยงาม) */
     @keyframes driveF { 
         0% { opacity: 0; transform: translateX(-100vw); } 
-        70% { opacity: 1; transform: translateX(20px); } /* จังหวะเบรกตัวโก่ง */
+        70% { opacity: 1; transform: translateX(20px); } 
         100% { opacity: 1; transform: translateX(0); } 
     }
     
@@ -30,12 +29,12 @@
         100% { opacity: 1; transform: translateX(0); } 
     }
 
-    /* แอนิเมชันให้รอยยางค่อยๆ จางหายไปตอนเบรกจอดสนิท */
+    /* แอนิเมชันให้รอยตารางค่อยๆ จางหายไปตอนเบรกจอดสนิท */
     @keyframes fadeTrack {
         0% { opacity: 0; }
         30% { opacity: 1; }
         70% { opacity: 1; }
-        100% { opacity: 0; } /* รอยหายไปตอนจบ */
+        100% { opacity: 0; } 
     }
     
     /* ตัว F (สีขาวล้วน) */
@@ -53,17 +52,19 @@
         -webkit-font-smoothing: antialiased; 
     }
     
-    /* 🌟 สร้างรอยยาง (ดอกยาง) ลากตามหลังตัว F จากขอบซ้าย */
+    /* 🌟 สร้างรอยตารางหมากรุก ดำ-ขาว ความสูงเท่าตัวอักษร ลากตามตัว F */
     .logo-f::after {
         content: '';
         position: absolute;
-        right: 80%; /* ให้ออกมาจากท้ายตัวอักษร */
-        bottom: 25px; /* ระดับความสูงของรอยยางให้อยู่ที่ฐานตัวหนังสือ */
+        right: 80%; 
+        top: 0; 
         width: 100vw;
-        height: 25px;
-        /* วาดลายดอกยางรถเฉียงๆ สีขาว */
-        background: repeating-linear-gradient(75deg, rgba(255,255,255,0.2) 0, rgba(255,255,255,0.2) 6px, transparent 6px, transparent 12px);
-        /* เฟดให้ปลายรอยยางค่อยๆ กลืนไปกับพื้นหลัง */
+        height: 100%; /* ความสูง 100% เท่ากับตัว F */
+        background-color: #111; /* พื้นหลังสีดำ */
+        background-image: conic-gradient(rgba(255,255,255,0.9) 90deg, transparent 90deg 180deg, transparent 180deg 270deg, rgba(255,255,255,0.9) 270deg);
+        background-size: 32px 32px; /* ขนาดช่องตาราง */
+        transform: skewX(-15deg); /* เอียงตารางให้รับกับความเอียงของตัวอักษร */
+        transform-origin: right center;
         -webkit-mask-image: linear-gradient(to right, transparent 0%, black 90%);
         mask-image: linear-gradient(to right, transparent 0%, black 90%);
         animation: fadeTrack 0.6s ease-out forwards;
@@ -87,16 +88,19 @@
         -webkit-font-smoothing: antialiased;
     }
 
-    /* 🌟 สร้างรอยยาง (ดอกยาง) ลากตามหลังเลข 1 จากขอบขวา */
+    /* 🌟 สร้างรอยตารางหมากรุก ดำ-เหลือง ความสูงเท่าตัวอักษร ลากตามเลข 1 */
     .logo-1::after {
         content: '';
         position: absolute;
-        left: 80%; /* ให้ออกมาจากท้ายเลข 1 */
-        bottom: 25px; 
+        left: 70%; 
+        top: 0; 
         width: 100vw;
-        height: 25px;
-        /* วาดลายดอกยางรถเฉียงๆ สีเหลือง */
-        background: repeating-linear-gradient(-75deg, rgba(250,225,0,0.2) 0, rgba(250,225,0,0.2) 6px, transparent 6px, transparent 12px);
+        height: 100%; /* ความสูง 100% เท่ากับเลข 1 */
+        background-color: #111; /* พื้นหลังสีดำ */
+        background-image: conic-gradient(rgba(250,225,0,0.9) 90deg, transparent 90deg 180deg, transparent 180deg 270deg, rgba(250,225,0,0.9) 270deg);
+        background-size: 32px 32px; /* ขนาดช่องตาราง */
+        transform: skewX(-15deg); /* เอียงตารางให้รับกับความเอียงของตัวเลข */
+        transform-origin: left center;
         -webkit-mask-image: linear-gradient(to left, transparent 0%, black 90%);
         mask-image: linear-gradient(to left, transparent 0%, black 90%);
         animation: fadeTrack 0.6s ease-out forwards;
