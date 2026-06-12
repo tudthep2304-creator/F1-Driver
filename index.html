@@ -182,7 +182,22 @@
   </div>
 
   <!-- News Modal -->
-  <div id="newsModal" class="hidden fixed inset-0 z-[200] bg-transparent transition-opacity flex flex-col">
+  <div id="newsModal" class="hidden fixed inset-0 z-[200] bg-[#1e234e] flex flex-col pointer-events-auto transition-transform">
+    
+    <div class="absolute inset-0 z-0 overflow-hidden pointer-events-none">
+        <div class="absolute top-[-10%] left-[-10%] w-[60vw] h-[60vw] rounded-full bg-blue-500/10 blur-[80px]"></div>
+        <div class="absolute bottom-[-10%] right-[-10%] w-[70vw] h-[70vw] rounded-full bg-[#fae100]/5 blur-[100px]"></div>
+        <svg class="absolute inset-0 w-full h-full opacity-[0.08]" viewBox="0 0 1000 1000" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M100,1000 C150,600 700,500 800,-100 L1000,-100 C800,600 300,700 300,1000 Z" fill="#fae100" opacity="0.3"/>
+            <path d="M150,1000 C200,620 650,480 750,-100 L850,-100 C650,550 250,650 250,1000 Z" fill="#fae100" opacity="0.6"/>
+            <path d="M200,1000 C250,650 600,450 700,-100 L750,-100 C550,500 200,600 200,1000 Z" fill="#fae100" opacity="0.9"/>
+            <path d="M120,1000 C170,610 680,490 780,-100 L810,-100 C680,580 280,680 280,1000 Z" fill="#fae100" opacity="0.5"/>
+        </svg>
+    </div>
+    
+    <div class="relative z-10 flex flex-col h-full">
+        </div>
+</div>
       <!-- บาร์ด้านบนสูง h-16 px-4 -->
       <div class="sticky top-0 bg-[#1e234e] border-b border-[#2a2f5c] h-16 px-4 flex items-center justify-between z-10 shadow-md shrink-0 w-full">
           <div class="flex items-center gap-3">
