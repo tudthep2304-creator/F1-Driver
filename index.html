@@ -209,27 +209,38 @@
   </div>
 
   <!-- ✅ Community Modal (แชทส่วนกลาง แบบมีตัวกรอง) -->
-<div id="communityModal" class="hidden fixed inset-0 z-[200] bg-transparent flex flex-col pointer-events-auto transition-transform">
+<div id="communityModal" class="hidden fixed inset-0 z-[200] bg-[#1e234e] flex flex-col pointer-events-auto transition-transform">
       
-      <div class="bg-[#2a2f5c]/90 backdrop-blur-md border-b border-[#383d6a] h-16 px-4 flex items-center gap-3 shadow-md shrink-0 w-full">
+      <div class="absolute inset-0 z-0 overflow-hidden pointer-events-none">
+          <div class="absolute top-[-10%] left-[-10%] w-[60vw] h-[60vw] rounded-full bg-blue-500/10 blur-[80px]"></div>
+          <div class="absolute bottom-[-10%] right-[-10%] w-[70vw] h-[70vw] rounded-full bg-[#fae100]/5 blur-[100px]"></div>
+          <svg class="absolute inset-0 w-full h-full opacity-[0.08]" viewBox="0 0 1000 1000" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M100,1000 C150,600 700,500 800,-100 L1000,-100 C800,600 300,700 300,1000 Z" fill="#fae100" opacity="0.3"/>
+              <path d="M150,1000 C200,620 650,480 750,-100 L850,-100 C650,550 250,650 250,1000 Z" fill="#fae100" opacity="0.6"/>
+              <path d="M200,1000 C250,650 600,450 700,-100 L750,-100 C550,500 200,600 200,1000 Z" fill="#fae100" opacity="0.9"/>
+              <path d="M120,1000 C170,610 680,490 780,-100 L810,-100 C680,580 280,680 280,1000 Z" fill="#fae100" opacity="0.5"/>
+          </svg>
+      </div>
+
+      <div class="relative z-10 bg-[#2a2f5c]/90 backdrop-blur-md border-b border-[#383d6a] h-16 px-4 flex items-center gap-3 shadow-md shrink-0 w-full">
           <button onclick="window.closeCommunityModal()" class="w-10 h-10 bg-[#383d6a]/80 text-gray-400 rounded-full flex items-center justify-center hover:text-[#fae100] transition"><i class="fas fa-arrow-left"></i></button>
           <h2 class="text-lg font-black text-[#fae100]"><i class="fas fa-users mr-2"></i> แชทคอมมูนิตี้ส่วนกลาง</h2>
       </div>
       
-      <div class="p-3 bg-transparent border-b border-[#383d6a] shrink-0">
+      <div class="relative z-10 p-3 bg-transparent border-b border-[#383d6a] shrink-0">
           <div class="relative w-full shadow-sm rounded-xl bg-[#2a2f5c]/80 backdrop-blur-sm border border-[#383d6a] overflow-hidden">
-              <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none z-10"><i class="fas fa-search text-gray-400"></i></div>
+              <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none"><i class="fas fa-search text-gray-400"></i></div>
               <input type="text" id="chatSearchInput" onkeyup="window.filterCommunityChat()" class="w-full py-2.5 pl-9 pr-3 bg-transparent outline-none font-normal text-[13px] text-white placeholder-gray-500" placeholder="ค้นหาข้อความ หรือวันที่ (เช่น 11/06)...">
           </div>
       </div>
 
-      <div id="globalChatBox" class="flex-1 overflow-y-auto p-4 bg-transparent hide-scrollbar flex flex-col">
+      <div id="globalChatBox" class="relative z-10 flex-1 overflow-y-auto p-4 bg-transparent hide-scrollbar flex flex-col">
           <div id="globalChatMessages" class="space-y-3 flex-1 flex flex-col justify-end">
               <p class="text-center text-xs font-normal text-gray-500 my-4">พูดคุยกับผู้โดยสารและคนขับในพื้นที่ได้ที่นี่</p>
           </div>
       </div>
 
-      <div class="bg-[#2a2f5c]/90 backdrop-blur-md p-3 flex gap-2 shrink-0 shadow-[0_-5px_15px_rgba(0,0,0,0.3)] border-t border-[#383d6a]">
+      <div class="relative z-10 bg-[#2a2f5c]/90 backdrop-blur-md p-3 flex gap-2 shrink-0 shadow-[0_-5px_15px_rgba(0,0,0,0.3)] border-t border-[#383d6a]">
           <input type="text" id="globalChatInput" class="flex-1 rounded-xl bg-[#383d6a]/80 text-white px-4 py-3 text-sm font-normal outline-none focus:border-[#fae100] border border-transparent transition shadow-inner" placeholder="พิมพ์ข้อความพูดคุย...">
           <button onclick="window.sendGlobalChat()" class="bg-[#fae100] text-[#1e234e] font-black px-5 rounded-xl hover:bg-[#e5ce00] transition shadow-md active:scale-95"><i class="fas fa-paper-plane"></i></button>
       </div>
