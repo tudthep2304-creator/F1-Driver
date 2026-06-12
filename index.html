@@ -2233,6 +2233,144 @@
             renderBlockedDrivers(); 
         });
     }
+    // ==========================================
+    // ระบบแชทคอมมูนิตี้ (แก้ไขประวัติหาย + ตัวเองอยู่ขวา + ตัวเลขแจ้งเตือน)
+    // วางไว้ล่างสุดเหนือ
+    // ==========================================
+    window.unreadChatCount = 0;
+
+    // ฟังก์ชันนี้จะดึงประวัติแชทมาเตรียมไว้ทันทีที่โหลดเว็บ เพื่อไม่ให้ประวัติหาย
+    function initGlobalChat() {
+        if (window.activeGlobalChatListenerRef) return;
+        
+        const messagesDiv = document.getElementById('globalChatMessages');
+        if (messagesDiv) {
+            messagesDiv.innerHTML = '<p class="text-center text-xs font-normal text-gray-500 my-4">พูดคุยกับผู้โดยสารและคนขับในพื้นที่ได้ที่นี่</p>';
+        }
+
+        window.activeGlobalChatListenerRef = db.ref('community_chat').limitToLast(50);
+        window.activeGlobalChatListenerRef.on('child_added', snap => {
+            let messageData = snap.val();
+            
+            // เช็กไอดีว่าเราเป็นคนพิมพ์เองหรือไม่
+            let isSenderMe = messageData.pin === lineUserId;
+            
+            // ถ้าเราพิมพ์เองให้อยู่ขวา (justify-end) สีเหลือง, คนอื่นอยู่ซ้าย (justify-start) สีกรมท่า
+            let align = isSenderMe ? 'justify-end' : 'justify-start';
+            let bg = isSenderMe ? 'bg-[#fae100] text-[#1e234e]' : 'bg-[#2a2f5c] border border-[#383d6a] text-white';
+            let senderName = isSenderMe ? 'คุณ' : (messageData.name || 'ผู้ใช้');
+            
+            // ติดป้ายว่าเป็นคนขับ
+            let isDriver = messageData.role === 'driver';
+            let roleBadge = isDriver ? `<span class="bg-blue-500 text-white text-[8px] px-1 py-0.5 rounded ml-1 font-bold">DRIVER</span>` : '';
+
+            // ระบบนับการแจ้งเตือน
+            let modal = document.getElementById('communityModal');
+            if (modal && modal.classList.contains('hidden') && !isSenderMe) {
+                let lastSeen = parseInt(localStorage.getItem('lastSeenChatTime') || '0');
+                if (messageData.timestamp > lastSeen) {
+                    window.unreadChatCount++;
+                    updateChatBadge();
+                }
+            } else if (modal && !modal.classList.contains('hidden')) {
+                localStorage.setItem('lastSeenChatTime', Date.now());
+            }
+
+            // จัดฟอร์แมตเวลา
+            let timeStr = "";
+            if (messageData.timestamp) {
+                let d = new Date(messageData.timestamp);
+                let day = String(d.getDate()).padStart(2, '0');
+                let month = String(d.getMonth() + 1).padStart(2, '0');
+                let hrs = String(d.getHours()).padStart(2, '0');
+                let mins = String(d.getMinutes()).padStart(2, '0');
+                timeStr = `${day}/${month} ${hrs}:${mins}`;
+            }
+
+            let messageHtml = `
+            <div class="chat-msg-item flex w-full ${align} animate-fade-in mb-3">
+                <div class="flex flex-col ${isSenderMe ? 'items-end' : 'items-start'} max-w-[85%]">
+                    ${!isSenderMe ? `<span class="text-[10px] text-gray-400 font-normal mb-1 ml-1 flex items-center">${senderName} ${roleBadge}</span>` : ''}
+                    <div class="${bg} px-4 py-2.5 rounded-2xl text-[13px] font-normal shadow-sm break-words w-full">
+                        ${messageData.text}
+                    </div>
+                    <span class="text-[9px] text-gray-500 mt-1 ${isSenderMe ? 'mr-1' : 'ml-1'} font-normal">${timeStr}</span>
+                </div>
+            </div>`;
+
+            if (messagesDiv) {
+                messagesDiv.insertAdjacentHTML('beforeend', messageHtml);
+            }
+            
+            const chatBox = document.getElementById('globalChatBox');
+            if (chatBox) chatBox.scrollTop = chatBox.scrollHeight;
+        });
+    }
+
+    // เมื่อกดปุ่มเปิดคอมมูนิตี้
+    window.openCommunityModal = function() {
+        document.getElementById('communityModal').classList.remove('hidden');
+        window.unreadChatCount = 0;
+        updateChatBadge();
+        localStorage.setItem('lastSeenChatTime', Date.now());
+
+        initGlobalChat();
+
+        const chatBox = document.getElementById('globalChatBox');
+        if (chatBox) {
+            setTimeout(() => { chatBox.scrollTop = chatBox.scrollHeight; }, 100);
+        }
+    };
+
+    function updateChatBadge() {
+        let badge = document.getElementById('chatBadge');
+        if(badge) {
+            if(window.unreadChatCount > 0) {
+                badge.innerText = window.unreadChatCount > 99 ? '99+' : window.unreadChatCount;
+                badge.classList.remove('hidden');
+            } else {
+                badge.classList.add('hidden');
+            }
+        }
+    }
+
+    window.closeCommunityModal = function() { 
+        document.getElementById('communityModal').classList.add('hidden'); 
+        localStorage.setItem('lastSeenChatTime', Date.now());
+    };
+
+    window.sendGlobalChat = function() {
+        let inputEl = document.getElementById('globalChatInput');
+        let textVal = inputEl.value.trim();
+        if(!textVal) return;
+        
+        db.ref('community_chat').push({
+            pin: lineUserId, 
+            name: lineName || 'ผู้โดยสาร',
+            role: 'passenger', 
+            text: textVal,
+            timestamp: firebase.database.ServerValue.TIMESTAMP
+        }).then(() => { 
+            inputEl.value = ''; 
+        });
+    };
+
+    window.filterCommunityChat = function() {
+        let keyword = document.getElementById('chatSearchInput').value.toLowerCase();
+        let messages = document.querySelectorAll('.chat-msg-item');
+        messages.forEach(msg => {
+            let text = msg.innerText.toLowerCase();
+            if(text.includes(keyword)) {
+                msg.style.display = 'flex';
+            } else {
+                msg.style.display = 'none';
+            }
+        });
+    };
+    
+    // บังคับให้โหลดประวัติแชททันทีที่เปิดแอป
+    setTimeout(() => { initGlobalChat(); }, 1500);
+    
   </script>
   <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDsZ_tbFhH6fUXRz3I6C-tMshNwwrSevd4&libraries=places,geometry&callback=initMap" async defer></script>
 </body>
