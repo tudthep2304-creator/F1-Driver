@@ -203,20 +203,8 @@
       </div>
       
       <div class="relative z-10 flex-1 overflow-y-auto flex flex-col w-full hide-scrollbar">
-          
-          <div class="p-4 w-full shrink-0 pb-0">
-              <div id="newsTopBannerContainer" class="w-full aspect-video bg-black hidden relative shadow-md rounded-none overflow-hidden mb-2">
-                  <div id="newsTopBannerSlider" class="flex overflow-x-auto snap-x snap-mandatory hide-scrollbar w-full h-full relative scroll-smooth items-center"></div>
-              </div>
-          </div>
-          
-          <div class="px-2 py-0 w-full flex-1" id="newsListContainer"></div>
-        
-          <div class="px-4 mt-auto w-full flex flex-col gap-3 pb-8 shrink-0">
-              <div id="newsBottomBannerContainer" class="w-full aspect-[5/1] min-h-[70px] max-h-[120px] bg-transparent rounded-none overflow-hidden hidden relative shadow-md shrink-0">
-                  <div id="newsBottomBannerSlider" class="flex overflow-x-auto snap-x snap-mandatory hide-scrollbar w-full h-full scroll-smooth items-center"></div>
-              </div>
-          </div>
+          <!-- กล่องใส่รายการข่าวสาร (เพิ่ม py-2 ให้มีช่องว่างด้านบน-ล่างนิดหน่อย) -->
+          <div class="px-2 py-2 w-full flex-1" id="newsListContainer"></div>
       </div>
 
   <div id="newsDetailModal" class="hidden fixed inset-0 z-[210] bg-[#1e234e] transition-transform flex flex-col pointer-events-auto">
