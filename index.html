@@ -15,9 +15,11 @@
     .map-container { position: fixed; inset: 0; width: 100vw; height: 100vh; z-index: 0; background: #1e234e; }
     
     /* Splash Screen CSS */
-    #splashScreen { position: fixed; inset: 0; z-index: 999999; background-color: #1e234e; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 0.5s ease, visibility 0.5s; }
-    .splash-logo { font-size: 4rem; color: #fae100; margin-bottom: 15px; }
-    .splash-text { color: white; font-size: 1.8rem; font-weight: 900; letter-spacing: 2px; }
+    #splashScreen { position: fixed; inset: 0; z-index: 999999; background-color: #1e234e; display: flex; align-items: center; justify-content: center; transition: opacity 0.5s ease, visibility 0.5s; }
+    @keyframes popF { 0% { opacity: 0; transform: scale(0.8); } 100% { opacity: 1; transform: scale(1); } }
+    @keyframes drawOne { 0% { opacity: 0; transform: translateX(-30px); } 100% { opacity: 1; transform: translateX(0); } }
+    .logo-f { font-size: 6.5rem; color: white; animation: popF 0.5s ease-out forwards; line-height: 1; }
+    .logo-1 { font-size: 6.5rem; color: #fae100; opacity: 0; animation: drawOne 0.4s ease-out 0.4s forwards; margin-left: 8px; line-height: 1; }
 
     .ui-panel { 
         position: fixed; bottom: 0; left: 0; right: 0; background: #1e234e; 
@@ -66,9 +68,10 @@
 
   <!-- Splash Screen -->
   <div id="splashScreen">
-      <i class="fas fa-car-side splash-logo animate-pulse"></i>
-      <h1 class="splash-text">F1 DRIVER</h1>
-      <p class="text-[#fae100] text-sm mt-3 font-normal tracking-widest"><i class="fas fa-spinner fa-spin"></i> กำลังเชื่อมต่อระบบ...</p>
+      <div class="flex items-center font-black italic tracking-tighter">
+          <span class="logo-f">F</span>
+          <span class="logo-1">1</span>
+      </div>
   </div>
 
   <audio id="notiSound" src="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3" preload="auto"></audio>
