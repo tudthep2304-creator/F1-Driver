@@ -641,8 +641,7 @@
     
     window.activeGlobalChatListenerRef = null;
     let currentSelectedRatingScore = 0;
-    window.unreadChatCount = 0;
-
+    
     const detailedDarkMapStyle = [
       { elementType: "geometry", stylers: [{ color: "#1e234e" }] },
       { elementType: "labels.text.stroke", stylers: [{ color: "#1e234e" }] },
@@ -1396,7 +1395,6 @@
 
     db.ref('community_chat').limitToLast(50).once('value', snap => {
         let lastSeenChat = parseInt(localStorage.getItem('lastSeenChatTime') || '0');
-        window.unreadChatCount = 0;
         snap.forEach(child => {
             if(child.val().timestamp > lastSeenChat) window.unreadChatCount++;
         });
@@ -1410,7 +1408,6 @@
             let modal = document.getElementById('communityModal');
             if(!modal.classList.contains('hidden')) {
                 localStorage.setItem('lastSeenChatTime', Date.now());
-                window.unreadChatCount = 0;
             } else {
                 let lastSeenChat = parseInt(localStorage.getItem('lastSeenChatTime') || '0');
                 if (messageData.timestamp > lastSeenChat) {
@@ -1454,18 +1451,6 @@
         });
     }
 
-    }
-
-    function updateChatBadge() {
-        let badge = document.getElementById('chatBadge');
-        if(badge) {
-            if(window.unreadChatCount > 0) {
-                badge.innerText = window.unreadChatCount;
-                badge.classList.remove('hidden');
-            } else {
-                badge.classList.add('hidden');
-            }
-        }
     }
 
     window.filterCommunityChat = function() {
