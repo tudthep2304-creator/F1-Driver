@@ -13,35 +13,34 @@
     @import url('https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;700&display=swap');
     body { font-family: 'Kanit', sans-serif; background-color: #1e234e; color: #f3f4f6; }
     .map-container { position: fixed; inset: 0; width: 100vw; height: 100vh; z-index: 0; background: #1e234e; }
-    
-/* Splash Screen CSS */
+
+    /* Splash Screen CSS */
     #splashScreen { position: fixed; inset: 0; z-index: 999999; background-color: #1e234e; display: flex; align-items: center; justify-content: center; transition: opacity 0.5s ease, visibility 0.5s; }
     
-    @keyframes popF { 0% { opacity: 0; transform: scale(0.5); } 100% { opacity: 1; transform: scale(1); } }
+    /* เหลือแค่แอนิเมชันขีดเลข 1 */
     @keyframes drawOne { 0% { opacity: 0; transform: translateX(-30px); } 100% { opacity: 1; transform: translateX(0); } }
     
-    /* ตัว F: สั่งให้อยู่เลเยอร์บนสุด (z-index: 2) ขีดจะได้ไม่โดนเลข 1 ทับ */
+    /* ตัว F: ลบ animation ออก ให้อยู่นิ่งๆ แข็งๆ ป้องกันอาการแกว่งบนมือถือ */
     .logo-f { 
         display: inline-block; 
         font-size: 8.5rem; 
         color: white; 
-        animation: popF 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; 
         line-height: 1; 
-        padding-right: 15px; /* เผื่อที่ให้ความเอียงนิดนึง */
+        padding-right: 15px; 
         position: relative; 
         z-index: 2; 
     }
     
-    /* เลข 1: ดันลงล่าง ดึงซ้ายมาซุก และให้อยู่เลเยอร์ใต้ตัว F (z-index: 1) */
+    /* เลข 1: สไลด์เข้ามาซุกใต้ตัว F เหมือนเดิม (ปรับเวลาให้เร็วขึ้นนิดนึงจะได้ต่อเนื่อง) */
     .logo-1 { 
         display: inline-block; 
         font-size: 8.5rem; 
         color: #fae100; 
         opacity: 0; 
-        animation: drawOne 0.4s ease-out 0.4s forwards; 
+        animation: drawOne 0.4s ease-out 0.2s forwards; 
         line-height: 1; 
-        margin-left: -20px; /* ขยับซ้ายมาซุกใต้ F */
-        margin-top: 45px;   /* ขยับเยื้องลงมาด้านล่างตามแบบ */
+        margin-left: -20px; 
+        margin-top: 45px;   
         padding-right: 15px; 
         position: relative; 
         z-index: 1; 
