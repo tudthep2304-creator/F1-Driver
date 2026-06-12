@@ -423,15 +423,15 @@
           <button onclick="window.closeProfileModal()" class="w-10 h-10 shrink-0 bg-[#383d6a] text-gray-400 rounded-full flex items-center justify-center hover:text-white transition"><i class="fas fa-arrow-left"></i></button>
           <h2 class="text-lg font-black text-white">โปรไฟล์ส่วนตัว</h2>
       </div>
-      <div class="p-6 flex flex-col items-center border-b border-[#383d6a] shrink-0">
+<div class="p-6 flex flex-col items-center border-b border-[#383d6a] shrink-0">
           <img id="profilePicLarge" class="w-24 h-24 rounded-full border-4 border-[#fae100] object-cover bg-[#2a2f5c] mb-4 shadow-[0_0_15px_rgba(250,225,0,0.3)]" src="https://img.icons8.com/bubbles/150/user.png" alt="Profile">
           <h2 class="text-2xl font-black text-white" id="profileNameLarge">กำลังโหลด...</h2>
           <div class="flex items-center gap-2 mt-1">
               <p class="text-gray-400 font-normal" id="profilePhoneLarge">เบอร์โทร: ยังไม่ระบุ</p>
               <button onclick="window.editProfilePhone()" class="text-gray-500 hover:text-[#fae100] transition w-8 h-8 flex items-center justify-center bg-[#2a2f5c] rounded-full border border-[#383d6a] shadow-sm"><i class="fas fa-edit text-xs"></i></button>
           </div>
-      </div>
-    <div class="grid grid-cols-2 gap-3 w-full mt-6">
+
+          <div class="grid grid-cols-2 gap-3 w-full mt-6">
               <div class="bg-[#2a2f5c] p-3 rounded-xl border border-[#383d6a] text-center shadow-sm">
                   <p class="text-[10px] text-gray-400 font-bold uppercase mb-1">คะแนนของคุณ</p>
                   <p class="text-lg font-black text-[#fae100] flex items-center justify-center gap-1"><i class="fas fa-star text-sm"></i> 5.0</p>
@@ -440,6 +440,7 @@
                   <p class="text-[10px] text-gray-400 font-bold uppercase mb-1">เดินทางไปแล้ว</p>
                   <p class="text-lg font-black text-white"><span id="profileTotalRides">0</span> <span class="text-[10px] text-gray-500 font-normal">ครั้ง</span></p>
               </div>
+          </div>
           </div>
       <div class="p-4 space-y-3 flex-1 overflow-y-auto">
           <button onclick="window.openPassengerHistory()" class="w-full bg-[#2a2f5c] border border-[#383d6a] p-4 rounded-2xl shadow-sm flex items-center justify-between hover:bg-[#383d6a] transition">
