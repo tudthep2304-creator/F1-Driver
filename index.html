@@ -83,14 +83,14 @@
   </div>
 
   <div id="topSearchPick" class="hidden fixed top-[76px] left-4 right-4 z-40 pointer-events-auto transition-transform duration-300">
-      <div class="relative w-full shadow-[0_10px_20px_rgba(250,225,0,0.2)] rounded-2xl bg-[#2a2f5c] border-2 border-[#fae100] overflow-visible">
+      <div class="relative w-full shadow-[0_10px_20px_rgba(74,222,128,0.2)] rounded-full bg-[#2a2f5c] border-2 border-[#4ade80] overflow-visible">
           <div class="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none z-10"><i class="fas fa-search text-gray-400"></i></div>
           <input type="text" id="pickupSearch" class="w-full py-3.5 pl-11 pr-4 bg-transparent outline-none font-normal text-[13px] text-white truncate placeholder-gray-400" placeholder="พิมพ์ค้นหาสถานที่ (หรือเลื่อนเป้าบนแผนที่)">
       </div>
   </div>
 
   <div id="topSearchDrop" class="hidden fixed top-[76px] left-4 right-4 z-40 pointer-events-auto transition-transform duration-300">
-      <div class="relative w-full shadow-[0_10px_20px_rgba(239,68,68,0.2)] rounded-2xl bg-[#2a2f5c] border-2 border-red-500 overflow-visible">
+      <div class="relative w-full shadow-[0_10px_20px_rgba(239,68,68,0.2)] rounded-full bg-[#2a2f5c] border-2 border-red-500 overflow-visible">
           <div class="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none z-10"><i class="fas fa-search text-gray-400"></i></div>
           <input type="text" id="dropoffSearch" class="w-full py-3.5 pl-11 pr-4 bg-transparent outline-none font-normal text-[13px] text-white truncate placeholder-gray-400" placeholder="พิมพ์ค้นหาสถานที่ (หรือเลื่อนเป้าบนแผนที่)">
       </div>
@@ -280,41 +280,41 @@
 
   <!-- PAGE 2: PICKUP -->
   <div id="page2" class="hidden">
-    <div class="ui-panel border-t-[4px] border-[#fae100] h-auto pb-6 pt-4">
+    <div class="ui-panel border-t-[4px] border-[#4ade80] h-auto pb-6 pt-4">
       <div class="flex justify-between items-center mb-2">
-        <div><p class="text-[10px] font-black text-[#fae100] mb-0.5 tracking-widest"><i class="fas fa-circle"></i> STEP 1</p><p class="text-base font-black text-white">เลื่อนแผนที่เพื่อกำหนดจุดรับ</p></div>
+        <div><p class="text-[10px] font-black text-[#4ade80] mb-0.5 tracking-widest"><i class="fas fa-circle"></i> STEP 1</p><p class="text-base font-black text-white">เลื่อนแผนที่เพื่อกำหนดจุดรับ</p></div>
         <div class="flex gap-1.5">
-            <button onclick="window.openRecentPlacesModal()" class="text-[10px] font-normal bg-[#2a2f5c] border border-[#383d6a] text-gray-300 px-2.5 py-1.5 rounded-lg hover:bg-[#383d6a] transition shadow-sm flex items-center gap-1.5"><i class="fas fa-history"></i> ประวัติ</button>
-            <button onclick="window.useCurrentLocation()" class="text-[10px] font-normal bg-[#fae100]/20 border border-[#fae100]/30 text-[#fae100] px-2.5 py-1.5 rounded-lg hover:bg-[#fae100]/40 transition shadow-sm flex items-center gap-1.5"><i class="fas fa-crosshairs"></i> ปัจจุบัน</button>
+            <button onclick="window.openRecentPlacesModal()" class="text-[10px] font-normal bg-[#2a2f5c] border border-[#383d6a] text-gray-300 px-3 py-1.5 rounded-full hover:bg-[#383d6a] transition shadow-sm flex items-center gap-1.5"><i class="fas fa-history"></i> ประวัติ</button>
+            <button onclick="window.useCurrentLocation()" class="text-[10px] font-normal bg-[#4ade80]/20 border border-[#4ade80]/30 text-[#4ade80] px-3 py-1.5 rounded-full hover:bg-[#4ade80]/40 transition shadow-sm flex items-center gap-1.5"><i class="fas fa-crosshairs"></i> ปัจจุบัน</button>
         </div>
       </div>
       
       <div class="flex gap-2 overflow-x-auto pb-2 hide-scrollbar mb-1 items-center w-full">
           <div class="flex shrink-0 bg-[#2a2f5c] border border-[#383d6a] rounded-full overflow-hidden shadow-sm items-center">
-              <button onclick="window.handleSavedPlace('home')" class="px-2.5 py-1 flex items-center gap-1.5 hover:bg-[#383d6a] transition"><i class="fas fa-home text-blue-400 text-[10px]"></i><span class="label-home text-[11px] font-normal text-gray-200">บ้าน</span></button>
+              <button onclick="window.handleSavedPlace('home')" class="px-3 py-1.5 flex items-center gap-1.5 hover:bg-[#383d6a] transition"><i class="fas fa-home text-blue-400 text-[10px]"></i><span class="label-home text-[11px] font-normal text-gray-200">บ้าน</span></button>
               <div class="w-[1px] h-3 bg-[#383d6a]"></div>
-              <button onclick="window.editSavedPlace('home', event)" class="px-2 py-1 text-gray-400 hover:text-[#fae100] hover:bg-[#383d6a] transition flex items-center"><i class="fas fa-cog text-[10px]"></i></button>
+              <button onclick="window.editSavedPlace('home', event)" class="px-2.5 py-1.5 text-gray-400 hover:text-[#fae100] hover:bg-[#383d6a] transition flex items-center"><i class="fas fa-cog text-[10px]"></i></button>
           </div>
           <div class="flex shrink-0 bg-[#2a2f5c] border border-[#383d6a] rounded-full overflow-hidden shadow-sm items-center">
-              <button onclick="window.handleSavedPlace('favorite1')" class="px-2.5 py-1 flex items-center gap-1.5 hover:bg-[#383d6a] transition"><i class="fas fa-heart text-pink-500 text-[10px]"></i><span class="label-favorite1 text-[11px] font-normal text-gray-200">รายการโปรด 1</span></button>
+              <button onclick="window.handleSavedPlace('favorite1')" class="px-3 py-1.5 flex items-center gap-1.5 hover:bg-[#383d6a] transition"><i class="fas fa-heart text-pink-500 text-[10px]"></i><span class="label-favorite1 text-[11px] font-normal text-gray-200">รายการโปรด 1</span></button>
               <div class="w-[1px] h-3 bg-[#383d6a]"></div>
-              <button onclick="window.editSavedPlace('favorite1', event)" class="px-2 py-1 text-gray-400 hover:text-[#fae100] hover:bg-[#383d6a] transition flex items-center"><i class="fas fa-cog text-[10px]"></i></button>
+              <button onclick="window.editSavedPlace('favorite1', event)" class="px-2.5 py-1.5 text-gray-400 hover:text-[#fae100] hover:bg-[#383d6a] transition flex items-center"><i class="fas fa-cog text-[10px]"></i></button>
           </div>
           <div class="flex shrink-0 bg-[#2a2f5c] border border-[#383d6a] rounded-full overflow-hidden shadow-sm items-center">
-              <button onclick="window.handleSavedPlace('favorite2')" class="px-2.5 py-1 flex items-center gap-1.5 hover:bg-[#383d6a] transition"><i class="fas fa-star text-yellow-500 text-[10px]"></i><span class="label-favorite2 text-[11px] font-normal text-gray-200">รายการโปรด 2</span></button>
+              <button onclick="window.handleSavedPlace('favorite2')" class="px-3 py-1.5 flex items-center gap-1.5 hover:bg-[#383d6a] transition"><i class="fas fa-star text-yellow-500 text-[10px]"></i><span class="label-favorite2 text-[11px] font-normal text-gray-200">รายการโปรด 2</span></button>
               <div class="w-[1px] h-3 bg-[#383d6a]"></div>
-              <button onclick="window.editSavedPlace('favorite2', event)" class="px-2 py-1 text-gray-400 hover:text-[#fae100] hover:bg-[#383d6a] transition flex items-center"><i class="fas fa-cog text-[10px]"></i></button>
+              <button onclick="window.editSavedPlace('favorite2', event)" class="px-2.5 py-1.5 text-gray-400 hover:text-[#fae100] hover:bg-[#383d6a] transition flex items-center"><i class="fas fa-cog text-[10px]"></i></button>
           </div>
       </div>
       
       <div id="pickupWaypointsList" class="flex flex-col gap-1.5 mb-1 max-h-[110px] overflow-y-auto slim-scroll"></div>
 
       <div class="flex gap-2 mt-2">
-          <button onclick="window.addWaypointFromCenter('pick')" class="flex-[1] bg-[#2a2f5c] border border-[#fae100]/50 text-[#fae100] py-3 rounded-xl font-normal text-[14px] shadow-sm hover:bg-[#383d6a] transition flex justify-center items-center gap-1.5">
+          <button onclick="window.addWaypointFromCenter('pick')" class="flex-[1] bg-[#2a2f5c] border border-[#4ade80]/50 text-[#4ade80] py-3 rounded-full font-normal text-[14px] shadow-sm hover:bg-[#383d6a] transition flex justify-center items-center gap-1.5">
               <i class="fas fa-plus"></i> จุดรับ
           </button>
-          <button id="btnConfirmPick" onclick="window.confirmPickup()" disabled class="flex-[2] bg-[#2a2f5c] text-gray-400 border border-[#383d6a] py-3 rounded-xl font-black text-[14px] shadow-md transition flex justify-center items-center gap-1.5 cursor-not-allowed opacity-50">
-              เลือกจุดหมาย <i class="fas fa-arrow-right"></i>
+          <button id="btnConfirmPick" onclick="window.confirmPickup()" disabled class="flex-[2] bg-[#2a2f5c] text-gray-400 border border-[#383d6a] py-3 rounded-full font-black text-[14px] shadow-md transition flex justify-center items-center gap-1.5 cursor-not-allowed opacity-50">
+              ต่อไป <i class="fas fa-arrow-right"></i>
           </button>
       </div>
     </div>
@@ -326,36 +326,36 @@
       <div class="flex justify-between items-center mb-2">
         <div><p class="text-[10px] font-black text-red-500 mb-0.5 tracking-widest"><i class="fas fa-circle"></i> STEP 2</p><p class="text-base font-black text-white">เลื่อนแผนที่เพื่อกำหนดจุดส่ง</p></div>
         <div class="flex gap-1.5">
-            <button onclick="window.openRecentPlacesModal()" class="text-[10px] font-normal bg-[#2a2f5c] border border-[#383d6a] text-gray-300 px-2.5 py-1.5 rounded-lg hover:bg-[#383d6a] transition shadow-sm flex items-center gap-1.5"><i class="fas fa-history"></i> ประวัติ</button>
-            <button onclick="window.useCurrentLocation()" class="text-[10px] font-normal bg-red-900/30 border border-red-500/30 text-red-400 px-2.5 py-1.5 rounded-lg hover:bg-red-800/50 transition shadow-sm flex items-center gap-1.5"><i class="fas fa-crosshairs"></i> ปัจจุบัน</button>
+            <button onclick="window.openRecentPlacesModal()" class="text-[10px] font-normal bg-[#2a2f5c] border border-[#383d6a] text-gray-300 px-3 py-1.5 rounded-full hover:bg-[#383d6a] transition shadow-sm flex items-center gap-1.5"><i class="fas fa-history"></i> ประวัติ</button>
+            <button onclick="window.useCurrentLocation()" class="text-[10px] font-normal bg-red-900/30 border border-red-500/30 text-red-400 px-3 py-1.5 rounded-full hover:bg-red-800/50 transition shadow-sm flex items-center gap-1.5"><i class="fas fa-crosshairs"></i> ปัจจุบัน</button>
         </div>
       </div>
       
       <div class="flex gap-2 overflow-x-auto pb-2 hide-scrollbar mb-1 items-center w-full">
           <div class="flex shrink-0 bg-[#2a2f5c] border border-[#383d6a] rounded-full overflow-hidden shadow-sm items-center">
-              <button onclick="window.handleSavedPlace('home')" class="px-2.5 py-1 flex items-center gap-1.5 hover:bg-[#383d6a] transition"><i class="fas fa-home text-blue-400 text-[10px]"></i><span class="label-home text-[11px] font-normal text-gray-200">บ้าน</span></button>
+              <button onclick="window.handleSavedPlace('home')" class="px-3 py-1.5 flex items-center gap-1.5 hover:bg-[#383d6a] transition"><i class="fas fa-home text-blue-400 text-[10px]"></i><span class="label-home text-[11px] font-normal text-gray-200">บ้าน</span></button>
               <div class="w-[1px] h-3 bg-[#383d6a]"></div>
-              <button onclick="window.editSavedPlace('home', event)" class="px-2 py-1 text-gray-400 hover:text-[#fae100] hover:bg-[#383d6a] transition flex items-center"><i class="fas fa-cog text-[10px]"></i></button>
+              <button onclick="window.editSavedPlace('home', event)" class="px-2.5 py-1.5 text-gray-400 hover:text-[#fae100] hover:bg-[#383d6a] transition flex items-center"><i class="fas fa-cog text-[10px]"></i></button>
           </div>
           <div class="flex shrink-0 bg-[#2a2f5c] border border-[#383d6a] rounded-full overflow-hidden shadow-sm items-center">
-              <button onclick="window.handleSavedPlace('favorite1')" class="px-2.5 py-1 flex items-center gap-1.5 hover:bg-[#383d6a] transition"><i class="fas fa-heart text-pink-500 text-[10px]"></i><span class="label-favorite1 text-[11px] font-normal text-gray-200">รายการโปรด 1</span></button>
+              <button onclick="window.handleSavedPlace('favorite1')" class="px-3 py-1.5 flex items-center gap-1.5 hover:bg-[#383d6a] transition"><i class="fas fa-heart text-pink-500 text-[10px]"></i><span class="label-favorite1 text-[11px] font-normal text-gray-200">รายการโปรด 1</span></button>
               <div class="w-[1px] h-3 bg-[#383d6a]"></div>
-              <button onclick="window.editSavedPlace('favorite1', event)" class="px-2 py-1 text-gray-400 hover:text-[#fae100] hover:bg-[#383d6a] transition flex items-center"><i class="fas fa-cog text-[10px]"></i></button>
+              <button onclick="window.editSavedPlace('favorite1', event)" class="px-2.5 py-1.5 text-gray-400 hover:text-[#fae100] hover:bg-[#383d6a] transition flex items-center"><i class="fas fa-cog text-[10px]"></i></button>
           </div>
           <div class="flex shrink-0 bg-[#2a2f5c] border border-[#383d6a] rounded-full overflow-hidden shadow-sm items-center">
-              <button onclick="window.handleSavedPlace('favorite2')" class="px-2.5 py-1 flex items-center gap-1.5 hover:bg-[#383d6a] transition"><i class="fas fa-star text-yellow-500 text-[10px]"></i><span class="label-favorite2 text-[11px] font-normal text-gray-200">รายการโปรด 2</span></button>
+              <button onclick="window.handleSavedPlace('favorite2')" class="px-3 py-1.5 flex items-center gap-1.5 hover:bg-[#383d6a] transition"><i class="fas fa-star text-yellow-500 text-[10px]"></i><span class="label-favorite2 text-[11px] font-normal text-gray-200">รายการโปรด 2</span></button>
               <div class="w-[1px] h-3 bg-[#383d6a]"></div>
-              <button onclick="window.editSavedPlace('favorite2', event)" class="px-2 py-1 text-gray-400 hover:text-[#fae100] hover:bg-[#383d6a] transition flex items-center"><i class="fas fa-cog text-[10px]"></i></button>
+              <button onclick="window.editSavedPlace('favorite2', event)" class="px-2.5 py-1.5 text-gray-400 hover:text-[#fae100] hover:bg-[#383d6a] transition flex items-center"><i class="fas fa-cog text-[10px]"></i></button>
           </div>
       </div>
 
       <div id="dropoffWaypointsList" class="flex flex-col gap-1.5 mb-1 max-h-[110px] overflow-y-auto slim-scroll"></div>
 
       <div class="flex gap-2 mt-2">
-          <button onclick="window.addWaypointFromCenter('drop')" class="flex-[1] bg-[#2a2f5c] border border-red-500/50 text-red-400 py-3 rounded-xl font-normal text-[14px] shadow-sm hover:bg-[#383d6a] transition flex justify-center items-center gap-1.5">
+          <button onclick="window.addWaypointFromCenter('drop')" class="flex-[1] bg-[#2a2f5c] border border-red-500/50 text-red-400 py-3 rounded-full font-normal text-[14px] shadow-sm hover:bg-[#383d6a] transition flex justify-center items-center gap-1.5">
               <i class="fas fa-plus"></i> จุดส่ง
           </button>
-          <button id="btnConfirmDrop" onclick="window.confirmDropoff()" disabled class="flex-[2] bg-[#2a2f5c] text-gray-400 border border-[#383d6a] py-3 rounded-xl font-black text-[14px] shadow-md transition flex justify-center items-center gap-1.5 cursor-not-allowed opacity-50">
+          <button id="btnConfirmDrop" onclick="window.confirmDropoff()" disabled class="flex-[2] bg-[#2a2f5c] text-gray-400 border border-[#383d6a] py-3 rounded-full font-black text-[14px] shadow-md transition flex justify-center items-center gap-1.5 cursor-not-allowed opacity-50">
               สรุปการเดินทาง <i class="fas fa-check-circle"></i>
           </button>
       </div>
