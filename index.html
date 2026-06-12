@@ -14,6 +14,7 @@
     body { font-family: 'Kanit', sans-serif; background-color: #1e234e; color: #f3f4f6; }
     .map-container { position: fixed; inset: 0; width: 100vw; height: 100vh; z-index: 0; background: #1e234e; }
     
+    /* Splash Screen CSS */
     #splashScreen { position: fixed; inset: 0; z-index: 999999; background-color: #1e234e; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 0.5s ease, visibility 0.5s; }
     .splash-logo { font-size: 4rem; color: #fae100; margin-bottom: 15px; }
     .splash-text { color: white; font-size: 1.8rem; font-weight: 900; letter-spacing: 2px; }
@@ -63,6 +64,7 @@
       </svg>
   </div>
 
+  <!-- Splash Screen -->
   <div id="splashScreen">
       <i class="fas fa-car-side splash-logo animate-pulse"></i>
       <h1 class="splash-text">F1 DRIVER</h1>
@@ -73,6 +75,7 @@
 
   <div id="map" class="map-container hidden"></div>
 
+  <!-- บาร์ด้านบนสำหรับแผนที่ (สูง 64px = h-16) -->
   <div id="navBar" class="hidden fixed top-0 w-full h-16 bg-[#1e234e] border-b border-[#2a2f5c] flex items-center justify-between px-4 z-20 text-white shadow-md pointer-events-auto">
     <button id="btnNavBack" onclick="goBack()" class="p-2 text-2xl active:opacity-50 hover:text-[#fae100] transition"><i class="fas fa-chevron-left"></i></button>
     <h1 id="navTitle" class="text-lg font-black text-[#fae100] tracking-wide"><i class="fas fa-car-side"></i> F1 Fast and Furious</h1>
@@ -90,180 +93,6 @@
       <div class="relative w-full shadow-[0_10px_20px_rgba(239,68,68,0.2)] rounded-full bg-[#2a2f5c] border-2 border-red-500 overflow-visible">
           <div class="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none z-10"><i class="fas fa-search text-gray-400"></i></div>
           <input type="text" id="dropoffSearch" class="w-full py-3.5 pl-11 pr-4 bg-transparent outline-none font-normal text-[13px] text-white truncate placeholder-gray-400" placeholder="พิมพ์ค้นหาสถานที่ (หรือเลื่อนเป้าบนแผนที่)">
-      </div>
-  </div>
-
-  <div id="mapControls" class="hidden fixed top-[140px] right-4 z-30 flex-col gap-3 pointer-events-auto transition-all duration-300">
-      <button onclick="toggleMapStyle()" id="btnMapStyle" class="glass-box w-11 h-11 flex items-center justify-center rounded-full shadow-lg text-gray-300 border border-[#383d6a] hover:bg-white/10 transition" title="สลับโหมดแผนที่"><i class="fas fa-satellite text-[18px]"></i></button>
-      <button onclick="fitAllWaypoints()" id="btnOverview" class="hidden glass-box w-11 h-11 flex items-center justify-center rounded-full shadow-lg text-gray-300 border border-[#383d6a] hover:bg-white/10 transition" title="ดูเส้นทางรวม"><i class="fas fa-route text-[18px]"></i></button>
-      <button onclick="handleCrosshairClick()" id="btnCrosshair" class="hidden glass-box w-11 h-11 flex items-center justify-center rounded-full shadow-lg text-[#fae100] border border-[#383d6a] hover:bg-white/10 transition" title="พิกัดปัจจุบัน"><i class="fas fa-crosshairs text-[18px]"></i></button>
-      <button onclick="openEmergencyModal()" id="btnEmergency" class="hidden bg-red-900/80 w-11 h-11 flex items-center justify-center rounded-full shadow-[0_0_15px_rgba(239,68,68,0.5)] text-red-400 border border-red-500/50 active:bg-red-800 transition mt-2"><i class="fas fa-shield-alt text-[18px]"></i></button>
-  </div>
-
-  <div id="page1" class="full-page flex flex-col overflow-y-auto hide-scrollbar">
-    <div class="bg-[#1e234e] border-b border-[#2a2f5c] text-[#fae100] h-16 px-4 shadow-md shrink-0 flex justify-between items-center sticky top-0 z-20 w-full">
-        <h1 class="text-lg font-black tracking-wide flex items-center gap-2"><i class="fas fa-car-side"></i> F1 DRIVER</h1>
-        <div class="flex items-center gap-2 text-sm text-gray-400 bg-[#2a2f5c] px-3 py-1.5 rounded-full border border-[#383d6a] cursor-pointer shadow-sm hover:text-[#fae100] transition" onclick="openProfileModal()">
-            <img id="userPicSmall" class="w-6 h-6 rounded-full object-cover bg-gray-700" src="https://img.icons8.com/bubbles/150/user.png" alt="Profile">
-            <span id="userNameSmall" class="font-normal truncate max-w-[90px] text-xs">...</span>
-        </div>
-    </div>
-
-    <div class="p-4 flex-1 flex flex-col items-center w-full">
-      <div id="homeBannerContainer" class="w-full aspect-video bg-black rounded-none mb-6 shadow-md overflow-hidden relative hidden shrink-0">
-          <div id="bannerSlider" class="flex overflow-x-auto snap-x snap-mandatory hide-scrollbar w-full h-full relative scroll-smooth items-center"></div>
-          <div id="bannerDots" class="absolute bottom-3 left-1/2 transform -translate-x-1/2 flex gap-1.5 z-10 bg-black/40 px-2 py-1 rounded-full"></div>
-          <div class="absolute top-2 right-2 bg-black/60 px-2 py-0.5 rounded text-[10px] text-white z-10 font-normal">Ad</div>
-      </div>
-      
-      <div class="w-full grid grid-cols-3 gap-2 shrink-0 mb-4 mt-2">
-          <button id="btnMainRideAction" onclick="handleMainRideClick()" class="flex flex-col items-center justify-center gap-1.5 text-[#fae100] transition active:scale-95 bg-transparent outline-none">
-              <i class="fas fa-car text-[30px]" id="btnMainRideIcon"></i>
-              <span class="font-normal text-xs text-center leading-tight tracking-wide" id="btnMainRideText">เรียกรถ</span>
-          </button>
-          
-          <button onclick="openNewsModal()" class="flex flex-col items-center justify-center gap-1.5 text-[#fae100] transition active:scale-95 relative bg-transparent outline-none">
-              <div id="newsBadge" class="hidden absolute top-0 right-3 bg-red-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full shadow animate-pulse">New</div>
-              <i class="fas fa-bullhorn text-[30px]"></i>
-              <span class="font-normal text-xs text-center leading-tight tracking-wide">ข่าวสาร<br>&โปรโมชั่น</span>
-          </button>
-
-          <button onclick="window.openCommunityModal()" class="flex flex-col items-center justify-center gap-1.5 text-[#fae100] transition active:scale-95 relative bg-transparent outline-none">
-              <div id="chatBadge" class="hidden absolute top-0 right-3 bg-red-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full shadow">0</div>
-              <i class="fas fa-users text-[30px]"></i>
-              <span class="font-normal text-xs text-center leading-tight tracking-wide">คอมมูนิตี้</span>
-          </button>
-      </div>
-
-      <div class="mt-auto w-full flex flex-col gap-3 pb-8">
-          <div id="bottomBannerContainer" class="w-full aspect-[5/1] min-h-[70px] max-h-[120px] bg-transparent rounded-none overflow-hidden hidden relative shadow-md shrink-0">
-          <div id="bottomBannerSlider" class="flex overflow-x-auto snap-x snap-mandatory hide-scrollbar w-full h-full scroll-smooth items-center"></div>
-          </div>
-      </div>
-    </div>
-  </div>
-
-  <div id="vehicleSelectionModal" class="hidden fixed inset-0 z-[150] bg-black/80 flex items-center justify-center p-4 pointer-events-auto transition-opacity">
-      <div class="bg-[#1e234e] border border-[#fae100]/30 rounded-3xl p-6 w-full max-w-sm text-center shadow-2xl transform scale-100 max-h-[90vh] flex flex-col">
-          <h3 class="text-xl font-black text-[#fae100] mb-2 shrink-0">เลือกประเภทรถ</h3>
-          <p class="text-sm font-normal text-gray-400 mb-4 leading-relaxed shrink-0">ระบบรองรับบริการหลายรูปแบบ ราคาประเมินจะแตกต่างกัน</p>
-          
-          <div class="grid grid-cols-2 gap-3 overflow-y-auto slim-scroll pr-1 pb-2 flex-1">
-              <button id="btnSelectCar" onclick="selectVehicleAndStart('car')" class="w-full py-4 bg-[#fae100] text-[#1e234e] font-black rounded-2xl shadow-md hover:bg-[#e5ce00] transition flex flex-col items-center justify-center gap-2 active:scale-95 shrink-0">
-                  <i class="fas fa-car-side text-3xl"></i> 
-                  <span class="text-sm font-bold text-center leading-tight">รถยนต์</span>
-              </button>
-              
-              <button id="btnSelectPremiumCar" onclick="selectVehicleAndStart('premium_car')" class="w-full py-4 bg-[#fae100] text-[#1e234e] font-black rounded-2xl shadow-md hover:bg-[#e5ce00] transition flex flex-col items-center justify-center gap-2 active:scale-95 shrink-0">
-                  <i class="fas fa-car text-3xl"></i> 
-                  <span class="text-sm font-bold text-center leading-tight">รถยนต์พรีเมียม</span>
-              </button>
-
-              <button id="btnSelectBike" onclick="selectVehicleAndStart('bike')" class="w-full py-4 bg-[#fae100] text-[#1e234e] font-black rounded-2xl shadow-md hover:bg-[#e5ce00] transition flex flex-col items-center justify-center gap-2 active:scale-95 shrink-0">
-                  <i class="fas fa-motorcycle text-3xl text-blue-600"></i> 
-                  <span class="text-sm font-bold text-center leading-tight">รถมอเตอร์ไซค์</span>
-              </button>
-
-              <button id="btnSelectPremiumBike" onclick="selectVehicleAndStart('premium_bike')" class="w-full py-4 bg-[#fae100] text-[#1e234e] font-black rounded-2xl shadow-md hover:bg-[#e5ce00] transition flex flex-col items-center justify-center gap-2 active:scale-95 shrink-0">
-                  <i class="fas fa-motorcycle text-3xl text-purple-600"></i> 
-                  <span class="text-sm font-bold text-center leading-tight">รถมอเตอร์ไซค์<br>พรีเมียม</span>
-              </button>
-          </div>
-          
-          <button onclick="closeVehicleModal()" class="mt-4 text-sm font-normal text-gray-400 hover:text-white transition shrink-0">ยกเลิก</button>
-      </div>
-  </div>
-
-  <div id="newsModal" class="hidden fixed inset-0 z-[200] bg-[#1e234e] transition-opacity flex flex-col">
-      <div class="absolute inset-0 z-0 overflow-hidden pointer-events-none">
-          <div class="absolute top-[-10%] left-[-10%] w-[60vw] h-[60vw] rounded-full bg-blue-500/10 blur-[80px]"></div>
-          <div class="absolute bottom-[-10%] right-[-10%] w-[70vw] h-[70vw] rounded-full bg-[#fae100]/5 blur-[100px]"></div>
-          <svg class="absolute inset-0 w-full h-full opacity-[0.08]" viewBox="0 0 1000 1000" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M100,1000 C150,600 700,500 800,-100 L1000,-100 C800,600 300,700 300,1000 Z" fill="#fae100" opacity="0.3"/>
-              <path d="M150,1000 C200,620 650,480 750,-100 L850,-100 C650,550 250,650 250,1000 Z" fill="#fae100" opacity="0.6"/>
-              <path d="M200,1000 C250,650 600,450 700,-100 L750,-100 C550,500 200,600 200,1000 Z" fill="#fae100" opacity="0.9"/>
-              <path d="M120,1000 C170,610 680,490 780,-100 L810,-100 C680,580 280,680 280,1000 Z" fill="#fae100" opacity="0.5"/>
-          </svg>
-      </div>
-
-      <div class="relative z-10 bg-[#2a2f5c]/90 backdrop-blur-md border-b border-[#383d6a] h-16 px-4 flex items-center justify-between shadow-md shrink-0 w-full">
-          <div class="flex items-center gap-3">
-              <button onclick="closeNewsModal()" class="w-10 h-10 shrink-0 bg-[#383d6a]/80 text-gray-400 rounded-full flex items-center justify-center hover:text-[#fae100] transition"><i class="fas fa-arrow-left"></i></button>
-              <h2 class="text-lg font-black text-[#fae100]"><i class="fas fa-bullhorn mr-1"></i> ข่าวสาร & โปรโมชั่น</h2>
-          </div>
-      </div>
-      
-      <div class="relative z-10 flex-1 overflow-y-auto flex flex-col w-full hide-scrollbar">
-          <div class="p-4 w-full shrink-0 pb-0">
-              <div id="newsTopBannerContainer" class="w-full aspect-video bg-black hidden relative shadow-md rounded-none overflow-hidden mb-2">
-                  <div id="newsTopBannerSlider" class="flex overflow-x-auto snap-x snap-mandatory hide-scrollbar w-full h-full relative scroll-smooth items-center"></div>
-              </div>
-          </div>
-          
-          <div class="px-2 py-0 w-full flex-1" id="newsListContainer"></div>
-        
-          <div class="px-4 mt-auto w-full flex flex-col gap-3 pb-8 shrink-0">
-              <div id="newsBottomBannerContainer" class="w-full aspect-[5/1] min-h-[70px] max-h-[120px] bg-transparent rounded-none overflow-hidden hidden relative shadow-md shrink-0">
-                  <div id="newsBottomBannerSlider" class="flex overflow-x-auto snap-x snap-mandatory hide-scrollbar w-full h-full scroll-smooth items-center"></div>
-              </div>
-          </div>
-      </div>
-  </div>
-
-  <div id="newsDetailModal" class="hidden fixed inset-0 z-[210] bg-[#1e234e] transition-transform flex flex-col pointer-events-auto">
-      <div class="relative z-10 bg-[#2a2f5c]/90 backdrop-blur-md border-b border-[#383d6a] h-16 px-4 flex items-center gap-3 shadow-md shrink-0 w-full">
-          <button onclick="window.closeNewsDetailModal()" class="w-10 h-10 shrink-0 bg-[#383d6a]/80 text-gray-400 rounded-full flex items-center justify-center hover:text-[#fae100] transition"><i class="fas fa-arrow-left"></i></button>
-          <h2 class="text-lg font-black text-white">รายละเอียดข้อความ</h2>
-      </div>
-      
-      <div class="p-5 flex-1 overflow-y-auto w-full hide-scrollbar text-white">
-          <div class="flex justify-between items-center mb-4">
-              <span id="ndBadge" class="bg-blue-500 text-white text-[10px] font-black px-2 py-1 rounded shadow">NEWS</span>
-              <span id="ndDate" class="text-[12px] text-gray-400 font-bold"></span>
-          </div>
-          <h3 id="ndTitle" class="text-xl font-black text-white mb-4 leading-tight"></h3>
-          
-          <div id="ndImageContainer" class="mb-5 hidden">
-              <img id="ndImage" src="" class="w-full rounded-xl shadow-md object-contain border border-[#383d6a] bg-black/20">
-          </div>
-          
-          <p id="ndContent" class="text-sm text-gray-300 leading-relaxed whitespace-pre-line"></p>
-      </div>
-  </div>
-
-  <div id="communityModal" class="hidden fixed inset-0 z-[200] bg-[#1e234e] flex flex-col pointer-events-auto transition-transform">
-      <div class="absolute inset-0 z-0 overflow-hidden pointer-events-none">
-          <div class="absolute top-[-10%] left-[-10%] w-[60vw] h-[60vw] rounded-full bg-blue-500/10 blur-[80px]"></div>
-          <div class="absolute bottom-[-10%] right-[-10%] w-[70vw] h-[70vw] rounded-full bg-[#fae100]/5 blur-[100px]"></div>
-          <svg class="absolute inset-0 w-full h-full opacity-[0.08]" viewBox="0 0 1000 1000" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M100,1000 C150,600 700,500 800,-100 L1000,-100 C800,600 300,700 300,1000 Z" fill="#fae100" opacity="0.3"/>
-              <path d="M150,1000 C200,620 650,480 750,-100 L850,-100 C650,550 250,650 250,1000 Z" fill="#fae100" opacity="0.6"/>
-              <path d="M200,1000 C250,650 600,450 700,-100 L750,-100 C550,500 200,600 200,1000 Z" fill="#fae100" opacity="0.9"/>
-              <path d="M120,1000 C170,610 680,490 780,-100 L810,-100 C680,580 280,680 280,1000 Z" fill="#fae100" opacity="0.5"/>
-          </svg>
-      </div>
-
-      <div class="relative z-10 bg-[#2a2f5c]/90 backdrop-blur-md border-b border-[#383d6a] h-16 px-4 flex items-center gap-3 shadow-md shrink-0 w-full">
-          <button onclick="window.closeCommunityModal()" class="w-10 h-10 bg-[#383d6a]/80 text-gray-400 rounded-full flex items-center justify-center hover:text-[#fae100] transition"><i class="fas fa-arrow-left"></i></button>
-          <h2 class="text-lg font-black text-[#fae100]"><i class="fas fa-users mr-2"></i> แชทคอมมูนิตี้ส่วนกลาง</h2>
-      </div>
-      
-      <div class="relative z-10 p-3 bg-transparent border-b border-[#383d6a] shrink-0">
-          <div class="relative w-full shadow-sm rounded-xl bg-[#2a2f5c]/80 backdrop-blur-sm border border-[#383d6a] overflow-hidden">
-              <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none"><i class="fas fa-search text-gray-400"></i></div>
-              <input type="text" id="chatSearchInput" onkeyup="window.filterCommunityChat()" class="w-full py-2.5 pl-9 pr-3 bg-transparent outline-none font-normal text-[13px] text-white placeholder-gray-500" placeholder="ค้นหาข้อความ หรือวันที่ (เช่น 11/06)...">
-          </div>
-      </div>
-
-      <div id="globalChatBox" class="relative z-10 flex-1 overflow-y-auto p-4 bg-transparent hide-scrollbar flex flex-col">
-          <div id="globalChatMessages" class="space-y-3 flex-1 flex flex-col justify-end">
-              <p class="text-center text-xs font-normal text-gray-500 my-4">พูดคุยกับผู้โดยสารและคนขับในพื้นที่ได้ที่นี่</p>
-          </div>
-      </div>
-
-      <div class="relative z-10 bg-[#2a2f5c]/90 backdrop-blur-md p-3 flex gap-2 shrink-0 shadow-[0_-5px_15px_rgba(0,0,0,0.3)] border-t border-[#383d6a]">
-          <input type="text" id="globalChatInput" class="flex-1 rounded-xl bg-[#383d6a]/80 text-white px-4 py-3 text-sm font-normal outline-none focus:border-[#fae100] border border-transparent transition shadow-inner" placeholder="พิมพ์ข้อความพูดคุย...">
-          <button onclick="window.sendGlobalChat()" class="bg-[#fae100] text-[#1e234e] font-black px-5 rounded-xl hover:bg-[#e5ce00] transition shadow-md active:scale-95"><i class="fas fa-paper-plane"></i></button>
       </div>
   </div>
 
@@ -349,6 +178,20 @@
     </div>
   </div>
 
+      <div id="dropoffWaypointsList" class="flex flex-col gap-1.5 mb-1 max-h-[110px] overflow-y-auto slim-scroll"></div>
+
+      <div class="flex gap-2 mt-2">
+          <button onclick="window.addWaypointFromCenter('drop')" class="flex-[1] bg-[#2a2f5c] border border-red-500/50 text-red-400 py-3 rounded-xl font-normal text-[14px] shadow-sm hover:bg-[#383d6a] transition flex justify-center items-center gap-1.5">
+              <i class="fas fa-plus"></i> จุดส่ง
+          </button>
+          <button id="btnConfirmDrop" onclick="window.confirmDropoff()" disabled class="flex-[2] bg-[#2a2f5c] text-gray-400 border border-[#383d6a] py-3 rounded-xl font-black text-[14px] shadow-md transition flex justify-center items-center gap-1.5 cursor-not-allowed opacity-50">
+              สรุปการเดินทาง <i class="fas fa-check-circle"></i>
+          </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAGE 4: SUMMARY -->
   <div id="page4" class="hidden">
     <div id="page4Panel" class="ui-panel border-t-[4px] border-blue-500 h-auto pb-6 pt-3 transition-transform duration-300">
       <div class="w-full flex justify-center pb-3 cursor-pointer" onclick="window.togglePage4Panel()"><div class="w-12 h-1.5 bg-[#4b507d] rounded-full"></div></div>
@@ -396,6 +239,7 @@
     </div>
   </div>
 
+  <!-- TRACKING -->
   <div id="pageTracking" class="hidden">
     <div id="trackingPanel" class="ui-panel border-t-[4px] border-[#fae100] h-auto pb-5 pt-3 transition-transform duration-300"> 
       <div class="w-full flex justify-center pb-3 cursor-pointer" onclick="window.toggleTrackingPanel()"><div class="w-12 h-1.5 bg-[#4b507d] rounded-full"></div></div>
@@ -442,6 +286,7 @@
     </div>
   </div>
 
+  <!-- Modals -->
   <div id="driverRatingModal" class="hidden fixed inset-0 z-[260] bg-black/80 flex items-center justify-center p-4 pointer-events-auto">
       <div class="bg-[#1e234e] border border-[#fae100]/30 rounded-3xl p-6 w-full max-w-sm text-center shadow-2xl">
           <div class="w-16 h-16 bg-[#fae100]/20 text-[#fae100] border border-[#fae100]/30 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl"><i class="fas fa-star-half-alt"></i></div>
@@ -737,12 +582,13 @@
 
     window.currentServiceType = 'car';
 
-    function updateRideButtonState() {
+function updateRideButtonState() {
         let btnMainRide = document.getElementById('btnMainRideAction');
         let btnMainRideIcon = document.getElementById('btnMainRideIcon');
         let btnMainRideText = document.getElementById('btnMainRideText');
         if(!btnMainRide) return;
 
+        // 🌟 แก้ไข: ลบเงื่อนไขที่กันสถานะ "รอผู้ขับขี่ตอบรับ" ออกไป เพื่อให้ปุ่มจำงานที่กำลังรอได้
         let hasActiveJob = bookData && bookData.status && bookData.status !== "เสร็จสิ้น" && !bookData.status.includes("ยกเลิก");
 
         if (hasActiveJob) {
@@ -811,9 +657,10 @@
         window.closeVehicleModal(); window.showPage(2);
     }
 
-    window.loadedNewsItems = {}; 
+window.loadedNewsItems = {}; 
     window.unreadNewsCount = 0;
 
+    // 🌟 1. ระบบ Realtime เช็คข่าวใหม่และอัปเดตตัวเลขหน้าแรก
     db.ref('news_promotions').on('value', snap => {
         let readIds = JSON.parse(localStorage.getItem('readNewsIds') || '[]');
         let count = 0;
@@ -822,6 +669,7 @@
         }
         window.unreadNewsCount = count;
         
+        // อัปเดตตัวเลขแจ้งเตือนที่ปุ่มหน้าแรก
         let badge = document.getElementById('newsBadge');
         if(badge) {
             if(count > 0) {
@@ -833,6 +681,7 @@
             }
         }
 
+        // ถ้าหน้าต่างข่าวสารเปิดอยู่ ให้รีเฟรชรายการข่าวด้วย
         let nModal = document.getElementById('newsModal');
         if(nModal && !nModal.classList.contains('hidden')) { renderNewsAndPromotions(snap); }
     });
@@ -846,6 +695,7 @@
         document.getElementById('newsModal').classList.add('hidden'); 
     }
 
+// 🌟 2. ระบบเรนเดอร์รายการข่าว (เช็คสถานะการอ่านแยกทีละข้อความ)
     function renderNewsAndPromotions(snapshot = null) {
         let container = document.getElementById('newsListContainer');
         let readIds = JSON.parse(localStorage.getItem('readNewsIds') || '[]');
@@ -862,12 +712,14 @@
             let html = '';
             items.forEach(item => {
                 window.loadedNewsItems[item.id] = item;
+                // เช็คว่า ID ของข่าวนี้ อยู่ในรายการที่เคยอ่าน (readIds) หรือยัง
                 let isNew = !readIds.includes(item.id); 
                 
                 let iconClass = item.isPromo ? "fas fa-tag" : "fas fa-envelope";
                 let iconBg = item.isPromo ? "bg-[#fae100]/20" : "bg-gray-500/20";
                 let iconColor = item.isPromo ? "text-[#fae100]" : "text-gray-300";
                 
+                // เอาคำว่า NEW ออก เหลือแค่จุดแจ้งเตือนสีแดง
                 let newDot = isNew ? `<div id="dot-${item.id}" class="w-2.5 h-2.5 bg-red-500 rounded-full absolute top-0 right-0 border-2 border-[#1e234e] shadow-sm animate-pulse"></div>` : '';
                 let textTitleColor = isNew ? 'text-white' : 'text-gray-400';
                 let textTimeColor = isNew ? 'text-[#fae100]' : 'text-gray-500';
@@ -894,15 +746,18 @@
         else db.ref('news_promotions').once('value', snap => processSnap(snap));
     }
 
+    // 🌟 3. ระบบกดอ่านข่าว (บันทึกสถานะว่าอ่านแล้วทันที)
     window.openNewsDetail = function(id) {
         let item = window.loadedNewsItems[id];
         if(!item) return;
 
+        // บันทึก ID ลงเครื่องว่า "อ่านแล้ว"
         let readIds = JSON.parse(localStorage.getItem('readNewsIds') || '[]');
         if(!readIds.includes(id)) {
             readIds.push(id);
             localStorage.setItem('readNewsIds', JSON.stringify(readIds));
             
+            // อัปเดตตัวเลขแจ้งเตือนหน้าแรกทันที
             window.unreadNewsCount = Math.max(0, window.unreadNewsCount - 1);
             let badge = document.getElementById('newsBadge');
             if(badge) {
@@ -910,11 +765,13 @@
                 else badge.classList.add('hidden');
             }
             
+            // ซ่อนจุดแดง สลับสีตัวหนังสือให้อ่อนลงทันที โดยไม่ต้องโหลดหน้าใหม่
             let dot = document.getElementById('dot-' + id); if(dot) dot.remove();
             let titleEl = document.getElementById('title-' + id); if(titleEl) { titleEl.classList.remove('text-white'); titleEl.classList.add('text-gray-400'); }
             let timeEl = document.getElementById('time-' + id); if(timeEl) { timeEl.classList.remove('text-[#fae100]'); timeEl.classList.add('text-gray-500'); }
         }
 
+        // แสดงเนื้อหา
         document.getElementById('ndDate').innerText = item.dateStr || '';
         document.getElementById('ndTitle').innerText = item.title;
         document.getElementById('ndContent').innerText = item.content;
@@ -923,6 +780,7 @@
         if(item.isPromo) { badgeEl.innerText = "PROMO"; badgeEl.className = "bg-red-500 text-white text-[10px] font-black px-2 py-1 rounded shadow"; } 
         else { badgeEl.innerText = "NEWS"; badgeEl.className = "bg-blue-500 text-white text-[10px] font-black px-2 py-1 rounded shadow"; }
 
+        // ระบบรองรับรูปภาพแนบ
         let imgContainer = document.getElementById('ndImageContainer');
         let imgEl = document.getElementById('ndImage');
         if(item.imageUrl) { imgEl.src = item.imageUrl; imgContainer.classList.remove('hidden'); } 
@@ -933,6 +791,13 @@
 
     window.closeNewsDetailModal = function() {
         document.getElementById('newsDetailModal').classList.add('hidden');
+    }
+
+    function updateMapPadding() {
+        if(!map) return;
+        let pTop = (currentStep === 2 || currentStep === 3) ? 140 : 70;
+        let pBottom = getDynamicBottomPadding();
+        map.setOptions({ padding: { top: pTop, bottom: pBottom, left: 0, right: 0 } });
     }
 
     function getDynamicBottomPadding() {
@@ -1138,7 +1003,7 @@
     window.openPromoModal = function() { document.getElementById('promoModal').classList.remove('hidden'); }
     window.closePromoModal = function() { document.getElementById('promoModal').classList.add('hidden'); }
 
-    window.openProfileModal = function() {
+window.openProfileModal = function() {
         document.getElementById('profileModal').classList.remove('hidden');
         let pNameL = document.getElementById('profileNameLarge');
         if(pNameL) pNameL.innerText = lineName || 'ไม่ทราบชื่อ';
@@ -1154,6 +1019,7 @@
         let pPhoneL = document.getElementById('profilePhoneLarge');
         if(pPhoneL) pPhoneL.innerText = savedPhone ? 'เบอร์โทร: ' + savedPhone : 'เบอร์โทร: ยังไม่ระบุ';
 
+        // 🌟 เพิ่มส่วนนี้: ดึงข้อมูลประวัติการเดินทางมานับจำนวนครั้ง
         let ridesEl = document.getElementById('profileTotalRides');
         if (ridesEl) {
             ridesEl.innerText = '...';
@@ -1397,6 +1263,7 @@
         disableDefaultUI: true, gestureHandling: 'greedy', zoomControl: false
       });
       
+      // อัปเดตไอคอนปุ่มมุมขวาให้ตรงกับโหมด (ให้เป็นไอคอน layer เพื่อกดสลับกลับเป็นโหมดปกติได้)
       let btnMapStyle = document.getElementById('btnMapStyle');
       if(btnMapStyle) btnMapStyle.innerHTML = '<i class="fas fa-layer-group text-[18px]"></i>';
 
@@ -1507,7 +1374,7 @@
             }
             
             updateRideButtonState();
-            renderWaypointsUI();
+          renderWaypointsUI();
             handleTracking(); 
         } 
         else if (currentStep === 'Tracking' && !window.isCompleting) {
@@ -1533,65 +1400,66 @@
                 }
             });
         }
-      });
+    });
 
-      db.ref('community_chat').limitToLast(50).once('value', snap => {
-          let lastSeenChat = parseInt(localStorage.getItem('lastSeenChatTime') || '0');
-          snap.forEach(child => {
-              if(child.val().timestamp > lastSeenChat) window.unreadChatCount++;
-          });
-          updateChatBadge();
-      });
+    db.ref('community_chat').limitToLast(50).once('value', snap => {
+        let lastSeenChat = parseInt(localStorage.getItem('lastSeenChatTime') || '0');
+        snap.forEach(child => {
+            if(child.val().timestamp > lastSeenChat) window.unreadChatCount++;
+        });
+        updateChatBadge();
+    });
 
-      if(!window.activeGlobalChatListenerRef) {
-          window.activeGlobalChatListenerRef = db.ref('community_chat').limitToLast(50);
-          window.activeGlobalChatListenerRef.on('child_added', snap => {
-              let messageData = snap.val();
-              let modal = document.getElementById('communityModal');
-              if(!modal.classList.contains('hidden')) {
-                  localStorage.setItem('lastSeenChatTime', Date.now());
-              } else {
-                  let lastSeenChat = parseInt(localStorage.getItem('lastSeenChatTime') || '0');
-                  if (messageData.timestamp > lastSeenChat) {
-                      window.unreadChatCount++;
-                  }
-              }
-              updateChatBadge();
+    if(!window.activeGlobalChatListenerRef) {
+        window.activeGlobalChatListenerRef = db.ref('community_chat').limitToLast(50);
+        window.activeGlobalChatListenerRef.on('child_added', snap => {
+            let messageData = snap.val();
+            let modal = document.getElementById('communityModal');
+            if(!modal.classList.contains('hidden')) {
+                localStorage.setItem('lastSeenChatTime', Date.now());
+            } else {
+                let lastSeenChat = parseInt(localStorage.getItem('lastSeenChatTime') || '0');
+                if (messageData.timestamp > lastSeenChat) {
+                    window.unreadChatCount++;
+                }
+            }
+            updateChatBadge();
 
-              const messagesDiv = document.getElementById('globalChatMessages');
-              const chatBox = document.getElementById('globalChatBox');
-              if (messagesDiv && !modal.classList.contains('hidden')) {
-                  let isSenderMe = messageData.pin === lineUserId;
-                  let align = isSenderMe ? 'justify-end' : 'justify-start';
-                  let bg = isSenderMe ? 'bg-[#fae100] text-[#1e234e]' : 'bg-[#2a2f5c] border border-[#383d6a] text-white';
-                  let senderName = isSenderMe ? 'คุณ' : (messageData.name || 'Unknown');
-                  
-                  let timeStr = "";
-                  if (messageData.timestamp) {
-                      let d = new Date(messageData.timestamp);
-                      let day = String(d.getDate()).padStart(2, '0');
-                      let month = String(d.getMonth() + 1).padStart(2, '0');
-                      let hrs = String(d.getHours()).padStart(2, '0');
-                      let mins = String(d.getMinutes()).padStart(2, '0');
-                      timeStr = `${day}/${month} ${hrs}:${mins}`;
-                  }
+            const messagesDiv = document.getElementById('globalChatMessages');
+            const chatBox = document.getElementById('globalChatBox');
+            if (messagesDiv && !modal.classList.contains('hidden')) {
+                let isSenderMe = messageData.pin === lineUserId;
+                let align = isSenderMe ? 'justify-end' : 'justify-start';
+                let bg = isSenderMe ? 'bg-[#fae100] text-[#1e234e]' : 'bg-[#2a2f5c] border border-[#383d6a] text-white';
+                let senderName = isSenderMe ? 'คุณ' : (messageData.name || 'Unknown');
+                
+                let timeStr = "";
+                if (messageData.timestamp) {
+                    let d = new Date(messageData.timestamp);
+                    let day = String(d.getDate()).padStart(2, '0');
+                    let month = String(d.getMonth() + 1).padStart(2, '0');
+                    let hrs = String(d.getHours()).padStart(2, '0');
+                    let mins = String(d.getMinutes()).padStart(2, '0');
+                    timeStr = `${day}/${month} ${hrs}:${mins}`;
+                }
 
-                  let messageHtml = `
-                  <div class="chat-msg-item flex w-full ${align} animate-fade-in mb-3">
-                      <div class="flex flex-col ${isSenderMe ? 'items-end' : 'items-start'} max-w-[85%]">
-                          ${!isSenderMe ? `<span class="text-[10px] text-gray-500 font-bold mb-1 ml-1">${senderName}</span>` : ''}
-                          <div class="${bg} px-4 py-2.5 rounded-2xl text-[13px] shadow-sm break-words w-full">
-                              ${messageData.text}
-                          </div>
-                          <span class="text-[9px] text-gray-600 mt-1 ${isSenderMe ? 'mr-1' : 'ml-1'}">${timeStr}</span>
-                      </div>
-                  </div>`;
-                  
-                  messagesDiv.insertAdjacentHTML('beforeend', messageHtml);
-                  chatBox.scrollTop = chatBox.scrollHeight;
-              }
-          });
-      }
+                let messageHtml = `
+                <div class="chat-msg-item flex w-full ${align} animate-fade-in mb-3">
+                    <div class="flex flex-col ${isSenderMe ? 'items-end' : 'items-start'} max-w-[85%]">
+                        ${!isSenderMe ? `<span class="text-[10px] text-gray-500 font-bold mb-1 ml-1">${senderName}</span>` : ''}
+                        <div class="${bg} px-4 py-2.5 rounded-2xl text-[13px] shadow-sm break-words w-full">
+                            ${messageData.text}
+                        </div>
+                        <span class="text-[9px] text-gray-600 mt-1 ${isSenderMe ? 'mr-1' : 'ml-1'}">${timeStr}</span>
+                    </div>
+                </div>`;
+                
+                messagesDiv.insertAdjacentHTML('beforeend', messageHtml);
+                chatBox.scrollTop = chatBox.scrollHeight;
+            }
+        });
+    }
+
     }
 
     window.filterCommunityChat = function() {
@@ -1639,7 +1507,7 @@
         });
     }
 
-    function renderWaypointsUI() {
+function renderWaypointsUI() {
         const typeOrder = { 'pick': 1, 'waypoint': 2, 'drop': 3 };
         localWaypoints.sort((a, b) => typeOrder[a.type] - typeOrder[b.type]);
 
@@ -1656,6 +1524,7 @@
             else btnOverview.classList.add('hidden');
         }
 
+        // 🌟 อัปเดตสีและข้อความปุ่มจุดรับ
         if (btnConfirmPick) {
             if (picks.length > 0) { 
                 btnConfirmPick.disabled = false; btnConfirmPick.className = "flex-[2] bg-[#4ade80] text-[#1e234e] py-3 rounded-full font-black text-[14px] shadow-md transition flex justify-center items-center gap-1.5 hover:bg-[#22c55e]";
@@ -1666,6 +1535,7 @@
             }
         }
 
+        // 🌟 อัปเดตสีและข้อความปุ่มจุดส่ง
         if (btnConfirmDrop) {
             if (drops.length > 0) { 
                 btnConfirmDrop.disabled = false; btnConfirmDrop.className = "flex-[2] bg-[#ef4444] text-white py-3 rounded-full font-black text-[14px] shadow-md transition flex justify-center items-center gap-1.5 hover:bg-red-600";
@@ -1680,6 +1550,7 @@
             let isFocused = (focusedWaypointIndex === index);
             let isPickup = wp.type === 'pick';
             
+            // ใช้สีเขียวมินต์ #4ade80 สำหรับจุดรับ
             let colorClass = isPickup ? 'bg-[#4ade80] text-[#1e234e]' : 'bg-[#ef4444] text-white';
             let colorHex = isPickup ? '#4ade80' : '#ef4444';
             let textColorMap = isPickup ? '#1e234e' : '#ffffff';
@@ -1708,6 +1579,7 @@
             else if (wp.iconType === 'favorite1') iconAddonPrefix = '<i class="fas fa-heart text-pink-500 mr-1.5" title="รายการโปรด 1"></i>';
             else if (wp.iconType === 'favorite2') iconAddonPrefix = '<i class="fas fa-star text-[#fae100] mr-1.5" title="รายการโปรด 2"></i>';
 
+            // 🌟 กล่องรายการให้เป็นแคปซูล (rounded-full)
             let itemHtml = `<div class="flex items-center gap-2.5 py-1.5 px-3 rounded-full border relative z-10 shadow-sm mb-1.5 cursor-pointer hover:bg-[#383d6a] transition ${bgItem}" onclick="window.focusLocationToggle(${wp.lat}, ${wp.lng}, ${index})">
                 <div class="w-[20px] h-[20px] ${colorClass} rounded-full flex items-center justify-center text-[10px] font-bold shrink-0 shadow-inner">${globalCount}</div>
                 <p class="text-[11px] ${textItem} truncate flex-1 leading-tight flex items-center">${iconAddonPrefix}${wp.name}</p>
@@ -1753,7 +1625,7 @@
       if (page === 2) {
           document.body.classList.remove('theme-dropoff');
           if(topSearchPick) topSearchPick.classList.remove('hidden'); if(topSearchDrop) topSearchDrop.classList.add('hidden');
-          if(crosshairMarker) { crosshairMarker.setMap(map); window.updateCrosshairColor('#4ade80'); }
+          if(crosshairMarker) { crosshairMarker.setMap(map); window.updateCrosshairColor('#22c55e'); }
           renderWaypointsUI();
       } else if (page === 3) {
           document.body.classList.add('theme-dropoff');
@@ -1812,6 +1684,7 @@
         const p4Panel = document.getElementById('page4Panel'); if(p4Panel) p4Panel.classList.remove('panel-collapsed-page4');
         bookData.waypoints = localWaypoints; renderWaypointsUI(); calculatePrice();
       }
+      // 🌟 เติมบล็อกนี้เข้าไปทั้งหมด เพื่อให้หน้า Tracking โหลดข้อมูลสมบูรณ์เวลาเปิดกลับมาดู
       else if (page === 'Tracking') {
         const bEmer = document.getElementById('btnEmergency');
         if(bEmer) bEmer.classList.remove('hidden'); 
@@ -1822,9 +1695,9 @@
      let btnNavBack = document.getElementById('btnNavBack');
       if (btnNavBack) {
           if (page === 'Tracking') {
-              btnNavBack.classList.add('invisible');
+              btnNavBack.classList.add('invisible'); // ซ่อนปุ่มแบบรักษาสมดุลเลย์เอาต์ไว้
           } else {
-              btnNavBack.classList.remove('invisible');
+              btnNavBack.classList.remove('invisible'); // โชว์ปุ่มตามปกติในหน้าอื่น
           }
       }
       
@@ -2082,7 +1955,9 @@
           });
       });
     }
-    
+    // ==========================================
+    // กู้คืนระบบประวัติการเดินทาง (History)
+    // ==========================================
     window.openPassengerHistory = function() {
         document.getElementById('historyModal').classList.remove('hidden');
         renderPassengerHistory();
@@ -2162,6 +2037,9 @@
         selectedHistoryJobId = null; 
     }
 
+    // ==========================================
+    // กู้คืนระบบจัดการแบล็กลิสต์คนขับ (Block)
+    // ==========================================
     window.blockCurrentHistoryDriver = function() {
         let job = loadedHistoryJobs[selectedHistoryJobId]; 
         if(!job || !job.driverPin) { 
@@ -2233,7 +2111,150 @@
             renderBlockedDrivers(); 
         });
     }
+// ==========================================
+    // ระบบแชทคอมมูนิตี้ (Clean Version ฉบับสมบูรณ์)
+    // ==========================================
+    window.unreadChatMessages = new Set(); 
+    window.isGlobalChatLoaded = false;
 
+    // แทรกการโหลดแชทเข้ากับระบบตอนที่ Login LINE ผ่านแล้ว
+    const originalInitApp = typeof initApp === 'function' ? initApp : null;
+    initApp = function() {
+        if (originalInitApp) originalInitApp(); 
+        
+        if (window.isGlobalChatLoaded) return;
+        window.isGlobalChatLoaded = true;
+
+        // ปิดการเชื่อมต่อแชทชุดเก่า (ถ้ามีค้าง) ป้องกันบั๊กแชทเบิ้ล
+        db.ref('community_chat').off();
+
+        const messagesDiv = document.getElementById('globalChatMessages');
+        if (messagesDiv) {
+            messagesDiv.innerHTML = '<p class="text-center text-xs font-normal text-gray-500 my-4">พูดคุยกับผู้โดยสารและคนขับในพื้นที่ได้ที่นี่</p>';
+        }
+
+        window.activeGlobalChatListenerRef = db.ref('community_chat').limitToLast(50);
+        window.activeGlobalChatListenerRef.on('child_added', snap => {
+            let messageData = snap.val();
+            if (!messageData) return;
+
+            // ตรวจสอบไอดีผู้ส่ง เพื่อแยกฝั่งแชทและสีพื้นหลัง
+            let isSenderMe = (messageData.pin === lineUserId);
+            let align = isSenderMe ? 'justify-end' : 'justify-start';
+            let bg = isSenderMe ? 'bg-[#fae100] text-[#1e234e]' : 'bg-[#2a2f5c] border border-[#383d6a] text-white';
+            let senderName = isSenderMe ? 'คุณ' : (messageData.name || 'ผู้ใช้');
+            let isDriver = messageData.role === 'driver';
+            let roleBadge = isDriver ? `<span class="bg-blue-500 text-white text-[8px] px-1 py-0.5 rounded ml-1 font-bold">DRIVER</span>` : '';
+
+            // ระบบนับแจ้งเตือนข้อความใหม่
+            let modal = document.getElementById('communityModal');
+            let lastSeen = parseInt(localStorage.getItem('lastSeenChatTime') || '0');
+            
+            if (modal && modal.classList.contains('hidden') && !isSenderMe) {
+                if (messageData.timestamp > lastSeen) {
+                    window.unreadChatMessages.add(snap.key); 
+                    updateChatBadge();
+                }
+            } else if (modal && !modal.classList.contains('hidden')) {
+                localStorage.setItem('lastSeenChatTime', Date.now());
+                window.unreadChatMessages.clear(); 
+                updateChatBadge();
+            }
+
+            let timeStr = "";
+            if (messageData.timestamp) {
+                let d = new Date(messageData.timestamp);
+                let day = String(d.getDate()).padStart(2, '0');
+                let month = String(d.getMonth() + 1).padStart(2, '0');
+                let hrs = String(d.getHours()).padStart(2, '0');
+                let mins = String(d.getMinutes()).padStart(2, '0');
+                timeStr = `${day}/${month} ${hrs}:${mins}`;
+            }
+
+            let messageHtml = `
+            <div class="chat-msg-item flex w-full ${align} animate-fade-in mb-3">
+                <div class="flex flex-col ${isSenderMe ? 'items-end' : 'items-start'} max-w-[85%]">
+                    ${!isSenderMe ? `<span class="text-[10px] text-gray-400 font-normal mb-1 ml-1 flex items-center">${senderName} ${roleBadge}</span>` : ''}
+                    <div class="${bg} px-4 py-2.5 rounded-2xl text-[13px] font-normal shadow-sm break-words w-full">
+                        ${messageData.text}
+                    </div>
+                    <span class="text-[9px] text-gray-500 mt-1 ${isSenderMe ? 'mr-1' : 'ml-1'} font-normal">${timeStr}</span>
+                </div>
+            </div>`;
+
+            if (messagesDiv) {
+                messagesDiv.insertAdjacentHTML('beforeend', messageHtml);
+            }
+            
+            // ดันแชทลงล่างสุดเวลามีข้อความใหม่
+            const chatBox = document.getElementById('globalChatBox');
+            if (chatBox) {
+                setTimeout(() => { chatBox.scrollTop = chatBox.scrollHeight; }, 100);
+            }
+        });
+    };
+
+    window.openCommunityModal = function() {
+        document.getElementById('communityModal').classList.remove('hidden');
+        window.unreadChatMessages.clear(); 
+        updateChatBadge();
+        localStorage.setItem('lastSeenChatTime', Date.now());
+
+        const chatBox = document.getElementById('globalChatBox');
+        if (chatBox) {
+            setTimeout(() => { chatBox.scrollTop = chatBox.scrollHeight; }, 100);
+        }
+    };
+
+    function updateChatBadge() {
+        let badge = document.getElementById('chatBadge');
+        if(badge) {
+            let count = window.unreadChatMessages.size;
+            if(count > 0) {
+                badge.innerText = count > 99 ? '99+' : count;
+                badge.classList.remove('hidden');
+            } else {
+                badge.classList.add('hidden');
+            }
+        }
+    }
+
+    window.closeCommunityModal = function() { 
+        document.getElementById('communityModal').classList.add('hidden'); 
+        localStorage.setItem('lastSeenChatTime', Date.now());
+    };
+
+    window.sendGlobalChat = function() {
+        let inputEl = document.getElementById('globalChatInput');
+        let textVal = inputEl.value.trim();
+        if(!textVal) return;
+        
+        db.ref('community_chat').push({
+            pin: lineUserId, 
+            name: lineName || 'ผู้โดยสาร',
+            role: 'passenger',
+            text: textVal,
+            timestamp: firebase.database.ServerValue.TIMESTAMP
+        }).then(() => { 
+            inputEl.value = ''; 
+        });
+    };
+
+    window.filterCommunityChat = function() {
+        let keyword = document.getElementById('chatSearchInput').value.toLowerCase();
+        let messages = document.querySelectorAll('.chat-msg-item');
+        messages.forEach(msg => {
+            let text = msg.innerText.toLowerCase();
+            if(text.includes(keyword)) {
+                msg.style.display = 'flex';
+            } else {
+                msg.style.display = 'none';
+            }
+        });
+    };
+// ==========================================
+    // ระบบ Smooth Swipe to Go Back (เลื่อนติดนิ้วสไตล์แอป Native)
+    // ==========================================
     function enableSmoothSwipeToClose(modalId, closeCallback) {
         const modal = document.getElementById(modalId);
         if (!modal) return;
@@ -2242,50 +2263,63 @@
         let touchstartY = 0;
         let isSwiping = false;
 
+        // เมื่อเริ่มเอานิ้วแตะจอ
         modal.addEventListener('touchstart', function(event) {
             if (event.target.closest('.overflow-x-auto') || event.target.closest('.pac-container')) return;
-            event.stopPropagation();
+            event.stopPropagation(); // 👉 เติมบรรทัดนี้ เพื่อกันไม่ให้ส่งการสัมผัสทะลุไปหน้าหลัง
             touchstartX = event.touches[0].clientX;
             touchstartY = event.touches[0].clientY;
             isSwiping = false;
+            
+            // ปิด transition ชั่วคราว เพื่อให้หน้าต่างเลื่อนติดนิ้วแบบไม่มีดีเลย์
             modal.style.transition = 'none'; 
         }, { passive: true });
 
+        // ระหว่างที่นิ้วกำลังลากบนจอ
         modal.addEventListener('touchmove', function(event) {
             if (event.target.closest('.overflow-x-auto') || event.target.closest('.pac-container')) return;
-            event.stopPropagation(); 
+            event.stopPropagation(); // 👉 เติมบรรทัดนี้
             let touchMoveX = event.touches[0].clientX;
             let touchMoveY = event.touches[0].clientY;
             
             let diffX = touchMoveX - touchstartX;
             let diffY = Math.abs(touchMoveY - touchstartY);
 
+            // ตรวจสอบว่า "ตั้งใจปัดขวา" (แกน X ต้องไปทางบวก และมากกว่าการเลื่อนขึ้นลงแนวแกน Y)
             if (diffX > 10 && diffX > diffY) {
                 isSwiping = true;
+                // สั่งให้หน้าต่างขยับตามระยะที่นิ้วลาก
                 modal.style.transform = `translateX(${diffX}px)`;
             }
         }, { passive: true });
 
+        // เมื่อปล่อยนิ้วออกจากจอ
         modal.addEventListener('touchend', function(event) {
-            event.stopPropagation(); 
+            event.stopPropagation(); // 👉 เติมบรรทัดนี้
             if (!isSwiping) {
-                modal.style.transition = ''; 
+                modal.style.transition = ''; // คืนค่าแอนิเมชันกลับเป็นค่าเริ่มต้น
                 return;
             }
 
             let touchendX = event.changedTouches[0].clientX;
             let diffX = touchendX - touchstartX;
 
+            // ใส่แอนิเมชันให้สมูท (ความเร็ว 0.3 วินาที เด้งนิดๆ)
             modal.style.transition = 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
 
             if (diffX > 120) { 
+                // ถ้าระยะปัดเกิน 120px ถือว่าตั้งใจปิด -> ให้สไลด์ออกไปขวาสุดจอเลย
                 modal.style.transform = 'translateX(100%)'; 
                 
+                // รอให้สไลด์จนสุดขอบจอ (300ms) แล้วค่อยสั่งซ่อนหน้าต่าง
                 setTimeout(() => {
                     if (typeof closeCallback === 'function') closeCallback();
+                    
+                    // รีเซ็ตตำแหน่งหน้าต่างกลับมาตรงกลาง เตรียมพร้อมสำหรับการเปิดครั้งหน้า
                     setTimeout(() => { modal.style.transform = ''; }, 50); 
                 }, 300);
             } else {
+                // ถ้าปัดนิดเดียว (ไม่ถึงระยะ) -> ให้เด้งกลับมาที่เดิม
                 modal.style.transform = 'translateX(0)';
                 setTimeout(() => { modal.style.transform = ''; }, 300);
             }
@@ -2293,6 +2327,7 @@
         }, { passive: true });
     }
 
+    // ผูกระบบปัดสุดสมูทเข้ากับหน้าต่างต่างๆ 
     setTimeout(() => {
         enableSmoothSwipeToClose('newsModal', window.closeNewsModal);
         enableSmoothSwipeToClose('communityModal', window.closeCommunityModal);
@@ -2300,10 +2335,14 @@
         enableSmoothSwipeToClose('historyModal', window.closePassengerHistory);
         enableSmoothSwipeToClose('historyDetailModal', window.closeHistoryDetail);
         enableSmoothSwipeToClose('blockedDriversModal', window.closeBlockedDrivers);
-        enableSmoothSwipeToClose('newsDetailModal', window.closeNewsDetailModal);
+      enableSmoothSwipeToClose('newsDetailModal', window.closeNewsDetailModal);
     }, 1000);
 
-    function handleTracking() {
+    // ==========================================
+    // กู้คืนฟังก์ชันที่หายไป (Tracking, Rating, แชทคนขับ)
+    // ==========================================
+    
+function handleTracking() {
         if (!bookData) return;
         const statusText = document.getElementById('unifiedStatusText');
         const actionBtns = document.getElementById('actionButtonsBox');
@@ -2314,15 +2353,18 @@
         let btnCall = document.getElementById('btnCall');
         let btnCancel = document.getElementById('btnCancel');
         
+        // 🌟 เพิ่มตัวแปรปุ่มฉุกเฉิน และตัวอักษรราคาประเมิน
         let btnEmer = document.getElementById('btnEmergency'); 
         let priceText = document.getElementById('unifiedPriceText');
 
         if(statusText) statusText.innerText = bookData.status;
 
+        // 🌟 ดึงราคาประเมินมาแสดงผล
         if(priceText) {
             priceText.innerText = bookData.priceEstimate ? bookData.priceEstimate : ('~฿' + (bookData.price || 0));
         }
 
+        // ซ่อน/แสดง ข้อมูลคนขับและปุ่มต่างๆ ตามสถานะงาน
         if (bookData.status === "รอผู้ขับขี่ตอบรับ") {
             if(driverBox) driverBox.classList.add('hidden');
             if(actionBtns) actionBtns.classList.remove('hidden'); 
@@ -2330,15 +2372,16 @@
             if(btnChat) btnChat.classList.add('hidden');
             if(btnAddWaypt) btnAddWaypt.classList.add('hidden');
             if(btnCall) btnCall.classList.add('hidden');
-            if(btnCancel) btnCancel.classList.remove('hidden');
+            if(btnCancel) btnCancel.classList.remove('hidden'); // โชว์แค่ปุ่มยกเลิก
             
-            if(btnEmer) btnEmer.classList.add('hidden'); 
+            if(btnEmer) btnEmer.classList.add('hidden'); // 🌟 ซ่อนปุ่มฉุกเฉินตอนกำลังรอรถ
             
         } else if (bookData.status.includes("ยกเลิก") || bookData.status === "เสร็จสิ้น") {
             if(driverBox) driverBox.classList.add('hidden');
             if(actionBtns) actionBtns.classList.add('hidden');
-            if(btnEmer) btnEmer.classList.add('hidden');
+            if(btnEmer) btnEmer.classList.add('hidden'); // ซ่อนปุ่มฉุกเฉิน
         } else {
+            // กรณีคนขับรับงานแล้ว
             if(driverBox) driverBox.classList.remove('hidden');
             if(actionBtns) actionBtns.classList.remove('hidden');
             
@@ -2347,13 +2390,14 @@
             if(btnCall) btnCall.classList.remove('hidden');
             if(btnCancel) btnCancel.classList.remove('hidden');
 
-            if(btnEmer) btnEmer.classList.remove('hidden');
+            if(btnEmer) btnEmer.classList.remove('hidden'); // 🌟 โชว์ปุ่มฉุกเฉินเฉพาะตอนคนขับรับงานแล้ว
 
             document.getElementById('trackDriverPlate').innerText = bookData.driverPlate || 'กำลังดึงข้อมูล...';
             document.getElementById('trackDriverCar').innerText = bookData.driverCar || '-';
             document.getElementById('trackDriverName').innerText = bookData.driverName || '-';
         }
         
+        // วาดเส้นทางใหม่ตามสถานะ
         if(typeof drawTrackingRoute === 'function') {
             drawTrackingRoute(bookData.status);
         }
@@ -2373,12 +2417,14 @@
     
     window.acceptRouteChange = function() { 
         document.getElementById('routeChangeModal').classList.add('hidden'); 
+        // โค้ดสำหรับอัปเดตจุดแวะและบันทึกลง Firebase จะอยู่ตรงนี้
     }
     
     window.rejectRouteChange = function() { 
         document.getElementById('routeChangeModal').classList.add('hidden'); 
     }
 
+    // --- ระบบให้คะแนนคนขับ ---
     window.updateSelectedRatingScore = function(score) {
         currentSelectedRatingScore = score;
         const stars = document.getElementById('starRatingBox').querySelectorAll('i');
@@ -2400,7 +2446,9 @@
         });
     }
 
+    // --- ระบบแชท 1 ต่อ 1 ---
     window.openInAppChatModal = function() {
+        // หากต้องการกู้แชทคนขับคืนมา ต้องนำโค้ด HTML หน้า inAppChatModal กลับมาใส่ในไฟล์ด้วยครับ
         showAlert('ระบบแชท', 'ฟังก์ชันแชทกับคนขับกำลังอยู่ระหว่างการปรับปรุงครับ', 'info');
     }
   </script>
