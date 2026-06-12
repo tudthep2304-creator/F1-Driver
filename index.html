@@ -18,29 +18,33 @@
     #splashScreen { position: fixed; inset: 0; z-index: 999999; background-color: #1e234e; display: flex; align-items: center; justify-content: center; transition: opacity 0.5s ease, visibility 0.5s; }
     
     @keyframes popF { 0% { opacity: 0; transform: scale(0.5); } 100% { opacity: 1; transform: scale(1); } }
-    @keyframes slideOne { 0% { opacity: 0; transform: translateX(-20px); } 100% { opacity: 1; transform: translateX(0); } }
+    @keyframes drawOne { 0% { opacity: 0; transform: translateX(-30px); } 100% { opacity: 1; transform: translateX(0); } }
     
-    /* ตัว F ใหญ่และเพิ่มพื้นที่ด้านขวา (padding-right) ไม่ให้ตัวเอียงโดนตัด */
+    /* ตัว F: สั่งให้อยู่เลเยอร์บนสุด (z-index: 2) ขีดจะได้ไม่โดนเลข 1 ทับ */
     .logo-f { 
         display: inline-block; 
         font-size: 8.5rem; 
         color: white; 
         animation: popF 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; 
-        line-height: 0.8; 
-        padding-right: 15px; 
+        line-height: 1; 
+        padding-right: 15px; /* เผื่อที่ให้ความเอียงนิดนึง */
+        position: relative; 
+        z-index: 2; 
     }
     
-    /* เลข 1 เล็กลง (5rem) และขยับเข้ามาใกล้ตัว F */
+    /* เลข 1: ดันลงล่าง ดึงซ้ายมาซุก และให้อยู่เลเยอร์ใต้ตัว F (z-index: 1) */
     .logo-1 { 
         display: inline-block; 
-        font-size: ค.5rem; 
+        font-size: 8.5rem; 
         color: #fae100; 
         opacity: 0; 
-        animation: slideOne 0.4s ease-out 0.3s forwards; 
-        line-height: 0.8; 
-        margin-left: -10px; 
-        margin-bottom: 2px;
-        padding-right: 20px;
+        animation: drawOne 0.4s ease-out 0.4s forwards; 
+        line-height: 1; 
+        margin-left: -20px; /* ขยับซ้ายมาซุกใต้ F */
+        margin-top: 45px;   /* ขยับเยื้องลงมาด้านล่างตามแบบ */
+        padding-right: 15px; 
+        position: relative; 
+        z-index: 1; 
     }
     
     .glass-box { background: rgba(42, 47, 92, 0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1); box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3); }
@@ -82,7 +86,7 @@
 
   <!-- Splash Screen -->
   <div id="splashScreen">
-      <div class="flex items-end justify-center font-black italic tracking-tighter">
+      <div class="flex items-start font-black italic">
           <span class="logo-f">F</span>
           <span class="logo-1">1</span>
       </div>
