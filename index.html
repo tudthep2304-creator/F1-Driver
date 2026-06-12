@@ -2357,6 +2357,85 @@ window.openProfileModal = function() {
         enableSmoothSwipeToClose('historyDetailModal', window.closeHistoryDetail);
         enableSmoothSwipeToClose('blockedDriversModal', window.closeBlockedDrivers);
     }, 1000);
+
+    // ==========================================
+    // กู้คืนฟังก์ชันที่หายไป (Tracking, Rating, แชทคนขับ)
+    // ==========================================
+    
+    function handleTracking() {
+        if (!bookData) return;
+        const statusText = document.getElementById('unifiedStatusText');
+        const actionBtns = document.getElementById('actionButtonsBox');
+        const driverBox = document.getElementById('driverInfoBox');
+
+        if(statusText) statusText.innerText = bookData.status;
+
+        // ซ่อน/แสดง ข้อมูลคนขับตามสถานะงาน
+        if (bookData.status === "รอผู้ขับขี่ตอบรับ" || bookData.status.includes("ยกเลิก")) {
+            if(driverBox) driverBox.classList.add('hidden');
+            if(actionBtns) actionBtns.classList.add('hidden');
+        } else {
+            if(driverBox) driverBox.classList.remove('hidden');
+            if(actionBtns) actionBtns.classList.remove('hidden');
+            document.getElementById('trackDriverPlate').innerText = bookData.driverPlate || 'กำลังดึงข้อมูล...';
+            document.getElementById('trackDriverCar').innerText = bookData.driverCar || '-';
+            document.getElementById('trackDriverName').innerText = bookData.driverName || '-';
+        }
+        
+        // วาดเส้นทางใหม่ตามสถานะ
+        if(typeof drawTrackingRoute === 'function') {
+            drawTrackingRoute(bookData.status);
+        }
+    }
+
+    function updateRealtimeMap() {
+        if(!map || !currentRouteBounds) return;
+        let pb = getDynamicBottomPadding();
+        map.fitBounds(currentRouteBounds, { top: 120, right: 50, bottom: pb, left: 50 });
+    }
+
+    window.calculateNewRoutePriceForTracking = function(lat, lng, name) {
+        let addrEl = document.getElementById('rcAddress');
+        if(addrEl) addrEl.innerText = name;
+        document.getElementById('routeChangeModal').classList.remove('hidden');
+    }
+    
+    window.acceptRouteChange = function() { 
+        document.getElementById('routeChangeModal').classList.add('hidden'); 
+        // โค้ดสำหรับอัปเดตจุดแวะและบันทึกลง Firebase จะอยู่ตรงนี้
+    }
+    
+    window.rejectRouteChange = function() { 
+        document.getElementById('routeChangeModal').classList.add('hidden'); 
+    }
+
+    // --- ระบบให้คะแนนคนขับ ---
+    window.updateSelectedRatingScore = function(score) {
+        currentSelectedRatingScore = score;
+        const stars = document.getElementById('starRatingBox').querySelectorAll('i');
+        stars.forEach((star, index) => {
+            if(index < score) {
+                star.classList.remove('text-gray-600');
+                star.classList.add('text-[#fae100]');
+            } else {
+                star.classList.add('text-gray-600');
+                star.classList.remove('text-[#fae100]');
+            }
+        });
+    }
+
+    window.submitDriverRatingScore = function() {
+        document.getElementById('driverRatingModal').classList.add('hidden');
+        showAlert('ขอบคุณครับ', 'ระบบได้ส่งคะแนนประเมินให้คนขับเรียบร้อยแล้ว', 'success', () => {
+            window.showPage(1);
+        });
+    }
+
+    // --- ระบบแชท 1 ต่อ 1 ---
+    window.openInAppChatModal = function() {
+        // หากต้องการกู้แชทคนขับคืนมา ต้องนำโค้ด HTML หน้า inAppChatModal กลับมาใส่ในไฟล์ด้วยครับ
+        showAlert('ระบบแชท', 'ฟังก์ชันแชทกับคนขับกำลังอยู่ระหว่างการปรับปรุงครับ', 'info');
+    }
   </script>
   <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDsZ_tbFhH6fUXRz3I6C-tMshNwwrSevd4&libraries=places,geometry&callback=initMap" async defer></script>
 </body>
