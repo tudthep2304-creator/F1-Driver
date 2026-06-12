@@ -15,25 +15,27 @@
     .map-container { position: fixed; inset: 0; width: 100vw; height: 100vh; z-index: 0; background: #1e234e; }
 
 /* Splash Screen CSS */
-    #splashScreen { position: fixed; inset: 0; z-index: 999999; background-color: #1e234e; display: flex; align-items: center; justify-content: center; transition: opacity 0.5s ease, visibility 0.5s; overflow: hidden; }
+    #splashScreen { position: fixed; inset: 0; z-index: 999999; background-color: #1e234e; display: flex; align-items: center; justify-content: center; transition: opacity 0.8s ease, visibility 0.8s; overflow: hidden; }
     
+    /* ทำให้พริ้วขึ้น: วิ่งมาแบบเอียงนิดๆ แล้วตั้งตรงตอนเบรก (ยืดเวลาเป็น 1.2 วินาที) */
     @keyframes driveF { 
-        0% { opacity: 0; transform: translateX(-100vw); } 
-        70% { opacity: 1; transform: translateX(20px); } 
-        100% { opacity: 1; transform: translateX(0); } 
+        0% { opacity: 0; transform: translateX(-100vw) skewX(-5deg); } 
+        60% { opacity: 1; transform: translateX(15px) skewX(2deg); } 
+        100% { opacity: 1; transform: translateX(0) skewX(0); } 
     }
     
     @keyframes driveOne { 
-        0% { opacity: 0; transform: translateX(100vw); } 
-        70% { opacity: 1; transform: translateX(-20px); } 
-        100% { opacity: 1; transform: translateX(0); } 
+        0% { opacity: 0; transform: translateX(100vw) skewX(5deg); } 
+        60% { opacity: 1; transform: translateX(-15px) skewX(-2deg); } 
+        100% { opacity: 1; transform: translateX(0) skewX(0); } 
     }
 
-    @keyframes fadeTrack {
-        0% { opacity: 0; }
+    /* แอนิเมชันให้รอยตารางพริ้วไหล (Flow ถอยหลัง) และค่อยๆ จาง */
+    @keyframes fadeTrackFlow {
+        0% { opacity: 0; background-position: 0 0; }
         30% { opacity: 1; }
-        70% { opacity: 1; }
-        100% { opacity: 0; } 
+        80% { opacity: 1; }
+        100% { opacity: 0; background-position: -50px 0; } /* ขยับตารางถอยหลังให้ดูเหมือนพริ้วลู่ลม */
     }
     
     /* ตัว F (สีขาวล้วน) */
@@ -47,27 +49,26 @@
         position: relative; 
         z-index: 2; 
         opacity: 0;
-        animation: driveF 0.6s cubic-bezier(0.25, 1, 0.5, 1) forwards; 
+        animation: driveF 1.2s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; 
         -webkit-font-smoothing: antialiased; 
     }
     
-    /* 🌟 รอยตารางหมากรุก ดำ-ขาว (แก้ลายและปรับความสูงให้พอดีแล้ว) */
+    /* รอยตาราง ดำ-ขาว (ขยายขนาด + บีบความสูงลงอีก) */
     .logo-f::after {
         content: '';
         position: absolute;
         right: 75%; 
-        top: 14%;    /* ตัดพื้นที่ขอบบนของฟอนต์ออก ให้พอดีหัวตัว F */
-        bottom: 12%; /* ตัดพื้นที่ขอบล่างของฟอนต์ออก ให้พอดีฐานตัว F */
+        top: 18%;    /* 🌟 บีบลงมาให้ต่ำกว่าเดิม เพื่อหลบขอบบนของฟอนต์ */
+        bottom: 15%; /* 🌟 บีบขึ้นมา เพื่อหลบขอบล่างของฟอนต์ */
         width: 100vw;
         background-color: #111; 
-        /* สร้างตารางหมากรุกแบบถูกต้อง (สลับ 4 มุม) */
         background-image: conic-gradient(rgba(255,255,255,0.9) 90deg, transparent 90deg 180deg, rgba(255,255,255,0.9) 180deg 270deg, transparent 270deg);
-        background-size: 24px 24px; 
+        background-size: 44px 44px; /* 🌟 ขยายขนาดตารางให้กว้างขึ้น */
         transform: skewX(-15deg); 
         transform-origin: right center;
         -webkit-mask-image: linear-gradient(to right, transparent 0%, black 95%);
         mask-image: linear-gradient(to right, transparent 0%, black 95%);
-        animation: fadeTrack 0.6s ease-out forwards;
+        animation: fadeTrackFlow 1.4s ease-out forwards;
         z-index: -1;
     }
     
@@ -84,27 +85,26 @@
         position: relative; 
         z-index: 1; 
         opacity: 0;
-        animation: driveOne 0.6s cubic-bezier(0.25, 1, 0.5, 1) forwards; 
+        animation: driveOne 1.2s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; 
         -webkit-font-smoothing: antialiased;
     }
 
-    /* 🌟 รอยตารางหมากรุก ดำ-เหลือง (แก้ลายและปรับความสูงให้พอดีแล้ว) */
+    /* รอยตาราง ดำ-เหลือง (ขยายขนาด + บีบความสูงลงอีก) */
     .logo-1::after {
         content: '';
         position: absolute;
         left: 65%; 
-        top: 14%; 
-        bottom: 12%;
+        top: 18%; 
+        bottom: 15%;
         width: 100vw;
         background-color: #111; 
-        /* สร้างตารางหมากรุกแบบถูกต้อง (สลับ 4 มุม) */
         background-image: conic-gradient(rgba(250,225,0,0.9) 90deg, transparent 90deg 180deg, rgba(250,225,0,0.9) 180deg 270deg, transparent 270deg);
-        background-size: 24px 24px; 
+        background-size: 44px 44px; 
         transform: skewX(-15deg); 
         transform-origin: left center;
         -webkit-mask-image: linear-gradient(to left, transparent 0%, black 95%);
         mask-image: linear-gradient(to left, transparent 0%, black 95%);
-        animation: fadeTrack 0.6s ease-out forwards;
+        animation: fadeTrackFlow 1.4s ease-out forwards;
         z-index: -1;
     }
     
@@ -1273,7 +1273,7 @@ window.loadedNewsItems = {};
                 splash.style.opacity = '0';
                 setTimeout(() => { splash.style.visibility = 'hidden'; splash.style.display = 'none'; }, 500);
             }
-        }, 2000);
+        }, 3000);
     });
 
     let currentConfirmCallback = null;
