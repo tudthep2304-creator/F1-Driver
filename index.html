@@ -77,7 +77,7 @@
 
   <!-- บาร์ด้านบนสำหรับแผนที่ (สูง 64px = h-16) -->
   <div id="navBar" class="hidden fixed top-0 w-full h-16 bg-[#1e234e] border-b border-[#2a2f5c] flex items-center justify-between px-4 z-20 text-white shadow-md pointer-events-auto">
-    <button onclick="goBack()" class="p-2 text-2xl active:opacity-50 hover:text-[#fae100] transition"><i class="fas fa-chevron-left"></i></button>
+    <button id="btnNavBack" onclick="goBack()" class="p-2 text-2xl active:opacity-50 hover:text-[#fae100] transition"><i class="fas fa-chevron-left"></i></button>
     <h1 id="navTitle" class="text-lg font-black text-[#fae100] tracking-wide"><i class="fas fa-car-side"></i> F1 Fast and Furious</h1>
     <button onclick="goHome()" class="p-2 text-xl active:opacity-50 hover:text-[#fae100] transition"><i class="fas fa-home"></i></button>
   </div>
@@ -1859,6 +1859,15 @@ window.openProfileModal = function() {
         if(typeof handleTracking === 'function') handleTracking();
       }
 
+     let btnNavBack = document.getElementById('btnNavBack');
+      if (btnNavBack) {
+          if (page === 'Tracking') {
+              btnNavBack.classList.add('invisible'); // ซ่อนปุ่มแบบรักษาสมดุลเลย์เอาต์ไว้
+          } else {
+              btnNavBack.classList.remove('invisible'); // โชว์ปุ่มตามปกติในหน้าอื่น
+          }
+      }
+      
       updateMapControlsPosition(page);
     };
     
