@@ -29,7 +29,6 @@
         100% { opacity: 1; transform: translateX(0); } 
     }
 
-    /* แอนิเมชันให้รอยตารางค่อยๆ จางหายไปตอนเบรกจอดสนิท */
     @keyframes fadeTrack {
         0% { opacity: 0; }
         30% { opacity: 1; }
@@ -52,21 +51,22 @@
         -webkit-font-smoothing: antialiased; 
     }
     
-    /* 🌟 สร้างรอยตารางหมากรุก ดำ-ขาว ความสูงเท่าตัวอักษร ลากตามตัว F */
+    /* 🌟 รอยตารางหมากรุก ดำ-ขาว (แก้ลายและปรับความสูงให้พอดีแล้ว) */
     .logo-f::after {
         content: '';
         position: absolute;
-        right: 80%; 
-        top: 0; 
+        right: 75%; 
+        top: 14%;    /* ตัดพื้นที่ขอบบนของฟอนต์ออก ให้พอดีหัวตัว F */
+        bottom: 12%; /* ตัดพื้นที่ขอบล่างของฟอนต์ออก ให้พอดีฐานตัว F */
         width: 100vw;
-        height: 100%; /* ความสูง 100% เท่ากับตัว F */
-        background-color: #111; /* พื้นหลังสีดำ */
-        background-image: conic-gradient(rgba(255,255,255,0.9) 90deg, transparent 90deg 180deg, transparent 180deg 270deg, rgba(255,255,255,0.9) 270deg);
-        background-size: 32px 32px; /* ขนาดช่องตาราง */
-        transform: skewX(-15deg); /* เอียงตารางให้รับกับความเอียงของตัวอักษร */
+        background-color: #111; 
+        /* สร้างตารางหมากรุกแบบถูกต้อง (สลับ 4 มุม) */
+        background-image: conic-gradient(rgba(255,255,255,0.9) 90deg, transparent 90deg 180deg, rgba(255,255,255,0.9) 180deg 270deg, transparent 270deg);
+        background-size: 24px 24px; 
+        transform: skewX(-15deg); 
         transform-origin: right center;
-        -webkit-mask-image: linear-gradient(to right, transparent 0%, black 90%);
-        mask-image: linear-gradient(to right, transparent 0%, black 90%);
+        -webkit-mask-image: linear-gradient(to right, transparent 0%, black 95%);
+        mask-image: linear-gradient(to right, transparent 0%, black 95%);
         animation: fadeTrack 0.6s ease-out forwards;
         z-index: -1;
     }
@@ -88,21 +88,22 @@
         -webkit-font-smoothing: antialiased;
     }
 
-    /* 🌟 สร้างรอยตารางหมากรุก ดำ-เหลือง ความสูงเท่าตัวอักษร ลากตามเลข 1 */
+    /* 🌟 รอยตารางหมากรุก ดำ-เหลือง (แก้ลายและปรับความสูงให้พอดีแล้ว) */
     .logo-1::after {
         content: '';
         position: absolute;
-        left: 70%; 
-        top: 0; 
+        left: 65%; 
+        top: 14%; 
+        bottom: 12%;
         width: 100vw;
-        height: 100%; /* ความสูง 100% เท่ากับเลข 1 */
-        background-color: #111; /* พื้นหลังสีดำ */
-        background-image: conic-gradient(rgba(250,225,0,0.9) 90deg, transparent 90deg 180deg, transparent 180deg 270deg, rgba(250,225,0,0.9) 270deg);
-        background-size: 32px 32px; /* ขนาดช่องตาราง */
-        transform: skewX(-15deg); /* เอียงตารางให้รับกับความเอียงของตัวเลข */
+        background-color: #111; 
+        /* สร้างตารางหมากรุกแบบถูกต้อง (สลับ 4 มุม) */
+        background-image: conic-gradient(rgba(250,225,0,0.9) 90deg, transparent 90deg 180deg, rgba(250,225,0,0.9) 180deg 270deg, transparent 270deg);
+        background-size: 24px 24px; 
+        transform: skewX(-15deg); 
         transform-origin: left center;
-        -webkit-mask-image: linear-gradient(to left, transparent 0%, black 90%);
-        mask-image: linear-gradient(to left, transparent 0%, black 90%);
+        -webkit-mask-image: linear-gradient(to left, transparent 0%, black 95%);
+        mask-image: linear-gradient(to left, transparent 0%, black 95%);
         animation: fadeTrack 0.6s ease-out forwards;
         z-index: -1;
     }
