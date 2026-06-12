@@ -1706,7 +1706,7 @@ window.openProfileModal = function() {
             if (typeof google !== 'undefined') google.maps.event.trigger(map, 'resize');
         }
       } else {
-          if(navBar) navBar.classList.add('hidden'); if(mapControls) mapControls.classList.add('hidden');
+          if(navBar) navBar.classList.add('hidden'); if(mapControls) mapControls.classList.add('hidden'); if(mapEl) mapEl.classList.add('hidden');
       }
 
       if (page === 2 || page === 3) {
