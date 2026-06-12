@@ -696,7 +696,7 @@
 
     let currentRouteBounds = null;
     let isTrackingMode = true;
-    let isSatelliteMode = false; 
+    let isSatelliteMode = true; 
     
     let lastNotifiedStatus = "";
     let wakeLock = null;
@@ -972,6 +972,32 @@ window.loadedNewsItems = {};
         map.setOptions({ padding: { top: pTop, bottom: pBottom, left: 0, right: 0 } });
     }
 
+    function getDynamicBottomPadding() {
+        if(!document.getElementById('page4Panel')) return 0;
+        let pBottom = 0;
+        if (currentStep === 4) {
+            const panel = document.getElementById('page4Panel');
+            pBottom = (panel && panel.classList.contains('panel-collapsed-page4')) ? 120 : panel.offsetHeight;
+        } else if (currentStep === 'Tracking') {
+            const panel = document.getElementById('trackingPanel');
+            pBottom = (panel && panel.classList.contains('panel-collapsed')) ? 120 : panel.offsetHeight;
+        } else if (currentStep === 2) {
+            const panel = document.querySelector('#page2 .ui-panel');
+            pBottom = panel ? panel.offsetHeight : 0;
+        } else if (currentStep === 3) {
+            const panel = document.querySelector('#page3 .ui-panel');
+            pBottom = panel ? panel.offsetHeight : 0;
+        }
+        return pBottom + 20;
+    }
+
+    function updateMapPadding() {
+        if(!map) return;
+        let pTop = (currentStep === 2 || currentStep === 3) ? 140 : 70;
+        let pBottom = getDynamicBottomPadding();
+        map.setOptions({ padding: { top: pTop, bottom: pBottom, left: 0, right: 0 } });
+    }
+    
     let pricingConfig = { base: 50, km: 10, pick: 5 }; 
     db.ref('config/pricing').on('value', snap => { if(snap.exists()) pricingConfig = snap.val(); });
 
@@ -1405,9 +1431,13 @@ window.openProfileModal = function() {
       if (map) return; 
       
       map = new google.maps.Map(document.getElementById('map'), { 
-        zoom: 16, center: {lat: driverData.lat, lng: driverData.lng}, mapTypeId: 'roadmap', styles: detailedDarkMapStyle,
+        zoom: 16, center: {lat: driverData.lat, lng: driverData.lng}, mapTypeId: 'hybrid',
         disableDefaultUI: true, gestureHandling: 'greedy', zoomControl: false
       });
+      
+      // อัปเดตไอคอนปุ่มมุมขวาให้ตรงกับโหมด (ให้เป็นไอคอน layer เพื่อกดสลับกลับเป็นโหมดปกติได้)
+      let btnMapStyle = document.getElementById('btnMapStyle');
+      if(btnMapStyle) btnMapStyle.innerHTML = '<i class="fas fa-layer-group text-[18px]"></i>';
 
       crosshairMarker = new google.maps.Marker({ map: null, zIndex: 1, clickable: false });
       crosshairMarker.bindTo('position', map, 'center');
