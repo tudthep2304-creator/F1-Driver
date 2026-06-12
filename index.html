@@ -866,7 +866,7 @@ window.loadedNewsItems = {};
         document.getElementById('newsModal').classList.add('hidden'); 
     }
 
-    // 🌟 2. ระบบเรนเดอร์รายการข่าว (เช็คสถานะการอ่านแยกทีละข้อความ)
+// 🌟 2. ระบบเรนเดอร์รายการข่าว (เช็คสถานะการอ่านแยกทีละข้อความ)
     function renderNewsAndPromotions(snapshot = null) {
         let container = document.getElementById('newsListContainer');
         let readIds = JSON.parse(localStorage.getItem('readNewsIds') || '[]');
@@ -890,11 +890,10 @@ window.loadedNewsItems = {};
                 let iconBg = item.isPromo ? "bg-[#fae100]/20" : "bg-gray-500/20";
                 let iconColor = item.isPromo ? "text-[#fae100]" : "text-gray-300";
                 
-                // ใส่ id ให้จุดแดง และคำว่า NEW เพื่อให้ลบออกได้ตอนกดอ่าน
+                // เอาคำว่า NEW ออก เหลือแค่จุดแจ้งเตือนสีแดง
                 let newDot = isNew ? `<div id="dot-${item.id}" class="w-2.5 h-2.5 bg-red-500 rounded-full absolute top-0 right-0 border-2 border-[#1e234e] shadow-sm animate-pulse"></div>` : '';
                 let textTitleColor = isNew ? 'text-white' : 'text-gray-400';
                 let textTimeColor = isNew ? 'text-[#fae100]' : 'text-gray-500';
-                let newTag = isNew ? `<span id="tag-${item.id}" class="bg-red-500 text-white text-[8px] font-black px-1 py-0.5 rounded ml-1.5 shadow">NEW</span>` : '';
 
                 html += `
                 <div onclick="window.openNewsDetail('${item.id}')" class="flex items-center gap-3 py-3.5 border-b border-[#383d6a]/50 cursor-pointer hover:bg-[#2a2f5c]/40 transition px-2">
@@ -903,7 +902,7 @@ window.loadedNewsItems = {};
                         ${newDot}
                     </div>
                     <div class="flex-1 min-w-0">
-                        <h3 id="title-${item.id}" class="text-[14px] font-bold ${textTitleColor} truncate leading-tight">${item.title}${newTag}</h3>
+                        <h3 id="title-${item.id}" class="text-[14px] font-bold ${textTitleColor} truncate leading-tight">${item.title}</h3>
                         <p class="text-[12px] text-gray-500 truncate mt-0.5">${item.content}</p>
                     </div>
                     <div class="shrink-0 text-right pl-2">
@@ -916,6 +915,53 @@ window.loadedNewsItems = {};
 
         if (snapshot) processSnap(snapshot);
         else db.ref('news_promotions').once('value', snap => processSnap(snap));
+    }
+
+    // 🌟 3. ระบบกดอ่านข่าว (บันทึกสถานะว่าอ่านแล้วทันที)
+    window.openNewsDetail = function(id) {
+        let item = window.loadedNewsItems[id];
+        if(!item) return;
+
+        // บันทึก ID ลงเครื่องว่า "อ่านแล้ว"
+        let readIds = JSON.parse(localStorage.getItem('readNewsIds') || '[]');
+        if(!readIds.includes(id)) {
+            readIds.push(id);
+            localStorage.setItem('readNewsIds', JSON.stringify(readIds));
+            
+            // อัปเดตตัวเลขแจ้งเตือนหน้าแรกทันที
+            window.unreadNewsCount = Math.max(0, window.unreadNewsCount - 1);
+            let badge = document.getElementById('newsBadge');
+            if(badge) {
+                if(window.unreadNewsCount > 0) badge.innerText = window.unreadNewsCount > 99 ? '99+' : window.unreadNewsCount;
+                else badge.classList.add('hidden');
+            }
+            
+            // ซ่อนจุดแดง สลับสีตัวหนังสือให้อ่อนลงทันที โดยไม่ต้องโหลดหน้าใหม่
+            let dot = document.getElementById('dot-' + id); if(dot) dot.remove();
+            let titleEl = document.getElementById('title-' + id); if(titleEl) { titleEl.classList.remove('text-white'); titleEl.classList.add('text-gray-400'); }
+            let timeEl = document.getElementById('time-' + id); if(timeEl) { timeEl.classList.remove('text-[#fae100]'); timeEl.classList.add('text-gray-500'); }
+        }
+
+        // แสดงเนื้อหา
+        document.getElementById('ndDate').innerText = item.dateStr || '';
+        document.getElementById('ndTitle').innerText = item.title;
+        document.getElementById('ndContent').innerText = item.content;
+        
+        let badgeEl = document.getElementById('ndBadge');
+        if(item.isPromo) { badgeEl.innerText = "PROMO"; badgeEl.className = "bg-red-500 text-white text-[10px] font-black px-2 py-1 rounded shadow"; } 
+        else { badgeEl.innerText = "NEWS"; badgeEl.className = "bg-blue-500 text-white text-[10px] font-black px-2 py-1 rounded shadow"; }
+
+        // ระบบรองรับรูปภาพแนบ
+        let imgContainer = document.getElementById('ndImageContainer');
+        let imgEl = document.getElementById('ndImage');
+        if(item.imageUrl) { imgEl.src = item.imageUrl; imgContainer.classList.remove('hidden'); } 
+        else { imgContainer.classList.add('hidden'); imgEl.src = ""; }
+
+        document.getElementById('newsDetailModal').classList.remove('hidden');
+    }
+
+    window.closeNewsDetailModal = function() {
+        document.getElementById('newsDetailModal').classList.add('hidden');
     }
 
     function updateMapPadding() {
