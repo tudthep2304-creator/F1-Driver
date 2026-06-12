@@ -182,9 +182,8 @@
   </div>
 
 <!-- News Modal -->
-  <div id="newsModal" class="hidden fixed inset-0 z-[200] bg-[#1e234e] transition-opacity flex flex-col">
+<div id="newsModal" class="hidden fixed inset-0 z-[200] bg-[#1e234e] transition-opacity flex flex-col">
       
-      <!-- 🌟 พื้นหลังลายพู่กันและออร่า เฉพาะสำหรับหน้าข่าวสาร (ฝังไว้ด้านล่างสุด) 🌟 -->
       <div class="absolute inset-0 z-0 overflow-hidden pointer-events-none">
           <div class="absolute top-[-10%] left-[-10%] w-[60vw] h-[60vw] rounded-full bg-blue-500/10 blur-[80px]"></div>
           <div class="absolute bottom-[-10%] right-[-10%] w-[70vw] h-[70vw] rounded-full bg-[#fae100]/5 blur-[100px]"></div>
@@ -196,7 +195,6 @@
           </svg>
       </div>
 
-      <!-- บาร์ด้านบน (ใส่ Effect กระจกให้ดูพรีเมียม) -->
       <div class="relative z-10 bg-[#2a2f5c]/90 backdrop-blur-md border-b border-[#383d6a] h-16 px-4 flex items-center justify-between shadow-md shrink-0 w-full">
           <div class="flex items-center gap-3">
               <button onclick="closeNewsModal()" class="w-10 h-10 shrink-0 bg-[#383d6a]/80 text-gray-400 rounded-full flex items-center justify-center hover:text-[#fae100] transition"><i class="fas fa-arrow-left"></i></button>
@@ -204,28 +202,25 @@
           </div>
       </div>
       
-      <!-- ส่วนเนื้อหาข่าวสาร (ครอบ relative z-10 ไว้เพื่อให้ลอยอยู่เหนือลายพู่กัน) -->
       <div class="relative z-10 flex-1 overflow-y-auto flex flex-col w-full hide-scrollbar">
           
-          <!-- แบนเนอร์บน -->
           <div class="px-4 w-full shrink-0 mt-4">
-              <div id="newsTopBannerContainer" class="w-full aspect-video bg-[#2a2f5c] hidden relative shadow-md rounded-xl border border-[#383d6a] overflow-hidden">
+              <div id="newsTopBannerContainer" class="w-full aspect-video bg-[#2a2f5c] hidden relative shadow-md rounded-none border border-[#383d6a] overflow-hidden">
                   <div id="newsTopBannerSlider" class="flex overflow-x-auto snap-x snap-mandatory hide-scrollbar w-full h-full relative scroll-smooth items-center"></div>
               </div>
           </div>
           
-          <!-- รายการข่าวสาร -->
-          <div class="p-4 space-y-4 w-full flex-1" id="newsListContainer"></div>
+          <div class="p-4 space-y-3 w-full flex-1" id="newsListContainer"></div>
         
-          <!-- แบนเนอร์ล่าง -->
           <div class="px-4 w-full shrink-0 mb-8 mt-auto">
-              <div id="newsBottomBannerContainer" class="w-full aspect-[5/1] min-h-[70px] max-h-[120px] bg-[#2a2f5c] rounded-xl overflow-hidden hidden relative shadow-md border border-[#383d6a] shrink-0">
+              <div id="newsBottomBannerContainer" class="w-full aspect-[5/1] min-h-[70px] max-h-[120px] bg-[#2a2f5c] rounded-none overflow-hidden hidden relative shadow-md border border-[#383d6a] shrink-0">
                   <div id="newsBottomBannerSlider" class="flex overflow-x-auto snap-x snap-mandatory hide-scrollbar w-full h-full scroll-smooth items-center"></div>
               </div>
           </div>
       </div>
   </div>
-  <!-- ✅ Community Modal (แชทส่วนกลาง แบบมีตัวกรอง) -->
+
+<!-- ✅ Community Modal (แชทส่วนกลาง แบบมีตัวกรอง) -->
 <div id="communityModal" class="hidden fixed inset-0 z-[200] bg-[#1e234e] flex flex-col pointer-events-auto transition-transform">
       
       <div class="absolute inset-0 z-0 overflow-hidden pointer-events-none">
@@ -824,11 +819,11 @@ function updateRideButtonState() {
     }
     window.closeNewsModal = function() { document.getElementById('newsModal').classList.add('hidden'); }
 
-    function renderNewsAndPromotions() {
+function renderNewsAndPromotions() {
         let container = document.getElementById('newsListContainer');
         db.ref('news_promotions').once('value', snap => {
             if (!snap.exists()) {
-                container.innerHTML = `<div class="bg-[#2a2f5c] rounded-2xl p-6 text-center border border-[#383d6a] shadow-sm"><i class="fas fa-box-open text-4xl text-gray-600 mb-3"></i><p class="text-gray-400 font-bold text-sm">ยังไม่มีข่าวสารหรือโปรโมชั่นในขณะนี้</p></div>`;
+                container.innerHTML = `<div class="bg-[#2a2f5c] rounded-none p-5 text-center border border-[#383d6a] shadow-sm"><i class="fas fa-box-open text-3xl text-gray-600 mb-2"></i><p class="text-gray-400 font-bold text-xs">ยังไม่มีข่าวสารหรือโปรโมชั่นในขณะนี้</p></div>`;
                 return;
             }
             let items = [];
@@ -840,15 +835,23 @@ function updateRideButtonState() {
             let html = '';
             items.forEach(item => {
                 let isNew = (item.timestamp || 0) > lastSeen;
-                let badge = item.isPromo ? `<span class="bg-red-500 text-white text-[10px] font-black px-2 py-0.5 rounded shadow">PROMO</span>` : `<span class="bg-blue-500 text-white text-[10px] font-black px-2 py-0.5 rounded shadow">NEWS</span>`;
-                let newTag = isNew ? `<span class="bg-red-500 text-white text-[9px] font-black px-1.5 py-0.5 rounded ml-2 shadow">NEW</span>` : '';
+                let badge = item.isPromo ? `<span class="bg-red-500 text-white text-[9px] font-black px-1.5 py-0.5 rounded shadow">PROMO</span>` : `<span class="bg-blue-500 text-white text-[9px] font-black px-1.5 py-0.5 rounded shadow">NEWS</span>`;
+                let newTag = isNew ? `<span class="bg-red-500 text-white text-[8px] font-black px-1 py-0.5 rounded ml-1.5 shadow animate-pulse">NEW</span>` : '';
 
-                html += `<div class="bg-[#2a2f5c] rounded-2xl p-5 border border-[#383d6a] shadow-sm relative overflow-hidden mb-4"><div class="flex justify-between items-start mb-2">${badge}<span class="text-[10px] text-gray-500 font-bold">${item.dateStr || ''}</span></div><h3 class="text-base font-black text-white mb-2 leading-tight">${item.title}${newTag}</h3><p class="text-sm text-gray-400 leading-relaxed font-normal">${item.content}</p></div>`;
+                // 🌟 จุดที่มีการปรับแก้: เปลี่ยน rounded-2xl เป็น rounded-none, ลด padding เป็น p-3.5, และปรับขนาดอักษรให้เล็กลง
+                html += `
+                <div class="bg-[#2a2f5c] rounded-none p-3.5 border border-[#383d6a] shadow-sm relative overflow-hidden mb-1">
+                    <div class="flex justify-between items-center mb-1.5">
+                        ${badge}
+                        <span class="text-[9px] text-gray-500 font-bold">${item.dateStr || ''}</span>
+                    </div>
+                    <h3 class="text-[14px] font-black text-white mb-1 leading-tight">${item.title}${newTag}</h3>
+                    <p class="text-[12px] text-gray-400 leading-relaxed font-normal">${item.content}</p>
+                </div>`;
             });
             container.innerHTML = html;
         });
     }
-
     db.ref('news_promotions').on('value', snap => {
         let badge = document.getElementById('newsBadge');
         if(snap.exists() && badge) {
