@@ -597,11 +597,10 @@
       <div class="flex-1 overflow-y-auto w-full hide-scrollbar flex flex-col bg-[#1e234e] relative z-10">
           <div id="historyMap" class="w-full h-[220px] bg-[#1e234e] shrink-0 border-b border-[#383d6a]"></div>
 
-          <div class="p-3 flex flex-col gap-3 text-white font-normal pb-8"> <div class="flex justify-between items-center border-b border-[#383d6a] pb-2.5">
+          <div class="flex justify-between items-center border-b border-[#383d6a] pb-2.5">
                   <div>
                       <p class="text-[11px] text-gray-400 mb-0.5 font-normal">รหัสการเดินทาง</p>
-                      <p class="text-[13px] font-normal text-[#fae100]" id="histDetId">#JOB-XXXX</p>
-                  </div>
+                      <p class="text-[13px] font-normal text-white" id="histDetId">#JOB-XXXX</p> </div>
                   <div class="text-right">
                       <p class="text-[11px] text-gray-400 mb-0.5 font-normal">วันที่เดินทาง</p>
                       <p class="text-[13px] font-normal" id="histDetDate">--/--/----</p>
@@ -610,7 +609,7 @@
 
               <div class="bg-[#2a2f5c] p-2.5 rounded-xl border border-[#383d6a] shadow-sm flex items-center justify-between">
                   <div class="flex items-center gap-3">
-                      <div class="w-9 h-9 bg-[#1e234e] rounded-full flex items-center justify-center text-[#fae100] text-lg border border-[#383d6a] shrink-0"><i class="fas fa-user-tie"></i></div>
+                      <div class="w-9 h-9 bg-[#1e234e] rounded-full flex items-center justify-center text-white text-lg border border-[#383d6a] shrink-0"><i class="fas fa-user-tie"></i></div>
                       <div>
                           <p class="text-[12px] font-normal" id="histDetDriver">คนขับ: -</p>
                           <p class="text-[11px] text-gray-400 mt-0 font-normal" id="histDetDriverRating"><i class="fas fa-star text-[#fae100]"></i> 5.0</p>
@@ -2334,7 +2333,7 @@ function renderWaypointsUI() {
         }, 300);
     }
 
-    // 🌟 ฟังก์ชันใหม่: จัดการตอนกดที่ชื่อสถานที่
+    // 🌟 ฟังก์ชันจัดการตอนกดที่ชื่อสถานที่ (เน้นตัวหนา แต่เป็นสีขาว)
     window.toggleHistoryWaypointFocus = function(index, lat, lng) {
         let textEl = document.getElementById('hist-wp-text-' + index);
         
@@ -2344,26 +2343,26 @@ function renderWaypointsUI() {
             if (window.historyMapBounds && historyMapInstance) {
                 historyMapInstance.fitBounds(window.historyMapBounds);
             }
-            // คืนค่าตัวหนังสือทั้งหมดให้เป็นปกติ
+            // คืนค่าตัวหนังสือทั้งหมดให้เป็นปกติ (เอาแค่ตัวหนาออก)
             document.querySelectorAll('.hist-wp-text').forEach(el => {
-                el.classList.remove('font-bold', 'text-[#fae100]', 'scale-[1.02]', 'origin-left');
-                el.classList.add('font-normal', 'text-white');
+                el.classList.remove('font-bold', 'scale-[1.02]', 'origin-left');
+                el.classList.add('font-normal');
             });
         } else {
             // กดที่ใหม่ -> ซูมเข้าไปที่หมุดนั้น
             window.historyFocusedIndex = index;
             if (historyMapInstance) {
                 historyMapInstance.panTo({lat: lat, lng: lng});
-                historyMapInstance.setZoom(17); // ระดับการซูม (ยิ่งมากยิ่งใกล้)
+                historyMapInstance.setZoom(17);
             }
-            // รีเซ็ตตัวหนังสืออันอื่น แล้วเน้นตัวที่กด (หนาขึ้น เปลี่ยนเป็นสีเหลือง)
+            // รีเซ็ตตัวหนังสืออันอื่น แล้วเน้นตัวที่กด (หนาขึ้น แต่สีขาวคงเดิม)
             document.querySelectorAll('.hist-wp-text').forEach(el => {
-                el.classList.remove('font-bold', 'text-[#fae100]', 'scale-[1.02]', 'origin-left');
-                el.classList.add('font-normal', 'text-white');
+                el.classList.remove('font-bold', 'scale-[1.02]', 'origin-left');
+                el.classList.add('font-normal');
             });
             if (textEl) {
-                textEl.classList.remove('font-normal', 'text-white');
-                textEl.classList.add('font-bold', 'text-[#fae100]', 'scale-[1.02]', 'origin-left'); 
+                textEl.classList.remove('font-normal');
+                textEl.classList.add('font-bold', 'scale-[1.02]', 'origin-left'); 
             }
         }
     };
