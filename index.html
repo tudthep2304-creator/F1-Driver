@@ -16,18 +16,31 @@
     
 /* Splash Screen CSS */
     #splashScreen { position: fixed; inset: 0; z-index: 999999; background-color: #1e234e; display: flex; align-items: center; justify-content: center; transition: opacity 0.5s ease, visibility 0.5s; }
-    @keyframes popF { 0% { opacity: 0; transform: scale(0.5); } 100% { opacity: 1; transform: scale(1); } }
-    @keyframes drawOne { 0% { opacity: 0; transform: translateX(-40px); } 100% { opacity: 1; transform: translateX(0); } }
     
-    /* เติม display: inline-block และ padding รอบๆ เพื่อขยายกรอบไม่ให้ตัวอักษรโดนตัดเวลามันขยายตัว */
-    .logo-f { display: inline-block; font-size: 8.5rem; color: white; animation: popF 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; line-height: 1; padding: 10px 0 10px 20px; }
-    .logo-1 { display: inline-block; font-size: 8.5rem; color: #fae100; opacity: 0; animation: drawOne 0.4s ease-out 0.4s forwards; margin-left: 5px; line-height: 1; padding: 10px 20px 10px 0; }
-    .ui-panel { 
-        position: fixed; bottom: 0; left: 0; right: 0; background: #1e234e; 
-        border-top-left-radius: 24px; border-top-right-radius: 24px; 
-        box-shadow: 0 -10px 30px rgba(0,0,0,0.6); z-index: 10; 
-        display: flex; flex-direction: column; padding: 20px; 
-        max-height: 85vh; overflow-y: hidden; 
+    @keyframes popF { 0% { opacity: 0; transform: scale(0.5); } 100% { opacity: 1; transform: scale(1); } }
+    @keyframes slideOne { 0% { opacity: 0; transform: translateX(-20px); } 100% { opacity: 1; transform: translateX(0); } }
+    
+    /* ตัว F ใหญ่และเพิ่มพื้นที่ด้านขวา (padding-right) ไม่ให้ตัวเอียงโดนตัด */
+    .logo-f { 
+        display: inline-block; 
+        font-size: 8.5rem; 
+        color: white; 
+        animation: popF 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; 
+        line-height: 0.8; 
+        padding-right: 15px; 
+    }
+    
+    /* เลข 1 เล็กลง (5rem) และขยับเข้ามาใกล้ตัว F */
+    .logo-1 { 
+        display: inline-block; 
+        font-size: ค.5rem; 
+        color: #fae100; 
+        opacity: 0; 
+        animation: slideOne 0.4s ease-out 0.3s forwards; 
+        line-height: 0.8; 
+        margin-left: -10px; 
+        margin-bottom: 2px;
+        padding-right: 20px;
     }
     
     .glass-box { background: rgba(42, 47, 92, 0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1); box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3); }
@@ -69,7 +82,7 @@
 
   <!-- Splash Screen -->
   <div id="splashScreen">
-      <div class="flex items-center font-black italic tracking-tighter">
+      <div class="flex items-end justify-center font-black italic tracking-tighter">
           <span class="logo-f">F</span>
           <span class="logo-1">1</span>
       </div>
