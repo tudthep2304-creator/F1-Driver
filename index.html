@@ -2248,68 +2248,90 @@ window.openProfileModal = function() {
             }
         });
     };
+// ==========================================
+    // ระบบ Smooth Swipe to Go Back (เลื่อนติดนิ้วสไตล์แอป Native)
     // ==========================================
-    // ระบบ Swipe to Go Back (ปัดขวาเพื่อกลับ/ปิดหน้า)
-    // ==========================================
-    function enableSwipeToClose(modalId, closeCallback) {
+    function enableSmoothSwipeToClose(modalId, closeCallback) {
         const modal = document.getElementById(modalId);
         if (!modal) return;
 
         let touchstartX = 0;
         let touchstartY = 0;
-        let touchendX = 0;
-        let touchendY = 0;
+        let isSwiping = false;
 
         // เมื่อเริ่มเอานิ้วแตะจอ
         modal.addEventListener('touchstart', function(event) {
-            // ดักไว้: ถ้าจุดที่แตะจอ เป็นกล่องที่เลื่อนซ้ายขวาได้ (เช่น สไลด์แบนเนอร์โฆษณา) ให้ข้ามไป ไม่ต้องทำอะไร
-            if (event.target.closest('.overflow-x-auto') || event.target.closest('.pac-container')) {
-                return; 
+            // ยกเว้น: ถ้ากำลังแตะกล่องที่ต้องเลื่อนซ้ายขวาได้ (เช่น แบนเนอร์) ให้ข้ามไป
+            if (event.target.closest('.overflow-x-auto') || event.target.closest('.pac-container')) return;
+            
+            touchstartX = event.touches[0].clientX;
+            touchstartY = event.touches[0].clientY;
+            isSwiping = false;
+            
+            // ปิด transition ชั่วคราว เพื่อให้หน้าต่างเลื่อนติดนิ้วแบบไม่มีดีเลย์
+            modal.style.transition = 'none'; 
+        }, { passive: true });
+
+        // ระหว่างที่นิ้วกำลังลากบนจอ
+        modal.addEventListener('touchmove', function(event) {
+            if (event.target.closest('.overflow-x-auto') || event.target.closest('.pac-container')) return;
+
+            let touchMoveX = event.touches[0].clientX;
+            let touchMoveY = event.touches[0].clientY;
+            
+            let diffX = touchMoveX - touchstartX;
+            let diffY = Math.abs(touchMoveY - touchstartY);
+
+            // ตรวจสอบว่า "ตั้งใจปัดขวา" (แกน X ต้องไปทางบวก และมากกว่าการเลื่อนขึ้นลงแนวแกน Y)
+            if (diffX > 10 && diffX > diffY) {
+                isSwiping = true;
+                // สั่งให้หน้าต่างขยับตามระยะที่นิ้วลาก
+                modal.style.transform = `translateX(${diffX}px)`;
             }
-            touchstartX = event.changedTouches[0].screenX;
-            touchstartY = event.changedTouches[0].screenY;
         }, { passive: true });
 
         // เมื่อปล่อยนิ้วออกจากจอ
         modal.addEventListener('touchend', function(event) {
-            if (event.target.closest('.overflow-x-auto') || event.target.closest('.pac-container')) {
+            if (!isSwiping) {
+                modal.style.transition = ''; // คืนค่าแอนิเมชันกลับเป็นค่าเริ่มต้น
                 return;
             }
-            touchendX = event.changedTouches[0].screenX;
-            touchendY = event.changedTouches[0].screenY;
-            handleSwipeGesture();
-        }, { passive: true });
 
-        // คำนวณระยะการปัด
-        function handleSwipeGesture() {
-            const diffX = touchendX - touchstartX;
-            const diffY = Math.abs(touchendY - touchstartY);
-            
-            // ตรรกะ: ปัดไปทางขวามากกว่า 80px และไม่ได้เป็นการเลื่อนขึ้น/ลง (diffY ต้องน้อยกว่า 50)
-            if (diffX > 80 && diffY < 50) {
-                // เรียกใช้ฟังก์ชันปิดหน้านั้นๆ
-                if (typeof closeCallback === 'function') {
-                    closeCallback();
-                }
+            let touchendX = event.changedTouches[0].clientX;
+            let diffX = touchendX - touchstartX;
+
+            // ใส่แอนิเมชันให้สมูท (ความเร็ว 0.3 วินาที เด้งนิดๆ)
+            modal.style.transition = 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
+
+            if (diffX > 120) { 
+                // ถ้าระยะปัดเกิน 120px ถือว่าตั้งใจปิด -> ให้สไลด์ออกไปขวาสุดจอเลย
+                modal.style.transform = 'translateX(100%)'; 
+                
+                // รอให้สไลด์จนสุดขอบจอ (300ms) แล้วค่อยสั่งซ่อนหน้าต่าง
+                setTimeout(() => {
+                    if (typeof closeCallback === 'function') closeCallback();
+                    
+                    // รีเซ็ตตำแหน่งหน้าต่างกลับมาตรงกลาง เตรียมพร้อมสำหรับการเปิดครั้งหน้า
+                    setTimeout(() => { modal.style.transform = ''; }, 50); 
+                }, 300);
+            } else {
+                // ถ้าปัดนิดเดียว (ไม่ถึงระยะ) -> ให้เด้งกลับมาที่เดิม
+                modal.style.transform = 'translateX(0)';
+                setTimeout(() => { modal.style.transform = ''; }, 300);
             }
-        }
+            isSwiping = false;
+        }, { passive: true });
     }
 
-    // ผูกระบบปัดขวาเข้ากับหน้าต่าง (Modal) ต่างๆ ทันทีที่ระบบพร้อม
+    // ผูกระบบปัดสุดสมูทเข้ากับหน้าต่างต่างๆ 
     setTimeout(() => {
-        // หน้าข่าวสาร
-        enableSwipeToClose('newsModal', window.closeNewsModal);
-        // หน้าคอมมูนิตี้
-        enableSwipeToClose('communityModal', window.closeCommunityModal);
-        // หน้าโปรไฟล์
-        enableSwipeToClose('profileModal', window.closeProfileModal);
-        // หน้าประวัติรวม
-        enableSwipeToClose('historyModal', window.closePassengerHistory);
-        // หน้ารายละเอียดประวัติแต่ละงาน (แถมให้เพื่อความลื่นไหลครับ)
-        enableSwipeToClose('historyDetailModal', window.closeHistoryDetail);
-        // หน้าจัดการแบล็กลิสต์
-        enableSwipeToClose('blockedDriversModal', window.closeBlockedDrivers);
-    }, 1000); // หน่วงเวลา 1 วิให้ UI โหลดเสร็จก่อน
+        enableSmoothSwipeToClose('newsModal', window.closeNewsModal);
+        enableSmoothSwipeToClose('communityModal', window.closeCommunityModal);
+        enableSmoothSwipeToClose('profileModal', window.closeProfileModal);
+        enableSmoothSwipeToClose('historyModal', window.closePassengerHistory);
+        enableSmoothSwipeToClose('historyDetailModal', window.closeHistoryDetail);
+        enableSmoothSwipeToClose('blockedDriversModal', window.closeBlockedDrivers);
+    }, 1000);
   </script>
   <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDsZ_tbFhH6fUXRz3I6C-tMshNwwrSevd4&libraries=places,geometry&callback=initMap" async defer></script>
 </body>
