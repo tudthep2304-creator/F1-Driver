@@ -2232,12 +2232,15 @@ function renderWaypointsUI() {
     let historyMapInstance = null;
     let historyDirectionsService = null;
     let historyDirectionsRenderer = null;
-    window.historyMapMarkers = []; // ตัวเก็บหมุดเก่าไว้ลบทิ้ง
+    window.historyMapMarkers = []; 
+    window.historyMapBounds = null; // เก็บขอบเขตแผนที่เดิมไว้ตอนซูมออก
+    window.historyFocusedIndex = -1; // เก็บสถานะว่ากำลังกดดูหมุดไหนอยู่
 
     window.openHistoryDetail = function(jobId) {
         let job = loadedHistoryJobs[jobId]; 
         if(!job) return; 
         selectedHistoryJobId = jobId;
+        window.historyFocusedIndex = -1; // รีเซ็ตสถานะการซูม
 
         // 1. สร้างรหัสการเดินทางจาก Job ID
         let shortId = jobId.substring(jobId.length - 8).toUpperCase();
@@ -2268,35 +2271,42 @@ function renderWaypointsUI() {
             document.getElementById('histDetDriverRating').innerText = `-`;
         }
 
-        // 5. รายการจุดรับ-ส่ง พร้อมเวลา
+        // 5. รายการจุดรับ-ส่ง พร้อมเวลาและการคำนวณเวลาเฉลี่ย
         let wpContainer = document.getElementById('historyDetailWaypointsContainer');
         if (wpContainer) {
             let wpHtml = '';
             let waypoints = job.waypoints || [];
+            
+            // เตรียมตัวแปรคำนวณเวลา (ถ้าไม่มีข้อมูลเวลาในแต่ละจุด)
+            let startTime = job.timestamp || Date.now();
+            let endTime = job.completedAt || (startTime + (parseInt(job.duration || 0) * 60000));
+            let timeDiff = endTime - startTime;
+
             waypoints.forEach((wp, index) => {
                 let colorClass = wp.type === 'pick' ? 'text-[#4ade80]' : (wp.type === 'drop' ? 'text-red-500' : 'text-yellow-500');
                 let labelText = wp.type === 'pick' ? 'จุดรับ' : (wp.type === 'drop' ? 'จุดส่ง' : 'จุดแวะ');
                 
-                // จัดการเวลา (ถ้ามีเวลาแต่ละจุดใช้จุดนั้น ถ้าไม่มีให้เอาเวลาสร้างงาน/จบงานมาโชว์)
+                // จัดการเวลาให้ครบทุกจุด
                 let wpTimeStr = "--:--";
                 if (wp.timestamp) { 
                     wpTimeStr = new Date(wp.timestamp).toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' });
-                } else if (index === 0 && job.timestamp) {
-                    wpTimeStr = new Date(job.timestamp).toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' });
-                } else if (index === waypoints.length - 1 && job.completedAt) {
-                    wpTimeStr = new Date(job.completedAt).toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' });
+                } else {
+                    // คำนวณเวลาเฉลี่ยตามสัดส่วนระยะทางของจุดนั้นๆ
+                    let estTime = startTime + (timeDiff * (index / (waypoints.length - 1 || 1)));
+                    wpTimeStr = new Date(estTime).toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' });
                 }
 
+                // 🌟 เพิ่ม onclick ให้กดซูมได้ และใส่ id ให้ตัวหนังสือ
                 wpHtml += `
-                <div class="flex items-start gap-3 relative z-10 w-full min-w-0">
-                    <div class="shrink-0 mt-0.5"><i class="fas fa-circle text-[12px] ${colorClass} bg-[#1e234e] rounded-full border-[1.5px] border-[#383d6a]"></i></div>
-                    <div class="flex-1 min-w-0 pb-1 flex justify-between gap-2">
+                <div class="flex items-start gap-3 relative z-10 w-full min-w-0 cursor-pointer hover:bg-[#383d6a] p-1.5 -ml-1.5 rounded-lg transition" onclick="window.toggleHistoryWaypointFocus(${index}, ${wp.lat}, ${wp.lng})">
+                    <div class="shrink-0 mt-0.5 relative z-10"><i class="fas fa-circle text-[12px] ${colorClass} bg-[#1e234e] rounded-full border-[1.5px] border-[#383d6a]"></i></div>
+                    <div class="flex-1 min-w-0 pb-1 flex justify-between gap-2 border-b border-[#383d6a]/50">
                         <div>
                             <p class="text-[11px] text-gray-400 mb-0.5 font-normal">${labelText}</p>
-                            <p class="text-[13px] text-white font-normal leading-snug break-words">${wp.name}</p>
+                            <p id="hist-wp-text-${index}" class="hist-wp-text text-[13px] text-white font-normal leading-snug break-words transition-all duration-300">${wp.name}</p>
                         </div>
                         <div class="shrink-0 text-right">
-                            <span class="text-[11px] text-gray-400 font-normal">${wpTimeStr}</span>
+                            <span class="text-[11px] text-gray-400 font-normal mt-3 inline-block">${wpTimeStr}</span>
                         </div>
                     </div>
                 </div>`;
@@ -2306,34 +2316,69 @@ function renderWaypointsUI() {
 
         document.getElementById('historyDetailModal').classList.remove('hidden');
 
-        // 6. วาดแผนที่พร้อมหมุด
+        // 6. วาดแผนที่
         setTimeout(() => {
             drawHistoryMap(job.waypoints);
         }, 300);
     }
+
+    // 🌟 ฟังก์ชันใหม่: จัดการตอนกดที่ชื่อสถานที่
+    window.toggleHistoryWaypointFocus = function(index, lat, lng) {
+        let textEl = document.getElementById('hist-wp-text-' + index);
+        
+        if (window.historyFocusedIndex === index) {
+            // กดซ้ำที่เดิม -> ยกเลิกซูม กลับไปมุมมองกว้าง
+            window.historyFocusedIndex = -1;
+            if (window.historyMapBounds && historyMapInstance) {
+                historyMapInstance.fitBounds(window.historyMapBounds);
+            }
+            // คืนค่าตัวหนังสือทั้งหมดให้เป็นปกติ
+            document.querySelectorAll('.hist-wp-text').forEach(el => {
+                el.classList.remove('font-bold', 'text-[#fae100]', 'scale-[1.02]', 'origin-left');
+                el.classList.add('font-normal', 'text-white');
+            });
+        } else {
+            // กดที่ใหม่ -> ซูมเข้าไปที่หมุดนั้น
+            window.historyFocusedIndex = index;
+            if (historyMapInstance) {
+                historyMapInstance.panTo({lat: lat, lng: lng});
+                historyMapInstance.setZoom(17); // ระดับการซูม (ยิ่งมากยิ่งใกล้)
+            }
+            // รีเซ็ตตัวหนังสืออันอื่น แล้วเน้นตัวที่กด (หนาขึ้น เปลี่ยนเป็นสีเหลือง)
+            document.querySelectorAll('.hist-wp-text').forEach(el => {
+                el.classList.remove('font-bold', 'text-[#fae100]', 'scale-[1.02]', 'origin-left');
+                el.classList.add('font-normal', 'text-white');
+            });
+            if (textEl) {
+                textEl.classList.remove('font-normal', 'text-white');
+                textEl.classList.add('font-bold', 'text-[#fae100]', 'scale-[1.02]', 'origin-left'); 
+            }
+        }
+    };
 
     window.closeHistoryDetail = function() { 
         document.getElementById('historyDetailModal').classList.add('hidden'); 
         selectedHistoryJobId = null; 
     }
 
-    // ฟังก์ชันวาดแผนที่เส้นทางย้อนหลัง (ปิดหมุดเก่า เปิดหมุดของเราเอง)
     function drawHistoryMap(waypoints) {
         if (typeof google === 'undefined' || !waypoints || waypoints.length < 2) return;
 
         if (!historyMapInstance) {
             historyMapInstance = new google.maps.Map(document.getElementById('historyMap'), {
-                zoom: 13, mapTypeId: 'hybrid', disableDefaultUI: true, gestureHandling: 'none'
+                zoom: 13, 
+                mapTypeId: 'hybrid', 
+                disableDefaultUI: true, 
+                gestureHandling: 'cooperative' // 🌟 เปลี่ยนจาก none เป็น cooperative เพื่อให้ซูมและเลื่อนแผนที่ได้
             });
             historyDirectionsService = new google.maps.DirectionsService();
             historyDirectionsRenderer = new google.maps.DirectionsRenderer({
                 map: historyMapInstance,
-                suppressMarkers: true, // 🌟 สั่งซ่อนหมุดแบบเก่าของ Google
+                suppressMarkers: true,
                 preserveViewport: false
             });
         }
 
-        // ลบหมุดประวัติรอบที่แล้วออก
         if (window.historyMapMarkers && window.historyMapMarkers.length > 0) {
             window.historyMapMarkers.forEach(m => m.setMap(null));
         }
@@ -2343,7 +2388,6 @@ function renderWaypointsUI() {
         let dest = new google.maps.LatLng(waypoints[waypoints.length - 1].lat, waypoints[waypoints.length - 1].lng);
         let wps = waypoints.slice(1, -1).map(w => ({ location: new google.maps.LatLng(w.lat, w.lng), stopover: true }));
 
-        // 🌟 วาดหมุดขึ้นมาใหม่ ให้มีเลขและสีเหมือนด้านหน้า
         waypoints.forEach((wp, idx) => {
             let isPickup = wp.type === 'pick';
             let colorHex = isPickup ? '#4ade80' : '#ef4444';
@@ -2357,15 +2401,20 @@ function renderWaypointsUI() {
                 label: { text: (idx + 1).toString(), color: textColorMap, fontWeight: 'bold', fontSize: '13px' },
                 zIndex: 10
             });
+            
+            // ทำให้คลิกที่หมุดบนแผนที่ได้ด้วย
+            m.addListener('click', () => { window.toggleHistoryWaypointFocus(idx, wp.lat, wp.lng); });
             window.historyMapMarkers.push(m);
         });
 
         historyDirectionsService.route({ origin: origin, destination: dest, waypoints: wps, travelMode: 'DRIVING' }, (res, status) => {
             if (status === 'OK') {
                 historyDirectionsRenderer.setDirections(res);
+                window.historyMapBounds = res.routes[0].bounds; // 🌟 จำขอบเขตแผนที่ไว้สำหรับตอนกดซูมออก
             }
         });
     }
+
 
     // ==========================================
     // กู้คืนระบบจัดการแบล็กลิสต์คนขับ (Block)
