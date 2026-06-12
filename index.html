@@ -2510,33 +2510,45 @@ function handleTracking() {
         let btnAddWaypt = document.getElementById('btnAddWaypt');
         let btnCall = document.getElementById('btnCall');
         let btnCancel = document.getElementById('btnCancel');
+        
+        // 🌟 เพิ่มตัวแปรปุ่มฉุกเฉิน และตัวอักษรราคาประเมิน
+        let btnEmer = document.getElementById('btnEmergency'); 
+        let priceText = document.getElementById('unifiedPriceText');
 
         if(statusText) statusText.innerText = bookData.status;
+
+        // 🌟 ดึงราคาประเมินมาแสดงผล
+        if(priceText) {
+            priceText.innerText = bookData.priceEstimate ? bookData.priceEstimate : ('~฿' + (bookData.price || 0));
+        }
 
         // ซ่อน/แสดง ข้อมูลคนขับและปุ่มต่างๆ ตามสถานะงาน
         if (bookData.status === "รอผู้ขับขี่ตอบรับ") {
             if(driverBox) driverBox.classList.add('hidden');
-            if(actionBtns) actionBtns.classList.remove('hidden'); // 🌟 เปิดกล่องปุ่มทำงาน
+            if(actionBtns) actionBtns.classList.remove('hidden'); 
             
-            // 🌟 ซ่อนปุ่มอื่น โชว์แค่ปุ่ม "ยกเลิก" (มันจะขยายเต็มจออัตโนมัติ)
             if(btnChat) btnChat.classList.add('hidden');
             if(btnAddWaypt) btnAddWaypt.classList.add('hidden');
             if(btnCall) btnCall.classList.add('hidden');
-            if(btnCancel) btnCancel.classList.remove('hidden');
+            if(btnCancel) btnCancel.classList.remove('hidden'); // โชว์แค่ปุ่มยกเลิก
+            
+            if(btnEmer) btnEmer.classList.add('hidden'); // 🌟 ซ่อนปุ่มฉุกเฉินตอนกำลังรอรถ
             
         } else if (bookData.status.includes("ยกเลิก") || bookData.status === "เสร็จสิ้น") {
             if(driverBox) driverBox.classList.add('hidden');
             if(actionBtns) actionBtns.classList.add('hidden');
+            if(btnEmer) btnEmer.classList.add('hidden'); // ซ่อนปุ่มฉุกเฉิน
         } else {
             // กรณีคนขับรับงานแล้ว
             if(driverBox) driverBox.classList.remove('hidden');
             if(actionBtns) actionBtns.classList.remove('hidden');
             
-            // 🌟 เปิดให้กดได้ทุกปุ่ม
             if(btnChat) btnChat.classList.remove('hidden');
             if(btnAddWaypt) btnAddWaypt.classList.remove('hidden');
             if(btnCall) btnCall.classList.remove('hidden');
             if(btnCancel) btnCancel.classList.remove('hidden');
+
+            if(btnEmer) btnEmer.classList.remove('hidden'); // 🌟 โชว์ปุ่มฉุกเฉินเฉพาะตอนคนขับรับงานแล้ว
 
             document.getElementById('trackDriverPlate').innerText = bookData.driverPlate || 'กำลังดึงข้อมูล...';
             document.getElementById('trackDriverCar').innerText = bookData.driverCar || '-';
@@ -2548,6 +2560,7 @@ function handleTracking() {
             drawTrackingRoute(bookData.status);
         }
     }
+    
     function updateRealtimeMap() {
         if(!map || !currentRouteBounds) return;
         let pb = getDynamicBottomPadding();
