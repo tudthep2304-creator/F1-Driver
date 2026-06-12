@@ -1545,6 +1545,7 @@ window.openProfileModal = function() {
             }
             
             updateRideButtonState();
+          renderWaypointsUI();
             handleTracking(); 
         } 
         else if (currentStep === 'Tracking' && !window.isCompleting) {
@@ -1849,6 +1850,13 @@ window.openProfileModal = function() {
 
         const p4Panel = document.getElementById('page4Panel'); if(p4Panel) p4Panel.classList.remove('panel-collapsed-page4');
         bookData.waypoints = localWaypoints; renderWaypointsUI(); calculatePrice();
+      }
+      // 🌟 เติมบล็อกนี้เข้าไปทั้งหมด เพื่อให้หน้า Tracking โหลดข้อมูลสมบูรณ์เวลาเปิดกลับมาดู
+      else if (page === 'Tracking') {
+        const bEmer = document.getElementById('btnEmergency');
+        if(bEmer) bEmer.classList.remove('hidden'); 
+        renderWaypointsUI();
+        if(typeof handleTracking === 'function') handleTracking();
       }
 
       updateMapControlsPosition(page);
