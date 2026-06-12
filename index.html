@@ -573,7 +573,7 @@
       <div class="p-4" id="blockedListContainer"><div class="flex justify-center py-10"><i class="fas fa-spinner fa-spin text-3xl text-red-500"></i></div></div>
   </div>
 
-<div id="historyDetailModal" class="hidden fixed inset-0 z-[260] bg-[#1e234e] flex flex-col pointer-events-auto transition-transform">
+  <div id="historyDetailModal" class="hidden fixed inset-0 z-[260] bg-[#1e234e] flex flex-col pointer-events-auto transition-transform">
       <div class="relative z-20 bg-[#2a2f5c]/90 backdrop-blur-md border-b border-[#383d6a] h-16 px-4 flex items-center justify-between shadow-md shrink-0 w-full">
           <div class="flex items-center gap-3">
               <button onclick="window.closeHistoryDetail()" class="w-10 h-10 shrink-0 bg-[#383d6a]/80 text-gray-400 rounded-full flex items-center justify-center hover:text-[#fae100] transition"><i class="fas fa-arrow-left"></i></button>
@@ -582,7 +582,6 @@
       </div>
 
       <div class="flex-1 overflow-y-auto w-full hide-scrollbar flex flex-col bg-[#1e234e] relative z-10">
-          
           <div id="historyMap" class="w-full h-[220px] bg-[#1e234e] shrink-0 border-b border-[#383d6a] pointer-events-none"></div>
 
           <div class="p-4 flex flex-col gap-4 text-white font-normal pb-10">
@@ -592,47 +591,52 @@
                       <p class="text-[13px] font-normal text-[#fae100]" id="histDetId">#JOB-XXXX</p>
                   </div>
                   <div class="text-right">
-                      <p class="text-[11px] text-gray-400 mb-0.5 font-normal">เวลาที่เดินทาง</p>
-                      <p class="text-[13px] font-normal" id="histDetDate">--/--/---- --:--</p>
-                  </div>
-              </div>
-
-              <div class="bg-[#2a2f5c] p-4 rounded-2xl border border-[#383d6a] shadow-sm flex justify-between items-center">
-                  <div class="flex gap-5">
-                      <div>
-                          <p class="text-[11px] text-gray-400 mb-0.5 font-normal">ระยะทาง</p>
-                          <p class="text-[13px] font-normal"><span id="histDetDist">0</span> กม.</p>
-                      </div>
-                      <div>
-                          <p class="text-[11px] text-gray-400 mb-0.5 font-normal">เวลา</p>
-                          <p class="text-[13px] font-normal"><span id="histDetTime">0</span> นาที</p>
-                      </div>
-                  </div>
-                  <div class="text-right">
-                      <p class="text-[11px] text-gray-400 mb-0.5 font-normal">ราคาสุทธิ</p>
-                      <p class="text-[18px] font-bold text-[#4ade80]" id="histDetPrice">฿0</p>
+                      <p class="text-[11px] text-gray-400 mb-0.5 font-normal">วันที่เดินทาง</p>
+                      <p class="text-[13px] font-normal" id="histDetDate">--/--/----</p>
                   </div>
               </div>
 
               <div class="bg-[#2a2f5c] p-4 rounded-2xl border border-[#383d6a] shadow-sm flex items-center justify-between">
                   <div class="flex items-center gap-3">
-                      <div class="w-10 h-10 bg-[#1e234e] rounded-full flex items-center justify-center text-[#fae100] text-xl border border-[#383d6a]"><i class="fas fa-user-tie"></i></div>
+                      <div class="w-10 h-10 bg-[#1e234e] rounded-full flex items-center justify-center text-[#fae100] text-xl border border-[#383d6a] shrink-0"><i class="fas fa-user-tie"></i></div>
                       <div>
                           <p class="text-[13px] font-normal" id="histDetDriver">คนขับ: -</p>
                           <p class="text-[11px] text-gray-400 mt-0.5 font-normal" id="histDetDriverRating"><i class="fas fa-star text-[#fae100]"></i> 5.0</p>
                       </div>
                   </div>
+                  <button id="btnBlockDriver" onclick="window.blockCurrentHistoryDriver()" class="w-10 h-10 bg-red-900/30 text-red-500 rounded-full border border-red-500/30 flex items-center justify-center hover:bg-red-900/50 transition shrink-0" title="บล็อกคนขับ">
+                      <i class="fas fa-ban"></i>
+                  </button>
               </div>
 
-              <div class="bg-[#2a2f5c] p-4 rounded-2xl border border-[#383d6a] shadow-sm relative">
-                  <div class="absolute left-[1.45rem] top-8 bottom-8 w-0.5 border-l-[1.5px] border-dashed border-[#4b507d]"></div>
-                  <div id="historyDetailWaypointsContainer" class="flex flex-col relative z-10 gap-3"></div>
+              <div class="bg-[#2a2f5c] p-4 rounded-2xl border border-[#383d6a] shadow-sm flex flex-col gap-4">
+                  <div class="flex justify-between items-center border-b border-[#383d6a] pb-4">
+                      <div class="flex gap-5">
+                          <div>
+                              <p class="text-[11px] text-gray-400 mb-0.5 font-normal">ระยะทาง</p>
+                              <p class="text-[13px] font-normal"><span id="histDetDist">0</span> กม.</p>
+                          </div>
+                          <div>
+                              <p class="text-[11px] text-gray-400 mb-0.5 font-normal">เวลา</p>
+                              <p class="text-[13px] font-normal"><span id="histDetTime">0</span> นาที</p>
+                          </div>
+                      </div>
+                      <div class="text-right">
+                          <p class="text-[11px] text-gray-400 mb-0.5 font-normal">ราคาสุทธิ</p>
+                          <p class="text-[18px] font-bold text-[#4ade80]" id="histDetPrice">฿0</p>
+                      </div>
+                  </div>
+
+                  <div class="relative mt-1">
+                      <div class="absolute left-[0.45rem] top-4 bottom-4 w-0.5 border-l-[1.5px] border-dashed border-[#4b507d]"></div>
+                      <div id="historyDetailWaypointsContainer" class="flex flex-col relative z-10 gap-4"></div>
+                  </div>
               </div>
 
-              <button id="btnBlockDriver" onclick="window.blockCurrentHistoryDriver()" class="w-full mt-2 bg-transparent border border-red-500/50 text-red-400 font-normal py-3 rounded-full shadow-sm hover:bg-red-900/40 transition flex items-center justify-center gap-2"><i class="fas fa-ban"></i> บล็อกคนขับคนนี้</button>
           </div>
       </div>
   </div>
+
   <div id="routeChangeModal" class="hidden fixed inset-0 z-[200] bg-black/80 flex items-center justify-center p-4 pointer-events-auto transition-opacity">
       <div class="bg-[#1e234e] rounded-3xl p-6 w-full max-w-sm text-center shadow-xl text-gray-100 border border-[#383d6a]">
           <div class="w-16 h-16 bg-[#fae100]/20 text-[#fae100] border border-[#fae100]/30 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl"><i class="fas fa-route"></i></div>
@@ -2224,10 +2228,11 @@ function renderWaypointsUI() {
         });
     }
 
-// ตัวแปรสำหรับแผนที่ประวัติ
+    // ตัวแปรสำหรับแผนที่ประวัติ
     let historyMapInstance = null;
     let historyDirectionsService = null;
     let historyDirectionsRenderer = null;
+    window.historyMapMarkers = []; // ตัวเก็บหมุดเก่าไว้ลบทิ้ง
 
     window.openHistoryDetail = function(jobId) {
         let job = loadedHistoryJobs[jobId]; 
@@ -2239,7 +2244,7 @@ function renderWaypointsUI() {
         document.getElementById('histDetId').innerText = `#${shortId}`;
 
         // 2. วันที่ และ ราคา
-        document.getElementById('histDetDate').innerText = new Date(job.completedAt || job.timestamp).toLocaleString('th-TH', { dateStyle: 'short', timeStyle: 'short' }); 
+        document.getElementById('histDetDate').innerText = new Date(job.completedAt || job.timestamp).toLocaleDateString('th-TH'); 
         document.getElementById('histDetPrice').innerText = "฿" + (job.price || 0); 
 
         // 3. ระยะทาง และ เวลา
@@ -2263,20 +2268,36 @@ function renderWaypointsUI() {
             document.getElementById('histDetDriverRating').innerText = `-`;
         }
 
-        // 5. รายการจุดรับ-ส่ง
+        // 5. รายการจุดรับ-ส่ง พร้อมเวลา
         let wpContainer = document.getElementById('historyDetailWaypointsContainer');
         if (wpContainer) {
             let wpHtml = '';
             let waypoints = job.waypoints || [];
-            waypoints.forEach(wp => {
+            waypoints.forEach((wp, index) => {
                 let colorClass = wp.type === 'pick' ? 'text-[#4ade80]' : (wp.type === 'drop' ? 'text-red-500' : 'text-yellow-500');
                 let labelText = wp.type === 'pick' ? 'จุดรับ' : (wp.type === 'drop' ? 'จุดส่ง' : 'จุดแวะ');
+                
+                // จัดการเวลา (ถ้ามีเวลาแต่ละจุดใช้จุดนั้น ถ้าไม่มีให้เอาเวลาสร้างงาน/จบงานมาโชว์)
+                let wpTimeStr = "--:--";
+                if (wp.timestamp) { 
+                    wpTimeStr = new Date(wp.timestamp).toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' });
+                } else if (index === 0 && job.timestamp) {
+                    wpTimeStr = new Date(job.timestamp).toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' });
+                } else if (index === waypoints.length - 1 && job.completedAt) {
+                    wpTimeStr = new Date(job.completedAt).toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' });
+                }
+
                 wpHtml += `
                 <div class="flex items-start gap-3 relative z-10 w-full min-w-0">
                     <div class="shrink-0 mt-0.5"><i class="fas fa-circle text-[12px] ${colorClass} bg-[#1e234e] rounded-full border-[1.5px] border-[#383d6a]"></i></div>
-                    <div class="flex-1 min-w-0 pb-1">
-                        <p class="text-[11px] text-gray-400 mb-0.5 font-normal">${labelText}</p>
-                        <p class="text-[13px] text-white font-normal leading-snug break-words">${wp.name}</p>
+                    <div class="flex-1 min-w-0 pb-1 flex justify-between gap-2">
+                        <div>
+                            <p class="text-[11px] text-gray-400 mb-0.5 font-normal">${labelText}</p>
+                            <p class="text-[13px] text-white font-normal leading-snug break-words">${wp.name}</p>
+                        </div>
+                        <div class="shrink-0 text-right">
+                            <span class="text-[11px] text-gray-400 font-normal">${wpTimeStr}</span>
+                        </div>
                     </div>
                 </div>`;
             });
@@ -2285,7 +2306,7 @@ function renderWaypointsUI() {
 
         document.getElementById('historyDetailModal').classList.remove('hidden');
 
-        // 6. วาดแผนที่หน่วงเวลาเล็กน้อยเพื่อให้หน้าต่างเปิดเสร็จก่อน
+        // 6. วาดแผนที่พร้อมหมุด
         setTimeout(() => {
             drawHistoryMap(job.waypoints);
         }, 300);
@@ -2296,28 +2317,48 @@ function renderWaypointsUI() {
         selectedHistoryJobId = null; 
     }
 
-    // ฟังก์ชันวาดแผนที่เส้นทางย้อนหลัง
+    // ฟังก์ชันวาดแผนที่เส้นทางย้อนหลัง (ปิดหมุดเก่า เปิดหมุดของเราเอง)
     function drawHistoryMap(waypoints) {
         if (typeof google === 'undefined' || !waypoints || waypoints.length < 2) return;
 
         if (!historyMapInstance) {
             historyMapInstance = new google.maps.Map(document.getElementById('historyMap'), {
-                zoom: 13,
-                mapTypeId: 'hybrid', // ใช้ดาวเทียมให้เข้ากับธีมแอป
-                disableDefaultUI: true,
-                gestureHandling: 'none' // ล็อกแผนที่ไม่ให้เลื่อน จะได้ไถหน้าจอมือถือได้ง่าย
+                zoom: 13, mapTypeId: 'hybrid', disableDefaultUI: true, gestureHandling: 'none'
             });
             historyDirectionsService = new google.maps.DirectionsService();
             historyDirectionsRenderer = new google.maps.DirectionsRenderer({
                 map: historyMapInstance,
-                suppressMarkers: false, // ปล่อยให้ Google วาดหมุด A, B ให้
+                suppressMarkers: true, // 🌟 สั่งซ่อนหมุดแบบเก่าของ Google
                 preserveViewport: false
             });
         }
 
+        // ลบหมุดประวัติรอบที่แล้วออก
+        if (window.historyMapMarkers && window.historyMapMarkers.length > 0) {
+            window.historyMapMarkers.forEach(m => m.setMap(null));
+        }
+        window.historyMapMarkers = [];
+
         let origin = new google.maps.LatLng(waypoints[0].lat, waypoints[0].lng);
         let dest = new google.maps.LatLng(waypoints[waypoints.length - 1].lat, waypoints[waypoints.length - 1].lng);
         let wps = waypoints.slice(1, -1).map(w => ({ location: new google.maps.LatLng(w.lat, w.lng), stopover: true }));
+
+        // 🌟 วาดหมุดขึ้นมาใหม่ ให้มีเลขและสีเหมือนด้านหน้า
+        waypoints.forEach((wp, idx) => {
+            let isPickup = wp.type === 'pick';
+            let colorHex = isPickup ? '#4ade80' : '#ef4444';
+            if (wp.type === 'waypoint') colorHex = '#eab308';
+            let textColorMap = isPickup ? '#1e234e' : '#ffffff';
+
+            let m = new google.maps.Marker({
+                position: { lat: wp.lat, lng: wp.lng },
+                map: historyMapInstance,
+                icon: createNumberedMarkerIcon((idx + 1).toString(), colorHex, textColorMap),
+                label: { text: (idx + 1).toString(), color: textColorMap, fontWeight: 'bold', fontSize: '13px' },
+                zIndex: 10
+            });
+            window.historyMapMarkers.push(m);
+        });
 
         historyDirectionsService.route({ origin: origin, destination: dest, waypoints: wps, travelMode: 'DRIVING' }, (res, status) => {
             if (status === 'OK') {
@@ -2325,6 +2366,7 @@ function renderWaypointsUI() {
             }
         });
     }
+
     // ==========================================
     // กู้คืนระบบจัดการแบล็กลิสต์คนขับ (Block)
     // ==========================================
