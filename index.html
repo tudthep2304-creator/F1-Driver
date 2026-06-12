@@ -114,7 +114,7 @@
         </div>
     </div>
 
-    <div class="p-4 flex-1 flex flex-col items-center w-full max-w-sm mx-auto">
+    <div class="p-4 flex-1 flex flex-col items-center w-full">
       <div id="homeBannerContainer" class="w-full aspect-video bg-black rounded-none mb-6 shadow-md overflow-hidden relative hidden shrink-0">
           <div id="bannerSlider" class="flex overflow-x-auto snap-x snap-mandatory hide-scrollbar w-full h-full relative scroll-smooth items-center"></div>
           <div id="bannerDots" class="absolute bottom-3 left-1/2 transform -translate-x-1/2 flex gap-1.5 z-10 bg-black/40 px-2 py-1 rounded-full"></div>
@@ -192,15 +192,15 @@
       </div>
       
       <div class="flex-1 overflow-y-auto flex flex-col w-full hide-scrollbar">
-          <div class="px-4 w-full max-w-sm mx-auto shrink-0 mt-4">
+          <div class="px-4 w-full shrink-0 mt-4">
               <div id="newsTopBannerContainer" class="w-full aspect-video bg-black hidden relative shadow-md rounded-none">
                   <div id="newsTopBannerSlider" class="flex overflow-x-auto snap-x snap-mandatory hide-scrollbar w-full h-full relative scroll-smooth items-center"></div>
               </div>
           </div>
           
-          <div class="p-4 space-y-4 w-full max-w-sm mx-auto flex-1" id="newsListContainer"></div>
+          <div class="p-4 space-y-4 w-full flex-1" id="newsListContainer"></div>
 
-          <div class="px-4 w-full max-w-sm mx-auto shrink-0 mb-4 mt-auto">
+          <div class="px-4 w-full shrink-0 mb-4 mt-auto">
               <div id="newsBottomBannerContainer" class="w-full h-[70px] bg-[#2a2f5c] rounded-none overflow-hidden hidden relative shadow-md">
                   <div id="newsBottomBannerSlider" class="flex overflow-x-auto snap-x snap-mandatory hide-scrollbar w-full h-full scroll-smooth items-center"></div>
               </div>
@@ -721,7 +721,7 @@
 
     window.currentServiceType = 'car';
 
-    function updateRideButtonState() {
+function updateRideButtonState() {
         let btnMainRide = document.getElementById('btnMainRideAction');
         let btnMainRideIcon = document.getElementById('btnMainRideIcon');
         let btnMainRideText = document.getElementById('btnMainRideText');
@@ -731,14 +731,15 @@
 
         if (hasActiveJob) {
             btnMainRide.disabled = false;
-            btnMainRide.className = "flex flex-col items-center justify-center gap-1.5 text-[#fae100] transition active:scale-95 bg-transparent border border-[#383d6a] rounded-2xl p-4 outline-none animate-pulse";
+            // เอาคลาสกรอบ (border) และ p-4 ออก
+            btnMainRide.className = "flex flex-col items-center justify-center gap-1.5 text-[#fae100] transition active:scale-95 bg-transparent outline-none animate-pulse";
             if(btnMainRideIcon) btnMainRideIcon.className = "fas fa-route text-[30px]";
             if(btnMainRideText) btnMainRideText.innerText = "ดูสถานะ";
             btnMainRide.onclick = function() { window.showPage('Tracking'); };
         } else {
-            // ปุ่มพร้อมใช้งานเสมอ แม้จะไม่มีรถ
             btnMainRide.disabled = false;
-            btnMainRide.className = "flex flex-col items-center justify-center gap-1.5 text-[#fae100] transition active:scale-95 bg-transparent border border-[#383d6a] rounded-2xl p-4 outline-none";
+            // เอาคลาสกรอบ (border) และ p-4 ออก
+            btnMainRide.className = "flex flex-col items-center justify-center gap-1.5 text-[#fae100] transition active:scale-95 bg-transparent outline-none";
             if(btnMainRideIcon) btnMainRideIcon.className = "fas fa-car text-[30px]";
             if(btnMainRideText) btnMainRideText.innerText = "เรียกรถ";
             btnMainRide.onclick = function() { window.openVehicleModal(); };
