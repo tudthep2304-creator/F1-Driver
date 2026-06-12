@@ -17,41 +17,65 @@
 /* Splash Screen CSS */
     #splashScreen { position: fixed; inset: 0; z-index: 999999; background-color: #1e234e; display: flex; align-items: center; justify-content: center; transition: opacity 0.5s ease, visibility 0.5s; overflow: hidden; }
     
-    /* เอฟเฟกต์ยืดแบบโดนหลุมดำดูด (Warp / Spaghettification) */
-    @keyframes warpF { 
-        0% { opacity: 0; transform: translateX(-150vw) scaleX(8); } /* ยืดออก 8 เท่าจากนอกจอ */
-        70% { opacity: 1; transform: translateX(20px) scaleX(0.7); } /* เบรกตัวโก่ง หดสั้นกว่าปกตินิดนึง */
-        100% { opacity: 1; transform: translateX(0) scaleX(1); } /* ดีดกลับมาทรงเดิม */
+    /* แอนิเมชันสไลด์พุ่งเข้ามา (เอาการยืดออก เพื่อให้รอยยางคงรูปสวยงาม) */
+    @keyframes driveF { 
+        0% { opacity: 0; transform: translateX(-100vw); } 
+        70% { opacity: 1; transform: translateX(20px); } /* จังหวะเบรกตัวโก่ง */
+        100% { opacity: 1; transform: translateX(0); } 
     }
     
-    @keyframes warpOne { 
-        0% { opacity: 0; transform: translateX(150vw) scaleX(8); } 
-        70% { opacity: 1; transform: translateX(-20px) scaleX(0.7); } 
-        100% { opacity: 1; transform: translateX(0) scaleX(1); } 
+    @keyframes driveOne { 
+        0% { opacity: 0; transform: translateX(100vw); } 
+        70% { opacity: 1; transform: translateX(-20px); } 
+        100% { opacity: 1; transform: translateX(0); } 
+    }
+
+    /* แอนิเมชันให้รอยยางค่อยๆ จางหายไปตอนเบรกจอดสนิท */
+    @keyframes fadeTrack {
+        0% { opacity: 0; }
+        30% { opacity: 1; }
+        70% { opacity: 1; }
+        100% { opacity: 0; } /* รอยหายไปตอนจบ */
     }
     
-    /* ตัว F (พุ่งจากขอบซ้าย + สีขาวล้วน) */
+    /* ตัว F (สีขาวล้วน) */
     .logo-f { 
         display: inline-block; 
         font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
         font-size: 8.5rem; 
-        color: white; /* กลับมาใช้สีขาว */
+        color: white; 
         line-height: 1; 
         padding-right: 15px; 
         position: relative; 
         z-index: 2; 
         opacity: 0;
-        transform-origin: right center;
-        animation: warpF 0.6s cubic-bezier(0.25, 1, 0.5, 1) forwards; 
+        animation: driveF 0.6s cubic-bezier(0.25, 1, 0.5, 1) forwards; 
         -webkit-font-smoothing: antialiased; 
     }
     
-    /* เลข 1 (พุ่งจากขอบขวา + สีเหลืองล้วน) */
+    /* 🌟 สร้างรอยยาง (ดอกยาง) ลากตามหลังตัว F จากขอบซ้าย */
+    .logo-f::after {
+        content: '';
+        position: absolute;
+        right: 80%; /* ให้ออกมาจากท้ายตัวอักษร */
+        bottom: 25px; /* ระดับความสูงของรอยยางให้อยู่ที่ฐานตัวหนังสือ */
+        width: 100vw;
+        height: 25px;
+        /* วาดลายดอกยางรถเฉียงๆ สีขาว */
+        background: repeating-linear-gradient(75deg, rgba(255,255,255,0.2) 0, rgba(255,255,255,0.2) 6px, transparent 6px, transparent 12px);
+        /* เฟดให้ปลายรอยยางค่อยๆ กลืนไปกับพื้นหลัง */
+        -webkit-mask-image: linear-gradient(to right, transparent 0%, black 90%);
+        mask-image: linear-gradient(to right, transparent 0%, black 90%);
+        animation: fadeTrack 0.6s ease-out forwards;
+        z-index: -1;
+    }
+    
+    /* เลข 1 (สีเหลืองล้วน) */
     .logo-1 { 
         display: inline-block; 
         font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
         font-size: 8.5rem; 
-        color: #fae100; /* กลับมาใช้สีเหลือง */
+        color: #fae100; 
         line-height: 1; 
         margin-left: -20px; 
         margin-top: 45px;   
@@ -59,9 +83,24 @@
         position: relative; 
         z-index: 1; 
         opacity: 0;
-        transform-origin: left center;
-        animation: warpOne 0.6s cubic-bezier(0.25, 1, 0.5, 1) forwards; 
+        animation: driveOne 0.6s cubic-bezier(0.25, 1, 0.5, 1) forwards; 
         -webkit-font-smoothing: antialiased;
+    }
+
+    /* 🌟 สร้างรอยยาง (ดอกยาง) ลากตามหลังเลข 1 จากขอบขวา */
+    .logo-1::after {
+        content: '';
+        position: absolute;
+        left: 80%; /* ให้ออกมาจากท้ายเลข 1 */
+        bottom: 25px; 
+        width: 100vw;
+        height: 25px;
+        /* วาดลายดอกยางรถเฉียงๆ สีเหลือง */
+        background: repeating-linear-gradient(-75deg, rgba(250,225,0,0.2) 0, rgba(250,225,0,0.2) 6px, transparent 6px, transparent 12px);
+        -webkit-mask-image: linear-gradient(to left, transparent 0%, black 90%);
+        mask-image: linear-gradient(to left, transparent 0%, black 90%);
+        animation: fadeTrack 0.6s ease-out forwards;
+        z-index: -1;
     }
     
     .glass-box { background: rgba(42, 47, 92, 0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1); box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3); }
