@@ -2298,21 +2298,17 @@ function renderWaypointsUI() {
                 
                 html += `
                 <div onclick="window.openHistoryDetail('${job.id}')" class="bg-[#2a2f5c] border border-[#383d6a] p-3 rounded-2xl shadow-sm cursor-pointer hover:bg-[#383d6a] transition">
-                    <!-- 🌟 ปรับ margin ล่างเป็น 5px (mb-[5px]) -->
                     <div class="flex justify-between items-center mb-[5px]">
-                        <!-- 🌟 ปรับขนาดวันที่เป็น 13px -->
-                        <p class="text-[13px] text-gray-400 font-bold"><i class="far fa-clock"></i> ${dateStr}</p>
-                        <!-- 🌟 เอากรอบ/พื้นหลังออก และปรับขนาดราคาเป็น 18px -->
-                        <span class="font-black text-[#4ade80] text-[18px] leading-none">฿${job.price}</span>
+                        <p class="text-[11px] text-gray-400 font-normal"><i class="far fa-clock"></i> ${dateStr}</p>
+                        <span class="font-normal text-[#4ade80] text-[16px] leading-none">฿${job.price}</span>
                     </div>
-                    <!-- 🌟 ปรับขนาดชื่อสถานที่เป็น 13px -->
                     <div class="flex items-center gap-2 mb-1.5">
                         <i class="fas fa-circle text-[8px] text-green-500 shrink-0"></i>
-                        <p class="text-[13px] text-gray-300 truncate">${job.pName}</p>
+                        <p class="text-[13px] text-white truncate">${job.pName}</p>
                     </div>
                     <div class="flex items-center gap-2">
                         <i class="fas fa-circle text-[8px] text-red-500 shrink-0"></i>
-                        <p class="text-[13px] text-gray-300 truncate">${job.dName}</p>
+                        <p class="text-[13px] text-white truncate">${job.dName}</p>
                     </div>
                 </div>`;
             });
