@@ -437,7 +437,7 @@
   </div>
 
   <div id="page4" class="hidden">
-    <div id="page4Panel" class="ui-panel border-t-[4px] border-blue-500 h-auto pb-6 pt-3 transition-transform duration-300">
+    <div id="page4Panel" class="ui-panel border-t-[4px] border-[#fae100] h-auto pb-6 pt-3 transition-transform duration-300">
       <div class="w-full flex justify-center pb-3 cursor-pointer" onclick="window.togglePage4Panel()"><div class="w-12 h-1.5 bg-[#4b507d] rounded-full"></div></div>
       
       <div class="flex justify-between items-center mb-2">
@@ -464,47 +464,34 @@
 
       <form onsubmit="event.preventDefault(); window.submitBooking();" class="flex gap-1.5 w-full mt-1 shrink-0 pb-2">
           
-          <button type="button" id="btnUsePromo" onclick="window.openPromoModal()" class="shrink-0 px-3 bg-[#2a2f5c] border border-[#383d6a] text-[#fae100] rounded-full text-[13px] font-normal hover:bg-[#383d6a] transition flex items-center justify-center gap-1.5 shadow-sm">
-              <i class="fas fa-ticket-alt"></i> โค้ด
-          </button>
-          
           <div class="relative flex-[1.2] min-w-[100px]">
               <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-400"><i class="fas fa-phone-alt text-[13px]"></i></div>
               <input type="tel" id="userPhone" name="tel" autocomplete="tel" inputmode="tel" oninput="window.formatPhone(this)" placeholder="เบอร์ติดต่อ" class="w-full py-3 pl-8 pr-2 bg-[#2a2f5c] border border-[#383d6a] focus:border-[#fae100] focus:bg-[#1e234e] text-white placeholder-gray-500 rounded-full text-[13px] font-normal outline-none transition-colors h-full">
           </div>
 
+          <button type="button" id="btnUsePromo" onclick="window.openPromoModal()" class="shrink-0 px-3 bg-[#2a2f5c] border border-[#383d6a] text-[#fae100] rounded-full text-[13px] font-normal hover:bg-[#383d6a] transition flex items-center justify-center gap-1.5 shadow-sm">
+              <i class="fas fa-ticket-alt"></i> โค้ด
+          </button>
+
           <button type="submit" id="btnSubmitBooking" class="flex-[1.5] bg-[#fae100] text-[#1e234e] py-3 rounded-full font-normal text-[13px] shadow-md hover:bg-[#e5ce00] active:scale-[0.98] transition flex justify-center items-center gap-1.5 whitespace-nowrap h-full shrink-0">
-              ยืนยันเรียกรถ <i class="fas fa-check"></i>
+              ยืนยัน <i class="fas fa-check"></i>
           </button>
       </form>
     </div>
   </div>
-
-  <div id="confirmActionModal" class="hidden fixed inset-0 z-[9990] bg-black/80 flex items-center justify-center p-4 pointer-events-auto">
-      <div class="bg-[#1e234e] border border-[#383d6a] rounded-3xl p-3 w-full max-w-sm text-center shadow-2xl">
-          <div class="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl" id="confirmActionIcon"><i class="fas fa-map-marked-alt"></i></div>
-          <h3 id="confirmActionTitle" class="text-[13px] font-medium text-white mb-2">...</h3>
-          <p id="confirmActionMessage" class="text-[13px] font-normal text-white mb-6 leading-relaxed">...</p>
-          <div class="flex gap-2">
-              <button onclick="window.closeConfirmActionModal()" class="flex-1 py-2 bg-[#2a2f5c] text-white font-normal rounded-full hover:bg-[#383d6a] transition border border-[#383d6a] text-[13px]">ยกเลิก</button>
-              <button id="confirmActionButton" onclick="window.submitConfirmAction()" class="flex-1 py-2 font-normal rounded-full shadow-md transition text-[13px] text-white">ตกลง</button>
-          </div>
-      </div>
-  </div>
   
-  <!-- TRACKING -->
   <div id="pageTracking" class="hidden">
     <div id="trackingPanel" class="ui-panel border-t-[4px] border-[#fae100] h-auto pb-5 pt-3 transition-transform duration-300"> 
       <div class="w-full flex justify-center pb-3 cursor-pointer" onclick="window.toggleTrackingPanel()"><div class="w-12 h-1.5 bg-[#4b507d] rounded-full"></div></div>
       <div id="unifiedStatusBox" class="mb-3 flex justify-between items-center w-full relative overflow-hidden pb-1">
           <div class="min-w-0 flex-1 pr-2">
-              <p class="text-[10px] font-black text-gray-400 mb-0.5 tracking-widest flex items-center gap-1.5" id="unifiedStatusLabel"><i class="fas fa-spinner fa-spin text-blue-400 text-[12px]"></i> STATUS</p>
+              <p class="text-[11px] font-normal text-gray-400 mb-0.5 tracking-widest flex items-center gap-1.5" id="unifiedStatusLabel"><i class="fas fa-spinner fa-spin text-blue-400 text-[12px]"></i> STATUS</p>
               <h2 class="font-black text-[15px] leading-tight text-white truncate" id="unifiedStatusText">กำลังค้นหาคนขับ...</h2>
               <p class="text-[11px] font-normal mt-0.5 text-blue-400 hidden truncate" id="unifiedEtaText">ระยะทาง -- กม. • -- นาที • ถึง --:-- น.</p>
           </div>
           <div class="text-right shrink-0 flex flex-col items-end">
-              <p class="text-[10px] text-gray-400 font-normal mb-0.5" id="priceLabelTracking">ราคาประเมิน</p>
-              <span class="bg-[#2a2f5c] border border-[#383d6a] px-3 py-1.5 rounded-xl font-black text-[#fae100] text-sm inline-block shadow-inner" id="unifiedPriceText">~฿0</span>
+              <p class="text-[11px] text-gray-400 font-normal mb-0.5" id="priceLabelTracking">ราคาประเมิน</p>
+              <span class="text-[#4ade80] text-[13px] font-medium" id="unifiedPriceText">~฿0</span>
           </div>
           <div id="searchProgressBar" class="absolute bottom-0 left-0 w-full h-[2px] bg-[#383d6a]/50 hidden"><div class="h-full bg-blue-500 w-1/3 rounded-full animate-loading-scan"></div></div>
       </div>
@@ -531,193 +518,17 @@
       </div>
 
       <div id="actionButtonsBox" class="hidden gap-2 mb-1 shrink-0 w-full flex-row">
-          <button id="btnChat" onclick="window.openInAppChatModal()" class="flex-1 w-full bg-blue-900/40 text-blue-400 py-3 rounded-xl font-normal border border-blue-500/30 text-sm shadow-sm hover:bg-blue-800 transition flex justify-center items-center gap-1.5"><i class="fas fa-comments text-[16px]"></i> แชท</button>
-          <button id="btnAddWaypt" onclick="window.openWaypointSearchModal()" class="flex-1 w-full bg-yellow-900/30 text-yellow-400 py-3 rounded-xl font-normal border border-yellow-500/30 text-sm shadow-sm hover:bg-yellow-600/50 transition flex justify-center items-center gap-1.5"><i class="fas fa-plus"></i> แวะเพิ่ม</button>
-          <button id="btnCall" onclick="window.openCallConfirmModal()" class="flex-1 w-full bg-[#fae100] text-[#1e234e] py-3 rounded-xl font-black text-sm shadow-sm hover:bg-[#e5ce00] transition flex justify-center items-center gap-1.5"><i class="fas fa-phone-alt"></i> โทร</button>
-          <button id="btnCancel" onclick="window.openCancelModal()" class="flex-1 w-full bg-red-900/40 text-red-400 py-3 rounded-xl font-normal border border-red-500/30 text-sm hover:bg-red-900/60 transition flex justify-center items-center gap-1.5"><i class="fas fa-times"></i> ยกเลิก</button>
+          <button id="btnChat" onclick="window.openInAppChatModal()" class="flex-1 w-full bg-blue-900/40 text-blue-400 py-3 rounded-full font-normal border border-blue-500/30 text-[13px] shadow-sm hover:bg-blue-800 transition flex justify-center items-center gap-1.5"><i class="fas fa-comments text-[14px]"></i> แชท</button>
+          <button id="btnCall" onclick="window.openCallConfirmModal()" class="flex-1 w-full bg-[#fae100] text-[#1e234e] py-3 rounded-full font-medium text-[13px] shadow-sm hover:bg-[#e5ce00] transition flex justify-center items-center gap-1.5"><i class="fas fa-phone-alt"></i> โทร</button>
+          <button id="btnCancel" onclick="window.openCancelModal()" class="flex-1 w-full bg-red-900/40 text-red-400 py-3 rounded-full font-normal border border-red-500/30 text-[13px] hover:bg-red-900/60 transition flex justify-center items-center gap-1.5"><i class="fas fa-times"></i> ยกเลิก</button>
       </div>
     </div>
-  </div>
-
-  <!-- Modals -->
-  <div id="driverRatingModal" class="hidden fixed inset-0 z-[260] bg-black/80 flex items-center justify-center p-4 pointer-events-auto">
-      <div class="bg-[#1e234e] border border-[#fae100]/30 rounded-3xl p-6 w-full max-w-sm text-center shadow-2xl">
-          <div class="w-16 h-16 bg-[#fae100]/20 text-[#fae100] border border-[#fae100]/30 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl"><i class="fas fa-star-half-alt"></i></div>
-          <h3 class="text-xl font-black text-white mb-2">ให้คะแนนคนขับ</h3>
-          <p class="text-sm font-normal text-gray-400 mb-6 leading-relaxed">กรุณาประเมินความพึงพอใจการให้บริการของคนขับในรอบนี้ครับ</p>
-          <div class="flex justify-center gap-2 mb-6" id="starRatingBox">
-              <i class="fas fa-star text-3xl font-normal text-gray-600 cursor-pointer transition hover:text-white" onclick="window.updateSelectedRatingScore(1)"></i>
-              <i class="fas fa-star text-3xl font-normal text-gray-600 cursor-pointer transition hover:text-white" onclick="window.updateSelectedRatingScore(2)"></i>
-              <i class="fas fa-star text-3xl font-normal text-gray-600 cursor-pointer transition hover:text-white" onclick="window.updateSelectedRatingScore(3)"></i>
-              <i class="fas fa-star text-3xl font-normal text-gray-600 cursor-pointer transition hover:text-white" onclick="window.updateSelectedRatingScore(4)"></i>
-              <i class="fas fa-star text-3xl font-normal text-gray-600 cursor-pointer transition hover:text-white" onclick="window.updateSelectedRatingScore(5)"></i>
-          </div>
-          <button onclick="window.submitDriverRatingScore()" class="w-full py-3.5 bg-[#fae100] text-[#1e234e] font-black rounded-xl shadow-md hover:bg-[#e5ce00] transition">ยืนยันคะแนน</button>
-      </div>
-  </div>
-
-  <div id="profileModal" class="hidden fixed inset-0 z-[190] bg-[#1e234e] pointer-events-auto transition-transform flex flex-col">
-      <div class="bg-[#2a2f5c] border-b border-[#383d6a] h-16 px-4 flex items-center gap-3 shadow-md shrink-0 w-full">
-          <button onclick="window.closeProfileModal()" class="w-10 h-10 shrink-0 bg-[#383d6a] text-gray-400 rounded-full flex items-center justify-center hover:text-white transition"><i class="fas fa-arrow-left"></i></button>
-          <h2 class="text-lg font-bold text-white">โปรไฟล์ส่วนตัว</h2>
-      </div>
-      
-      <div class="p-6 flex flex-col items-center border-b border-[#383d6a] shrink-0">
-          <img id="profilePicLarge" class="w-24 h-24 rounded-full border-4 border-[#fae100] object-cover bg-[#2a2f5c] mb-4 shadow-[0_0_15px_rgba(250,225,0,0.3)]" src="https://img.icons8.com/bubbles/150/user.png" alt="Profile">
-          
-          <h2 class="text-2xl font-bold text-white" id="profileNameLarge">กำลังโหลด...</h2>
-          
-          <div class="flex items-center gap-2 mt-1">
-              <p class="text-[13px] text-white font-normal" id="profilePhoneLarge">เบอร์โทร: ยังไม่ระบุ</p>
-              <button onclick="window.editProfilePhone()" class="text-gray-500 hover:text-white transition w-8 h-8 flex items-center justify-center bg-[#2a2f5c] rounded-full border border-[#383d6a] shadow-sm"><i class="fas fa-edit text-xs"></i></button>
-          </div>
-
-          <div class="flex w-full mt-6 bg-[#2a2f5c] border border-[#383d6a] rounded-full shadow-sm items-center py-2.5">
-              <div class="flex-1 flex flex-col items-center justify-center border-r border-[#383d6a]">
-                  <p class="text-[11px] text-white font-normal mb-0.5">คะแนนของคุณ</p>
-                  <p class="text-[16px] font-normal text-white flex items-center gap-1"><i class="fas fa-star text-[12px] text-[#fae100]"></i> 5.0</p>
-              </div>
-              <div class="flex-1 flex flex-col items-center justify-center">
-                  <p class="text-[11px] text-white font-normal mb-0.5">เดินทางไปแล้ว</p>
-                  <p class="text-[16px] font-normal text-white"><span id="profileTotalRides">0</span> <span class="text-[11px] text-white font-normal">ครั้ง</span></p>
-              </div>
-          </div>
-      </div>
-      
-      <div class="p-4 flex-1 overflow-y-auto w-full">
-          <div class="grid grid-cols-4 gap-2 w-full mt-2 px-1">
-              
-              <button onclick="window.openBlockedDrivers()" class="flex flex-col items-center justify-start gap-1.5 text-white hover:opacity-80 transition active:scale-95 bg-transparent outline-none pt-2">
-                  <div class="w-10 h-10 rounded-full bg-red-900/30 text-red-500 flex items-center justify-center text-[18px]">
-                      <i class="fas fa-user-slash"></i>
-                  </div>
-                  <span class="font-normal text-[11px] text-center leading-tight">จัดการบล็อก<br>คนขับ</span>
-              </button>
-
-          </div>
-      </div>
-  </div>
-  
-  <div id="recentPlacesModal" class="hidden fixed inset-0 z-[250] bg-[#1e234e] pointer-events-auto transition-transform flex flex-col">
-      <div class="bg-[#2a2f5c] border-b border-[#383d6a] h-16 px-4 flex items-center gap-3 shadow-md shrink-0 w-full">
-          <button onclick="window.closeRecentPlacesModal()" class="w-10 h-10 shrink-0 bg-[#383d6a] text-gray-400 rounded-full flex items-center justify-center hover:text-white transition"><i class="fas fa-arrow-left"></i></button>
-          <h2 class="text-lg font-black text-white">ประวัติสถานที่ (ล่าสุด)</h2>
-      </div>
-      <div class="p-4 space-y-2 flex-1 overflow-y-auto" id="recentPlacesModalList"></div>
-  </div>
-
-  <div id="waypointSearchModal" class="hidden fixed inset-0 z-[150] bg-[#1e234e] pointer-events-auto transition-transform duration-300 flex flex-col">
-      <div class="bg-[#2a2f5c] border-b border-[#383d6a] h-16 px-4 flex items-center gap-3 shadow-md shrink-0 w-full">
-          <button onclick="window.closeWaypointSearchModal()" class="w-10 h-10 shrink-0 bg-[#383d6a] text-gray-400 rounded-full flex items-center justify-center hover:text-white transition"><i class="fas fa-arrow-left"></i></button>
-          <h2 class="text-lg font-black text-white">ค้นหาสถานที่จุดแวะ</h2>
-      </div>
-      <div class="p-4 flex-1">
-          <div class="relative w-full shadow-sm rounded-2xl bg-[#2a2f5c] border border-[#383d6a] overflow-visible mb-4">
-              <div class="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none z-10"><i class="fas fa-search text-gray-400"></i></div>
-              <input type="text" id="waypointSearchInput" class="w-full py-4 pl-11 pr-4 bg-transparent outline-none font-normal text-[14px] text-white placeholder-gray-500" placeholder="พิมพ์ชื่อสถานที่...">
-          </div>
-          <p class="text-xs font-normal text-gray-500 text-center mt-10">ระบบจะคำนวณราคาใหม่ และส่งให้คุณยืนยันก่อนเพิ่มลงในเส้นทาง</p>
-      </div>
-  </div>
-
-  <div id="historyModal" class="hidden fixed inset-0 z-[200] bg-[#1e234e] overflow-y-auto pb-10 transition-opacity">
-      <div class="sticky top-0 bg-[#2a2f5c] border-b border-[#383d6a] h-16 px-4 flex items-center justify-between z-10 shadow-md w-full">
-          <div class="flex items-center gap-3">
-              <button onclick="window.closePassengerHistory()" class="w-10 h-10 shrink-0 bg-[#383d6a] text-gray-400 rounded-full flex items-center justify-center hover:text-white transition"><i class="fas fa-arrow-left"></i></button>
-              <h2 class="text-lg font-black text-white">ประวัติการเดินทาง</h2>
-          </div>
-      </div>
-      <div class="p-4" id="historyListContainer"><div class="flex justify-center py-10"><i class="fas fa-spinner fa-spin text-3xl text-blue-500"></i></div></div>
-  </div>
-
-  <div id="blockedDriversModal" class="hidden fixed inset-0 z-[220] bg-[#1e234e] overflow-y-auto pb-10 transition-opacity">
-      <div class="sticky top-0 bg-[#2a2f5c] border-b border-[#383d6a] h-16 px-4 flex items-center justify-between z-10 shadow-md w-full">
-          <div class="flex items-center gap-3">
-              <button onclick="window.closeBlockedDrivers()" class="w-10 h-10 shrink-0 bg-[#383d6a] text-gray-400 rounded-full flex items-center justify-center hover:text-white transition"><i class="fas fa-arrow-left"></i></button>
-              <h2 class="text-lg font-black text-white">จัดการการบล็อก</h2>
-          </div>
-      </div>
-      <div class="p-4" id="blockedListContainer"><div class="flex justify-center py-10"><i class="fas fa-spinner fa-spin text-3xl text-red-500"></i></div></div>
-  </div>
-
-<div id="historyDetailModal" class="hidden fixed inset-0 z-[260] bg-[#1e234e] flex flex-col pointer-events-auto transition-transform">
-      <div class="relative z-20 bg-[#2a2f5c]/90 backdrop-blur-md border-b border-[#383d6a] h-16 px-4 flex items-center justify-between shadow-md shrink-0 w-full">
-          <div class="flex items-center gap-3">
-              <button onclick="window.closeHistoryDetail()" class="w-10 h-10 shrink-0 bg-[#383d6a]/80 text-gray-400 rounded-full flex items-center justify-center hover:text-white transition"><i class="fas fa-arrow-left"></i></button>
-              <h2 class="text-[18px] font-bold text-white tracking-wide">รายละเอียดประวัติการเดินทาง</h2>
-          </div>
-      </div>
-
-      <div class="flex-1 overflow-y-auto w-full hide-scrollbar flex flex-col bg-[#1e234e] relative z-10">
-          
-          <div id="historyMap" class="w-full h-[220px] bg-[#1e234e] shrink-0 border-b border-[#383d6a]"></div>
-
-          <div class="p-3 flex flex-col gap-3 text-white font-normal pb-8">
-              
-              <div class="flex justify-between items-center border-b border-[#383d6a] pb-2.5">
-                  <div class="flex-1">
-                      <p class="text-[11px] text-gray-400 mb-0.5 font-normal">รหัส</p>
-                      <p class="text-[13px] font-normal text-white" id="histDetId">#JOB-XXXX</p>
-                  </div>
-                  <div class="flex-1 text-center">
-                      <p class="text-[11px] text-gray-400 mb-0.5 font-normal">ประเภทรถ</p>
-                      <p class="text-[13px] font-normal text-white" id="histDetService">รถยนต์</p>
-                  </div>
-                  <div class="flex-1 text-right">
-                      <p class="text-[11px] text-gray-400 mb-0.5 font-normal">วันที่</p>
-                      <p class="text-[13px] font-normal" id="histDetDate">--/--/----</p>
-                  </div>
-              </div>
-
-              <div class="bg-[#2a2f5c] p-2.5 rounded-xl border border-[#383d6a] shadow-sm flex items-center justify-between">
-                  <div class="flex items-center gap-3">
-                      <div class="w-9 h-9 bg-[#1e234e] rounded-full flex items-center justify-center text-white text-lg border border-[#383d6a] shrink-0"><i class="fas fa-user-tie"></i></div>
-                      <div>
-                          <p class="text-[12px] font-normal" id="histDetDriver">คนขับ: -</p>
-                          <p class="text-[11px] text-gray-400 mt-0 font-normal" id="histDetDriverRating"><i class="fas fa-star text-[#fae100]"></i> 5.0</p>
-                      </div>
-                  </div>
-                  <div class="flex items-center gap-2 shrink-0">
-                      <button id="btnReportTrip" onclick="window.confirmReportTrip()" class="w-9 h-9 bg-yellow-900/20 text-[#fae100] rounded-full border border-yellow-500/20 flex items-center justify-center hover:bg-yellow-900/40 transition" title="รายงานปัญหา">
-                          <i class="fas fa-triangle-exclamation text-[13px]"></i>
-                      </button>
-                      <button id="btnBlockDriver" onclick="window.blockCurrentHistoryDriver()" class="w-9 h-9 bg-red-900/20 text-red-500 rounded-full border border-red-500/20 flex items-center justify-center hover:bg-red-900/40 transition" title="บล็อกคนขับ">
-                          <i class="fas fa-user-slash text-[14px]"></i>
-                      </button>
-                  </div>
-              </div>
-
-              <div class="bg-[#2a2f5c] p-3 rounded-xl border border-[#383d6a] shadow-sm flex flex-col gap-2.5">
-                  <div class="flex justify-between items-center border-b border-[#383d6a]/80 pb-2.5">
-                      <div class="flex gap-4">
-                          <div>
-                              <p class="text-[11px] text-gray-400 mb-0.5 font-normal leading-tight">ระยะทาง</p>
-                              <p class="text-[13px] font-normal"><span id="histDetDist">0</span> กม.</p>
-                          </div>
-                          <div>
-                              <p class="text-[11px] text-gray-400 mb-0.5 font-normal leading-tight">เวลา</p>
-                              <p class="text-[13px] font-normal"><span id="histDetTime">0</span> นาที</p>
-                          </div>
-                      </div>
-                      <div class="text-right">
-                          <p class="text-[11px] text-gray-400 mb-0.5 font-normal leading-tight">ราคาสุทธิ</p>
-                          <p class="text-[16px] font-normal text-[#4ade80] leading-none" id="histDetPrice">฿0</p>
-                      </div>
-                  </div>
-
-                  <div class="relative mt-0.5 px-0.5">
-                      <div class="absolute left-[0.4rem] top-3 bottom-3 w-0.5 border-l-[1.5px] border-dashed border-[#4b507d]"></div>
-                      <div id="historyDetailWaypointsContainer" class="flex flex-col relative z-10 gap-3"></div>
-                  </div>
-              </div>
-          </div>
-      </div>
   </div>
 
   <div id="confirmActionModal" class="hidden fixed inset-0 z-[9990] bg-black/80 flex items-center justify-center p-4 pointer-events-auto">
       <div class="bg-[#1e234e] border border-[#383d6a] rounded-3xl p-3 w-full max-w-sm text-center shadow-2xl">
           <div class="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl" id="confirmActionIcon"><i class="fas fa-map-marked-alt"></i></div>
-          <h3 id="confirmActionTitle" class="text-[16px] font-bold text-white mb-2">...</h3>
+          <h3 id="confirmActionTitle" class="text-[13px] font-medium text-white mb-2">...</h3>
           <p id="confirmActionMessage" class="text-[13px] font-normal text-white mb-6 leading-relaxed">...</p>
           <div class="flex gap-2">
               <button onclick="window.closeConfirmActionModal()" class="flex-1 py-2 bg-[#2a2f5c] text-white font-normal rounded-full hover:bg-[#383d6a] transition border border-[#383d6a] text-[13px]">ยกเลิก</button>
@@ -727,47 +538,76 @@
   </div>
   
   <div id="callConfirmModal" class="hidden fixed inset-0 z-[130] bg-black/80 flex items-center justify-center p-4 pointer-events-auto">
-      <div class="bg-[#1e234e] border border-[#fae100]/30 rounded-3xl p-6 w-full max-w-sm text-center shadow-2xl">
-          <div class="w-16 h-16 bg-[#fae100]/20 text-[#fae100] border border-[#fae100]/30 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl"><i class="fas fa-phone-volume"></i></div>
-          <h3 class="text-xl font-black text-white mb-2">โทรหาคนขับ?</h3>
-          <p class="text-sm font-normal text-gray-400 mb-6 leading-relaxed">คุณต้องการโทรหาคนขับผ่านเบอร์โทรศัพท์มือถือ ใช่หรือไม่?</p>
-          <div class="flex gap-3">
-              <button onclick="window.closeCallConfirmModal()" class="flex-1 py-3 bg-[#2a2f5c] text-gray-200 font-normal rounded-xl hover:bg-[#383d6a] transition border border-[#383d6a]">ยกเลิก</button>
-              <a id="confirmCallBtn" href="#" onclick="window.closeCallConfirmModal()" class="flex-1 py-3 bg-[#fae100] text-[#1e234e] font-black rounded-xl shadow-md hover:bg-[#e5ce00] transition flex items-center justify-center gap-2"><i class="fas fa-phone-alt"></i> โทรเลย</a>
+      <div class="bg-[#1e234e] border border-[#fae100]/30 rounded-3xl p-4 w-full max-w-sm text-center shadow-2xl">
+          <div class="w-14 h-14 bg-[#fae100]/20 text-[#fae100] border border-[#fae100]/30 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl"><i class="fas fa-phone-volume"></i></div>
+          <h3 class="text-[13px] font-medium text-white mb-2">โทรหาคนขับ?</h3>
+          <p class="text-[13px] font-normal text-white mb-6 leading-relaxed">คุณต้องการโทรหาคนขับผ่านเบอร์โทรศัพท์มือถือ ใช่หรือไม่?</p>
+          <div class="flex gap-2">
+              <button onclick="window.closeCallConfirmModal()" class="flex-1 py-2.5 bg-[#2a2f5c] text-white font-normal rounded-full hover:bg-[#383d6a] transition border border-[#383d6a] text-[13px]">ยกเลิก</button>
+              <a id="confirmCallBtn" href="#" onclick="window.closeCallConfirmModal()" class="flex-1 py-2.5 bg-[#fae100] text-[#1e234e] font-normal rounded-full shadow-md hover:bg-[#e5ce00] transition flex items-center justify-center gap-2 text-[13px]"><i class="fas fa-phone-alt"></i> โทรเลย</a>
           </div>
       </div>
   </div>
 
   <div id="emergencyModal" class="hidden fixed inset-0 z-[120] bg-black/80 flex items-center justify-center p-4 pointer-events-auto">
-      <div class="bg-[#1e234e] border border-red-500/50 rounded-3xl p-6 w-full max-w-sm text-center shadow-[0_0_30px_rgba(239,68,68,0.2)]">
-          <div class="w-16 h-16 bg-red-900/30 text-red-500 border border-red-500/30 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl"><i class="fas fa-exclamation-triangle"></i></div>
-          <h3 class="text-xl font-black text-white mb-2">แจ้งเหตุฉุกเฉิน?</h3>
-          <p class="text-sm font-normal text-gray-400 mb-6 leading-relaxed">คุณต้องการโทรออกไปยังสายด่วนตำรวจ (191) เพื่อแจ้งเหตุฉุกเฉินใช่หรือไม่?</p>
-          <div class="flex gap-3">
-              <button onclick="window.closeEmergencyModal()" class="flex-1 py-3 bg-[#2a2f5c] text-gray-200 font-normal rounded-xl hover:bg-[#383d6a] transition border border-[#383d6a]">ยกเลิก</button>
-              <a href="tel:191" onclick="window.closeEmergencyModal()" class="flex-1 py-3 bg-red-600 text-white font-bold rounded-xl shadow-md hover:bg-red-700 transition flex items-center justify-center gap-2"><i class="fas fa-phone-alt"></i> โทร 191</a>
+      <div class="bg-[#1e234e] border border-red-500/50 rounded-3xl p-4 w-full max-w-sm text-center shadow-[0_0_30px_rgba(239,68,68,0.2)]">
+          <div class="w-14 h-14 bg-red-900/30 text-red-500 border border-red-500/30 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl"><i class="fas fa-exclamation-triangle"></i></div>
+          <h3 class="text-[13px] font-medium text-white mb-2">แจ้งเหตุฉุกเฉิน?</h3>
+          <p class="text-[13px] font-normal text-white mb-6 leading-relaxed">คุณต้องการโทรออกไปยังสายด่วนตำรวจ (191) ใช่หรือไม่?</p>
+          <div class="flex gap-2">
+              <button onclick="window.closeEmergencyModal()" class="flex-1 py-2.5 bg-[#2a2f5c] text-white font-normal rounded-full hover:bg-[#383d6a] transition border border-[#383d6a] text-[13px]">ยกเลิก</button>
+              <a href="tel:191" onclick="window.closeEmergencyModal()" class="flex-1 py-2.5 bg-red-600 text-white font-normal rounded-full shadow-md hover:bg-red-700 transition flex items-center justify-center gap-2 text-[13px]"><i class="fas fa-phone-alt"></i> โทร 191</a>
           </div>
       </div>
   </div>
 
   <div id="cancelModal" class="hidden fixed inset-0 z-[100] bg-black/80 flex items-center justify-center p-4 pointer-events-auto">
-      <div class="bg-[#1e234e] border border-[#383d6a] rounded-3xl p-6 w-full max-w-sm text-center shadow-2xl">
-          <div class="w-16 h-16 bg-[#2a2f5c] text-gray-400 border border-[#383d6a] rounded-full flex items-center justify-center mx-auto mb-4 text-3xl"><i class="fas fa-question-circle"></i></div>
-          <h3 class="text-xl font-black text-white mb-2">ยืนยันยกเลิกการเรียกรถ?</h3>
-          <p class="text-sm font-normal text-gray-400 mb-6 leading-relaxed">หากยกเลิกแล้ว งานนี้จะถูกลบทิ้ง และคุณจะต้องทำการเรียกรถใหม่อีกครั้ง</p>
-          <div class="flex gap-3">
-              <button onclick="window.closeCancelModal()" class="flex-1 py-3 bg-[#2a2f5c] text-gray-200 font-normal rounded-xl hover:bg-[#383d6a] transition border border-[#383d6a]">กลับไปรอรถ</button>
-              <button onclick="window.confirmCancelBooking()" class="flex-1 py-3 bg-red-900/80 text-red-400 font-bold rounded-xl border border-red-500/30 hover:bg-red-800 hover:text-white transition w-full">ยืนยันยกเลิก</button>
+      <div class="bg-[#1e234e] border border-[#383d6a] rounded-3xl p-4 w-full max-w-sm text-center shadow-2xl">
+          <div class="w-14 h-14 bg-[#2a2f5c] text-gray-400 border border-[#383d6a] rounded-full flex items-center justify-center mx-auto mb-4 text-2xl"><i class="fas fa-question-circle"></i></div>
+          <h3 class="text-[13px] font-medium text-white mb-2">ยืนยันยกเลิกการเรียกรถ?</h3>
+          <p class="text-[13px] font-normal text-white mb-6 leading-relaxed">หากยกเลิกแล้ว งานนี้จะถูกลบทิ้ง และคุณจะต้องทำการเรียกรถใหม่อีกครั้ง</p>
+          <div class="flex gap-2">
+              <button onclick="window.closeCancelModal()" class="flex-1 py-2.5 bg-[#2a2f5c] text-white font-normal rounded-full hover:bg-[#383d6a] transition border border-[#383d6a] text-[13px]">กลับไปรอรถ</button>
+              <button onclick="window.confirmCancelBooking()" class="flex-1 py-2.5 bg-red-900/80 text-red-400 font-normal rounded-full border border-red-500/30 hover:bg-red-800 hover:text-white transition w-full text-[13px]">ยืนยันยกเลิก</button>
           </div>
       </div>
   </div>
 
+  <div id="promoModal" class="hidden fixed inset-0 z-[140] bg-black/80 flex items-center justify-center p-4 pointer-events-auto">
+      <div class="bg-[#1e234e] border border-[#383d6a] rounded-3xl p-5 w-full max-w-sm text-center shadow-2xl">
+          <div class="w-12 h-12 bg-[#2a2f5c] rounded-full flex items-center justify-center mx-auto mb-3 shadow-inner border border-[#383d6a]"><i class="fas fa-ticket-alt text-[#fae100]"></i></div>
+          <h3 class="text-[13px] font-medium text-white mb-1">โค้ดส่วนลด</h3>
+          <p class="text-[13px] font-normal text-white mb-4 leading-relaxed">กรุณากรอกรหัสโปรโมชั่นเพื่อรับส่วนลด</p>
+          <input type="text" id="promoInput" placeholder="ใส่รหัสโค้ดที่นี่" class="w-full py-3 mb-4 bg-[#2a2f5c] border border-[#383d6a] focus:border-[#fae100] text-white rounded-full text-center font-normal uppercase outline-none transition placeholder-gray-500 text-[13px]">
+          <div class="flex gap-2">
+              <button onclick="window.closePromoModal()" class="flex-1 py-2.5 bg-[#2a2f5c] text-white font-normal rounded-full hover:bg-[#383d6a] transition text-[13px]">ปิด</button>
+              <button onclick="window.applyPromoCode()" class="flex-[1.5] py-2.5 bg-[#fae100] text-[#1e234e] font-normal rounded-full shadow-md hover:bg-[#e5ce00] transition text-[13px]">ยืนยัน</button>
+          </div>
+      </div>
+  </div>
+
+  <div id="driverRatingModal" class="hidden fixed inset-0 z-[260] bg-black/80 flex items-center justify-center p-4 pointer-events-auto">
+      <div class="bg-[#1e234e] border border-[#fae100]/30 rounded-3xl p-5 w-full max-w-sm text-center shadow-2xl">
+          <div class="w-14 h-14 bg-[#fae100]/20 text-[#fae100] border border-[#fae100]/30 rounded-full flex items-center justify-center mx-auto mb-3 text-2xl"><i class="fas fa-star-half-alt"></i></div>
+          <h3 class="text-[13px] font-medium text-white mb-2">ให้คะแนนคนขับ</h3>
+          <p class="text-[13px] font-normal text-white mb-4 leading-relaxed">กรุณาประเมินความพึงพอใจการให้บริการของคนขับ</p>
+          <div class="flex justify-center gap-2 mb-5" id="starRatingBox">
+              <i class="fas fa-star text-3xl font-normal text-gray-600 cursor-pointer transition hover:text-white" onclick="window.updateSelectedRatingScore(1)"></i>
+              <i class="fas fa-star text-3xl font-normal text-gray-600 cursor-pointer transition hover:text-white" onclick="window.updateSelectedRatingScore(2)"></i>
+              <i class="fas fa-star text-3xl font-normal text-gray-600 cursor-pointer transition hover:text-white" onclick="window.updateSelectedRatingScore(3)"></i>
+              <i class="fas fa-star text-3xl font-normal text-gray-600 cursor-pointer transition hover:text-white" onclick="window.updateSelectedRatingScore(4)"></i>
+              <i class="fas fa-star text-3xl font-normal text-gray-600 cursor-pointer transition hover:text-white" onclick="window.updateSelectedRatingScore(5)"></i>
+          </div>
+          <button onclick="window.submitDriverRatingScore()" class="w-full py-2.5 bg-[#fae100] text-[#1e234e] font-normal rounded-full shadow-md hover:bg-[#e5ce00] transition text-[13px]">ยืนยันคะแนน</button>
+      </div>
+  </div>
+
   <div id="alertModal" class="hidden fixed inset-0 z-[9999] bg-black/80 flex items-center justify-center p-4 pointer-events-auto">
-      <div class="bg-[#1e234e] border border-[#383d6a] rounded-3xl p-6 w-full max-w-sm text-center shadow-2xl transform transition-all">
-          <div id="alertIcon" class="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl"></div>
-          <h3 id="alertTitle" class="text-xl font-black text-white mb-2">...</h3>
-          <p id="alertMessage" class="text-sm font-normal text-gray-400 mb-6 whitespace-pre-line leading-relaxed">...</p>
-          <button onclick="window.closeAlertModal()" class="w-full py-3.5 bg-[#fae100] text-[#1e234e] font-black rounded-xl shadow-md hover:bg-[#e5ce00] transition">ตกลง</button>
+      <div class="bg-[#1e234e] border border-[#383d6a] rounded-3xl p-5 w-full max-w-sm text-center shadow-2xl transform transition-all">
+          <div id="alertIcon" class="w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-3 text-2xl"></div>
+          <h3 id="alertTitle" class="text-[13px] font-medium text-white mb-2">...</h3>
+          <p id="alertMessage" class="text-[13px] font-normal text-white mb-5 whitespace-pre-line leading-relaxed">...</p>
+          <button onclick="window.closeAlertModal()" class="w-full py-2.5 bg-[#fae100] text-[#1e234e] font-normal rounded-full shadow-md hover:bg-[#e5ce00] transition text-[13px]">ตกลง</button>
       </div>
   </div>
 
@@ -1510,8 +1350,16 @@ window.openProfileModal = function() {
 
     window.focusLocationToggle = function(lat, lng, index) {
         if(!map) return;
-        if (focusedWaypointIndex === index) { focusedWaypointIndex = -1; window.fitAllWaypoints(); } 
-        else { focusedWaypointIndex = index; updateMapPadding(); map.panTo({lat: lat, lng: lng}); setTimeout(() => { map.panBy(0, 150); }, 100); }
+        if (focusedWaypointIndex === index) { 
+            focusedWaypointIndex = -1; window.fitAllWaypoints(); 
+        } 
+        else { 
+            focusedWaypointIndex = index; 
+            updateMapPadding(); 
+            map.panTo({lat: lat, lng: lng}); 
+            // 🌟 เพิ่มคำสั่งซูมกล้องเข้าไปที่ระดับ 17
+            setTimeout(() => { map.setZoom(17); map.panBy(0, 150); }, 100); 
+        }
         renderWaypointsUI();
     };
 
@@ -1972,9 +1820,19 @@ window.openProfileModal = function() {
       }
 
       const navBar = document.getElementById('navBar'); const mapControls = document.getElementById('mapControls'); const mapEl = document.getElementById('map');
+      
+      // 🌟 ตั้งค่าให้ซ่อนปุ่มย้อนกลับเมื่ออยู่หน้า Tracking
+      const navBackButton = document.querySelector('#navBar button[onclick="goBack()"]');
+
       if(page !== 1) {
         if(navBar) navBar.classList.remove('hidden'); if(mapEl) mapEl.classList.remove('hidden'); if(mapControls) mapControls.classList.remove('hidden'); 
         
+        if (page === 'Tracking') {
+            if(navBackButton) navBackButton.classList.add('hidden'); // ซ่อนปุ่มย้อนกลับ
+        } else {
+            if(navBackButton) navBackButton.classList.remove('hidden'); // โชว์ปุ่มย้อนกลับหน้าอื่น
+        }
+
         if (!map) {
             window.initMap(); 
         } else {
@@ -2017,7 +1875,6 @@ window.openProfileModal = function() {
         const p4Panel = document.getElementById('page4Panel'); if(p4Panel) p4Panel.classList.remove('panel-collapsed-page4');
         bookData.waypoints = localWaypoints; renderWaypointsUI(); calculatePrice();
       }
-      // 🌟 เติมบล็อกนี้เข้าไปทั้งหมด เพื่อให้หน้า Tracking โหลดข้อมูลสมบูรณ์เวลาเปิดกลับมาดู
       else if (page === 'Tracking') {
         const bEmer = document.getElementById('btnEmergency');
         if(bEmer) bEmer.classList.remove('hidden'); 
