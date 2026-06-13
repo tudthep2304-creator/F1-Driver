@@ -211,12 +211,12 @@
 
   <!-- PAGE 1: HOME -->
   <div id="page1" class="full-page flex flex-col overflow-y-auto hide-scrollbar">
-    <!-- ✅ บาร์ด้านบนสำหรับหน้าแรก (สูง 64px = h-16 เท่ากันหมด) -->
-    <div class="bg-[#1e234e] border-b border-[#2a2f5c] text-[#fae100] h-16 px-4 shadow-md shrink-0 flex justify-between items-center sticky top-0 z-20 w-full">
-        <h1 class="text-lg font-black tracking-wide flex items-center gap-2"><i class="fas fa-car-side"></i> F1 DRIVER</h1>
-        <div class="flex items-center gap-2 text-sm text-gray-400 bg-[#2a2f5c] px-3 py-1.5 rounded-full border border-[#383d6a] cursor-pointer shadow-sm hover:text-[#fae100] transition" onclick="openProfileModal()">
-            <img id="userPicSmall" class="w-6 h-6 rounded-full object-cover bg-gray-700" src="https://img.icons8.com/bubbles/150/user.png" alt="Profile">
-            <span id="userNameSmall" class="font-normal truncate max-w-[90px] text-xs">...</span>
+    
+    <div class="bg-[#2a2f5c]/90 backdrop-blur-md border-b border-[#383d6a] text-white h-16 px-4 shadow-md shrink-0 flex justify-between items-center sticky top-0 z-20 w-full">
+        <h1 class="text-lg font-bold tracking-wide flex items-center gap-2"><i class="fas fa-car-side"></i> F1 DRIVER</h1>
+        <div class="flex items-center gap-2 text-[11px] text-white bg-[#1e234e] px-3 py-1.5 rounded-full border border-[#383d6a] cursor-pointer shadow-sm hover:opacity-80 transition" onclick="openProfileModal()">
+            <img id="userPicSmall" class="w-6 h-6 rounded-full object-cover bg-[#2a2f5c]" src="https://img.icons8.com/bubbles/150/user.png" alt="Profile">
+            <span id="userNameSmall" class="font-normal truncate max-w-[90px]">...</span>
         </div>
     </div>
 
@@ -227,41 +227,37 @@
           <div class="absolute top-2 right-2 bg-black/60 px-2 py-0.5 rounded text-[10px] text-white z-10 font-normal">Ad</div>
       </div>
       
-<!-- ✅ เมนูหลัก 4 ปุ่ม (ลดขนาดไอคอนและตัวหนังสือแล้ว) -->
       <div class="w-full grid grid-cols-4 gap-1 shrink-0 mb-4 mt-2 px-1">
-          <!-- 1. เรียกรถ -->
-          <button id="btnMainRideAction" onclick="handleMainRideClick()" class="flex flex-col items-center justify-start gap-1.5 text-[#fae100] transition active:scale-95 bg-transparent outline-none mt-1">
-              <i class="fas fa-car text-[24px]" id="btnMainRideIcon"></i>
-              <span class="font-normal text-[10px] text-center leading-tight tracking-wide" id="btnMainRideText">เรียกรถ</span>
+          <button id="btnMainRideAction" onclick="handleMainRideClick()" class="flex flex-col items-center justify-start gap-1.5 text-white transition active:scale-95 bg-transparent outline-none mt-1 group">
+              <div class="w-12 h-12 rounded-full bg-[#2a2f5c] border border-[#383d6a] flex items-center justify-center group-hover:bg-[#383d6a] transition shadow-sm">
+                  <i class="fas fa-car text-[20px] text-white" id="btnMainRideIcon"></i>
+              </div>
+              <span class="font-normal text-[11px] text-white text-center leading-tight tracking-wide" id="btnMainRideText">เรียกรถ</span>
           </button>
           
-          <!-- 2. ข่าวสาร -->
-          <button onclick="openNewsModal()" class="flex flex-col items-center justify-start gap-1.5 text-[#fae100] transition active:scale-95 relative bg-transparent outline-none mt-1">
-              <div id="newsBadge" class="hidden absolute -top-1.5 right-1.5 bg-red-500 text-white text-[8px] font-bold px-1 py-0.5 rounded-full shadow animate-pulse">New</div>
-              <i class="fas fa-bullhorn text-[24px]"></i>
-              <span class="font-normal text-[10px] text-center leading-tight tracking-wide">ข่าวสาร<br>&โปรโมชั่น</span>
+          <button onclick="openNewsModal()" class="flex flex-col items-center justify-start gap-1.5 text-white transition active:scale-95 relative bg-transparent outline-none mt-1 group">
+              <div class="relative w-12 h-12 rounded-full bg-[#2a2f5c] border border-[#383d6a] flex items-center justify-center group-hover:bg-[#383d6a] transition shadow-sm">
+                  <div id="newsBadge" class="hidden absolute -top-1 -right-1 z-10 bg-red-500 text-white text-[8px] font-bold px-1.5 py-0.5 rounded-full shadow border border-[#1e234e] animate-pulse">New</div>
+                  <i class="fas fa-bullhorn text-[20px] text-white"></i>
+              </div>
+              <span class="font-normal text-[11px] text-white text-center leading-tight tracking-wide">ข่าวสาร<br>&โปรโมชั่น</span>
           </button>
 
-          <!-- 3. คอมมูนิตี้ -->
-          <button onclick="window.openCommunityModal()" class="flex flex-col items-center justify-start gap-1.5 text-[#fae100] transition active:scale-95 relative bg-transparent outline-none mt-1">
-              <div id="chatBadge" class="hidden absolute -top-1.5 right-2 bg-red-500 text-white text-[8px] font-bold px-1 py-0.5 rounded-full shadow">0</div>
-              <i class="fas fa-users text-[24px]"></i>
-              <span class="font-normal text-[10px] text-center leading-tight tracking-wide">คอมมูนิตี้</span>
+          <button onclick="window.openCommunityModal()" class="flex flex-col items-center justify-start gap-1.5 text-white transition active:scale-95 relative bg-transparent outline-none mt-1 group">
+              <div class="relative w-12 h-12 rounded-full bg-[#2a2f5c] border border-[#383d6a] flex items-center justify-center group-hover:bg-[#383d6a] transition shadow-sm">
+                  <div id="chatBadge" class="hidden absolute -top-1 -right-1 z-10 bg-red-500 text-white text-[8px] font-bold px-1.5 py-0.5 rounded-full shadow border border-[#1e234e]">0</div>
+                  <i class="fas fa-users text-[20px] text-white"></i>
+              </div>
+              <span class="font-normal text-[11px] text-white text-center leading-tight tracking-wide">คอมมูนิตี้</span>
           </button>
 
-          <!-- 4. ประวัติการเดินทาง (เพิ่มเข้ามาใหม่ให้เต็ม 4 ช่อง) -->
-          <button onclick="window.openPassengerHistory()" class="flex flex-col items-center justify-start gap-1.5 text-[#fae100] transition active:scale-95 relative bg-transparent outline-none mt-1">
-              <i class="fas fa-history text-[24px]"></i>
-              <span class="font-normal text-[10px] text-center leading-tight tracking-wide">ประวัติ<br>การเดินทาง</span>
+          <button onclick="window.openPassengerHistory()" class="flex flex-col items-center justify-start gap-1.5 text-white transition active:scale-95 relative bg-transparent outline-none mt-1 group">
+              <div class="w-12 h-12 rounded-full bg-[#2a2f5c] border border-[#383d6a] flex items-center justify-center group-hover:bg-[#383d6a] transition shadow-sm">
+                  <i class="fas fa-history text-[20px] text-white"></i>
+              </div>
+              <span class="font-normal text-[11px] text-white text-center leading-tight tracking-wide">ประวัติ<br>การเดินทาง</span>
           </button>
       </div>
-      <div class="mt-auto w-full flex flex-col -mb-2">
-          <div id="bottomBannerContainer" class="w-full aspect-[5/1] min-h-[70px] max-h-[120px] bg-transparent rounded-none overflow-hidden hidden relative shrink-0">
-              <div id="bottomBannerSlider" class="flex overflow-x-auto snap-x snap-mandatory hide-scrollbar w-full h-full scroll-smooth items-center"></div>
-          </div>
-      </div>
-    </div>
-  </div>
       
   <!-- Vehicle Selection Modal (4 ประเภท) -->
   <div id="vehicleSelectionModal" class="hidden fixed inset-0 z-[150] bg-black/80 flex items-center justify-center p-4 pointer-events-auto transition-opacity">
@@ -896,14 +892,16 @@ function updateRideButtonState() {
 
         if (hasActiveJob) {
             btnMainRide.disabled = false;
-            btnMainRide.className = "flex flex-col items-center justify-start gap-1.5 text-[#fae100] transition active:scale-95 bg-transparent outline-none animate-pulse mt-1";
-            if(btnMainRideIcon) btnMainRideIcon.className = "fas fa-route text-[24px]"; // 🌟 ปรับขนาดตรงนี้
+            // 🌟 ให้คงสีขาวไว้
+            btnMainRide.className = "flex flex-col items-center justify-start gap-1.5 text-white transition active:scale-95 bg-transparent outline-none animate-pulse mt-1 group";
+            if(btnMainRideIcon) btnMainRideIcon.className = "fas fa-route text-[20px] text-white"; 
             if(btnMainRideText) btnMainRideText.innerText = "ดูสถานะ";
             btnMainRide.onclick = function() { window.showPage('Tracking'); };
         } else {
             btnMainRide.disabled = false;
-            btnMainRide.className = "flex flex-col items-center justify-start gap-1.5 text-[#fae100] transition active:scale-95 bg-transparent outline-none mt-1";
-            if(btnMainRideIcon) btnMainRideIcon.className = "fas fa-car text-[24px]"; // 🌟 ปรับขนาดตรงนี้
+            // 🌟 ให้คงสีขาวไว้
+            btnMainRide.className = "flex flex-col items-center justify-start gap-1.5 text-white transition active:scale-95 bg-transparent outline-none mt-1 group";
+            if(btnMainRideIcon) btnMainRideIcon.className = "fas fa-car text-[20px] text-white";
             if(btnMainRideText) btnMainRideText.innerText = "เรียกรถ";
             btnMainRide.onclick = function() { window.openVehicleModal(); };
         }
