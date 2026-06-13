@@ -687,9 +687,14 @@
                           <p class="text-[11px] text-gray-400 mt-0 font-normal" id="histDetDriverRating"><i class="fas fa-star text-[#fae100]"></i> 5.0</p>
                       </div>
                   </div>
-                  <button id="btnBlockDriver" onclick="window.blockCurrentHistoryDriver()" class="w-9 h-9 bg-red-900/20 text-red-500 rounded-full border border-red-500/20 flex items-center justify-center hover:bg-red-900/40 transition shrink-0" title="บล็อกคนขับ">
-                      <i class="fas fa-ban text-[14px]"></i>
-                  </button>
+                  <div class="flex items-center gap-2 shrink-0">
+                      <button id="btnReportTrip" onclick="window.confirmReportTrip()" class="w-9 h-9 bg-orange-900/20 text-orange-400 rounded-full border border-orange-500/20 flex items-center justify-center hover:bg-orange-900/40 transition" title="รายงานปัญหา">
+                          <i class="fas fa-flag text-[13px]"></i>
+                      </button>
+                      <button id="btnBlockDriver" onclick="window.blockCurrentHistoryDriver()" class="w-9 h-9 bg-red-900/20 text-red-500 rounded-full border border-red-500/20 flex items-center justify-center hover:bg-red-900/40 transition" title="บล็อกคนขับ">
+                          <i class="fas fa-ban text-[14px]"></i>
+                      </button>
+                  </div>
               </div>
 
               <div class="bg-[#2a2f5c] p-3 rounded-xl border border-[#383d6a] shadow-sm flex flex-col gap-2.5">
@@ -715,13 +720,7 @@
                       <div id="historyDetailWaypointsContainer" class="flex flex-col relative z-10 gap-3"></div>
                   </div>
               </div>
-
-              <button onclick="window.reportCurrentTrip()" class="w-full mt-2 bg-transparent border border-red-500/50 text-red-400 py-3 rounded-xl font-normal text-[13px] shadow-sm hover:bg-red-900/30 transition flex justify-center items-center gap-2">
-                  <i class="fas fa-exclamation-circle text-[15px]"></i> รายงานปัญหาการเดินทาง
-              </button>
-
           </div>
-          
       </div>
   </div>
   <div id="routeChangeModal" class="hidden fixed inset-0 z-[200] bg-black/80 flex items-center justify-center p-4 pointer-events-auto transition-opacity">
@@ -2924,35 +2923,37 @@ function handleTracking() {
         showAlert('ระบบแชท', 'ฟังก์ชันแชทกับคนขับกำลังอยู่ระหว่างการปรับปรุงครับ', 'info');
     }
 
-    // 🌟 ฟังก์ชันรายงานปัญหา ไปที่ LINE OA อัตโนมัติ
+    // 🌟 ฟังก์ชัน 1: เปิด Popup ยืนยันก่อนรายงาน
+    window.confirmReportTrip = function() {
+        window.openConfirmActionModal(
+            "รายงานปัญหา?", 
+            "คุณต้องการรายงานปัญหาการเดินทางในรอบนี้ ใช่หรือไม่?", 
+            () => { window.reportCurrentTrip(); }
+        );
+    }
+
+    // 🌟 ฟังก์ชัน 2: ส่งข้อมูลไปที่ LINE
     window.reportCurrentTrip = function() {
         if (!selectedHistoryJobId || !loadedHistoryJobs[selectedHistoryJobId]) return;
         
         let job = loadedHistoryJobs[selectedHistoryJobId];
-        // ดึงเลขรหัส 8 ตัวท้าย
         let shortId = selectedHistoryJobId.substring(selectedHistoryJobId.length - 8).toUpperCase();
-        // ดึงวันที่
         let dateStr = new Date(job.completedAt || job.timestamp).toLocaleString('th-TH');
-        // ดึงชื่อคนขับที่โชว์อยู่
         let driverInfo = document.getElementById('histDetDriver').innerText; 
         
-        // ร่างข้อความอัตโนมัติ
         let message = `🚨 รายงานปัญหาการเดินทาง\n`;
         message += `รหัสงาน: #${shortId}\n`;
         message += `วันที่: ${dateStr}\n`;
         message += `คนขับ: ${driverInfo}\n`;
         message += `\nรายละเอียดปัญหา:\n(กรุณาพิมพ์ปัญหาที่คุณพบ...)`;
         
-        // แปลงข้อความให้รองรับกับ URL
         let encodedMessage = encodeURIComponent(message);
         
-        // 🛑 สำคัญ: ให้คุณเปลี่ยน @YOUR_LINE_OA_ID ตรงนี้ เป็นไอดี LINE Official ของแอปคุณนะครับ (ต้องมี @ นำหน้าด้วย)
-        let lineOaId = "@YOUR_LINE_OA_ID"; 
+        // 🛑 สำคัญมาก: คุณต้องแก้ไอดีตรงนี้ให้เป็น LINE Official ของคุณ (อย่าลืมใส่ @ ด้านหน้า)
+        // ตัวอย่างเช่น let lineOaId = "@123abcde";
+        let lineOaId = "@805zvmii"; 
         
-        // สร้าง URL สำหรับเปิดแอป LINE พร้อมยัดข้อความใส่ช่องแชท
         let lineUrl = `https://line.me/R/oaMessage/${lineOaId}/?${encodedMessage}`;
-        
-        // เปิดหน้าต่างไปที่แอป LINE
         window.open(lineUrl, '_blank');
     }
   </script>
