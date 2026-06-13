@@ -927,15 +927,7 @@ function updateRideButtonState() {
 
     window.selectVehicleAndStart = function(type) {
         window.currentServiceType = type;
-        let labelIcon = 'fa-car-side';
-        let labelText = 'รถยนต์';
-        if(type === 'bike') { labelIcon = 'fa-motorcycle'; labelText = 'มอเตอร์ไซค์'; }
-        if(type === 'premium_car') { labelIcon = 'fa-car'; labelText = 'รถพรีเมียม'; }
-        if(type === 'premium_bike') { labelIcon = 'fa-motorcycle'; labelText = 'มอไซค์พรีเมียม'; }
-        
-        let indicator = document.getElementById('serviceLabelIndicator');
-        if(indicator) indicator.innerHTML = `<i class="fas ${labelIcon}"></i> ${labelText}`;
-        window.closeVehicleModal(); window.showPage(2);
+        window.showPage(2);
     }
 
 window.loadedNewsItems = {}; 
