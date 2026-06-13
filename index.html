@@ -437,7 +437,7 @@
   </div>
 
   <div id="page4" class="hidden">
-    <div id="page4Panel" class="ui-panel border-t-[4px] border-[#fae100] h-auto pb-6 pt-3 transition-transform duration-300">
+    <div id="page4Panel" class="ui-panel border-t-[4px] border-[#fae100] h-auto pb-4 pt-3 transition-transform duration-300">
       <div class="w-full flex justify-center pb-3 cursor-pointer" onclick="window.togglePage4Panel()"><div class="w-12 h-1.5 bg-[#4b507d] rounded-full"></div></div>
       
       <div class="flex justify-between items-center mb-2">
@@ -462,8 +462,7 @@
           <div class="text-center text-gray-500 text-xs py-4"><i class="fas fa-spinner fa-spin text-[#fae100]"></i> กำลังคำนวณราคา...</div>
       </div>
 
-      <form onsubmit="event.preventDefault(); window.submitBooking();" class="flex gap-1.5 w-full mt-1 shrink-0 pb-2">
-          
+      <form onsubmit="event.preventDefault(); window.submitBooking();" class="flex gap-1.5 w-full mt-2 shrink-0">
           <div class="relative flex-[1.2] min-w-[100px]">
               <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-400"><i class="fas fa-phone-alt text-[13px]"></i></div>
               <input type="tel" id="userPhone" name="tel" autocomplete="tel" inputmode="tel" oninput="window.formatPhone(this)" placeholder="เบอร์ติดต่อ" class="w-full py-3 pl-8 pr-2 bg-[#2a2f5c] border border-[#383d6a] focus:border-[#fae100] focus:bg-[#1e234e] text-white placeholder-gray-500 rounded-full text-[13px] font-normal outline-none transition-colors h-full">
@@ -523,6 +522,48 @@
           <button id="btnCancel" onclick="window.openCancelModal()" class="flex-1 w-full bg-red-900/40 text-red-400 py-3 rounded-full font-normal border border-red-500/30 text-[13px] hover:bg-red-900/60 transition flex justify-center items-center gap-1.5"><i class="fas fa-times"></i> ยกเลิก</button>
       </div>
     </div>
+  </div>
+
+  <div id="recentPlacesModal" class="hidden fixed inset-0 z-[250] bg-[#1e234e] pointer-events-auto transition-transform flex flex-col">
+      <div class="bg-[#2a2f5c] border-b border-[#383d6a] h-16 px-4 flex items-center gap-3 shadow-md shrink-0 w-full">
+          <button onclick="window.closeRecentPlacesModal()" class="w-10 h-10 shrink-0 bg-[#383d6a] text-gray-400 rounded-full flex items-center justify-center hover:text-white transition"><i class="fas fa-arrow-left"></i></button>
+          <h2 class="text-lg font-bold text-white">ประวัติสถานที่ (ล่าสุด)</h2>
+      </div>
+      <div class="p-4 space-y-2 flex-1 overflow-y-auto" id="recentPlacesModalList"></div>
+  </div>
+
+  <div id="waypointSearchModal" class="hidden fixed inset-0 z-[150] bg-[#1e234e] pointer-events-auto transition-transform duration-300 flex flex-col">
+      <div class="bg-[#2a2f5c] border-b border-[#383d6a] h-16 px-4 flex items-center gap-3 shadow-md shrink-0 w-full">
+          <button onclick="window.closeWaypointSearchModal()" class="w-10 h-10 shrink-0 bg-[#383d6a] text-gray-400 rounded-full flex items-center justify-center hover:text-white transition"><i class="fas fa-arrow-left"></i></button>
+          <h2 class="text-lg font-bold text-white">ค้นหาสถานที่จุดแวะ</h2>
+      </div>
+      <div class="p-4 flex-1">
+          <div class="relative w-full shadow-sm rounded-2xl bg-[#2a2f5c] border border-[#383d6a] overflow-visible mb-4">
+              <div class="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none z-10"><i class="fas fa-search text-gray-400"></i></div>
+              <input type="text" id="waypointSearchInput" class="w-full py-4 pl-11 pr-4 bg-transparent outline-none font-normal text-[14px] text-white placeholder-gray-500" placeholder="พิมพ์ชื่อสถานที่...">
+          </div>
+          <p class="text-xs font-normal text-gray-500 text-center mt-10">ระบบจะคำนวณราคาใหม่ และส่งให้คุณยืนยันก่อนเพิ่มลงในเส้นทาง</p>
+      </div>
+  </div>
+
+  <div id="historyModal" class="hidden fixed inset-0 z-[200] bg-[#1e234e] overflow-y-auto pb-10 transition-opacity">
+      <div class="sticky top-0 bg-[#2a2f5c] border-b border-[#383d6a] h-16 px-4 flex items-center justify-between z-10 shadow-md w-full">
+          <div class="flex items-center gap-3">
+              <button onclick="window.closePassengerHistory()" class="w-10 h-10 shrink-0 bg-[#383d6a] text-gray-400 rounded-full flex items-center justify-center hover:text-white transition"><i class="fas fa-arrow-left"></i></button>
+              <h2 class="text-lg font-bold text-white">ประวัติการเดินทาง</h2>
+          </div>
+      </div>
+      <div class="p-4" id="historyListContainer"><div class="flex justify-center py-10"><i class="fas fa-spinner fa-spin text-3xl text-blue-500"></i></div></div>
+  </div>
+
+  <div id="blockedDriversModal" class="hidden fixed inset-0 z-[220] bg-[#1e234e] overflow-y-auto pb-10 transition-opacity">
+      <div class="sticky top-0 bg-[#2a2f5c] border-b border-[#383d6a] h-16 px-4 flex items-center justify-between z-10 shadow-md w-full">
+          <div class="flex items-center gap-3">
+              <button onclick="window.closeBlockedDrivers()" class="w-10 h-10 shrink-0 bg-[#383d6a] text-gray-400 rounded-full flex items-center justify-center hover:text-white transition"><i class="fas fa-arrow-left"></i></button>
+              <h2 class="text-lg font-bold text-white">จัดการการบล็อก</h2>
+          </div>
+      </div>
+      <div class="p-4" id="blockedListContainer"><div class="flex justify-center py-10"><i class="fas fa-spinner fa-spin text-3xl text-red-500"></i></div></div>
   </div>
 
   <div id="confirmActionModal" class="hidden fixed inset-0 z-[9990] bg-black/80 flex items-center justify-center p-4 pointer-events-auto">
@@ -1689,7 +1730,7 @@ window.openProfileModal = function() {
         });
     }
 
-// 🌟 ระบบจัดการรายชื่อสถานที่ (ไม่มีกรอบเมื่อกดเลือก ใช้ฟอนต์ขาวหนาปานกลางแทนสีเหลือง)
+// 🌟 ระบบจัดการรายชื่อสถานที่ (แก้ตัวหนังสือสถานที่ให้เป็นสีขาวทั้งหมด)
     function renderWaypointsUI() {
         const typeOrder = { 'pick': 1, 'waypoint': 2, 'drop': 3 };
         localWaypoints.sort((a, b) => typeOrder[a.type] - typeOrder[b.type]);
@@ -1737,8 +1778,8 @@ window.openProfileModal = function() {
             let colorHex = isPickup ? '#4ade80' : '#ef4444';
             let textColorMap = isPickup ? '#1e234e' : '#ffffff';
 
-            // 🌟 ถอดสีกรอบออกทั้งหมดเมื่อ Active / เปลี่ยนเป็นฟอนต์สีขาว หนาปานกลางเมื่อเลือก
-            let textItem = isFocused ? 'text-white font-medium' : 'text-gray-200 font-normal';
+            // 🌟 ให้ตัวหนังสือสถานที่ในกรอบเป็นสีขาวเสมอ (ทั้งตอนเลือกและไม่เลือก)
+            let textItem = isFocused ? 'text-white font-medium' : 'text-white font-normal';
             let bgItem = isFocused ? 'bg-[#383d6a] border-transparent' : 'bg-[#2a2f5c] border-[#383d6a]';
             
             if (wp.passed) {
@@ -1767,9 +1808,10 @@ window.openProfileModal = function() {
                 <button onclick="event.stopPropagation(); window.removeWaypoint(${index})" class="text-red-400 hover:text-red-300 text-[12px] px-2 shrink-0 transition active:scale-90"><i class="fas fa-times"></i></button>
             </div>`;
             
+            // 🌟 ให้ตัวหนังสือสถานที่ในหน้าสรุปเป็นสีขาวด้วย
             let sumItemHtml = `<div class="flex items-center gap-2.5 relative z-10 py-0.5 cursor-pointer hover:bg-[#383d6a] rounded transition px-1" onclick="window.focusLocationToggle(${wp.lat}, ${wp.lng}, ${index})">
                 <div class="w-5 h-5 ${colorClass} rounded-full flex items-center justify-center text-[10px] font-bold shrink-0 shadow-inner">${globalCount}</div>
-                <p class="text-[13px] ${textItem} truncate flex-1 leading-tight flex items-center">${iconAddonPrefix}${wp.name}</p>
+                <p class="text-[13px] text-white truncate flex-1 leading-tight flex items-center">${iconAddonPrefix}${wp.name}</p>
             </div>`;
 
             if (wp.type === 'pick') { pickHtml += itemHtml; } else { dropHtml += itemHtml; }
@@ -1963,7 +2005,7 @@ window.openProfileModal = function() {
         } 
     }
 
-    // 🌟 ระบบคำนวณราคาและแสดงรถ (ทรงแคปซูล ไม่มีกรอบเมื่อเลือก)
+    // 🌟 ระบบคำนวณราคาและเปลี่ยนสีราคาเป็นสีเขียว
     function calculatePrice() {
       if(!directionsService || !map || localWaypoints.length < 2) return;
 
@@ -2026,7 +2068,6 @@ window.openProfileModal = function() {
                   displayPrice = `~฿${minPrice} - ${maxPrice}`;
                   displaySub = `<i class="fas fa-bolt text-[#fae100] mr-1"></i> มีรถว่างใกล้คุณ`;
                   
-                  // 🌟 เป็นสีสว่าง และเตรียมรองรับฟังก์ชันกด (ส่งค่า isOnline=true)
                   cardClass = "border-[#383d6a] cursor-pointer";
                   iconClass = v.color;
                   
@@ -2039,14 +2080,12 @@ window.openProfileModal = function() {
                   displayPrice = `~฿${minPrice}`;
                   displaySub = `(ไม่มีรถว่าง)`;
                   
-                  // 🌟 เป็นสีเทา และส่งค่า isOnline=false
                   cardClass = "border-[#2a2f5c] text-gray-500 opacity-60 cursor-pointer hover:opacity-80";
                   iconClass = "text-gray-500";
                   
                   if(v.id === prevSelected) foundPrevSelected = { id: v.id, price: minPrice, priceEstimate: displayPrice, isOnline: false };
               }
               
-              // 🌟 กรอบเป็นทรงแคปซูล (rounded-full) บีบระยะ p-2
               listHtml += `
               <div id="vcard-${v.id}" onclick="window.selectVehicleInSummary('${v.id}', ${minPrice}, '${displayPrice}', ${isOnline})" class="flex justify-between items-center py-2 px-3 rounded-full border transition ${cardClass}">
                   <div class="flex items-center gap-3">
@@ -2059,7 +2098,7 @@ window.openProfileModal = function() {
                       </div>
                   </div>
                   <div class="text-right flex flex-col items-end">
-                      <p class="font-medium text-[13px] leading-tight ${isOnline ? 'text-white' : 'text-gray-500'}">${displayPrice}</p>
+                      <p class="font-medium text-[13px] leading-tight ${isOnline ? 'text-[#4ade80]' : 'text-gray-500'}">${displayPrice}</p>
                       ${!isOnline ? `<p class="text-[9px] text-gray-500 mt-0.5">(ราคาประมาณ)</p>` : ''}
                   </div>
               </div>`;
