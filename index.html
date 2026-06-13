@@ -119,6 +119,21 @@
     
     .glass-box { background: rgba(42, 47, 92, 0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1); box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3); }
 
+/* 🌟 เพิ่มคลาส ui-panel ที่หายไปกลับคืนมา เพื่อให้กล่องเครื่องมือยึดติดด้านล่าง */
+    .ui-panel { 
+        position: fixed; 
+        bottom: 0; 
+        left: 0; 
+        right: 0; 
+        background-color: #1e234e; 
+        z-index: 40; 
+        border-top-left-radius: 24px; 
+        border-top-right-radius: 24px; 
+        padding-left: 16px; 
+        padding-right: 16px; 
+        box-shadow: 0 -10px 25px rgba(0, 0, 0, 0.5); 
+    }
+    
     #trackingPanel, #page4Panel { transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); padding-top: 12px; }
     .panel-collapsed, .panel-collapsed-page4 { transform: translateY(calc(100% - 110px)) !important; }
     .full-page { position: fixed; inset: 0; z-index: 30; background: transparent; flex-direction: column; }
