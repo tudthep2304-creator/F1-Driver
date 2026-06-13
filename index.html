@@ -1281,7 +1281,6 @@ window.loadedNewsItems = {};
 
     let currentConfirmCallback = null;
     window.openConfirmActionModal = function(title, message, callback, theme = 'blue') {
-        // ใส่ข้อมูล Title/Message และกำหนดสีขาวทั้งหมด
         document.getElementById('confirmActionTitle').innerText = title;
         document.getElementById('confirmActionTitle').classList.add('text-white');
         
@@ -1292,27 +1291,29 @@ window.loadedNewsItems = {};
         const iconDiv = document.getElementById('confirmActionIcon'); 
         const btn = document.getElementById('confirmActionButton');
         
-        // รีเซ็ตคลาสเดิม
+        // รีเซ็ตคลาสเริ่มต้น (ปุ่มให้เป็นตัวหนังสือสีขาวก่อน)
         iconDiv.className = "w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl border"; 
         btn.className = "flex-1 py-2 font-normal rounded-full shadow-md transition text-[13px] text-white";
         
-        // 🌟 เพิ่มไอคอนและสีตามธีม
         if (theme === 'green') { 
             iconDiv.classList.add('bg-[#fae100]/20', 'text-[#fae100]', 'border-[#fae100]/30'); 
+            btn.classList.remove('text-white'); 
             btn.classList.add('bg-[#fae100]', 'text-[#1e234e]', 'hover:bg-[#e5ce00]');
             iconDiv.innerHTML = '<i class="fas fa-check-circle text-[30px]"></i>';
         } else if (theme === 'red') { 
             iconDiv.classList.add('bg-red-900/30', 'text-red-500', 'border-red-500/30'); 
-            btn.classList.add('bg-red-600', 'text-white', 'hover:bg-red-700');
+            btn.classList.add('bg-red-600', 'hover:bg-red-700');
             iconDiv.innerHTML = '<i class="fas fa-ban text-[30px]"></i>';
         } else if (theme === 'yellow') { 
-            // 🌟 ธีมสีเหลืองสำหรับรายงานปัญหา (สีตามหมุดและแผนที่ในรูป 4)
-            iconDiv.classList.add('bg-yellow-900/20', 'text-[#fae100]', 'border-yellow-500/20'); 
-            btn.classList.add('bg-[#fae100]', 'text-[#1e234e]', 'hover:bg-[#e5ce00]');
-            // 🌟 ใช้ไอคอนสามเหลี่ยมรายงานสีเหลืองโปร่ง
-            iconDiv.innerHTML = '<i class="fas fa-triangle-exclamation text-[30px]" style="color: rgba(250, 225, 0, 0.4); stroke: white; stroke-width: 1px;"></i>';
+            // 🌟 ธีมสีเหลือง: ปรับไอคอนให้สว่างขึ้น (ลดความจาง)
+            iconDiv.classList.add('bg-yellow-900/40', 'text-[#fae100]', 'border-yellow-500/40'); 
+            btn.classList.remove('text-white'); // 🌟 เอาสีขาวออก
+            btn.classList.add('bg-[#fae100]', 'text-[#1e234e]', 'hover:bg-[#e5ce00]'); // 🌟 ใส่สีตัวหนังสือปุ่มเป็น #1e234e
+            // 🌟 ไอคอนสีเหลืองทึบชัดเจน
+            iconDiv.innerHTML = '<i class="fas fa-triangle-exclamation text-[30px]" style="color: #fae100;"></i>';
         } else { 
             iconDiv.classList.add('bg-[#fae100]/20', 'text-[#fae100]', 'border-[#fae100]/30'); 
+            btn.classList.remove('text-white');
             btn.classList.add('bg-[#fae100]', 'text-[#1e234e]', 'hover:bg-[#e5ce00]');
             iconDiv.innerHTML = '<i class="fas fa-info-circle text-[30px]"></i>';
         }
@@ -2941,7 +2942,7 @@ function handleTracking() {
         );
     }
 
-    // 🌟 ส่งข้อมูลไปที่ LINE และเปลี่ยนไอคอนพิกัดแผนที่
+    // 🌟 ส่งข้อมูลไปที่ LINE (เอาคำสั่งเปลี่ยนหมุดแผนที่ออก เพื่อให้หมุดเป็นเหมือนเดิม)
     window.reportCurrentTrip = function() {
         if (!selectedHistoryJobId || !loadedHistoryJobs[selectedHistoryJobId]) return;
         
@@ -2963,13 +2964,10 @@ function handleTracking() {
         message += `\nรายละเอียดปัญหา:\n(กรุณาพิมพ์ปัญหาที่คุณพบ...)`;
         
         let encodedMessage = encodeURIComponent(message);
-        let lineOaId = "@YOUR_LINE_OA_ID"; // 🛑 อย่าลืมเปลี่ยนเป็น LINE ID ของคุณ
+        let lineOaId = "@805zvmii"; // 🛑 อย่าลืมเปลี่ยนเป็น LINE ID ของคุณ
         
         let lineUrl = `https://line.me/R/oaMessage/${lineOaId}/?${encodedMessage}`;
         window.open(lineUrl, '_blank');
-
-        // 🌟 เปลี่ยนไอคอนพิกัดแผนที่ให้เป็นรูปรายงานสีเหลืองทันที
-        updateHistoryMarkersToReportStyle();
     }
 
     // 🌟 ฟังก์ชันเปลี่ยนไอคอนพิกัดบนแผนที่รายละเอียด
