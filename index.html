@@ -357,8 +357,8 @@
       </div>
 
       <div class="relative z-10 bg-[#2a2f5c]/90 backdrop-blur-md border-b border-[#383d6a] h-16 px-4 flex items-center gap-3 shadow-md shrink-0 w-full">
-          <button onclick="window.closeCommunityModal()" class="w-10 h-10 bg-[#383d6a]/80 text-gray-400 rounded-full flex items-center justify-center hover:text-[#fae100] transition"><i class="fas fa-arrow-left"></i></button>
-          <h2 class="text-lg font-black text-[#fae100]"><i class="fas fa-users mr-2"></i> แชทคอมมูนิตี้ส่วนกลาง</h2>
+          <button onclick="window.closeCommunityModal()" class="w-10 h-10 bg-[#383d6a]/80 text-gray-400 rounded-full flex items-center justify-center hover:text-white transition"><i class="fas fa-arrow-left"></i></button>
+          <h2 class="text-lg font-black text-white">แชทคอมมูนิตี้ส่วนกลาง</h2>
       </div>
       
       <div class="relative z-10 p-3 bg-transparent border-b border-[#383d6a] shrink-0">
@@ -370,7 +370,7 @@
 
       <div id="globalChatBox" class="relative z-10 flex-1 overflow-y-auto p-4 bg-transparent hide-scrollbar flex flex-col">
           <div id="globalChatMessages" class="space-y-3 flex-1 flex flex-col justify-end">
-              <p class="text-center text-xs font-normal text-gray-500 my-4">พูดคุยกับผู้โดยสารและคนขับในพื้นที่ได้ที่นี่</p>
+              <p class="text-center text-xs font-normal text-white opacity-70 my-4">พูดคุยกับผู้โดยสารและคนขับในพื้นที่ได้ที่นี่</p>
           </div>
       </div>
 
@@ -379,7 +379,7 @@
           <button onclick="window.sendGlobalChat()" class="bg-[#fae100] text-[#1e234e] font-black px-5 rounded-xl hover:bg-[#e5ce00] transition shadow-md active:scale-95"><i class="fas fa-paper-plane"></i></button>
       </div>
   </div>
-
+  
   <!-- PAGE 2: PICKUP -->
   <div id="page2" class="hidden">
     <div class="ui-panel border-t-[4px] border-[#4ade80] h-auto pb-6 pt-4">
@@ -2615,7 +2615,6 @@ function renderWaypointsUI() {
             let messageData = snap.val();
             if (!messageData) return;
 
-            // ตรวจสอบไอดีผู้ส่ง เพื่อแยกฝั่งแชทและสีพื้นหลัง
             let isSenderMe = (messageData.pin === lineUserId);
             let align = isSenderMe ? 'justify-end' : 'justify-start';
             let bg = isSenderMe ? 'bg-[#fae100] text-[#1e234e]' : 'bg-[#2a2f5c] border border-[#383d6a] text-white';
@@ -2623,7 +2622,6 @@ function renderWaypointsUI() {
             let isDriver = messageData.role === 'driver';
             let roleBadge = isDriver ? `<span class="bg-blue-500 text-white text-[8px] px-1 py-0.5 rounded ml-1 font-bold">DRIVER</span>` : '';
 
-            // ระบบนับแจ้งเตือนข้อความใหม่
             let modal = document.getElementById('communityModal');
             let lastSeen = parseInt(localStorage.getItem('lastSeenChatTime') || '0');
             
@@ -2648,29 +2646,31 @@ function renderWaypointsUI() {
                 timeStr = `${day}/${month} ${hrs}:${mins}`;
             }
 
+            // 🌟 รวมชื่อและเวลาไว้ในบรรทัดเดียวกัน กำหนดให้เป็นตัวหนังสือสีขาว (และเวลาดรอปความสว่างลงนิดนึงให้ดูมีมิติ)
+            let nameRow = `<span class="text-[10px] text-white font-normal mb-1 ${isSenderMe ? 'mr-1' : 'ml-1'} flex items-center gap-1.5">${senderName} ${roleBadge} <span class="text-[9px] text-white/60">${timeStr}</span></span>`;
+
+            // 🌟 ลบเวลาออกจากด้านล่างของแชท แล้วเรียกใช้ nameRow ด้านบนแทน
             let messageHtml = `
             <div class="chat-msg-item flex w-full ${align} animate-fade-in mb-3">
                 <div class="flex flex-col ${isSenderMe ? 'items-end' : 'items-start'} max-w-[85%]">
-                    ${!isSenderMe ? `<span class="text-[10px] text-gray-400 font-normal mb-1 ml-1 flex items-center">${senderName} ${roleBadge}</span>` : ''}
+                    ${nameRow}
                     <div class="${bg} px-4 py-2.5 rounded-2xl text-[13px] font-normal shadow-sm break-words w-full">
                         ${messageData.text}
                     </div>
-                    <span class="text-[9px] text-gray-500 mt-1 ${isSenderMe ? 'mr-1' : 'ml-1'} font-normal">${timeStr}</span>
                 </div>
             </div>`;
 
+            const messagesDiv = document.getElementById('globalChatMessages');
             if (messagesDiv) {
                 messagesDiv.insertAdjacentHTML('beforeend', messageHtml);
             }
             
-            // ดันแชทลงล่างสุดเวลามีข้อความใหม่
             const chatBox = document.getElementById('globalChatBox');
             if (chatBox) {
                 setTimeout(() => { chatBox.scrollTop = chatBox.scrollHeight; }, 100);
             }
         });
-    };
-
+      
     window.openCommunityModal = function() {
         document.getElementById('communityModal').classList.remove('hidden');
         window.unreadChatMessages.clear(); 
