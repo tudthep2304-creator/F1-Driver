@@ -992,7 +992,7 @@ window.loadedNewsItems = {};
         document.getElementById('newsModal').classList.add('hidden'); 
     }
 
-// 🌟 2. ระบบเรนเดอร์รายการข่าว
+// 🌟 2. ระบบเรนเดอร์รายการข่าว (เอาคำสั่งลบคำว่า NEW ออกไปแล้ว)
     function renderNewsAndPromotions(snapshot = null) {
         let container = document.getElementById('newsListContainer');
         let readIds = JSON.parse(localStorage.getItem('readNewsIds') || '[]');
@@ -1016,16 +1016,11 @@ window.loadedNewsItems = {};
                 let iconColor = item.isPromo ? "text-[#fae100]" : "text-gray-300";
                 
                 let newDot = isNew ? `<div id="dot-${item.id}" class="w-2.5 h-2.5 bg-red-500 rounded-full absolute top-0 right-0 border-2 border-[#1e234e] shadow-sm animate-pulse"></div>` : '';
+                
                 let textTitleColor = isNew ? 'text-white' : 'text-gray-400';
-                let textTimeColor = isNew ? 'text-[#fae100]' : 'text-gray-500';
+                // 🌟 วันที่ยังไม่อ่านให้เป็นสีขาว อ่านแล้วเป็นสีเทา
+                let textTimeColor = isNew ? 'text-white' : 'text-gray-500';
 
-                // 🌟 ตรวจสอบถ้าข่าวนี้อ่านแล้ว ให้ตัดคำว่า "NEW" ออกจากท้ายหัวข้อ
-                let displayTitle = item.title;
-                if (!isNew) {
-                    displayTitle = displayTitle.replace(/NEW/g, '').trim(); 
-                }
-
-                // 🌟 ปรับฟอนต์ให้เป็น font-normal ทั้งหมด และขนาดตามที่ต้องการ (16px, 13px, 11px)
                 html += `
                 <div onclick="window.openNewsDetail('${item.id}')" class="flex items-center gap-3 py-3.5 border-b border-[#383d6a]/50 cursor-pointer hover:bg-[#2a2f5c]/40 transition px-2">
                     <div class="relative w-10 h-10 shrink-0 rounded-full flex items-center justify-center text-lg ${iconBg} ${iconColor}">
@@ -1033,8 +1028,8 @@ window.loadedNewsItems = {};
                         ${newDot}
                     </div>
                     <div class="flex-1 min-w-0">
-                        <h3 id="title-${item.id}" class="text-[16px] font-normal ${textTitleColor} truncate leading-tight">${displayTitle}</h3>
-                        <p class="text-[13px] text-gray-500 font-normal truncate mt-0.5">${item.content}</p>
+                        <h3 id="title-${item.id}" class="text-[16px] font-normal ${textTitleColor} truncate leading-tight">${item.title || ""}</h3>
+                        <p class="text-[13px] text-gray-500 font-normal truncate mt-0.5">${item.content || ""}</p>
                     </div>
                     <div class="shrink-0 text-right pl-2">
                         <span id="time-${item.id}" class="text-[11px] ${textTimeColor} font-normal">${item.dateStr || ''}</span>
@@ -1048,7 +1043,7 @@ window.loadedNewsItems = {};
         else db.ref('news_promotions').once('value', snap => processSnap(snap));
     }
 
-    // 🌟 3. ระบบกดอ่านข่าว
+    // 🌟 3. ระบบกดอ่านข่าว (สลับสีอย่างเดียว ไม่ยุ่งกับข้อความแล้ว)
     window.openNewsDetail = function(id) {
         let item = window.loadedNewsItems[id];
         if(!item) return;
@@ -1065,25 +1060,25 @@ window.loadedNewsItems = {};
                 else badge.classList.add('hidden');
             }
             
-            // 🌟 ซ่อนจุดแดง สลับสี และลบคำว่า NEW ออกทันทีที่กดเข้าอ่านโดยไม่ต้องโหลดหน้าใหม่
             let dot = document.getElementById('dot-' + id); if(dot) dot.remove();
+            
             let titleEl = document.getElementById('title-' + id); 
             if(titleEl) { 
                 titleEl.classList.remove('text-white'); 
                 titleEl.classList.add('text-gray-400'); 
-                titleEl.innerText = titleEl.innerText.replace(/NEW/g, '').trim();
             }
+
             let timeEl = document.getElementById('time-' + id); 
             if(timeEl) { 
-                timeEl.classList.remove('text-[#fae100]'); 
+                timeEl.classList.remove('text-white'); 
                 timeEl.classList.add('text-gray-500'); 
             }
         }
 
-        // แสดงเนื้อหาใน Modal (ถ้าอ่านแล้ว ลบคำว่า NEW ในหน้ารายละเอียดออกด้วย)
+        // 🌟 แสดงเนื้อหาใน Modal
         document.getElementById('ndDate').innerText = item.dateStr || '';
-        document.getElementById('ndTitle').innerText = item.title.replace(/NEW/g, '').trim();
-        document.getElementById('ndContent').innerText = item.content;
+        document.getElementById('ndTitle').innerText = item.title || "";
+        document.getElementById('ndContent').innerText = item.content || "";
         
         let badgeEl = document.getElementById('ndBadge');
         if(item.isPromo) { badgeEl.innerText = "PROMO"; badgeEl.className = "bg-red-500 text-white text-[10px] font-normal px-2 py-1 rounded shadow"; } 
@@ -1095,6 +1090,11 @@ window.loadedNewsItems = {};
         else { imgContainer.classList.add('hidden'); imgEl.src = ""; }
 
         document.getElementById('newsDetailModal').classList.remove('hidden');
+    }
+
+    // 🌟 4. ฟังก์ชันปิดหน้ารายละเอียดข่าว
+    window.closeNewsDetailModal = function() {
+        document.getElementById('newsDetailModal').classList.add('hidden');
     }
     
     function updateMapPadding() {
