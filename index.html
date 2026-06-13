@@ -566,6 +566,80 @@
       <div class="p-4" id="blockedListContainer"><div class="flex justify-center py-10"><i class="fas fa-spinner fa-spin text-3xl text-red-500"></i></div></div>
   </div>
 
+<div id="historyDetailModal" class="hidden fixed inset-0 z-[260] bg-[#1e234e] flex flex-col pointer-events-auto transition-transform">
+      <div class="relative z-20 bg-[#2a2f5c]/90 backdrop-blur-md border-b border-[#383d6a] h-16 px-4 flex items-center justify-between shadow-md shrink-0 w-full">
+          <div class="flex items-center gap-3">
+              <button onclick="window.closeHistoryDetail()" class="w-10 h-10 shrink-0 bg-[#383d6a]/80 text-gray-400 rounded-full flex items-center justify-center hover:text-white transition"><i class="fas fa-arrow-left"></i></button>
+              <h2 class="text-[18px] font-bold text-white tracking-wide">รายละเอียดประวัติการเดินทาง</h2>
+          </div>
+      </div>
+
+      <div class="flex-1 overflow-y-auto w-full hide-scrollbar flex flex-col bg-[#1e234e] relative z-10">
+          
+          <div id="historyMap" class="w-full h-[220px] bg-[#1e234e] shrink-0 border-b border-[#383d6a]"></div>
+
+          <div class="p-3 flex flex-col gap-3 text-white font-normal pb-8">
+              
+              <div class="flex justify-between items-center border-b border-[#383d6a] pb-2.5">
+                  <div class="flex-1">
+                      <p class="text-[11px] text-gray-400 mb-0.5 font-normal">รหัส</p>
+                      <p class="text-[13px] font-normal text-white" id="histDetId">#JOB-XXXX</p>
+                  </div>
+                  <div class="flex-1 text-center">
+                      <p class="text-[11px] text-gray-400 mb-0.5 font-normal">ประเภทรถ</p>
+                      <p class="text-[13px] font-normal text-white" id="histDetService">รถยนต์</p>
+                  </div>
+                  <div class="flex-1 text-right">
+                      <p class="text-[11px] text-gray-400 mb-0.5 font-normal">วันที่</p>
+                      <p class="text-[13px] font-normal" id="histDetDate">--/--/----</p>
+                  </div>
+              </div>
+
+              <div class="bg-[#2a2f5c] p-2.5 rounded-xl border border-[#383d6a] shadow-sm flex items-center justify-between">
+                  <div class="flex items-center gap-3">
+                      <div class="w-9 h-9 bg-[#1e234e] rounded-full flex items-center justify-center text-white text-lg border border-[#383d6a] shrink-0"><i class="fas fa-user-tie"></i></div>
+                      <div>
+                          <p class="text-[12px] font-normal" id="histDetDriver">คนขับ: -</p>
+                          <p class="text-[11px] text-gray-400 mt-0 font-normal" id="histDetDriverRating"><i class="fas fa-star text-[#fae100]"></i> 5.0</p>
+                      </div>
+                  </div>
+                  <div class="flex items-center gap-2 shrink-0">
+                      <button id="btnReportTrip" onclick="window.confirmReportTrip()" class="w-9 h-9 bg-yellow-900/20 text-[#fae100] rounded-full border border-yellow-500/20 flex items-center justify-center hover:bg-yellow-900/40 transition" title="รายงานปัญหา">
+                          <i class="fas fa-triangle-exclamation text-[13px]"></i>
+                      </button>
+                      <button id="btnBlockDriver" onclick="window.blockCurrentHistoryDriver()" class="w-9 h-9 bg-red-900/20 text-red-500 rounded-full border border-red-500/20 flex items-center justify-center hover:bg-red-900/40 transition" title="บล็อกคนขับ">
+                          <i class="fas fa-user-slash text-[14px]"></i>
+                      </button>
+                  </div>
+              </div>
+
+              <div class="bg-[#2a2f5c] p-3 rounded-xl border border-[#383d6a] shadow-sm flex flex-col gap-2.5">
+                  <div class="flex justify-between items-center border-b border-[#383d6a]/80 pb-2.5">
+                      <div class="flex gap-4">
+                          <div>
+                              <p class="text-[11px] text-gray-400 mb-0.5 font-normal leading-tight">ระยะทาง</p>
+                              <p class="text-[13px] font-normal"><span id="histDetDist">0</span> กม.</p>
+                          </div>
+                          <div>
+                              <p class="text-[11px] text-gray-400 mb-0.5 font-normal leading-tight">เวลา</p>
+                              <p class="text-[13px] font-normal"><span id="histDetTime">0</span> นาที</p>
+                          </div>
+                      </div>
+                      <div class="text-right">
+                          <p class="text-[11px] text-gray-400 mb-0.5 font-normal leading-tight">ราคาสุทธิ</p>
+                          <p class="text-[16px] font-normal text-[#4ade80] leading-none" id="histDetPrice">฿0</p>
+                      </div>
+                  </div>
+
+                  <div class="relative mt-0.5 px-0.5">
+                      <div class="absolute left-[0.4rem] top-3 bottom-3 w-0.5 border-l-[1.5px] border-dashed border-[#4b507d]"></div>
+                      <div id="historyDetailWaypointsContainer" class="flex flex-col relative z-10 gap-3"></div>
+                  </div>
+              </div>
+          </div>
+      </div>
+  </div>
+  
   <div id="confirmActionModal" class="hidden fixed inset-0 z-[9990] bg-black/80 flex items-center justify-center p-4 pointer-events-auto">
       <div class="bg-[#1e234e] border border-[#383d6a] rounded-3xl p-3 w-full max-w-sm text-center shadow-2xl">
           <div class="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl" id="confirmActionIcon"><i class="fas fa-map-marked-alt"></i></div>
