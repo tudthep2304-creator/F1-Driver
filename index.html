@@ -668,7 +668,6 @@
 
           <div class="p-3 flex flex-col gap-3 text-white font-normal pb-8">
               
-              <!-- รหัสการเดินทาง, ประเภทรถ & วันที่ -->
               <div class="flex justify-between items-center border-b border-[#383d6a] pb-2.5">
                   <div class="flex-1">
                       <p class="text-[11px] text-gray-400 mb-0.5 font-normal">รหัส</p>
@@ -676,7 +675,7 @@
                   </div>
                   <div class="flex-1 text-center">
                       <p class="text-[11px] text-gray-400 mb-0.5 font-normal">ประเภทรถ</p>
-                      <p class="text-[13px] font-bold text-[#fae100]" id="histDetService">รถยนต์</p>
+                      <p class="text-[13px] font-normal text-white" id="histDetService">รถยนต์</p>
                   </div>
                   <div class="flex-1 text-right">
                       <p class="text-[11px] text-gray-400 mb-0.5 font-normal">วันที่</p>
@@ -693,8 +692,8 @@
                       </div>
                   </div>
                   <div class="flex items-center gap-2 shrink-0">
-                      <button id="btnReportTrip" onclick="window.confirmReportTrip()" class="w-9 h-9 bg-orange-900/20 text-orange-400 rounded-full border border-orange-500/20 flex items-center justify-center hover:bg-orange-900/40 transition" title="รายงานปัญหา">
-                          <i class="fas fa-flag text-[13px]"></i>
+                      <button id="btnReportTrip" onclick="window.confirmReportTrip()" class="w-9 h-9 bg-yellow-900/20 text-[#fae100] rounded-full border border-yellow-500/20 flex items-center justify-center hover:bg-yellow-900/40 transition" title="รายงานปัญหา">
+                          <i class="fas fa-triangle-exclamation text-[13px]"></i>
                       </button>
                       <button id="btnBlockDriver" onclick="window.blockCurrentHistoryDriver()" class="w-9 h-9 bg-red-900/20 text-red-500 rounded-full border border-red-500/20 flex items-center justify-center hover:bg-red-900/40 transition" title="บล็อกคนขับ">
                           <i class="fas fa-ban text-[14px]"></i>
@@ -728,43 +727,15 @@
           </div>
       </div>
   </div>
-  <div id="routeChangeModal" class="hidden fixed inset-0 z-[200] bg-black/80 flex items-center justify-center p-4 pointer-events-auto transition-opacity">
-      <div class="bg-[#1e234e] rounded-3xl p-6 w-full max-w-sm text-center shadow-xl text-gray-100 border border-[#383d6a]">
-          <div class="w-16 h-16 bg-[#fae100]/20 text-[#fae100] border border-[#fae100]/30 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl"><i class="fas fa-route"></i></div>
-          <h3 class="text-xl font-bold mb-2" id="rcTitle">ตรวจสอบราคาใหม่</h3>
-          <p class="text-sm font-normal text-gray-300 mb-2 leading-relaxed" id="rcAddress">ระบบกำลังเพิ่มจุดแวะ...</p>
-          <div class="bg-[#2a2f5c] rounded-xl p-3 mb-6 border border-[#383d6a] inline-block shadow-inner">
-              <p class="text-[10px] text-gray-400 font-bold">ราคาคำนวณใหม่ (คงที่)</p>
-              <p class="text-lg font-black text-[#fae100]" id="rcPrice">฿0</p>
-          </div>
-          <div class="flex gap-3">
-              <button onclick="window.rejectRouteChange()" class="flex-1 py-3 bg-[#2a2f5c] text-gray-200 font-normal rounded-xl hover:bg-[#383d6a] transition shadow-sm border border-[#383d6a]">ยกเลิก</button>
-              <button onclick="window.acceptRouteChange()" class="flex-[2] py-3 bg-[#fae100] text-[#1e234e] font-black rounded-xl shadow-md hover:bg-[#e5ce00] transition">ยืนยัน</button>
-          </div>
-      </div>
-  </div>
-
-  <div id="promoModal" class="hidden fixed inset-0 z-[140] bg-black/80 flex items-center justify-center p-4 pointer-events-auto">
-      <div class="bg-[#1e234e] border border-[#383d6a] rounded-3xl p-6 w-full max-w-sm text-center shadow-2xl">
-          <div class="w-14 h-14 bg-[#2a2f5c] rounded-full flex items-center justify-center mx-auto mb-4 text-2xl shadow-inner border border-[#383d6a]"><i class="fas fa-ticket-alt text-[#fae100]"></i></div>
-          <h3 class="text-xl font-black text-white mb-1">โค้ดส่วนลด</h3>
-          <p class="text-[13px] font-normal text-gray-400 mb-5 leading-relaxed">กรุณากรอกรหัสโปรโมชั่นเพื่อรับส่วนลด</p>
-          <input type="text" id="promoInput" placeholder="ใส่รหัสโค้ดที่นี่" class="w-full p-3.5 mb-5 bg-[#2a2f5c] border border-[#383d6a] focus:border-[#fae100] text-white rounded-xl text-center font-normal uppercase outline-none transition placeholder-gray-500 text-sm">
-          <div class="flex gap-3">
-              <button onclick="window.closePromoModal()" class="flex-[0.8] py-3.5 bg-[#2a2f5c] text-gray-300 font-normal rounded-xl hover:bg-[#383d6a] transition text-sm">ปิด</button>
-              <button onclick="window.applyPromoCode()" class="flex-1 py-3.5 bg-[#fae100] text-[#1e234e] font-black rounded-xl shadow-md hover:bg-[#e5ce00] transition text-sm">ยืนยัน</button>
-          </div>
-      </div>
-  </div>
 
   <div id="confirmActionModal" class="hidden fixed inset-0 z-[9990] bg-black/80 flex items-center justify-center p-4 pointer-events-auto">
-      <div class="bg-[#1e234e] border border-[#383d6a] rounded-3xl p-6 w-full max-w-sm text-center shadow-2xl">
+      <div class="bg-[#1e234e] border border-[#383d6a] rounded-3xl p-3 w-full max-w-sm text-center shadow-2xl">
           <div class="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl" id="confirmActionIcon"><i class="fas fa-map-marked-alt"></i></div>
-          <h3 id="confirmActionTitle" class="text-xl font-black text-white mb-2">...</h3>
-          <p id="confirmActionMessage" class="text-sm font-normal text-gray-400 mb-6 leading-relaxed">...</p>
-          <div class="flex gap-3">
-              <button onclick="window.closeConfirmActionModal()" class="flex-1 py-3 bg-[#2a2f5c] text-gray-200 font-normal rounded-xl hover:bg-[#383d6a] transition border border-[#383d6a]">ยกเลิก</button>
-              <button id="confirmActionButton" onclick="window.submitConfirmAction()" class="flex-1 py-3 text-[#1e234e] font-black rounded-xl shadow-md transition">ตกลง</button>
+          <h3 id="confirmActionTitle" class="text-[16px] font-bold text-white mb-2">...</h3>
+          <p id="confirmActionMessage" class="text-[13px] font-normal text-white mb-6 leading-relaxed">...</p>
+          <div class="flex gap-2">
+              <button onclick="window.closeConfirmActionModal()" class="flex-1 py-2 bg-[#2a2f5c] text-white font-normal rounded-full hover:bg-[#383d6a] transition border border-[#383d6a] text-[13px]">ยกเลิก</button>
+              <button id="confirmActionButton" onclick="window.submitConfirmAction()" class="flex-1 py-2 font-normal rounded-full shadow-md transition text-[13px] text-white">ตกลง</button>
           </div>
       </div>
   </div>
@@ -1310,13 +1281,42 @@ window.loadedNewsItems = {};
 
     let currentConfirmCallback = null;
     window.openConfirmActionModal = function(title, message, callback, theme = 'blue') {
-        document.getElementById('confirmActionTitle').innerText = title; document.getElementById('confirmActionMessage').innerHTML = message;
+        // ใส่ข้อมูล Title/Message และกำหนดสีขาวทั้งหมด
+        document.getElementById('confirmActionTitle').innerText = title;
+        document.getElementById('confirmActionTitle').classList.add('text-white');
+        
+        document.getElementById('confirmActionMessage').innerHTML = message;
+        document.getElementById('confirmActionMessage').classList.add('text-white');
+        
         currentConfirmCallback = callback;
-        const iconDiv = document.getElementById('confirmActionIcon'); const btn = document.getElementById('confirmActionButton');
-        iconDiv.className = "w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl border"; btn.className = "flex-1 py-3 font-black rounded-xl shadow-md transition";
-        if (theme === 'green') { iconDiv.classList.add('bg-[#fae100]/20', 'text-[#fae100]', 'border-[#fae100]/30'); btn.classList.add('bg-[#fae100]', 'text-[#1e234e]', 'hover:bg-[#e5ce00]'); } 
-        else if (theme === 'red') { iconDiv.classList.add('bg-red-900/30', 'text-red-500', 'border-red-500/30'); btn.classList.add('bg-red-600', 'text-white', 'hover:bg-red-700'); } 
-        else { iconDiv.classList.add('bg-[#fae100]/20', 'text-[#fae100]', 'border-[#fae100]/30'); btn.classList.add('bg-[#fae100]', 'text-[#1e234e]', 'hover:bg-[#e5ce00]'); }
+        const iconDiv = document.getElementById('confirmActionIcon'); 
+        const btn = document.getElementById('confirmActionButton');
+        
+        // รีเซ็ตคลาสเดิม
+        iconDiv.className = "w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl border"; 
+        btn.className = "flex-1 py-2 font-normal rounded-full shadow-md transition text-[13px] text-white";
+        
+        // 🌟 เพิ่มไอคอนและสีตามธีม
+        if (theme === 'green') { 
+            iconDiv.classList.add('bg-[#fae100]/20', 'text-[#fae100]', 'border-[#fae100]/30'); 
+            btn.classList.add('bg-[#fae100]', 'text-[#1e234e]', 'hover:bg-[#e5ce00]');
+            iconDiv.innerHTML = '<i class="fas fa-check-circle text-[30px]"></i>';
+        } else if (theme === 'red') { 
+            iconDiv.classList.add('bg-red-900/30', 'text-red-500', 'border-red-500/30'); 
+            btn.classList.add('bg-red-600', 'text-white', 'hover:bg-red-700');
+            iconDiv.innerHTML = '<i class="fas fa-ban text-[30px]"></i>';
+        } else if (theme === 'yellow') { 
+            // 🌟 ธีมสีเหลืองสำหรับรายงานปัญหา (สีตามหมุดและแผนที่ในรูป 4)
+            iconDiv.classList.add('bg-yellow-900/20', 'text-[#fae100]', 'border-yellow-500/20'); 
+            btn.classList.add('bg-[#fae100]', 'text-[#1e234e]', 'hover:bg-[#e5ce00]');
+            // 🌟 ใช้ไอคอนสามเหลี่ยมรายงานสีเหลืองโปร่ง
+            iconDiv.innerHTML = '<i class="fas fa-triangle-exclamation text-[30px]" style="color: rgba(250, 225, 0, 0.4); stroke: white; stroke-width: 1px;"></i>';
+        } else { 
+            iconDiv.classList.add('bg-[#fae100]/20', 'text-[#fae100]', 'border-[#fae100]/30'); 
+            btn.classList.add('bg-[#fae100]', 'text-[#1e234e]', 'hover:bg-[#e5ce00]');
+            iconDiv.innerHTML = '<i class="fas fa-info-circle text-[30px]"></i>';
+        }
+        
         document.getElementById('confirmActionModal').classList.remove('hidden');
     }
     window.closeConfirmActionModal = function() { document.getElementById('confirmActionModal').classList.add('hidden'); currentConfirmCallback = null; }
@@ -2928,16 +2928,20 @@ function handleTracking() {
         showAlert('ระบบแชท', 'ฟังก์ชันแชทกับคนขับกำลังอยู่ระหว่างการปรับปรุงครับ', 'info');
     }
 
-    // 🌟 ฟังก์ชัน 1: เปิด Popup ยืนยันก่อนรายงาน
+    // 🌟 เปิด Popup ยืนยันรายงานปัญหาให้เป็นสีเหลือง
     window.confirmReportTrip = function() {
+        if (!selectedHistoryJobId || !loadedHistoryJobs[selectedHistoryJobId]) return;
+        
+        // ส่ง theme 'yellow' ไปเพื่อเปลี่ยนสีป็อบอัพ
         window.openConfirmActionModal(
             "รายงานปัญหา?", 
             "คุณต้องการรายงานปัญหาการเดินทางในรอบนี้ ใช่หรือไม่?", 
-            () => { window.reportCurrentTrip(); }
+            () => { window.reportCurrentTrip(); },
+            'yellow'
         );
     }
 
-    // 🌟 ฟังก์ชันส่งข้อมูลเข้า LINE (เพิ่มประเภทรถเข้าไปในข้อความ)
+    // 🌟 ส่งข้อมูลไปที่ LINE และเปลี่ยนไอคอนพิกัดแผนที่
     window.reportCurrentTrip = function() {
         if (!selectedHistoryJobId || !loadedHistoryJobs[selectedHistoryJobId]) return;
         
@@ -2945,14 +2949,16 @@ function handleTracking() {
         let shortId = selectedHistoryJobId.substring(selectedHistoryJobId.length - 8).toUpperCase();
         let dateStr = new Date(job.completedAt || job.timestamp).toLocaleString('th-TH');
         
-        // ดึงข้อมูลที่หน้าจอโชว์อยู่
+        // แปลงข้อมูลประเภทรถ
+        let serviceMap = {'car': 'รถยนต์', 'premium_car': 'รถยนต์พรีเมียม', 'bike': 'มอเตอร์ไซค์', 'premium_bike': 'มอไซค์พรีเมียม'};
+        let serviceInfo = serviceMap[job.serviceType || 'car'] || 'รถยนต์';
+        
         let driverInfo = document.getElementById('histDetDriver').innerText; 
-        let serviceInfo = document.getElementById('histDetService').innerText; 
         
         let message = `🚨 รายงานปัญหาการเดินทาง\n`;
         message += `รหัสงาน: #${shortId}\n`;
         message += `วันที่: ${dateStr}\n`;
-        message += `ประเภทรถ: ${serviceInfo}\n`; // 🌟 เพิ่มประเภทรถในข้อความ
+        message += `ประเภทรถ: ${serviceInfo}\n`;
         message += `คนขับ: ${driverInfo}\n`;
         message += `\nรายละเอียดปัญหา:\n(กรุณาพิมพ์ปัญหาที่คุณพบ...)`;
         
@@ -2961,6 +2967,41 @@ function handleTracking() {
         
         let lineUrl = `https://line.me/R/oaMessage/${lineOaId}/?${encodedMessage}`;
         window.open(lineUrl, '_blank');
+
+        // 🌟 เปลี่ยนไอคอนพิกัดแผนที่ให้เป็นรูปรายงานสีเหลืองทันที
+        updateHistoryMarkersToReportStyle();
+    }
+
+    // 🌟 ฟังก์ชันเปลี่ยนไอคอนพิกัดบนแผนที่รายละเอียด
+    function updateHistoryMarkersToReportStyle() {
+        if (historyMapInstance && window.historyMapMarkers && window.historyMapMarkers.length > 0) {
+            let waypoints = loadedHistoryJobs[selectedHistoryJobId].waypoints || [];
+            window.historyMapMarkers.forEach((m, idx) => {
+                // เปลี่ยนไอคอนหมุดเป็นเครื่องหมายรายงานสีเหลือง
+                m.setIcon(createReportMarkerIcon((idx + 1).toString()));
+                // ซ่อน Label ตัวเลขเพื่อไม่ให้บัง
+                m.setLabel(null);
+            });
+        }
+    }
+    // 🌟 สร้างไอคอนมาร์กเกอร์รายงานสีเหลือง (สามเหลี่ยม + เครื่องหมาย !)
+    function createReportMarkerIcon(label) {
+        if (typeof google === 'undefined') return null;
+        
+        // เครื่องหมาย ! สีเหลืองทึบ (#fae100)
+        // เครื่องหมายสามเหลี่ยมโปร่งสีเหลือง (rgba(250, 225, 0, 0.4))
+        const reportSvg = `
+        <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 36 36">
+          <path d="M18 2.2c-1.3 0-2.6 0.7-3.3 1.8L2.1 22.1c-0.7 1.2-0.7 2.6 0 3.8 0.7 1.1 1.9 1.9 3.3 1.9h25.2c1.3 0 2.6-0.7 3.3-1.9 0.7-1.2 0.7-2.6 0-3.8L21.3 4C20.6 2.8 19.3 2.2 18 2.2z" fill="rgba(250, 225, 0, 0.4)" stroke="#ffffff" stroke-width="1.5"/>
+          <path d="M16.5 10.5h3v9h-3v-9zm0 12h3v3h-3v-3z" fill="#fae100"/>
+        </svg>`;
+        
+        return {
+            url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(reportSvg),
+            scaledSize: new google.maps.Size(36, 36),
+            anchor: new google.maps.Point(18, 32),
+            labelOrigin: new google.maps.Point(18, -10)
+        };
     }
   </script>
   <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDsZ_tbFhH6fUXRz3I6C-tMshNwwrSevd4&libraries=places,geometry&callback=initMap" async defer></script>
