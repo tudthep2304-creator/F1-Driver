@@ -1774,10 +1774,10 @@ window.openProfileModal = function() {
                 timeStr = `${day}/${month} ${hrs}:${mins}`;
             }
 
-            // 🌟 รวมชื่อและเวลาไว้ในบรรทัดเดียวกัน กำหนดให้เป็นตัวหนังสือสีขาว (และเวลาดรอปความสว่างลงนิดนึงให้ดูมีมิติ)
-            let nameRow = `<span class="text-[10px] text-white font-normal mb-1 ${isSenderMe ? 'mr-1' : 'ml-1'} flex items-center gap-1.5">${senderName} ${roleBadge} <span class="text-[9px] text-white/60">${timeStr}</span></span>`;
+            // 🌟 สร้างบรรทัดชื่อ โดยเอาเวลาไปต่อท้ายเลย
+            let nameRow = `<div class="text-[10px] text-white font-normal mb-1 ${isSenderMe ? 'mr-1' : 'ml-1'} flex items-center gap-1.5">${senderName} ${roleBadge} <span class="text-[9px] text-white/50">${timeStr}</span></div>`;
 
-            // 🌟 ลบเวลาออกจากด้านล่างของแชท แล้วเรียกใช้ nameRow ด้านบนแทน
+            // 🌟 ประกอบร่างแชท (สังเกตว่าไม่มี span เวลาอยู่ใต้กล่องข้อความแล้ว)
             let messageHtml = `
             <div class="chat-msg-item flex w-full ${align} animate-fade-in mb-3">
                 <div class="flex flex-col ${isSenderMe ? 'items-end' : 'items-start'} max-w-[85%]">
