@@ -668,13 +668,18 @@
 
           <div class="p-3 flex flex-col gap-3 text-white font-normal pb-8">
               
+              <!-- รหัสการเดินทาง, ประเภทรถ & วันที่ -->
               <div class="flex justify-between items-center border-b border-[#383d6a] pb-2.5">
-                  <div>
-                      <p class="text-[11px] text-gray-400 mb-0.5 font-normal">รหัสการเดินทาง</p>
+                  <div class="flex-1">
+                      <p class="text-[11px] text-gray-400 mb-0.5 font-normal">รหัส</p>
                       <p class="text-[13px] font-normal text-white" id="histDetId">#JOB-XXXX</p>
                   </div>
-                  <div class="text-right">
-                      <p class="text-[11px] text-gray-400 mb-0.5 font-normal">วันที่เดินทาง</p>
+                  <div class="flex-1 text-center">
+                      <p class="text-[11px] text-gray-400 mb-0.5 font-normal">ประเภทรถ</p>
+                      <p class="text-[13px] font-bold text-[#fae100]" id="histDetService">รถยนต์</p>
+                  </div>
+                  <div class="flex-1 text-right">
+                      <p class="text-[11px] text-gray-400 mb-0.5 font-normal">วันที่</p>
                       <p class="text-[13px] font-normal" id="histDetDate">--/--/----</p>
                   </div>
               </div>
@@ -2332,21 +2337,27 @@ function renderWaypointsUI() {
         let job = loadedHistoryJobs[jobId]; 
         if(!job) return; 
         selectedHistoryJobId = jobId;
-        window.historyFocusedIndex = -1; // รีเซ็ตสถานะการซูม
+        window.historyFocusedIndex = -1; 
 
-        // 1. สร้างรหัสการเดินทางจาก Job ID
+        // แปลงข้อมูลประเภทรถ
+        let serviceMap = {
+            'car': 'รถยนต์',
+            'premium_car': 'รถยนต์พรีเมียม',
+            'bike': 'มอเตอร์ไซค์',
+            'premium_bike': 'มอไซค์พรีเมียม'
+        };
+        let sType = job.serviceType || 'car';
+
+        // 1. สร้างรหัสการเดินทาง และแสดงข้อมูลทั่วไป
         let shortId = jobId.substring(jobId.length - 8).toUpperCase();
         document.getElementById('histDetId').innerText = `#${shortId}`;
-
-        // 2. วันที่ และ ราคา
+        document.getElementById('histDetService').innerText = serviceMap[sType] || 'รถยนต์'; // แสดงประเภทรถ
         document.getElementById('histDetDate').innerText = new Date(job.completedAt || job.timestamp).toLocaleDateString('th-TH'); 
         document.getElementById('histDetPrice').innerText = "฿" + (job.price || 0); 
-
-        // 3. ระยะทาง และ เวลา
         document.getElementById('histDetDist').innerText = job.distance || '-';
         document.getElementById('histDetTime').innerText = job.duration || '-';
         
-        // 4. ข้อมูลคนขับ
+        // ข้อมูลคนขับ
         if(job.driverPin) { 
             db.ref('drivers_profile/' + job.driverPin).once('value', snap => { 
                 if(snap.exists()) {
@@ -2363,13 +2374,11 @@ function renderWaypointsUI() {
             document.getElementById('histDetDriverRating').innerText = `-`;
         }
 
-        // 5. รายการจุดรับ-ส่ง พร้อมเวลาและการคำนวณเวลาเฉลี่ย
+        // รายการจุดรับ-ส่ง 
         let wpContainer = document.getElementById('historyDetailWaypointsContainer');
         if (wpContainer) {
             let wpHtml = '';
             let waypoints = job.waypoints || [];
-            
-            // เตรียมตัวแปรคำนวณเวลา (ถ้าไม่มีข้อมูลเวลาในแต่ละจุด)
             let startTime = job.timestamp || Date.now();
             let endTime = job.completedAt || (startTime + (parseInt(job.duration || 0) * 60000));
             let timeDiff = endTime - startTime;
@@ -2378,17 +2387,14 @@ function renderWaypointsUI() {
                 let colorClass = wp.type === 'pick' ? 'text-[#4ade80]' : (wp.type === 'drop' ? 'text-red-500' : 'text-yellow-500');
                 let labelText = wp.type === 'pick' ? 'จุดรับ' : (wp.type === 'drop' ? 'จุดส่ง' : 'จุดแวะ');
                 
-                // จัดการเวลาให้ครบทุกจุด
                 let wpTimeStr = "--:--";
                 if (wp.timestamp) { 
                     wpTimeStr = new Date(wp.timestamp).toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' });
                 } else {
-                    // คำนวณเวลาเฉลี่ยตามสัดส่วนระยะทางของจุดนั้นๆ
                     let estTime = startTime + (timeDiff * (index / (waypoints.length - 1 || 1)));
                     wpTimeStr = new Date(estTime).toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' });
                 }
 
-                // 🌟 เพิ่ม onclick ให้กดซูมได้ และจัดระยะให้ชิดเส้นข้างบนขึ้นอีก
                 wpHtml += `
                 <div class="flex items-start gap-2.5 relative z-10 w-full min-w-0 cursor-pointer hover:bg-[#383d6a]/50 p-1 -ml-1 rounded-lg transition" onclick="window.toggleHistoryWaypointFocus(${index}, ${wp.lat}, ${wp.lng})">
                     <div class="shrink-0 mt-1 relative z-10"><i class="fas fa-circle text-[11px] ${colorClass} bg-[#1e234e] rounded-full border-[1.5px] border-[#383d6a]"></i></div>
@@ -2408,12 +2414,11 @@ function renderWaypointsUI() {
 
         document.getElementById('historyDetailModal').classList.remove('hidden');
 
-        // 6. วาดแผนที่
         setTimeout(() => {
             drawHistoryMap(job.waypoints);
         }, 300);
     }
-
+    
     // 🌟 ฟังก์ชันจัดการตอนกดที่ชื่อสถานที่ (เน้นตัวหนา แต่เป็นสีขาว)
     window.toggleHistoryWaypointFocus = function(index, lat, lng) {
         let textEl = document.getElementById('hist-wp-text-' + index);
@@ -2932,26 +2937,27 @@ function handleTracking() {
         );
     }
 
-    // 🌟 ฟังก์ชัน 2: ส่งข้อมูลไปที่ LINE
+    // 🌟 ฟังก์ชันส่งข้อมูลเข้า LINE (เพิ่มประเภทรถเข้าไปในข้อความ)
     window.reportCurrentTrip = function() {
         if (!selectedHistoryJobId || !loadedHistoryJobs[selectedHistoryJobId]) return;
         
         let job = loadedHistoryJobs[selectedHistoryJobId];
         let shortId = selectedHistoryJobId.substring(selectedHistoryJobId.length - 8).toUpperCase();
         let dateStr = new Date(job.completedAt || job.timestamp).toLocaleString('th-TH');
+        
+        // ดึงข้อมูลที่หน้าจอโชว์อยู่
         let driverInfo = document.getElementById('histDetDriver').innerText; 
+        let serviceInfo = document.getElementById('histDetService').innerText; 
         
         let message = `🚨 รายงานปัญหาการเดินทาง\n`;
         message += `รหัสงาน: #${shortId}\n`;
         message += `วันที่: ${dateStr}\n`;
+        message += `ประเภทรถ: ${serviceInfo}\n`; // 🌟 เพิ่มประเภทรถในข้อความ
         message += `คนขับ: ${driverInfo}\n`;
         message += `\nรายละเอียดปัญหา:\n(กรุณาพิมพ์ปัญหาที่คุณพบ...)`;
         
         let encodedMessage = encodeURIComponent(message);
-        
-        // 🛑 สำคัญมาก: คุณต้องแก้ไอดีตรงนี้ให้เป็น LINE Official ของคุณ (อย่าลืมใส่ @ ด้านหน้า)
-        // ตัวอย่างเช่น let lineOaId = "@123abcde";
-        let lineOaId = "@805zvmii"; 
+        let lineOaId = "@YOUR_LINE_OA_ID"; // 🛑 อย่าลืมเปลี่ยนเป็น LINE ID ของคุณ
         
         let lineUrl = `https://line.me/R/oaMessage/${lineOaId}/?${encodedMessage}`;
         window.open(lineUrl, '_blank');
