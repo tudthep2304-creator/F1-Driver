@@ -706,7 +706,7 @@
                       </div>
                       <div class="text-right">
                           <p class="text-[11px] text-gray-400 mb-0.5 font-normal leading-tight">ราคาสุทธิ</p>
-                          <p class="text-[18px] font-bold text-[#4ade80] leading-none" id="histDetPrice">฿0</p>
+                          <p class="text-[16px] font-normal text-[#4ade80] leading-none" id="histDetPrice">฿0</p>
                       </div>
                   </div>
 
@@ -715,6 +715,10 @@
                       <div id="historyDetailWaypointsContainer" class="flex flex-col relative z-10 gap-3"></div>
                   </div>
               </div>
+
+              <button onclick="window.reportCurrentTrip()" class="w-full mt-2 bg-transparent border border-red-500/50 text-red-400 py-3 rounded-xl font-normal text-[13px] shadow-sm hover:bg-red-900/30 transition flex justify-center items-center gap-2">
+                  <i class="fas fa-exclamation-circle text-[15px]"></i> รายงานปัญหาการเดินทาง
+              </button>
 
           </div>
           
@@ -2918,6 +2922,38 @@ function handleTracking() {
     window.openInAppChatModal = function() {
         // หากต้องการกู้แชทคนขับคืนมา ต้องนำโค้ด HTML หน้า inAppChatModal กลับมาใส่ในไฟล์ด้วยครับ
         showAlert('ระบบแชท', 'ฟังก์ชันแชทกับคนขับกำลังอยู่ระหว่างการปรับปรุงครับ', 'info');
+    }
+
+    // 🌟 ฟังก์ชันรายงานปัญหา ไปที่ LINE OA อัตโนมัติ
+    window.reportCurrentTrip = function() {
+        if (!selectedHistoryJobId || !loadedHistoryJobs[selectedHistoryJobId]) return;
+        
+        let job = loadedHistoryJobs[selectedHistoryJobId];
+        // ดึงเลขรหัส 8 ตัวท้าย
+        let shortId = selectedHistoryJobId.substring(selectedHistoryJobId.length - 8).toUpperCase();
+        // ดึงวันที่
+        let dateStr = new Date(job.completedAt || job.timestamp).toLocaleString('th-TH');
+        // ดึงชื่อคนขับที่โชว์อยู่
+        let driverInfo = document.getElementById('histDetDriver').innerText; 
+        
+        // ร่างข้อความอัตโนมัติ
+        let message = `🚨 รายงานปัญหาการเดินทาง\n`;
+        message += `รหัสงาน: #${shortId}\n`;
+        message += `วันที่: ${dateStr}\n`;
+        message += `คนขับ: ${driverInfo}\n`;
+        message += `\nรายละเอียดปัญหา:\n(กรุณาพิมพ์ปัญหาที่คุณพบ...)`;
+        
+        // แปลงข้อความให้รองรับกับ URL
+        let encodedMessage = encodeURIComponent(message);
+        
+        // 🛑 สำคัญ: ให้คุณเปลี่ยน @YOUR_LINE_OA_ID ตรงนี้ เป็นไอดี LINE Official ของแอปคุณนะครับ (ต้องมี @ นำหน้าด้วย)
+        let lineOaId = "@YOUR_LINE_OA_ID"; 
+        
+        // สร้าง URL สำหรับเปิดแอป LINE พร้อมยัดข้อความใส่ช่องแชท
+        let lineUrl = `https://line.me/R/oaMessage/${lineOaId}/?${encodedMessage}`;
+        
+        // เปิดหน้าต่างไปที่แอป LINE
+        window.open(lineUrl, '_blank');
     }
   </script>
   <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDsZ_tbFhH6fUXRz3I6C-tMshNwwrSevd4&libraries=places,geometry&callback=initMap" async defer></script>
