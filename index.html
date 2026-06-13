@@ -355,13 +355,10 @@
   
   <!-- PAGE 2: PICKUP -->
   <div id="page2" class="hidden">
-    <!-- 🌟 ลด padding บนล่าง pt-3 pb-4 -->
     <div class="ui-panel border-t-[4px] border-[#4ade80] h-auto pb-4 pt-3">
       <div class="flex justify-between items-center mb-2">
-        <!-- 🌟 STEP 1 ขนาด 11px และไม่หนา -->
-        <div><p class="text-[11px] font-normal text-[#4ade80] mb-0.5 tracking-widest"><i class="fas fa-circle"></i> STEP 1</p><p class="text-base font-black text-white">เลื่อนแผนที่เพื่อกำหนดจุดรับ</p></div>
+        <div><p class="text-[11px] font-normal text-[#4ade80] mb-0.5 tracking-widest"><i class="fas fa-circle"></i> STEP 1</p><p class="text-[13px] font-medium text-white">เลื่อนแผนที่เพื่อกำหนดจุดรับ</p></div>
         <div class="flex gap-1.5">
-            <!-- 🌟 ประวัติ / ปัจจุบัน ขนาด 11px และไม่หนา -->
             <button onclick="window.openRecentPlacesModal()" class="text-[11px] font-normal bg-[#2a2f5c] border border-[#383d6a] text-gray-300 px-3 py-1.5 rounded-full hover:bg-[#383d6a] transition shadow-sm flex items-center gap-1.5"><i class="fas fa-history"></i> ประวัติ</button>
             <button onclick="window.useCurrentLocation()" class="text-[11px] font-normal bg-[#4ade80]/20 border border-[#4ade80]/30 text-[#4ade80] px-3 py-1.5 rounded-full hover:bg-[#4ade80]/40 transition shadow-sm flex items-center gap-1.5"><i class="fas fa-crosshairs"></i> ปัจจุบัน</button>
         </div>
@@ -388,7 +385,6 @@
       <div id="pickupWaypointsList" class="flex flex-col gap-1.5 mb-1 max-h-[110px] overflow-y-auto slim-scroll"></div>
 
       <div class="flex gap-2 mt-2">
-          <!-- 🌟 ปุ่ม 13px ไม่หนา -->
           <button onclick="window.addWaypointFromCenter('pick')" class="flex-[1] bg-[#2a2f5c] border border-[#4ade80]/50 text-[#4ade80] py-3 rounded-full font-normal text-[13px] shadow-sm hover:bg-[#383d6a] transition flex justify-center items-center gap-1.5">
               <i class="fas fa-plus"></i> จุดรับ
           </button>
@@ -399,13 +395,10 @@
     </div>
   </div>
 
-  <!-- PAGE 3: DROPOFF -->
   <div id="page3" class="hidden">
-    <!-- 🌟 ลด padding บนล่าง pt-3 pb-4 -->
     <div class="ui-panel border-t-[4px] border-red-500 h-auto pb-4 pt-3">
       <div class="flex justify-between items-center mb-2">
-        <!-- 🌟 STEP 2 ขนาด 11px และไม่หนา -->
-        <div><p class="text-[11px] font-normal text-red-500 mb-0.5 tracking-widest"><i class="fas fa-circle"></i> STEP 2</p><p class="text-base font-black text-white">เลื่อนแผนที่เพื่อกำหนดจุดส่ง</p></div>
+        <div><p class="text-[11px] font-normal text-red-500 mb-0.5 tracking-widest"><i class="fas fa-circle"></i> STEP 2</p><p class="text-[13px] font-medium text-white">เลื่อนแผนที่เพื่อกำหนดจุดส่ง</p></div>
         <div class="flex gap-1.5">
             <button onclick="window.openRecentPlacesModal()" class="text-[11px] font-normal bg-[#2a2f5c] border border-[#383d6a] text-gray-300 px-3 py-1.5 rounded-full hover:bg-[#383d6a] transition shadow-sm flex items-center gap-1.5"><i class="fas fa-history"></i> ประวัติ</button>
             <button onclick="window.useCurrentLocation()" class="text-[11px] font-normal bg-red-900/30 border border-red-500/30 text-red-400 px-3 py-1.5 rounded-full hover:bg-red-800/50 transition shadow-sm flex items-center gap-1.5"><i class="fas fa-crosshairs"></i> ปัจจุบัน</button>
@@ -433,7 +426,6 @@
       <div id="dropoffWaypointsList" class="flex flex-col gap-1.5 mb-1 max-h-[110px] overflow-y-auto slim-scroll"></div>
 
       <div class="flex gap-2 mt-2">
-          <!-- 🌟 ปุ่ม 13px ไม่หนา -->
           <button onclick="window.addWaypointFromCenter('drop')" class="flex-[1] bg-[#2a2f5c] border border-red-500/50 text-red-400 py-3 rounded-full font-normal text-[13px] shadow-sm hover:bg-[#383d6a] transition flex justify-center items-center gap-1.5">
               <i class="fas fa-plus"></i> จุดส่ง
           </button>
@@ -444,18 +436,18 @@
     </div>
   </div>
 
-  <!-- PAGE 4: SUMMARY -->
   <div id="page4" class="hidden">
     <div id="page4Panel" class="ui-panel border-t-[4px] border-blue-500 h-auto pb-6 pt-3 transition-transform duration-300">
       <div class="w-full flex justify-center pb-3 cursor-pointer" onclick="window.togglePage4Panel()"><div class="w-12 h-1.5 bg-[#4b507d] rounded-full"></div></div>
       
       <div class="flex justify-between items-center mb-2">
         <div>
-            <p class="text-base font-black text-white">เลือกรถ & ตรวจสอบ</p>
+            <p class="text-[11px] font-normal text-[#fae100] mb-0.5 tracking-widest"><i class="fas fa-circle"></i> STEP 3</p>
+            <p class="text-[13px] font-medium text-white">เลือกรถ & ตรวจสอบ</p>
         </div>
         <div class="text-right">
-            <p class="text-[10px] text-gray-400 font-normal mb-0.5" id="sumDistLabel">ระยะทาง / เวลา</p>
-            <p class="font-bold text-blue-400 text-[11px]" id="sumDistBox"><span id="sumDist">0</span> กม. • <span id="sumWait">0</span> นาที</p>
+            <p class="text-[11px] text-gray-400 font-normal mb-0.5" id="sumDistLabel">ระยะทาง / เวลา</p>
+            <p class="font-medium text-white text-[13px]" id="sumDistBox"><span id="sumDist">0</span> กม. • <span id="sumWait">0</span> นาที</p>
         </div>
       </div>
       <div class="border-b border-[#383d6a] mb-2 w-full opacity-50"></div>
@@ -465,34 +457,39 @@
           <div id="sumWaypointsContainer" class="flex flex-col gap-1.5 py-1"></div>
       </div>
 
-      <p class="text-[11px] font-normal text-gray-400 mb-1.5 px-1">ประเภทรถที่ให้บริการ</p>
+      <p class="text-[13px] font-normal text-white mb-1.5 px-1">ประเภทรถที่ให้บริการ</p>
       <div id="vehicleSelectionList" class="flex flex-col gap-2 mb-3 max-h-[170px] overflow-y-auto slim-scroll pr-1">
           <div class="text-center text-gray-500 text-xs py-4"><i class="fas fa-spinner fa-spin text-[#fae100]"></i> กำลังคำนวณราคา...</div>
       </div>
 
-      <div class="flex gap-2 mb-2 items-center">
-          <div class="flex-1 flex flex-col justify-center px-2">
-              <p class="text-[10px] text-gray-400 font-normal">ราคาสุทธิ</p>
-              <div class="flex items-end gap-1">
-                  <p id="sumPriceOld" class="hidden text-[11px] text-gray-500 line-through font-normal pb-0.5"></p>
-                  <p class="font-black text-[18px] text-[#fae100] leading-none" id="sumPrice">~฿0</p>
-              </div>
-          </div>
-          <button id="btnUsePromo" onclick="window.openPromoModal()" class="shrink-0 px-4 py-2.5 bg-[#2a2f5c] border border-[#383d6a] text-[#fae100] rounded-xl text-[11px] font-normal hover:bg-[#383d6a] transition flex items-center gap-1.5 shadow-sm">
-              <i class="fas fa-ticket-alt"></i> โค้ดส่วนลด
+      <form onsubmit="event.preventDefault(); window.submitBooking();" class="flex gap-1.5 w-full mt-1 shrink-0 pb-2">
+          
+          <button type="button" id="btnUsePromo" onclick="window.openPromoModal()" class="shrink-0 px-3 bg-[#2a2f5c] border border-[#383d6a] text-[#fae100] rounded-full text-[13px] font-normal hover:bg-[#383d6a] transition flex items-center justify-center gap-1.5 shadow-sm">
+              <i class="fas fa-ticket-alt"></i> โค้ด
           </button>
-      </div>
-
-      <form onsubmit="event.preventDefault(); window.submitBooking();" class="flex gap-2 w-full mt-1 shrink-0 pb-2">
-          <div class="relative flex-[1.2] min-w-[140px]">
+          
+          <div class="relative flex-[1.2] min-w-[100px]">
               <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-400"><i class="fas fa-phone-alt text-[13px]"></i></div>
-              <input type="tel" id="userPhone" name="tel" autocomplete="tel" inputmode="tel" oninput="window.formatPhone(this)" placeholder="เบอร์ติดต่อ" class="w-full py-3 pl-9 pr-2 bg-[#2a2f5c] border border-[#383d6a] focus:border-[#fae100] focus:bg-[#1e234e] text-white placeholder-gray-500 rounded-xl text-[13px] font-normal outline-none transition-colors h-full">
+              <input type="tel" id="userPhone" name="tel" autocomplete="tel" inputmode="tel" oninput="window.formatPhone(this)" placeholder="เบอร์ติดต่อ" class="w-full py-3 pl-8 pr-2 bg-[#2a2f5c] border border-[#383d6a] focus:border-[#fae100] focus:bg-[#1e234e] text-white placeholder-gray-500 rounded-full text-[13px] font-normal outline-none transition-colors h-full">
           </div>
-          <button type="submit" class="flex-1 bg-[#fae100] text-[#1e234e] py-3 rounded-xl font-black text-sm shadow-md hover:bg-[#e5ce00] active:scale-[0.98] transition flex justify-center items-center gap-1.5 whitespace-nowrap h-full shrink-0">
+
+          <button type="submit" id="btnSubmitBooking" class="flex-[1.5] bg-[#fae100] text-[#1e234e] py-3 rounded-full font-normal text-[13px] shadow-md hover:bg-[#e5ce00] active:scale-[0.98] transition flex justify-center items-center gap-1.5 whitespace-nowrap h-full shrink-0">
               ยืนยันเรียกรถ <i class="fas fa-check"></i>
           </button>
       </form>
     </div>
+  </div>
+
+  <div id="confirmActionModal" class="hidden fixed inset-0 z-[9990] bg-black/80 flex items-center justify-center p-4 pointer-events-auto">
+      <div class="bg-[#1e234e] border border-[#383d6a] rounded-3xl p-3 w-full max-w-sm text-center shadow-2xl">
+          <div class="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl" id="confirmActionIcon"><i class="fas fa-map-marked-alt"></i></div>
+          <h3 id="confirmActionTitle" class="text-[13px] font-medium text-white mb-2">...</h3>
+          <p id="confirmActionMessage" class="text-[13px] font-normal text-white mb-6 leading-relaxed">...</p>
+          <div class="flex gap-2">
+              <button onclick="window.closeConfirmActionModal()" class="flex-1 py-2 bg-[#2a2f5c] text-white font-normal rounded-full hover:bg-[#383d6a] transition border border-[#383d6a] text-[13px]">ยกเลิก</button>
+              <button id="confirmActionButton" onclick="window.submitConfirmAction()" class="flex-1 py-2 font-normal rounded-full shadow-md transition text-[13px] text-white">ตกลง</button>
+          </div>
+      </div>
   </div>
   
   <!-- TRACKING -->
@@ -1844,7 +1841,8 @@ window.openProfileModal = function() {
         });
     }
 
-function renderWaypointsUI() {
+// 🌟 ระบบจัดการรายชื่อสถานที่ (ไม่มีกรอบเมื่อกดเลือก ใช้ฟอนต์ขาวหนาปานกลางแทนสีเหลือง)
+    function renderWaypointsUI() {
         const typeOrder = { 'pick': 1, 'waypoint': 2, 'drop': 3 };
         localWaypoints.sort((a, b) => typeOrder[a.type] - typeOrder[b.type]);
 
@@ -1861,8 +1859,6 @@ function renderWaypointsUI() {
             else btnOverview.classList.add('hidden');
         }
 
-        // 🌟 อัปเดตสีและข้อความปุ่มจุดรับ
-        // 🌟 อัปเดตสีและข้อความปุ่มจุดรับ
         if (btnConfirmPick) {
             if (picks.length > 0) { 
                 btnConfirmPick.disabled = false; btnConfirmPick.className = "flex-[2] bg-[#4ade80] text-[#1e234e] py-3 rounded-full font-normal text-[13px] shadow-md transition flex justify-center items-center gap-1.5 hover:bg-[#22c55e]";
@@ -1873,7 +1869,6 @@ function renderWaypointsUI() {
             }
         }
 
-        // 🌟 อัปเดตสีและข้อความปุ่มจุดส่ง
         if (btnConfirmDrop) {
             if (drops.length > 0) { 
                 btnConfirmDrop.disabled = false; btnConfirmDrop.className = "flex-[2] bg-[#ef4444] text-white py-3 rounded-full font-normal text-[13px] shadow-md transition flex justify-center items-center gap-1.5 hover:bg-red-600";
@@ -1890,16 +1885,17 @@ function renderWaypointsUI() {
             let isFocused = (focusedWaypointIndex === index);
             let isPickup = wp.type === 'pick';
             
-            // ใช้สีเขียวมินต์ #4ade80 สำหรับจุดรับ
             let colorClass = isPickup ? 'bg-[#4ade80] text-[#1e234e]' : 'bg-[#ef4444] text-white';
             let colorHex = isPickup ? '#4ade80' : '#ef4444';
             let textColorMap = isPickup ? '#1e234e' : '#ffffff';
 
-            let textItem = isFocused ? 'text-[#fae100]' : 'text-gray-200';
+            // 🌟 ถอดสีกรอบออกทั้งหมดเมื่อ Active / เปลี่ยนเป็นฟอนต์สีขาว หนาปานกลางเมื่อเลือก
+            let textItem = isFocused ? 'text-white font-medium' : 'text-gray-200 font-normal';
+            let bgItem = isFocused ? 'bg-[#383d6a] border-transparent' : 'bg-[#2a2f5c] border-[#383d6a]';
+            
             if (wp.passed) {
-                colorClass = 'bg-[#4b507d] text-gray-400';
-                colorHex = '#4b507d';
-                textItem = 'text-gray-500 line-through opacity-60';
+                colorClass = 'bg-[#4b507d] text-gray-400'; colorHex = '#4b507d';
+                textItem = 'text-gray-500 line-through opacity-60 font-normal';
             }
 
             if (!wp.marker && typeof google !== 'undefined' && map) {
@@ -1912,23 +1908,20 @@ function renderWaypointsUI() {
                 wp.marker.setLabel({text: globalCount.toString(), color: textColorMap, fontWeight: 'bold', fontSize: '13px'});
             }
 
-            let bgItem = isFocused ? 'bg-[#383d6a] border-[#fae100]/50' : 'bg-[#2a2f5c] border-[#383d6a]';
-            
             let iconAddonPrefix = '';
             if (wp.iconType === 'home') iconAddonPrefix = '<i class="fas fa-home text-blue-400 mr-1.5" title="บ้าน"></i>';
             else if (wp.iconType === 'favorite1') iconAddonPrefix = '<i class="fas fa-heart text-pink-500 mr-1.5" title="รายการโปรด 1"></i>';
             else if (wp.iconType === 'favorite2') iconAddonPrefix = '<i class="fas fa-star text-[#fae100] mr-1.5" title="รายการโปรด 2"></i>';
 
-            // 🌟 กล่องรายการให้เป็นแคปซูล (rounded-full)
             let itemHtml = `<div class="flex items-center gap-2.5 py-1.5 px-3 rounded-full border relative z-10 shadow-sm mb-1.5 cursor-pointer hover:bg-[#383d6a] transition ${bgItem}" onclick="window.focusLocationToggle(${wp.lat}, ${wp.lng}, ${index})">
                 <div class="w-[20px] h-[20px] ${colorClass} rounded-full flex items-center justify-center text-[10px] font-bold shrink-0 shadow-inner">${globalCount}</div>
-                <p class="text-[11px] ${textItem} truncate flex-1 leading-tight flex items-center">${iconAddonPrefix}${wp.name}</p>
+                <p class="text-[13px] ${textItem} truncate flex-1 leading-tight flex items-center">${iconAddonPrefix}${wp.name}</p>
                 <button onclick="event.stopPropagation(); window.removeWaypoint(${index})" class="text-red-400 hover:text-red-300 text-[12px] px-2 shrink-0 transition active:scale-90"><i class="fas fa-times"></i></button>
             </div>`;
             
             let sumItemHtml = `<div class="flex items-center gap-2.5 relative z-10 py-0.5 cursor-pointer hover:bg-[#383d6a] rounded transition px-1" onclick="window.focusLocationToggle(${wp.lat}, ${wp.lng}, ${index})">
                 <div class="w-5 h-5 ${colorClass} rounded-full flex items-center justify-center text-[10px] font-bold shrink-0 shadow-inner">${globalCount}</div>
-                <p class="text-[12px] ${textItem} truncate flex-1 leading-tight flex items-center">${iconAddonPrefix}${wp.name}</p>
+                <p class="text-[13px] ${textItem} truncate flex-1 leading-tight flex items-center">${iconAddonPrefix}${wp.name}</p>
             </div>`;
 
             if (wp.type === 'pick') { pickHtml += itemHtml; } else { dropHtml += itemHtml; }
@@ -2113,6 +2106,7 @@ function renderWaypointsUI() {
         } 
     }
 
+    // 🌟 ระบบคำนวณราคาและแสดงรถ (ทรงแคปซูล ไม่มีกรอบเมื่อเลือก)
     function calculatePrice() {
       if(!directionsService || !map || localWaypoints.length < 2) return;
 
@@ -2134,7 +2128,6 @@ function renderWaypointsUI() {
           const sDist = document.getElementById('sumDist'); const sWait = document.getElementById('sumWait');
           if(sDist) sDist.innerText = bookData.distance; if(sWait) sWait.innerText = bookData.duration;
 
-          // 🌟 ตัวแปรเก็บข้อมูลรถทั้ง 5 ประเภท
           const vehicleTypes = [
               { id: 'car', name: 'รถยนต์', icon: 'fa-car-side', color: 'text-white' },
               { id: 'premium_car', name: 'รถยนต์พรีเมียม', icon: 'fa-car', color: 'text-[#fae100]' },
@@ -2143,13 +2136,9 @@ function renderWaypointsUI() {
               { id: 'bicycle', name: 'รถจักรยาน', icon: 'fa-bicycle', color: 'text-green-400' }
           ];
 
-          // ค่าเริ่มต้นหากไม่ได้ตั้งใน Database
           const defaultPricing = {
-              'car': { base: 50, km: 10, pick: 5 },
-              'premium_car': { base: 80, km: 15, pick: 5 },
-              'bike': { base: 30, km: 8, pick: 5 },
-              'premium_bike': { base: 50, km: 10, pick: 5 },
-              'bicycle': { base: 20, km: 5, pick: 5 }
+              'car': { base: 50, km: 10, pick: 5 }, 'premium_car': { base: 80, km: 15, pick: 5 },
+              'bike': { base: 30, km: 8, pick: 5 }, 'premium_bike': { base: 50, km: 10, pick: 5 }, 'bicycle': { base: 20, km: 5, pick: 5 }
           };
 
           let listHtml = '';
@@ -2159,73 +2148,61 @@ function renderWaypointsUI() {
 
           vehicleTypes.forEach(v => {
               let pConf = pricingConfig[v.id] || defaultPricing[v.id];
-              let baseFare = parseInt(pConf.base); 
-              let kmRate = parseInt(pConf.km);
-              let pickRate = parseInt(pConf.pick);
-
+              let baseFare = parseInt(pConf.base); let kmRate = parseInt(pConf.km); let pickRate = parseInt(pConf.pick);
               let baseRidePrice = baseFare + (distRideKm * kmRate);
               
-              // ตรวจสอบรถออนไลน์ในระบบตามประเภท
               let typeDrivers = window.onlineDrivers.filter(d => (d.serviceType || 'car') === v.id);
               let isOnline = typeDrivers.length > 0;
               
-              let displayPrice = "";
-              let displaySub = "";
-              let cardClass = "";
-              let iconClass = "";
-              let minPrice = 0;
+              let displayPrice = ""; let displaySub = ""; let cardClass = ""; let iconClass = ""; let minPrice = 0;
 
               if (isOnline) {
                   let distances = typeDrivers.map(d => {
-                      let dLoc = new google.maps.LatLng(d.lat, d.lng);
-                      return google.maps.geometry.spherical.computeDistanceBetween(dLoc, origin) / 1000;
+                      let dLoc = new google.maps.LatLng(d.lat, d.lng); return google.maps.geometry.spherical.computeDistanceBetween(dLoc, origin) / 1000;
                   });
-                  let minDriverDist = Math.min(...distances); 
-                  let maxDriverDist = Math.max(...distances);
+                  let minDriverDist = Math.min(...distances); let maxDriverDist = Math.max(...distances);
                   
                   minPrice = Math.floor((baseRidePrice + (minDriverDist * pickRate)) / 10) * 10;
                   let maxPrice = Math.ceil((baseRidePrice + (maxDriverDist * pickRate)) / 10) * 10;
-                  
-                  if(minPrice < baseFare) minPrice = baseFare;
-                  if(maxPrice <= minPrice) maxPrice = minPrice + 10; 
+                  if(minPrice < baseFare) minPrice = baseFare; if(maxPrice <= minPrice) maxPrice = minPrice + 10; 
 
                   displayPrice = `~฿${minPrice} - ${maxPrice}`;
                   displaySub = `<i class="fas fa-bolt text-[#fae100] mr-1"></i> มีรถว่างใกล้คุณ`;
                   
-                  // Active Styles (รถออนไลน์สีสว่าง)
-                  cardClass = "bg-[#2a2f5c] border border-[#383d6a] hover:border-[#fae100]/50 text-white cursor-pointer";
+                  // 🌟 เป็นสีสว่าง และเตรียมรองรับฟังก์ชันกด (ส่งค่า isOnline=true)
+                  cardClass = "border-[#383d6a] cursor-pointer";
                   iconClass = v.color;
                   
-                  if(!firstAvailable) firstAvailable = { id: v.id, price: minPrice, priceEstimate: displayPrice };
-                  if(v.id === prevSelected) foundPrevSelected = { id: v.id, price: minPrice, priceEstimate: displayPrice };
+                  if(!firstAvailable) firstAvailable = { id: v.id, price: minPrice, priceEstimate: displayPrice, isOnline: true };
+                  if(v.id === prevSelected) foundPrevSelected = { id: v.id, price: minPrice, priceEstimate: displayPrice, isOnline: true };
 
               } else {
-                  // Offline (บวก 10% และเป็นสีเทา)
                   let offlinePrice = baseRidePrice + (baseRidePrice * 0.10);
                   minPrice = Math.ceil(offlinePrice / 10) * 10;
                   displayPrice = `~฿${minPrice}`;
                   displaySub = `(ไม่มีรถว่าง)`;
                   
-                  // Grayed out Styles (รถไม่ออนไลน์สีเทา แต่กดเลือกได้)
-                  cardClass = "bg-[#1e234e] border border-[#2a2f5c] text-gray-500 opacity-60 cursor-pointer hover:opacity-80";
+                  // 🌟 เป็นสีเทา และส่งค่า isOnline=false
+                  cardClass = "border-[#2a2f5c] text-gray-500 opacity-60 cursor-pointer hover:opacity-80";
                   iconClass = "text-gray-500";
                   
-                  if(v.id === prevSelected) foundPrevSelected = { id: v.id, price: minPrice, priceEstimate: displayPrice };
+                  if(v.id === prevSelected) foundPrevSelected = { id: v.id, price: minPrice, priceEstimate: displayPrice, isOnline: false };
               }
               
+              // 🌟 กรอบเป็นทรงแคปซูล (rounded-full) บีบระยะ p-2
               listHtml += `
-              <div id="vcard-${v.id}" onclick="window.selectVehicleInSummary('${v.id}', ${minPrice}, '${displayPrice}')" class="flex justify-between items-center p-3 rounded-xl transition ${cardClass}">
+              <div id="vcard-${v.id}" onclick="window.selectVehicleInSummary('${v.id}', ${minPrice}, '${displayPrice}', ${isOnline})" class="flex justify-between items-center py-2 px-3 rounded-full border transition ${cardClass}">
                   <div class="flex items-center gap-3">
                       <div class="w-10 h-10 rounded-full bg-[#1e234e] flex items-center justify-center border border-[#383d6a] shadow-inner shrink-0">
                           <i class="fas ${v.icon} text-lg ${iconClass}"></i>
                       </div>
                       <div class="flex flex-col">
-                          <p class="text-[13px] font-bold leading-tight ${isOnline ? 'text-white' : 'text-gray-400'}">${v.name}</p>
-                          <p class="text-[10px] mt-0.5 ${isOnline ? 'text-gray-400' : 'text-gray-500'}">${displaySub}</p>
+                          <p class="v-name text-[13px] font-normal leading-tight ${isOnline ? 'text-gray-200' : 'text-gray-400'}">${v.name}</p>
+                          <p class="text-[11px] mt-0.5 ${isOnline ? 'text-white' : 'text-gray-500'}">${displaySub}</p>
                       </div>
                   </div>
                   <div class="text-right flex flex-col items-end">
-                      <p class="font-bold text-[15px] leading-tight ${isOnline ? 'text-white' : 'text-gray-500'}">${displayPrice}</p>
+                      <p class="font-medium text-[13px] leading-tight ${isOnline ? 'text-white' : 'text-gray-500'}">${displayPrice}</p>
                       ${!isOnline ? `<p class="text-[9px] text-gray-500 mt-0.5">(ราคาประมาณ)</p>` : ''}
                   </div>
               </div>`;
@@ -2234,13 +2211,12 @@ function renderWaypointsUI() {
           let listContainer = document.getElementById('vehicleSelectionList');
           if(listContainer) listContainer.innerHTML = listHtml;
           
-          // ระบบเลือกอัตโนมัติ
           if (foundPrevSelected) {
-              window.selectVehicleInSummary(foundPrevSelected.id, foundPrevSelected.price, foundPrevSelected.priceEstimate);
+              window.selectVehicleInSummary(foundPrevSelected.id, foundPrevSelected.price, foundPrevSelected.priceEstimate, foundPrevSelected.isOnline);
           } else if (firstAvailable) {
-              window.selectVehicleInSummary(firstAvailable.id, firstAvailable.price, firstAvailable.priceEstimate);
+              window.selectVehicleInSummary(firstAvailable.id, firstAvailable.price, firstAvailable.priceEstimate, firstAvailable.isOnline);
           } else {
-              window.selectVehicleInSummary('car', 0, '~฿0');
+              window.selectVehicleInSummary('car', 0, '~฿0', false);
           }
 
           setTimeout(() => { if(map) { let pb = getDynamicBottomPadding(); map.fitBounds(currentRouteBounds, { top: 120, right: 50, bottom: pb, left: 50 }); } }, 200);
@@ -2248,37 +2224,51 @@ function renderWaypointsUI() {
       });
     }
 
-    // 🌟 ฟังก์ชันจัดการตอนผู้โดยสารกดเลือกประเภทรถใน List
-    window.selectVehicleInSummary = function(id, price, priceEst) {
+    // 🌟 ฟังก์ชันเลือกรถ (จัดการล็อกปุ่ม และเปลี่ยนสีแบบไม่มีเส้นขอบ)
+    window.selectVehicleInSummary = function(id, price, priceEst, isOnline) {
         window.currentServiceType = id;
         bookData.originalPrice = price; 
         bookData.price = price; 
         bookData.priceEstimate = priceEst;
         
-        // อัปเดตกรอบสีเหลืองให้รถที่ถูกเลือก
+        const btnSubmit = document.getElementById('btnSubmitBooking');
+        if (btnSubmit) {
+            if (isOnline) {
+                // 🌟 ปลดล็อกปุ่มเรียกรถ (สีเหลือง)
+                btnSubmit.disabled = false;
+                btnSubmit.classList.remove('opacity-50', 'cursor-not-allowed', 'bg-gray-600', 'text-gray-400');
+                btnSubmit.classList.add('bg-[#fae100]', 'text-[#1e234e]', 'hover:bg-[#e5ce00]');
+                btnSubmit.innerHTML = 'ยืนยันเรียกรถ <i class="fas fa-check"></i>';
+            } else {
+                // 🌟 ล็อกปุ่มเรียกรถ (สีเทา) ถ้ารถไม่ออนไลน์
+                btnSubmit.disabled = true;
+                btnSubmit.classList.add('opacity-50', 'cursor-not-allowed', 'bg-gray-600', 'text-gray-400');
+                btnSubmit.classList.remove('bg-[#fae100]', 'text-[#1e234e]', 'hover:bg-[#e5ce00]');
+                btnSubmit.innerHTML = 'ไม่มีรถให้บริการ';
+            }
+        }
+
         const cards = document.querySelectorAll('#vehicleSelectionList > div');
         cards.forEach(c => {
+            let nameEl = c.querySelector('.v-name');
             if(c.id === `vcard-${id}`) {
-                c.classList.add('border-[#fae100]');
                 c.classList.remove('border-[#383d6a]', 'border-[#2a2f5c]');
-                c.classList.add('bg-[#383d6a]/40');
+                // 🌟 แบบไม่มีกรอบ ใช้พื้นหลังทึบขึ้น
+                c.classList.add('bg-[#383d6a]/80', 'border-transparent');
+                if (nameEl) { nameEl.classList.remove('font-normal', 'text-gray-200'); nameEl.classList.add('font-medium', 'text-white'); }
             } else {
-                c.classList.remove('border-[#fae100]');
+                c.classList.remove('border-transparent');
                 if(!c.classList.contains('opacity-60')) c.classList.add('border-[#383d6a]');
                 else c.classList.add('border-[#2a2f5c]');
-                c.classList.remove('bg-[#383d6a]/40');
+                c.classList.remove('bg-[#383d6a]/80');
+                if (nameEl) { nameEl.classList.remove('font-medium', 'text-white'); nameEl.classList.add('font-normal', 'text-gray-200'); }
             }
         });
         
-        // อัปเดตราคาบรรทัดล่างสุด
-        const sPrice = document.getElementById('sumPrice');
-        if(sPrice) sPrice.innerText = priceEst;
-        
-        // รีเซ็ตโปรโมชั่นเมื่อเปลี่ยนประเภทรถ
         let promoInput = document.getElementById('promoInput'); if(promoInput) promoInput.value = '';
         bookData.promoCode = ''; bookData.discount = 0;
-        const sOld = document.getElementById('sumPriceOld'); if(sOld) sOld.classList.add('hidden');
     }
+      
     function drawTrackingRoute(statusText) {
         if(!directionsService || !map || localWaypoints.length === 0) return;
         
