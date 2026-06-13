@@ -1411,10 +1411,20 @@ window.openProfileModal = function() {
         document.getElementById('recentPlacesModal').classList.remove('hidden');
         let places = JSON.parse(localStorage.getItem('recentPlaces') || '[]');
         let container = document.getElementById('recentPlacesModalList');
-        if(places.length === 0) { container.innerHTML = '<p class="text-center text-gray-500 mt-10">ยังไม่มีประวัติสถานที่</p>'; return; }
+        if(places.length === 0) { 
+            container.innerHTML = '<p class="text-center text-gray-500 mt-10 text-[13px]">ยังไม่มีประวัติสถานที่</p>'; 
+            return; 
+        }
         let html = '';
         places.forEach(p => {
-            html += `<button onclick="window.closeRecentPlacesModal(); window.panAndConfirmPlace('${p.name}', ${p.lat}, ${p.lng});" class="w-full text-left bg-[#2a2f5c] border border-[#383d6a] p-3.5 rounded-xl shadow-sm flex items-center gap-3 hover:bg-[#383d6a] transition"><div class="w-8 h-8 rounded-full bg-[#1e234e] flex items-center justify-center shrink-0"><i class="fas fa-history text-gray-400"></i></div><span class="text-gray-200 text-sm truncate">${p.name}</span></button>`;
+            // 🌟 ปรับคลาสเป็น rounded-full (แคปซูล) / py-3 px-4 (กระชับ) / text-white text-[11px] font-normal (ตามสั่ง)
+            html += `
+            <button onclick="window.closeRecentPlacesModal(); window.panAndConfirmPlace('${p.name}', ${p.lat}, ${p.lng});" class="w-full text-left bg-[#2a2f5c] border border-[#383d6a] py-3 px-4 rounded-full shadow-sm flex items-center gap-3 hover:bg-[#383d6a] transition mb-1.5">
+                <div class="w-8 h-8 rounded-full bg-[#1e234e] flex items-center justify-center shrink-0 border border-[#383d6a]">
+                    <i class="fas fa-history text-gray-400 text-[12px]"></i>
+                </div>
+                <span class="text-white text-[11px] font-normal truncate">${p.name}</span>
+            </button>`;
         });
         container.innerHTML = html;
     }
@@ -1804,7 +1814,7 @@ window.openProfileModal = function() {
         });
     }
 
-// 🌟 ระบบจัดการรายชื่อสถานที่ (แก้ตัวหนังสือสถานที่ให้เป็นสีขาวทั้งหมด)
+// 🌟 ระบบจัดการรายชื่อสถานที่ (ใช้ฟอนต์บาง font-light สีขาว)
     function renderWaypointsUI() {
         const typeOrder = { 'pick': 1, 'waypoint': 2, 'drop': 3 };
         localWaypoints.sort((a, b) => typeOrder[a.type] - typeOrder[b.type]);
@@ -1852,13 +1862,13 @@ window.openProfileModal = function() {
             let colorHex = isPickup ? '#4ade80' : '#ef4444';
             let textColorMap = isPickup ? '#1e234e' : '#ffffff';
 
-            // 🌟 ให้ตัวหนังสือสถานที่ในกรอบเป็นสีขาวเสมอ (ทั้งตอนเลือกและไม่เลือก)
-            let textItem = isFocused ? 'text-white font-medium' : 'text-white font-normal';
+            // 🌟 จุดสำคัญ: ใช้ font-light (ตัวบาง) เมื่อยังไม่กด / font-medium (หนาปานกลาง) เมื่อถูกกด
+            let textItem = isFocused ? 'text-white font-medium' : 'text-white font-light';
             let bgItem = isFocused ? 'bg-[#383d6a] border-transparent' : 'bg-[#2a2f5c] border-[#383d6a]';
             
             if (wp.passed) {
                 colorClass = 'bg-[#4b507d] text-gray-400'; colorHex = '#4b507d';
-                textItem = 'text-gray-500 line-through opacity-60 font-normal';
+                textItem = 'text-gray-500 line-through opacity-60 font-light';
             }
 
             if (!wp.marker && typeof google !== 'undefined' && map) {
@@ -1882,10 +1892,9 @@ window.openProfileModal = function() {
                 <button onclick="event.stopPropagation(); window.removeWaypoint(${index})" class="text-red-400 hover:text-red-300 text-[12px] px-2 shrink-0 transition active:scale-90"><i class="fas fa-times"></i></button>
             </div>`;
             
-            // 🌟 ให้ตัวหนังสือสถานที่ในหน้าสรุปเป็นสีขาวด้วย
             let sumItemHtml = `<div class="flex items-center gap-2.5 relative z-10 py-0.5 cursor-pointer hover:bg-[#383d6a] rounded transition px-1" onclick="window.focusLocationToggle(${wp.lat}, ${wp.lng}, ${index})">
                 <div class="w-5 h-5 ${colorClass} rounded-full flex items-center justify-center text-[10px] font-bold shrink-0 shadow-inner">${globalCount}</div>
-                <p class="text-[13px] text-white truncate flex-1 leading-tight flex items-center">${iconAddonPrefix}${wp.name}</p>
+                <p class="text-[13px] ${textItem} truncate flex-1 leading-tight flex items-center">${iconAddonPrefix}${wp.name}</p>
             </div>`;
 
             if (wp.type === 'pick') { pickHtml += itemHtml; } else { dropHtml += itemHtml; }
@@ -2412,25 +2421,17 @@ window.openProfileModal = function() {
         selectedHistoryJobId = jobId;
         window.historyFocusedIndex = -1; 
 
-        // แปลงข้อมูลประเภทรถ
-        let serviceMap = {
-            'car': 'รถยนต์',
-            'premium_car': 'รถยนต์พรีเมียม',
-            'bike': 'มอเตอร์ไซค์',
-            'premium_bike': 'มอไซค์พรีเมียม'
-        };
+        let serviceMap = { 'car': 'รถยนต์', 'premium_car': 'รถยนต์พรีเมียม', 'bike': 'มอเตอร์ไซค์', 'premium_bike': 'มอไซค์พรีเมียม' };
         let sType = job.serviceType || 'car';
 
-        // 1. สร้างรหัสการเดินทาง และแสดงข้อมูลทั่วไป
         let shortId = jobId.substring(jobId.length - 8).toUpperCase();
         document.getElementById('histDetId').innerText = `#${shortId}`;
-        document.getElementById('histDetService').innerText = serviceMap[sType] || 'รถยนต์'; // แสดงประเภทรถ
+        document.getElementById('histDetService').innerText = serviceMap[sType] || 'รถยนต์'; 
         document.getElementById('histDetDate').innerText = new Date(job.completedAt || job.timestamp).toLocaleDateString('th-TH'); 
         document.getElementById('histDetPrice').innerText = "฿" + (job.price || 0); 
         document.getElementById('histDetDist').innerText = job.distance || '-';
         document.getElementById('histDetTime').innerText = job.duration || '-';
         
-        // ข้อมูลคนขับ
         if(job.driverPin) { 
             db.ref('drivers_profile/' + job.driverPin).once('value', snap => { 
                 if(snap.exists()) {
@@ -2447,7 +2448,6 @@ window.openProfileModal = function() {
             document.getElementById('histDetDriverRating').innerText = `-`;
         }
 
-        // รายการจุดรับ-ส่ง 
         let wpContainer = document.getElementById('historyDetailWaypointsContainer');
         if (wpContainer) {
             let wpHtml = '';
@@ -2473,11 +2473,11 @@ window.openProfileModal = function() {
                     <div class="shrink-0 mt-1 relative z-10"><i class="fas fa-circle text-[11px] ${colorClass} bg-[#1e234e] rounded-full border-[1.5px] border-[#383d6a]"></i></div>
                     <div class="flex-1 min-w-0 flex justify-between gap-2 border-b border-[#383d6a]/40 pb-2">
                         <div class="-mt-1">
-                            <p class="text-[11px] text-gray-400 font-normal leading-none mb-0.5">${labelText}</p>
-                            <p id="hist-wp-text-${index}" class="hist-wp-text text-[13px] text-white font-normal leading-snug break-words transition-all duration-300">${wp.name}</p>
+                            <p class="text-[11px] text-gray-400 font-light leading-none mb-0.5">${labelText}</p>
+                            <p id="hist-wp-text-${index}" class="hist-wp-text text-[13px] text-white font-light leading-snug break-words transition-all duration-300">${wp.name}</p>
                         </div>
                         <div class="shrink-0 text-right">
-                            <span class="text-[11px] text-gray-400 font-normal inline-block mt-0">${wpTimeStr}</span>
+                            <span class="text-[11px] text-gray-400 font-light inline-block mt-0">${wpTimeStr}</span>
                         </div>
                     </div>
                 </div>`;
@@ -2486,10 +2486,7 @@ window.openProfileModal = function() {
         }
 
         document.getElementById('historyDetailModal').classList.remove('hidden');
-
-        setTimeout(() => {
-            drawHistoryMap(job.waypoints);
-        }, 300);
+        setTimeout(() => { drawHistoryMap(job.waypoints); }, 300);
     }
     
     // 🌟 ฟังก์ชันจัดการตอนกดที่ชื่อสถานที่ (เน้นตัวหนา แต่เป็นสีขาว)
@@ -2497,35 +2494,34 @@ window.openProfileModal = function() {
         let textEl = document.getElementById('hist-wp-text-' + index);
         
         if (window.historyFocusedIndex === index) {
-            // กดซ้ำที่เดิม -> ยกเลิกซูม กลับไปมุมมองกว้าง
             window.historyFocusedIndex = -1;
             if (window.historyMapBounds && historyMapInstance) {
                 historyMapInstance.fitBounds(window.historyMapBounds);
             }
-            // คืนค่าตัวหนังสือทั้งหมดให้เป็นปกติ (เอาแค่ตัวหนาออก)
             document.querySelectorAll('.hist-wp-text').forEach(el => {
-                el.classList.remove('font-bold', 'scale-[1.02]', 'origin-left');
-                el.classList.add('font-normal');
+                // 🌟 กลับเป็น font-light เมื่อยกเลิกการเลือก
+                el.classList.remove('font-medium', 'font-bold', 'scale-[1.02]', 'origin-left');
+                el.classList.add('font-light');
             });
         } else {
-            // กดที่ใหม่ -> ซูมเข้าไปที่หมุดนั้น
             window.historyFocusedIndex = index;
             if (historyMapInstance) {
                 historyMapInstance.panTo({lat: lat, lng: lng});
                 historyMapInstance.setZoom(17);
             }
-            // รีเซ็ตตัวหนังสืออันอื่น แล้วเน้นตัวที่กด (หนาขึ้น แต่สีขาวคงเดิม)
             document.querySelectorAll('.hist-wp-text').forEach(el => {
-                el.classList.remove('font-bold', 'scale-[1.02]', 'origin-left');
-                el.classList.add('font-normal');
+                // 🌟 รีเซ็ตตัวอื่นให้เป็น font-light
+                el.classList.remove('font-medium', 'font-bold', 'scale-[1.02]', 'origin-left');
+                el.classList.add('font-light');
             });
             if (textEl) {
-                textEl.classList.remove('font-normal');
-                textEl.classList.add('font-bold', 'scale-[1.02]', 'origin-left'); 
+                // 🌟 เปลี่ยนตัวที่ถูกกดให้เป็น font-medium (หนาปานกลาง)
+                textEl.classList.remove('font-light', 'font-normal');
+                textEl.classList.add('font-medium', 'scale-[1.02]', 'origin-left'); 
             }
         }
     };
-
+    
     window.closeHistoryDetail = function() { 
         document.getElementById('historyDetailModal').classList.add('hidden'); 
         selectedHistoryJobId = null; 
