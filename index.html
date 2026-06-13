@@ -309,38 +309,38 @@
           </svg>
       </div>
 
-      <div class="relative z-10 bg-[#2a2f5c]/90 backdrop-blur-md border-b border-[#383d6a] h-16 px-4 flex items-center justify-between shadow-md shrink-0 w-full">
-          <div class="flex items-center gap-3">
-              <button onclick="closeNewsModal()" class="w-10 h-10 shrink-0 bg-[#383d6a]/80 text-gray-400 rounded-full flex items-center justify-center hover:text-[#fae100] transition"><i class="fas fa-arrow-left"></i></button>
-              <h2 class="text-lg font-black text-[#fae100]"><i class="fas fa-bullhorn mr-1"></i> ข่าวสาร & โปรโมชั่น</h2>
-          </div>
+      <div class="relative z-10 bg-[#2a2f5c]/90 backdrop-blur-md border-b border-[#383d6a] h-16 px-4 flex items-center gap-3 shadow-md shrink-0 w-full">
+          <button onclick="closeNewsModal()" class="w-10 h-10 bg-[#383d6a]/80 text-gray-400 rounded-full flex items-center justify-center hover:text-white transition"><i class="fas fa-arrow-left"></i></button>
+          <h2 class="text-lg font-black text-white">ข่าวสาร & โปรโมชั่น</h2>
       </div>
       
       <div class="relative z-10 flex-1 overflow-y-auto flex flex-col w-full hide-scrollbar">
-          <!-- กล่องใส่รายการข่าวสาร (เพิ่ม py-2 ให้มีช่องว่างด้านบน-ล่างนิดหน่อย) -->
           <div class="px-2 py-2 w-full flex-1" id="newsListContainer"></div>
       </div>
+  </div>
 
   <div id="newsDetailModal" class="hidden fixed inset-0 z-[210] bg-[#1e234e] transition-transform flex flex-col pointer-events-auto">
       <div class="relative z-10 bg-[#2a2f5c]/90 backdrop-blur-md border-b border-[#383d6a] h-16 px-4 flex items-center gap-3 shadow-md shrink-0 w-full">
-          <button onclick="window.closeNewsDetailModal()" class="w-10 h-10 shrink-0 bg-[#383d6a]/80 text-gray-400 rounded-full flex items-center justify-center hover:text-[#fae100] transition"><i class="fas fa-arrow-left"></i></button>
+          <button onclick="window.closeNewsDetailModal()" class="w-10 h-10 bg-[#383d6a]/80 text-gray-400 rounded-full flex items-center justify-center hover:text-white transition"><i class="fas fa-arrow-left"></i></button>
           <h2 class="text-lg font-black text-white">รายละเอียดข้อความ</h2>
       </div>
       
       <div class="p-5 flex-1 overflow-y-auto w-full hide-scrollbar text-white">
-          <div class="flex justify-between items-center mb-4">
-              <span id="ndBadge" class="bg-blue-500 text-white text-[10px] font-black px-2 py-1 rounded shadow">NEWS</span>
-              <span id="ndDate" class="text-[12px] text-gray-400 font-bold"></span>
+          <div class="flex justify-between items-center mb-2">
+              <span id="ndBadge" class="bg-blue-500 text-white text-[10px] font-normal px-2 py-1 rounded shadow">NEWS</span>
+              <span id="ndDate" class="text-[11px] text-gray-400 font-normal"></span>
           </div>
-          <h3 id="ndTitle" class="text-xl font-black text-white mb-4 leading-tight"></h3>
+          
+          <h3 id="ndTitle" class="text-[16px] font-normal text-white mb-4 leading-tight"></h3>
+          
+          <div class="border-b border-[#383d6a] mb-4 w-full"></div>
           
           <div id="ndImageContainer" class="mb-5 hidden">
               <img id="ndImage" src="" class="w-full rounded-xl shadow-md object-contain border border-[#383d6a] bg-black/20">
           </div>
           
-          <p id="ndContent" class="text-sm text-gray-300 leading-relaxed whitespace-pre-line"></p>
+          <p id="ndContent" class="text-[13px] text-gray-200 font-normal leading-relaxed whitespace-pre-line"></p>
       </div>
-  </div>
   </div>
 <!-- ✅ Community Modal (แชทส่วนกลาง แบบมีตัวกรอง) -->
 <div id="communityModal" class="hidden fixed inset-0 z-[200] bg-[#1e234e] flex flex-col pointer-events-auto transition-transform">
@@ -992,7 +992,7 @@ window.loadedNewsItems = {};
         document.getElementById('newsModal').classList.add('hidden'); 
     }
 
-// 🌟 2. ระบบเรนเดอร์รายการข่าว (เช็คสถานะการอ่านแยกทีละข้อความ)
+// 🌟 2. ระบบเรนเดอร์รายการข่าว
     function renderNewsAndPromotions(snapshot = null) {
         let container = document.getElementById('newsListContainer');
         let readIds = JSON.parse(localStorage.getItem('readNewsIds') || '[]');
@@ -1009,18 +1009,23 @@ window.loadedNewsItems = {};
             let html = '';
             items.forEach(item => {
                 window.loadedNewsItems[item.id] = item;
-                // เช็คว่า ID ของข่าวนี้ อยู่ในรายการที่เคยอ่าน (readIds) หรือยัง
                 let isNew = !readIds.includes(item.id); 
                 
                 let iconClass = item.isPromo ? "fas fa-tag" : "fas fa-envelope";
                 let iconBg = item.isPromo ? "bg-[#fae100]/20" : "bg-gray-500/20";
                 let iconColor = item.isPromo ? "text-[#fae100]" : "text-gray-300";
                 
-                // เอาคำว่า NEW ออก เหลือแค่จุดแจ้งเตือนสีแดง
                 let newDot = isNew ? `<div id="dot-${item.id}" class="w-2.5 h-2.5 bg-red-500 rounded-full absolute top-0 right-0 border-2 border-[#1e234e] shadow-sm animate-pulse"></div>` : '';
                 let textTitleColor = isNew ? 'text-white' : 'text-gray-400';
                 let textTimeColor = isNew ? 'text-[#fae100]' : 'text-gray-500';
 
+                // 🌟 ตรวจสอบถ้าข่าวนี้อ่านแล้ว ให้ตัดคำว่า "NEW" ออกจากท้ายหัวข้อ
+                let displayTitle = item.title;
+                if (!isNew) {
+                    displayTitle = displayTitle.replace(/NEW/g, '').trim(); 
+                }
+
+                // 🌟 ปรับฟอนต์ให้เป็น font-normal ทั้งหมด และขนาดตามที่ต้องการ (16px, 13px, 11px)
                 html += `
                 <div onclick="window.openNewsDetail('${item.id}')" class="flex items-center gap-3 py-3.5 border-b border-[#383d6a]/50 cursor-pointer hover:bg-[#2a2f5c]/40 transition px-2">
                     <div class="relative w-10 h-10 shrink-0 rounded-full flex items-center justify-center text-lg ${iconBg} ${iconColor}">
@@ -1028,11 +1033,11 @@ window.loadedNewsItems = {};
                         ${newDot}
                     </div>
                     <div class="flex-1 min-w-0">
-                        <h3 id="title-${item.id}" class="text-[14px] font-bold ${textTitleColor} truncate leading-tight">${item.title}</h3>
-                        <p class="text-[12px] text-gray-500 truncate mt-0.5">${item.content}</p>
+                        <h3 id="title-${item.id}" class="text-[16px] font-normal ${textTitleColor} truncate leading-tight">${displayTitle}</h3>
+                        <p class="text-[13px] text-gray-500 font-normal truncate mt-0.5">${item.content}</p>
                     </div>
                     <div class="shrink-0 text-right pl-2">
-                        <span id="time-${item.id}" class="text-[10px] ${textTimeColor} font-bold">${item.dateStr || ''}</span>
+                        <span id="time-${item.id}" class="text-[11px] ${textTimeColor} font-normal">${item.dateStr || ''}</span>
                     </div>
                 </div>`;
             });
@@ -1043,18 +1048,16 @@ window.loadedNewsItems = {};
         else db.ref('news_promotions').once('value', snap => processSnap(snap));
     }
 
-    // 🌟 3. ระบบกดอ่านข่าว (บันทึกสถานะว่าอ่านแล้วทันที)
+    // 🌟 3. ระบบกดอ่านข่าว
     window.openNewsDetail = function(id) {
         let item = window.loadedNewsItems[id];
         if(!item) return;
 
-        // บันทึก ID ลงเครื่องว่า "อ่านแล้ว"
         let readIds = JSON.parse(localStorage.getItem('readNewsIds') || '[]');
         if(!readIds.includes(id)) {
             readIds.push(id);
             localStorage.setItem('readNewsIds', JSON.stringify(readIds));
             
-            // อัปเดตตัวเลขแจ้งเตือนหน้าแรกทันที
             window.unreadNewsCount = Math.max(0, window.unreadNewsCount - 1);
             let badge = document.getElementById('newsBadge');
             if(badge) {
@@ -1062,22 +1065,30 @@ window.loadedNewsItems = {};
                 else badge.classList.add('hidden');
             }
             
-            // ซ่อนจุดแดง สลับสีตัวหนังสือให้อ่อนลงทันที โดยไม่ต้องโหลดหน้าใหม่
+            // 🌟 ซ่อนจุดแดง สลับสี และลบคำว่า NEW ออกทันทีที่กดเข้าอ่านโดยไม่ต้องโหลดหน้าใหม่
             let dot = document.getElementById('dot-' + id); if(dot) dot.remove();
-            let titleEl = document.getElementById('title-' + id); if(titleEl) { titleEl.classList.remove('text-white'); titleEl.classList.add('text-gray-400'); }
-            let timeEl = document.getElementById('time-' + id); if(timeEl) { timeEl.classList.remove('text-[#fae100]'); timeEl.classList.add('text-gray-500'); }
+            let titleEl = document.getElementById('title-' + id); 
+            if(titleEl) { 
+                titleEl.classList.remove('text-white'); 
+                titleEl.classList.add('text-gray-400'); 
+                titleEl.innerText = titleEl.innerText.replace(/NEW/g, '').trim();
+            }
+            let timeEl = document.getElementById('time-' + id); 
+            if(timeEl) { 
+                timeEl.classList.remove('text-[#fae100]'); 
+                timeEl.classList.add('text-gray-500'); 
+            }
         }
 
-        // แสดงเนื้อหา
+        // แสดงเนื้อหาใน Modal (ถ้าอ่านแล้ว ลบคำว่า NEW ในหน้ารายละเอียดออกด้วย)
         document.getElementById('ndDate').innerText = item.dateStr || '';
-        document.getElementById('ndTitle').innerText = item.title;
+        document.getElementById('ndTitle').innerText = item.title.replace(/NEW/g, '').trim();
         document.getElementById('ndContent').innerText = item.content;
         
         let badgeEl = document.getElementById('ndBadge');
-        if(item.isPromo) { badgeEl.innerText = "PROMO"; badgeEl.className = "bg-red-500 text-white text-[10px] font-black px-2 py-1 rounded shadow"; } 
-        else { badgeEl.innerText = "NEWS"; badgeEl.className = "bg-blue-500 text-white text-[10px] font-black px-2 py-1 rounded shadow"; }
+        if(item.isPromo) { badgeEl.innerText = "PROMO"; badgeEl.className = "bg-red-500 text-white text-[10px] font-normal px-2 py-1 rounded shadow"; } 
+        else { badgeEl.innerText = "NEWS"; badgeEl.className = "bg-blue-500 text-white text-[10px] font-normal px-2 py-1 rounded shadow"; }
 
-        // ระบบรองรับรูปภาพแนบ
         let imgContainer = document.getElementById('ndImageContainer');
         let imgEl = document.getElementById('ndImage');
         if(item.imageUrl) { imgEl.src = item.imageUrl; imgContainer.classList.remove('hidden'); } 
@@ -1085,11 +1096,7 @@ window.loadedNewsItems = {};
 
         document.getElementById('newsDetailModal').classList.remove('hidden');
     }
-
-    window.closeNewsDetailModal = function() {
-        document.getElementById('newsDetailModal').classList.add('hidden');
-    }
-
+    
     function updateMapPadding() {
         if(!map) return;
         let pTop = (currentStep === 2 || currentStep === 3) ? 140 : 70;
