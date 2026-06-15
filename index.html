@@ -834,7 +834,14 @@
             if(d.status === 'ออนไลน์' && d.lat && window.onlineDrivers.length === 0) {
                 window.onlineDrivers = [d];
             }
-            if(currentStep === 'Tracking' && markerDriver) { markerDriver.setPosition({lat: d.lat, lng: d.lng}); }
+            if(currentStep === 'Tracking' && markerDriver) { 
+                let newPos = {lat: d.lat, lng: d.lng};
+                markerDriver.setPosition(newPos); 
+                // 🌟 ให้แผนที่เลื่อนตามรถอัตโนมัติเมื่ออยู่ในโหมดติดตาม
+                if (isTrackingMode && map) {
+                    map.panTo(newPos);
+                }
+            }
             updateRideButtonState();
         }
     });
@@ -1485,40 +1492,30 @@ window.openProfileModal = function() {
     function updateMapControlsPosition(page) {
         const controls = document.getElementById('mapControls'); if (!controls) return;
         controls.classList.remove('top-[76px]', 'top-[170px]', 'top-[140px]');
-        if (page === 2 || page === 3) controls.classList.add('top-[140px]'); else controls.classList.add('top-[76px]');
-        let btnC = document.getElementById('btnCrosshair'); if (page !== 'Tracking') { if(btnC) btnC.classList.add('hidden'); }
-    }
-
-    window.formatPhone = function(input) { let val = input.value.replace(/\D/g, ''); if (val.startsWith('66')) val = '0' + val.substring(2); if (val.length > 10) val = val.substring(0, 10); input.value = val; }
-
-    window.handleCrosshairClick = function() { if (currentStep === 2 || currentStep === 3) { window.useCurrentLocation(); } else { centerToFocus(); } };
-
-    window.focusLocationToggle = function(lat, lng, index) {
-        if(!map) return;
-        if (focusedWaypointIndex === index) { 
-            focusedWaypointIndex = -1; window.fitAllWaypoints(); 
-        } 
-        else { 
-            focusedWaypointIndex = index; 
-            updateMapPadding(); 
-            map.panTo({lat: lat, lng: lng}); 
-            // 🌟 เพิ่มคำสั่งซูมกล้องเข้าไปที่ระดับ 17
-            setTimeout(() => { map.setZoom(17); map.panBy(0, 150); }, 100); 
+        // 🌟 เพิ่ม Tracking ให้เมนูลอยอยู่ระดับเดียวกับหน้า 2 และ 3
+        if (page === 2 || page === 3 || page === 'Tracking') controls.classList.add('top-[140px]'); else controls.classList.add('top-[76px]');
+        
+        let btnC = document.getElementById('btnCrosshair'); 
+        // 🌟 โชว์ปุ่มเป้าเล็งในหน้า Tracking ด้วย
+        if (page === 2 || page === 3 || page === 'Tracking') { 
+            if(btnC) btnC.classList.remove('hidden'); 
+        } else { 
+            if(btnC) btnC.classList.add('hidden'); 
         }
-        renderWaypointsUI();
-    };
+    }
 
     function centerToFocus() {
         if(!map) return;
         if(currentStep === 'Tracking' && markerDriver && markerDriver.getMap()) {
-            isTrackingMode = true; const panel = document.getElementById('trackingPanel');
-            const doPanToCar = () => { updateMapPadding(); map.panTo(markerDriver.getPosition()); map.setZoom(18); };
-            if(panel && !panel.classList.contains('panel-collapsed')) { panel.classList.add('panel-collapsed'); setTimeout(doPanToCar, 350); } else { doPanToCar(); }
+            isTrackingMode = true; // 🌟 เปิดโหมดล็อกเป้าตามรถ
+            updateMapPadding(); 
+            map.panTo(markerDriver.getPosition()); 
+            map.setZoom(17);
             return;
         }
         window.useCurrentLocation();
     }
-
+    
     window.fitAllWaypoints = function() {
         if (!map || localWaypoints.length === 0) return;
         focusedWaypointIndex = -1; isTrackingMode = false;
@@ -2921,27 +2918,17 @@ window.openProfileModal = function() {
             priceText.innerText = bookData.priceEstimate ? bookData.priceEstimate : ('~฿' + (bookData.price || 0));
         }
 
-        // 🌟 ดักจับสถานะ "ยกเลิก" ทุกกรณี และทำการหาคนขับใหม่อัตโนมัติ
         if (bookData.status.includes("ยกเลิก")) {
             if(driverBox) driverBox.classList.add('hidden');
             if(actionBtns) actionBtns.classList.add('hidden');
             if(btnEmer) btnEmer.classList.add('hidden');
+            window.lastKnownStatus = bookData.status;
             
-            // ป้องกันระบบทำงานซ้ำซ้อน
             if (!window.hasAutoRebooked) {
                 window.hasAutoRebooked = true;
-                
-                // แจ้งเตือนผู้โดยสารสั้นๆ
                 showAlert('กำลังหาคนขับใหม่', 'คนขับก่อนหน้ายกเลิกงาน ระบบกำลังค้นหาคนขับใหม่ให้คุณอัตโนมัติครับ', 'info');
-                
-                // อัปเดตฐานข้อมูลให้กลับไปสถานะรอคนขับ และลบข้อมูลคนขับเดิมออกทั้งหมด
                 db.ref('bookings/' + lineUserId).update({
-                    status: "รอผู้ขับขี่ตอบรับ",
-                    driverPin: null,
-                    driverName: null,
-                    driverCar: null,
-                    driverPlate: null,
-                    driverPhone: null
+                    status: "รอผู้ขับขี่ตอบรับ", driverPin: null, driverName: null, driverCar: null, driverPlate: null, driverPhone: null
                 }).then(() => {
                     setTimeout(() => { window.hasAutoRebooked = false; }, 3000); 
                 });
@@ -2951,6 +2938,7 @@ window.openProfileModal = function() {
             if(driverBox) driverBox.classList.add('hidden');
             if(actionBtns) actionBtns.classList.add('hidden');
             if(btnEmer) btnEmer.classList.add('hidden');
+            window.lastKnownStatus = bookData.status;
         } 
         else if (bookData.status === "รอผู้ขับขี่ตอบรับ") {
             if(driverBox) driverBox.classList.add('hidden');
@@ -2959,26 +2947,37 @@ window.openProfileModal = function() {
             if(actionBtns) actionBtns.classList.remove('hidden'); 
             document.getElementById('btnChat').classList.add('hidden');
             document.getElementById('btnCall').classList.add('hidden');
-            document.getElementById('btnCancel').classList.remove('hidden'); // โชว์แค่ยกเลิกให้ผู้โดยสารกดได้
+            document.getElementById('btnCancel').classList.remove('hidden');
+            window.lastKnownStatus = bookData.status;
         } 
         else {
-            // กรณีคนขับรับงานแล้ว
             if(driverBox) driverBox.classList.remove('hidden');
             if(btnEmer) btnEmer.classList.remove('hidden');
             
-            // 🌟 ตรวจสอบว่าผู้โดยสารขึ้นรถหรือยัง (กำลังออกเดินทาง หรือ ไปส่ง)
-            let isPassengerInCar = bookData.status.includes("ออกเดินทาง") || bookData.status.includes("ไปส่ง") || bookData.status.includes("ขึ้นรถ");
+            // 🌟 เพิ่มคำว่า "ไปยัง" เพื่อให้ครอบคลุมคำว่า "ไปยังจุดส่ง" ด้วย
+            let isPassengerInCar = bookData.status.includes("ออกเดินทาง") || bookData.status.includes("ไปส่ง") || bookData.status.includes("ไปยัง") || bookData.status.includes("ขึ้นรถ");
 
             if (isPassengerInCar) {
-                // 🌟 ถ้าขึ้นรถแล้ว ให้ซ่อนปุ่ม แชท โทร ยกเลิก ทั้งแถบ
+                // ซ่อนปุ่ม แชท/โทร/ยกเลิก
                 if(actionBtns) actionBtns.classList.add('hidden');
+                
+                // 🌟 หากเพิ่งเปลี่ยนสถานะเป็น "ขึ้นรถแล้ว" ครั้งแรก ให้เล็งกล้องล็อกตามรถอัตโนมัติเลย
+                if (window.lastKnownStatus !== bookData.status) {
+                    isTrackingMode = true; // เปิดโหมดติดตาม
+                    if (markerDriver && markerDriver.getMap()) {
+                        updateMapPadding();
+                        map.panTo(markerDriver.getPosition());
+                        map.setZoom(17);
+                    }
+                }
             } else {
-                // ถ้ายังไม่ขึ้นรถ (กำลังมารับ, มาถึงจุดรับ) ให้แสดงปุ่มได้ปกติ
                 if(actionBtns) actionBtns.classList.remove('hidden');
                 document.getElementById('btnChat').classList.remove('hidden');
                 document.getElementById('btnCall').classList.remove('hidden');
                 document.getElementById('btnCancel').classList.remove('hidden');
             }
+
+            window.lastKnownStatus = bookData.status; // อัปเดตสถานะล่าสุดเก็บไว้
 
             let plateEl = document.getElementById('trackDriverPlate');
             let carEl = document.getElementById('trackDriverCar');
