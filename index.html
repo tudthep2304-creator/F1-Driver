@@ -2703,6 +2703,8 @@
         enableSmoothSwipeToClose('newsDetailModal', window.closeNewsDetailModal);
     }, 1000);
 
+    window.currentDriverGender = 'male'; // ค่าเริ่มต้น
+
     function handleTracking() {
         if (!bookData) return;
         const statusText = document.getElementById('unifiedStatusText');
@@ -2720,51 +2722,61 @@
             window.lastKnownStatus = bookData.status;
         }
 
+        // 🌟 1. ดึงข้อมูลเพศคนขับ (จะทำงานร่วมกับระบบแอดมิน/คนขับในอนาคต)
+        if (bookData.driverPin) {
+            db.ref('drivers_profile/' + bookData.driverPin).once('value', snap => {
+                if (snap.exists() && snap.val().gender) {
+                    window.currentDriverGender = snap.val().gender;
+                }
+            });
+        }
+        let driverGender = bookData.driverGender || window.currentDriverGender || 'male';
+
         // ==========================================
-        // 🌟 1. ระบบเสียงพูดแจ้งเตือน (Text-to-Speech)
+        // 🌟 2. ระบบเสียงพูดแจ้งเตือน (แยกเพศ)
         // ==========================================
         if (bookData.status.includes("รับงาน") || bookData.status.includes("กำลังเดินทาง")) {
             if (!window.hasSpokenAccept) {
-                playSoundAlert(); setTimeout(() => speakText("คนขับรับงานแล้วค่ะ"), 800);
+                playSoundAlert(); setTimeout(() => speakText("คนขับรับงานแล้ว", driverGender), 800);
                 window.hasSpokenAccept = true;
             }
-            // 🌟 เช็คระยะห่าง ถ้าน้อยกว่า 500 เมตร ให้พูดว่า "คนขับใกล้ถึงแล้ว"
             if (!window.hasSpokenArrivePick && driverData.lat && bookData.pLat && typeof google !== 'undefined') {
                 let dLoc = new google.maps.LatLng(driverData.lat, driverData.lng);
                 let pLoc = new google.maps.LatLng(bookData.pLat, bookData.pLng);
                 if (google.maps.geometry.spherical.computeDistanceBetween(dLoc, pLoc) <= 500) {
-                    playSoundAlert(); setTimeout(() => speakText("คนขับใกล้ถึงแล้วค่ะ"), 800);
+                    playSoundAlert(); setTimeout(() => speakText("คนขับใกล้ถึงแล้ว", driverGender), 800);
                     window.hasSpokenArrivePick = true;
                 }
             }
         } 
         else if (bookData.status.includes("ถึงจุดรับ") || bookData.status.includes("มาถึง")) {
             if (!window.hasSpokenAtPickup) {
-                playSoundAlert(); setTimeout(() => speakText("คนขับถึงจุดรับแล้วค่ะ"), 800);
+                playSoundAlert(); setTimeout(() => speakText("คนขับถึงจุดรับแล้ว", driverGender), 800);
                 window.hasSpokenAtPickup = true;
             }
         } 
         else if (bookData.status.includes("ออกเดินทาง") || bookData.status.includes("ขึ้นรถ") || bookData.status.includes("ไปยัง")) {
             if (!window.hasSpokenDepart) {
-                playSoundAlert(); setTimeout(() => speakText("ผู้โดยสารขึ้นรถแล้ว กำลังเดินทางไปยังจุดหมายค่ะ"), 800);
+                playSoundAlert(); setTimeout(() => speakText("ผู้โดยสารขึ้นรถแล้ว กำลังเดินทางไปยังจุดหมาย", driverGender), 800);
                 window.hasSpokenDepart = true;
             }
         } 
         else if (bookData.status === "เสร็จสิ้น" || bookData.status.includes("ถึงที่หมาย")) {
             if (!window.hasSpokenFinish) {
-                playSoundAlert(); setTimeout(() => speakText("ถึงจุดหมายปลายทางแล้วค่ะ ขอบคุณที่ใช้บริการค่ะ"), 800);
+                // 🌟 เพิ่มคำขอบคุณตอนถึงจุดหมาย
+                playSoundAlert(); setTimeout(() => speakText("ถึงจุดหมายปลายทางแล้ว ขอบคุณที่ใช้บริการ", driverGender), 800);
                 window.hasSpokenFinish = true;
             }
         }
         else if (bookData.status.includes("ยกเลิก")) {
             if (!window.hasSpokenCancel) {
-                playSoundAlert(); setTimeout(() => speakText("ขออภัยค่ะ งานถูกยกเลิก"), 800);
+                playSoundAlert(); setTimeout(() => speakText("ขออภัย งานถูกยกเลิก", driverGender), 800);
                 window.hasSpokenCancel = true;
             }
         }
 
         // ==========================================
-        // 🌟 2. การอัปเดตหน้าจอ UI
+        // 🌟 3. การอัปเดตหน้าจอ UI
         // ==========================================
         if (bookData.status.includes("ยกเลิก")) {
             if(driverBox) driverBox.classList.add('hidden'); if(actionBtns) actionBtns.classList.add('hidden'); if(btnEmer) btnEmer.classList.add('hidden');
@@ -2804,7 +2816,6 @@
             if (isPassengerInCar) {
                 if(actionBtns) actionBtns.classList.add('hidden');
                 
-                // 🌟 ล็อกเป้าแผนที่ตามติดรถอัตโนมัติเมื่อขึ้นรถแล้ว
                 if (isStatusChanged) {
                     isTrackingMode = true; 
                     if (map && markerDriver && markerDriver.getMap()) { 
