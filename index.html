@@ -1189,57 +1189,29 @@
     async function requestWakeLock() { if ('wakeLock' in navigator) { try { wakeLock = await navigator.wakeLock.request('screen'); } catch (err) {} } }
     document.addEventListener('visibilitychange', () => { if (wakeLock !== null && document.visibilityState === 'visible') requestWakeLock(); });
 
-    function playSoundAlert() {
-        if(!notiAudio) notiAudio = document.getElementById('notiSound');
-        if(notiAudio) { 
-            notiAudio.volume = 0.2; // 🌟 ลดความดังเสียงติ๊งน่องลงเหลือ 20%
-            notiAudio.currentTime = 0; 
-            notiAudio.play().catch(e => console.log('Audio playback prevented')); 
-        }
-    }
-
     // ==========================================
-    // 🌟 ระบบเสียงแจ้งเตือน และ Text-to-Speech (อัปเดตแก้บั๊กมือถือ)
+    // 🌟 1. ฟังก์ชันเสียง (กลับไปใช้ความเรียบง่ายแบบเวอร์ชันแรกที่เวิร์ค 100%)
     // ==========================================
     function playSoundAlert() {
         if(!notiAudio) notiAudio = document.getElementById('notiSound');
         if(notiAudio) { 
-            notiAudio.volume = 0.2; // ลดเสียงติ๊งน่องเหลือ 20%
+            notiAudio.volume = 0.2; // เสียงติ๊งน่องเบาลง
             notiAudio.currentTime = 0; 
             notiAudio.play().catch(e => console.log('Audio playback prevented')); 
         }
-    }
-
-    // เตรียมโหลดเสียงของเครื่อง
-    if ('speechSynthesis' in window) {
-        window.speechSynthesis.onvoiceschanged = function() { window.speechSynthesis.getVoices(); };
     }
 
     function speakText(baseText, gender = 'male') {
         if ('speechSynthesis' in window) {
-            // 🌟 สำคัญมาก: ต้องมี resume และ cancel เพื่อป้องกันคิวเสียงค้างในมือถือ (สาเหตุที่ทำให้เงียบ)
-            window.speechSynthesis.resume();
-            window.speechSynthesis.cancel(); 
+            window.speechSynthesis.cancel(); // ล้างคิวเก่า (วิธีออริจินัล)
             
             let politeWord = (gender === 'female') ? 'ค่ะ' : 'ครับ';
             let textToSpeak = baseText + politeWord;
 
             let msg = new SpeechSynthesisUtterance(textToSpeak); 
-            msg.lang = 'th-TH'; 
+            msg.lang = 'th-TH'; // ใช้เสียง Default ของเครื่องทันที ไม่ต้องง้อ getVoices()
             msg.rate = 1.0;     
-            msg.volume = 1.0; // เร่งเสียงพูดให้ดัง 100%
-
-            let voices = window.speechSynthesis.getVoices();
-            let thaiVoices = voices.filter(v => v.lang.includes('th'));
             
-            if (thaiVoices.length > 0) {
-                let preferredVoice = thaiVoices.find(v => v.name.toLowerCase().includes(gender));
-                if(preferredVoice) {
-                    msg.voice = preferredVoice;
-                } else {
-                    msg.voice = thaiVoices[0]; 
-                }
-            }
             window.speechSynthesis.speak(msg);
         }
     }
@@ -2764,12 +2736,12 @@
         let driverGender = bookData.driverGender || window.currentDriverGender || 'male';
 
         // ==========================================
-        // 🌟 1. ระบบเสียงเตือนเมื่อเปลี่ยนสถานะ (เอา setTimeout ออก เพื่อให้ทำงานบนมือถือได้ 100%)
+        // 🌟 ระบบเสียงเตือนเมื่อเปลี่ยนสถานะ (คืนชีพ setTimeout ตามแบบออริจินัล)
         // ==========================================
         if (bookData.status.includes("รับงาน") || bookData.status.includes("กำลังเดินทาง")) {
             if (!window.hasSpokenAccept) {
                 playSoundAlert(); 
-                speakText("คนขับรับงานแล้ว", driverGender);
+                setTimeout(() => speakText("คนขับรับงานแล้ว", driverGender), 800);
                 window.hasSpokenAccept = true;
             }
             if (!window.hasSpokenArrivePick && driverData.lat && bookData.pLat && typeof google !== 'undefined') {
@@ -2777,7 +2749,7 @@
                 let pLoc = new google.maps.LatLng(bookData.pLat, bookData.pLng);
                 if (google.maps.geometry.spherical.computeDistanceBetween(dLoc, pLoc) <= 500) {
                     playSoundAlert(); 
-                    speakText("คนขับใกล้ถึงแล้ว", driverGender);
+                    setTimeout(() => speakText("คนขับใกล้ถึงแล้ว", driverGender), 800);
                     window.hasSpokenArrivePick = true;
                 }
             }
@@ -2785,34 +2757,34 @@
         else if (bookData.status.includes("ถึงจุดรับ") || bookData.status.includes("มาถึง")) {
             if (!window.hasSpokenAtPickup) {
                 playSoundAlert(); 
-                speakText("คนขับถึงจุดรับแล้ว", driverGender);
+                setTimeout(() => speakText("คนขับถึงจุดรับแล้ว", driverGender), 800);
                 window.hasSpokenAtPickup = true;
             }
         } 
         else if (bookData.status.includes("ออกเดินทาง") || bookData.status.includes("ขึ้นรถ") || bookData.status.includes("ไปยัง")) {
             if (!window.hasSpokenDepart) {
                 playSoundAlert(); 
-                speakText("ผู้โดยสารขึ้นรถแล้ว กำลังเดินทางไปยังจุดหมาย", driverGender);
+                setTimeout(() => speakText("ผู้โดยสารขึ้นรถแล้ว กำลังเดินทางไปยังจุดหมาย", driverGender), 800);
                 window.hasSpokenDepart = true;
             }
         } 
         else if (bookData.status === "เสร็จสิ้น" || bookData.status.includes("ถึงที่หมาย")) {
             if (!window.hasSpokenFinish) {
                 playSoundAlert(); 
-                speakText("ถึงจุดหมายปลายทางแล้ว ขอบคุณที่ใช้บริการ", driverGender);
+                setTimeout(() => speakText("ถึงจุดหมายปลายทางแล้ว ขอบคุณที่ใช้บริการ", driverGender), 800);
                 window.hasSpokenFinish = true;
             }
         }
         else if (bookData.status.includes("ยกเลิก")) {
             if (!window.hasSpokenCancel) {
                 playSoundAlert(); 
-                speakText("ขออภัย งานถูกยกเลิก", driverGender);
+                setTimeout(() => speakText("ขออภัย งานถูกยกเลิก", driverGender), 800);
                 window.hasSpokenCancel = true;
             }
         }
 
         // ==========================================
-        // 🌟 2. การอัปเดตหน้าจอ UI
+        // 🌟 การอัปเดตหน้าจอ UI
         // ==========================================
         if (bookData.status.includes("ยกเลิก")) {
             if(driverBox) driverBox.classList.add('hidden'); if(actionBtns) actionBtns.classList.add('hidden'); if(btnEmer) btnEmer.classList.add('hidden');
@@ -2876,107 +2848,6 @@
         }
         if(typeof drawTrackingRoute === 'function') { drawTrackingRoute(bookData.status); }
     }
-    
-    function updateRealtimeMap() {
-        if(!map || !currentRouteBounds) return;
-        let pb = getDynamicBottomPadding();
-        map.fitBounds(currentRouteBounds, { top: 120, right: 50, bottom: pb, left: 50 });
-    }
-
-    window.updateSelectedRatingScore = function(score) {
-        currentSelectedRatingScore = score;
-        const stars = document.getElementById('starRatingBox').querySelectorAll('i');
-        stars.forEach((star, index) => {
-            if(index < score) {
-                star.classList.remove('text-gray-300', 'dark:text-gray-600');
-                star.classList.add('text-[#eab308]', 'dark:text-[#fae100]');
-            } else {
-                star.classList.add('text-gray-300', 'dark:text-gray-600');
-                star.classList.remove('text-[#eab308]', 'dark:text-[#fae100]');
-            }
-        });
-    }
-
-    window.submitDriverRatingScore = function() {
-        document.getElementById('driverRatingModal').classList.add('hidden');
-        showAlert('ขอบคุณครับ', 'ระบบได้ส่งคะแนนประเมินให้คนขับเรียบร้อยแล้ว', 'success', () => { window.showPage(1); });
-    }
-
-    window.openInAppChatModal = function() { showAlert('ระบบแชท', 'ฟังก์ชันแชทกับคนขับกำลังอยู่ระหว่างการปรับปรุงครับ', 'info'); }
-
-    window.confirmReportTrip = function() {
-        if (!selectedHistoryJobId || !loadedHistoryJobs[selectedHistoryJobId]) return;
-        window.openConfirmActionModal("รายงานปัญหา?", "คุณต้องการรายงานปัญหาการเดินทางในรอบนี้ ใช่หรือไม่?", () => { window.reportCurrentTrip(); }, 'yellow');
-    }
-
-    window.reportCurrentTrip = function() {
-        if (!selectedHistoryJobId || !loadedHistoryJobs[selectedHistoryJobId]) return;
-        let job = loadedHistoryJobs[selectedHistoryJobId];
-        let shortId = selectedHistoryJobId.substring(selectedHistoryJobId.length - 8).toUpperCase();
-        let dateStr = new Date(job.completedAt || job.timestamp).toLocaleString('th-TH');
-        let serviceMap = {'car': 'รถยนต์', 'premium_car': 'รถยนต์พรีเมียม', 'bike': 'มอเตอร์ไซค์', 'premium_bike': 'มอไซค์พรีเมียม'};
-        let serviceInfo = serviceMap[job.serviceType || 'car'] || 'รถยนต์';
-        let driverInfo = document.getElementById('histDetDriver').innerText; 
-        
-        let message = `🚨 รายงานปัญหาการเดินทาง\nรหัสงาน: #${shortId}\nวันที่: ${dateStr}\nประเภทรถ: ${serviceInfo}\nคนขับ: ${driverInfo}\n\nรายละเอียดปัญหา:\n(กรุณาพิมพ์ปัญหาที่คุณพบ...)`;
-        let encodedMessage = encodeURIComponent(message);
-        let lineOaId = "@805zvmii"; 
-        let lineUrl = `https://line.me/R/oaMessage/${lineOaId}/?${encodedMessage}`;
-        window.open(lineUrl, '_blank');
-    }
-    // ==========================================
-    // 🌟 กู้คืนฟังก์ชันที่หายไป (ปุ่มต่างๆ บนหน้าจอ)
-    // ==========================================
-    window.openCommunityModal = function() {
-        document.getElementById('communityModal').classList.remove('hidden');
-        window.unreadChatMessages.clear(); 
-        updateChatBadge();
-        localStorage.setItem('lastSeenChatTime', Date.now());
-        const chatBox = document.getElementById('globalChatBox');
-        if (chatBox) { setTimeout(() => { chatBox.scrollTop = chatBox.scrollHeight; }, 100); }
-    };
-    window.closeCommunityModal = function() { 
-        document.getElementById('communityModal').classList.add('hidden'); 
-        localStorage.setItem('lastSeenChatTime', Date.now());
-    };
-    window.sendGlobalChat = function() {
-        let inputEl = document.getElementById('globalChatInput');
-        let textVal = inputEl.value.trim();
-        if(!textVal) return;
-        db.ref('community_chat').push({
-            pin: lineUserId, name: lineName || 'ผู้โดยสาร', role: 'passenger',
-            text: textVal, timestamp: firebase.database.ServerValue.TIMESTAMP
-        }).then(() => { inputEl.value = ''; });
-    };
-    window.filterCommunityChat = function() {
-        let keyword = document.getElementById('chatSearchInput').value.toLowerCase();
-        let messages = document.querySelectorAll('.chat-msg-item');
-        messages.forEach(msg => {
-            let text = msg.innerText.toLowerCase();
-            msg.style.display = text.includes(keyword) ? 'flex' : 'none';
-        });
-    };
-    
-    window.handleCrosshairClick = function() { centerToFocus(); };
-    window.openEmergencyModal = function() { document.getElementById('emergencyModal').classList.remove('hidden'); };
-    window.closeEmergencyModal = function() { document.getElementById('emergencyModal').classList.add('hidden'); };
-    
-    // 🌟 ระบบกดชื่อสถานที่แล้วให้แผนที่เลื่อนไปโฟกัส (กดซ้ำเพื่อซูมออก)
-    window.focusLocationToggle = function(lat, lng, index) {
-        if (!map) return;
-        
-        if (focusedWaypointIndex === index) {
-            // ถ้ายกเลิกการโฟกัส (กดซ้ำ) ให้ซูมออกให้เห็นทุกหมุด
-            focusedWaypointIndex = -1;
-            window.fitAllWaypoints();
-        } else {
-            // ถ้ากดครั้งแรก ให้ซูมเข้าไปที่หมุดนั้น
-            focusedWaypointIndex = index;
-            map.panTo({lat: lat, lng: lng});
-            map.setZoom(17);
-            renderWaypointsUI(); // รีเฟรชสีตัวหนังสือ
-        }
-    };
     // ==========================================
     // 🌟 กู้คืนตัวแปรและฟังก์ชันของระบบคอมมูนิตี้แชท
     // ==========================================
