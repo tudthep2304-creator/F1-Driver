@@ -1172,13 +1172,43 @@
 
     function playSoundAlert() {
         if(!notiAudio) notiAudio = document.getElementById('notiSound');
-        if(notiAudio) { notiAudio.currentTime = 0; notiAudio.play().catch(e => console.log('Audio playback prevented')); }
+        if(notiAudio) { 
+            notiAudio.volume = 0.2; // 🌟 ลดความดังเสียงติ๊งน่องลงเหลือ 20%
+            notiAudio.currentTime = 0; 
+            notiAudio.play().catch(e => console.log('Audio playback prevented')); 
+        }
     }
 
-    function speakText(text) {
+    // โหลดเสียงเตรียมไว้ล่วงหน้า
+    if ('speechSynthesis' in window) {
+        window.speechSynthesis.onvoiceschanged = function() { window.speechSynthesis.getVoices(); };
+    }
+
+    function speakText(baseText, gender = 'male') {
         if ('speechSynthesis' in window) {
             window.speechSynthesis.cancel(); 
-            let msg = new SpeechSynthesisUtterance(text); msg.lang = 'th-TH'; msg.rate = 1.0;     
+            
+            // 🌟 เติมคำลงท้ายตามเพศคนขับ
+            let politeWord = (gender === 'female') ? 'ค่ะ' : 'ครับ';
+            let textToSpeak = baseText + politeWord;
+
+            let msg = new SpeechSynthesisUtterance(textToSpeak); 
+            msg.lang = 'th-TH'; 
+            msg.rate = 1.0;     
+
+            // 🌟 พยายามเลือกเสียงให้ตรงกับเพศ (ถ้าในมือถือลูกค้ามีเสียงให้เลือกหลายแบบ)
+            let voices = window.speechSynthesis.getVoices();
+            let thaiVoices = voices.filter(v => v.lang.includes('th'));
+            
+            if (thaiVoices.length > 0) {
+                let preferredVoice = thaiVoices.find(v => v.name.toLowerCase().includes(gender));
+                if(preferredVoice) {
+                    msg.voice = preferredVoice;
+                } else {
+                    msg.voice = thaiVoices[0]; // ถ้าไม่มีให้ใช้เสียงเริ่มต้นของเครื่อง
+                }
+            }
+
             window.speechSynthesis.speak(msg);
         }
     }
