@@ -456,7 +456,7 @@
       </div>
 
       <div id="actionButtonsBox" class="hidden flex gap-2 mb-1 shrink-0 w-full">
-          <button id="btnChat" onclick="window.openInAppChatModal()" class="flex-1 bg-blue-50 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400 py-3 rounded-full font-normal border border-blue-200 dark:border-blue-500/30 text-[13px] shadow-sm hover:bg-blue-100 dark:hover:bg-blue-800 transition flex justify-center items-center gap-1.5"><i class="fas fa-comments text-[14px]"></i> แชท</button>
+          <button id="btnChat" onclick="window.openInAppChatModal()" class="flex-1 bg-yellow-50 dark:bg-[#fae100]/20 text-[#eab308] dark:text-[#fae100] py-3 rounded-full font-normal border border-yellow-200 dark:border-[#fae100]/30 text-[13px] shadow-sm hover:bg-yellow-100 dark:hover:bg-[#fae100]/40 transition flex justify-center items-center gap-1.5"><i class="fas fa-comments text-[14px]"></i> แชท</button>
           <button id="btnCall" onclick="window.openCallConfirmModal()" class="flex-1 bg-[#fae100] text-gray-900 dark:text-[#1e234e] py-3 rounded-full font-medium text-[13px] shadow-sm hover:bg-[#e5ce00] transition flex justify-center items-center gap-1.5"><i class="fas fa-phone-alt"></i> โทร</button>
           <button id="btnCancel" onclick="window.openCancelModal()" class="flex-1 bg-red-50 dark:bg-red-900/40 text-red-500 dark:text-red-400 py-3 rounded-full font-normal border border-red-200 dark:border-red-500/30 text-[13px] hover:bg-red-100 dark:hover:bg-red-900/60 transition flex justify-center items-center gap-1.5"><i class="fas fa-times"></i> ยกเลิก</button>
       </div>
@@ -2958,6 +2958,12 @@
             
             const chatBox = document.getElementById('inAppChatBox');
             if(chatBox) setTimeout(() => { chatBox.scrollTop = chatBox.scrollHeight; }, 100);
+
+            // 🌟 เพิ่มเสียงแจ้งเตือนเมื่อมีข้อความจาก "คนขับ"
+            if (!isSenderPassenger) {
+                let chatSound = new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3');
+                chatSound.play().catch(e => {}); // ป้องกันเบราว์เซอร์บล็อกเสียง
+            }
 
             let modal = document.getElementById('inAppChatModal');
             if(modal && modal.classList.contains('hidden') && !isSenderPassenger) {
