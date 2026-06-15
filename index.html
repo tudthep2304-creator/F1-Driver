@@ -760,7 +760,12 @@
       appId: "1:1048189690454:web:7c2c4c9bbf12b9c77ed1f7"
     });
     const db = firebase.database();
-
+// ตัวแปรเก็บข้อมูลการเรียกรถ
+    let bookData = null;
+    let selectedVehicleType = 'car';
+    
+    // 🌟 1. เพิ่มตัวแปรเพื่อเก็บรายการรถจาก Firebase
+    let vehicleTypesFromDB = [];
     let bannerInterval = null; 
     let bottomBannerInterval = null;
     let notiAudio = null;
@@ -2105,7 +2110,7 @@ window.openProfileModal = function() {
         } 
     }
 
-    // 🌟 ระบบคำนวณราคาและเปลี่ยนสีราคาเป็นสีเขียว
+    // 🌟 ระบบคำนวณราคาแบบ Dynamic (ดึงข้อมูลรถจาก Firebase)
     function calculatePrice() {
       if(!directionsService || !map || localWaypoints.length < 2) return;
 
@@ -2127,95 +2132,114 @@ window.openProfileModal = function() {
           const sDist = document.getElementById('sumDist'); const sWait = document.getElementById('sumWait');
           if(sDist) sDist.innerText = bookData.distance; if(sWait) sWait.innerText = bookData.duration;
 
-          const vehicleTypes = [
-              { id: 'car', name: 'รถยนต์', icon: 'fa-car-side', color: 'text-white' },
-              { id: 'premium_car', name: 'รถยนต์พรีเมียม', icon: 'fa-car', color: 'text-[#fae100]' },
-              { id: 'bike', name: 'รถมอเตอร์ไซค์', icon: 'fa-motorcycle', color: 'text-blue-400' },
-              { id: 'premium_bike', name: 'มอเตอร์ไซค์พรีเมียม', icon: 'fa-motorcycle', color: 'text-purple-400' },
-              { id: 'bicycle', name: 'รถจักรยาน', icon: 'fa-bicycle', color: 'text-green-400' }
-          ];
-
-          const defaultPricing = {
-              'car': { base: 50, km: 10, pick: 5 }, 'premium_car': { base: 80, km: 15, pick: 5 },
-              'bike': { base: 30, km: 8, pick: 5 }, 'premium_bike': { base: 50, km: 10, pick: 5 }, 'bicycle': { base: 20, km: 5, pick: 5 }
-          };
-
-          let listHtml = '';
-          let firstAvailable = null;
-          let prevSelected = window.currentServiceType || 'car';
-          let foundPrevSelected = false;
-
-          vehicleTypes.forEach(v => {
-              let pConf = pricingConfig[v.id] || defaultPricing[v.id];
-              let baseFare = parseInt(pConf.base); let kmRate = parseInt(pConf.km); let pickRate = parseInt(pConf.pick);
-              let baseRidePrice = baseFare + (distRideKm * kmRate);
-              
-              let typeDrivers = window.onlineDrivers.filter(d => (d.serviceType || 'car') === v.id);
-              let isOnline = typeDrivers.length > 0;
-              
-              let displayPrice = ""; let displaySub = ""; let cardClass = ""; let iconClass = ""; let minPrice = 0;
-
-              if (isOnline) {
-                  let distances = typeDrivers.map(d => {
-                      let dLoc = new google.maps.LatLng(d.lat, d.lng); return google.maps.geometry.spherical.computeDistanceBetween(dLoc, origin) / 1000;
-                  });
-                  let minDriverDist = Math.min(...distances); let maxDriverDist = Math.max(...distances);
-                  
-                  minPrice = Math.floor((baseRidePrice + (minDriverDist * pickRate)) / 10) * 10;
-                  let maxPrice = Math.ceil((baseRidePrice + (maxDriverDist * pickRate)) / 10) * 10;
-                  if(minPrice < baseFare) minPrice = baseFare; if(maxPrice <= minPrice) maxPrice = minPrice + 10; 
-
-                  displayPrice = `~฿${minPrice} - ${maxPrice}`;
-                  displaySub = `<i class="fas fa-bolt text-[#fae100] mr-1"></i> มีรถว่างใกล้คุณ`;
-                  
-                  cardClass = "border-[#383d6a] cursor-pointer";
-                  iconClass = v.color;
-                  
-                  if(!firstAvailable) firstAvailable = { id: v.id, price: minPrice, priceEstimate: displayPrice, isOnline: true };
-                  if(v.id === prevSelected) foundPrevSelected = { id: v.id, price: minPrice, priceEstimate: displayPrice, isOnline: true };
-
+          // 🌟 2. ดึงข้อมูลรถและราคาจาก Firebase (แทนการฟิกซ์ในโค้ด)
+          db.ref('system_settings/vehicle_types').once('value').then(snap => {
+              let vehicleTypes = [];
+              if (snap.exists()) {
+                  // ถ้ามีข้อมูลใน DB แอดมิน ให้ดึงมาใช้
+                  let dbData = snap.val();
+                  for (let key in dbData) {
+                      vehicleTypes.push({
+                          id: key,
+                          name: dbData[key].name || 'รถยนต์',
+                          icon: dbData[key].icon || 'fa-car-side',
+                          color: dbData[key].color || 'text-white',
+                          base: parseInt(dbData[key].baseFare || 50),
+                          km: parseInt(dbData[key].kmRate || 10),
+                          pick: parseInt(dbData[key].pickupRate || 5)
+                      });
+                  }
               } else {
-                  let offlinePrice = baseRidePrice + (baseRidePrice * 0.10);
-                  minPrice = Math.ceil(offlinePrice / 10) * 10;
-                  displayPrice = `~฿${minPrice}`;
-                  displaySub = `(ไม่มีรถว่าง)`;
-                  
-                  cardClass = "border-[#2a2f5c] text-gray-500 opacity-60 cursor-pointer hover:opacity-80";
-                  iconClass = "text-gray-500";
-                  
-                  if(v.id === prevSelected) foundPrevSelected = { id: v.id, price: minPrice, priceEstimate: displayPrice, isOnline: false };
+                  // ถ้าแอดมินยังไม่ได้ตั้งค่าอะไรเลยในฐานข้อมูล ให้ใช้ค่า Default 5 ประเภทนี้ไปก่อน (กันแอปพัง)
+                  vehicleTypes = [
+                      { id: 'car', name: 'รถยนต์', icon: 'fa-car-side', color: 'text-white', base: 50, km: 10, pick: 5 },
+                      { id: 'premium_car', name: 'รถยนต์พรีเมียม', icon: 'fa-car', color: 'text-[#fae100]', base: 80, km: 15, pick: 5 },
+                      { id: 'bike', name: 'รถมอเตอร์ไซค์', icon: 'fa-motorcycle', color: 'text-blue-400', base: 30, km: 8, pick: 5 },
+                      { id: 'premium_bike', name: 'มอเตอร์ไซค์พรีเมียม', icon: 'fa-motorcycle', color: 'text-purple-400', base: 50, km: 10, pick: 5 },
+                      { id: 'bicycle', name: 'รถจักรยาน', icon: 'fa-bicycle', color: 'text-green-400', base: 20, km: 5, pick: 5 }
+                  ];
               }
-              
-              listHtml += `
-              <div id="vcard-${v.id}" onclick="window.selectVehicleInSummary('${v.id}', ${minPrice}, '${displayPrice}', ${isOnline})" class="flex justify-between items-center py-2 px-3 rounded-full border transition ${cardClass}">
-                  <div class="flex items-center gap-3">
-                      <div class="w-10 h-10 rounded-full bg-[#1e234e] flex items-center justify-center border border-[#383d6a] shadow-inner shrink-0">
-                          <i class="fas ${v.icon} text-lg ${iconClass}"></i>
-                      </div>
-                      <div class="flex flex-col">
-                          <p class="v-name text-[13px] font-normal leading-tight ${isOnline ? 'text-gray-200' : 'text-gray-400'}">${v.name}</p>
-                          <p class="text-[11px] mt-0.5 ${isOnline ? 'text-white' : 'text-gray-500'}">${displaySub}</p>
-                      </div>
-                  </div>
-                  <div class="text-right flex flex-col items-end">
-                      <p class="font-medium text-[13px] leading-tight ${isOnline ? 'text-[#4ade80]' : 'text-gray-500'}">${displayPrice}</p>
-                      ${!isOnline ? `<p class="text-[9px] text-gray-500 mt-0.5">(ราคาประมาณ)</p>` : ''}
-                  </div>
-              </div>`;
-          });
-          
-          let listContainer = document.getElementById('vehicleSelectionList');
-          if(listContainer) listContainer.innerHTML = listHtml;
-          
-          if (foundPrevSelected) {
-              window.selectVehicleInSummary(foundPrevSelected.id, foundPrevSelected.price, foundPrevSelected.priceEstimate, foundPrevSelected.isOnline);
-          } else if (firstAvailable) {
-              window.selectVehicleInSummary(firstAvailable.id, firstAvailable.price, firstAvailable.priceEstimate, firstAvailable.isOnline);
-          } else {
-              window.selectVehicleInSummary('car', 0, '~฿0', false);
-          }
 
-          setTimeout(() => { if(map) { let pb = getDynamicBottomPadding(); map.fitBounds(currentRouteBounds, { top: 120, right: 50, bottom: pb, left: 50 }); } }, 200);
+              // บันทึกตัวแปรเก็บไว้
+              vehicleTypesFromDB = vehicleTypes;
+
+              let listHtml = '';
+              let firstAvailable = null;
+              let prevSelected = window.currentServiceType || 'car';
+              let foundPrevSelected = false;
+
+              vehicleTypes.forEach(v => {
+                  let baseFare = v.base; let kmRate = v.km; let pickRate = v.pick;
+                  let baseRidePrice = baseFare + (distRideKm * kmRate);
+                  
+                  let typeDrivers = window.onlineDrivers.filter(d => (d.serviceType || 'car') === v.id);
+                  let isOnline = typeDrivers.length > 0;
+                  
+                  let displayPrice = ""; let displaySub = ""; let cardClass = ""; let iconClass = ""; let minPrice = 0;
+
+                  if (isOnline) {
+                      let distances = typeDrivers.map(d => {
+                          let dLoc = new google.maps.LatLng(d.lat, d.lng); return google.maps.geometry.spherical.computeDistanceBetween(dLoc, origin) / 1000;
+                      });
+                      let minDriverDist = Math.min(...distances); let maxDriverDist = Math.max(...distances);
+                      
+                      minPrice = Math.floor((baseRidePrice + (minDriverDist * pickRate)) / 10) * 10;
+                      let maxPrice = Math.ceil((baseRidePrice + (maxDriverDist * pickRate)) / 10) * 10;
+                      if(minPrice < baseFare) minPrice = baseFare; if(maxPrice <= minPrice) maxPrice = minPrice + 10; 
+
+                      displayPrice = `~฿${minPrice} - ${maxPrice}`;
+                      displaySub = `<i class="fas fa-bolt text-[#fae100] mr-1"></i> มีรถว่างใกล้คุณ`;
+                      cardClass = "border-[#383d6a] cursor-pointer";
+                      iconClass = v.color;
+                      
+                      if(!firstAvailable) firstAvailable = { id: v.id, price: minPrice, priceEstimate: displayPrice, isOnline: true };
+                      if(v.id === prevSelected) foundPrevSelected = { id: v.id, price: minPrice, priceEstimate: displayPrice, isOnline: true };
+                  } else {
+                      let offlinePrice = baseRidePrice + (baseRidePrice * 0.10);
+                      minPrice = Math.ceil(offlinePrice / 10) * 10;
+                      displayPrice = `~฿${minPrice}`;
+                      displaySub = `(ไม่มีรถว่าง)`;
+                      cardClass = "border-[#2a2f5c] text-gray-500 opacity-60 cursor-pointer hover:opacity-80";
+                      iconClass = "text-gray-500";
+                      
+                      if(v.id === prevSelected) foundPrevSelected = { id: v.id, price: minPrice, priceEstimate: displayPrice, isOnline: false };
+                  }
+                  
+                  listHtml += `
+                  <div id="vcard-${v.id}" onclick="window.selectVehicleInSummary('${v.id}', ${minPrice}, '${displayPrice}', ${isOnline})" class="flex justify-between items-center py-2 px-3 rounded-full border transition ${cardClass}">
+                      <div class="flex items-center gap-3">
+                          <div class="w-10 h-10 rounded-full bg-[#1e234e] flex items-center justify-center border border-[#383d6a] shadow-inner shrink-0">
+                              <i class="fas ${v.icon} text-lg ${iconClass}"></i>
+                          </div>
+                          <div class="flex flex-col">
+                              <p class="v-name text-[13px] font-normal leading-tight ${isOnline ? 'text-gray-200' : 'text-gray-400'}">${v.name}</p>
+                              <p class="text-[11px] mt-0.5 ${isOnline ? 'text-white' : 'text-gray-500'}">${displaySub}</p>
+                          </div>
+                      </div>
+                      <div class="text-right flex flex-col items-end">
+                          <p class="font-medium text-[13px] leading-tight ${isOnline ? 'text-[#4ade80]' : 'text-gray-500'}">${displayPrice}</p>
+                          ${!isOnline ? `<p class="text-[9px] text-gray-500 mt-0.5">(ราคาประมาณ)</p>` : ''}
+                      </div>
+                  </div>`;
+              });
+              
+              let listContainer = document.getElementById('vehicleSelectionList');
+              if(listContainer) listContainer.innerHTML = listHtml;
+              
+              if (foundPrevSelected) {
+                  window.selectVehicleInSummary(foundPrevSelected.id, foundPrevSelected.price, foundPrevSelected.priceEstimate, foundPrevSelected.isOnline);
+              } else if (firstAvailable) {
+                  window.selectVehicleInSummary(firstAvailable.id, firstAvailable.price, firstAvailable.priceEstimate, firstAvailable.isOnline);
+              } else {
+                  // ถ้าไม่มีรถว่างเลยสักคัน ให้ล็อกคันแรกไว้แต่เป็นสีเทากดไม่ได้
+                  window.selectVehicleInSummary(vehicleTypes[0].id, 0, '~฿0', false);
+              }
+
+              setTimeout(() => { if(map) { let pb = getDynamicBottomPadding(); map.fitBounds(currentRouteBounds, { top: 120, right: 50, bottom: pb, left: 50 }); } }, 200);
+          
+          }).catch(error => {
+              console.error("Error loading vehicle types:", error);
+          });
         }
       });
     }
