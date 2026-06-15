@@ -5,7 +5,14 @@
   <title>F1 Driver - เรียกรถ</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <script src="https://cdn.tailwindcss.com"></script>
-  
+  <script>
+    if (localStorage.getItem('theme') === 'light') {
+      document.documentElement.classList.remove('dark');
+    } else {
+      document.documentElement.classList.add('dark');
+      localStorage.setItem('theme', 'dark'); // ค่าเริ่มต้นให้เป็นโหมดมืด
+    }
+  </script>
   <script>
     if (localStorage.getItem('theme') === 'light') {
       document.documentElement.classList.remove('dark');
@@ -41,33 +48,51 @@
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;700&display=swap');
     body { font-family: 'Kanit', sans-serif; background-color: #1e234e; color: #f3f4f6; }
-    /* ☀️ ถังสี Light Mode (โหมดสว่าง) */
+    /* ☀️ ถังสี โหมดสว่าง (Light Mode) */
     :root {
-      --color-bg: #f3f4f6;
-      --color-card: #ffffff;
-      --color-border: #e5e7eb;
-      --color-text: #1f2937;
-      --color-text-muted: #6b7280;
-      --color-icon-bg: #f3f4f6;
+      --bg-main: #f3f4f6;
+      --bg-card: #ffffff;
+      --border-line: #e5e7eb;
+      --text-main: #1f2937;
+      --text-sub: #6b7280;
+      --icon-bg: #e5e7eb;
     }
 
-    /* 🌙 ถังสี Dark Mode (โหมดมืด - สีปัจจุบันของคุณ) */
+    /* 🌙 ถังสี โหมดมืด (Dark Mode) */
     .dark {
-      --color-bg: #1e234e;
-      --color-card: #2a2f5c;
-      --color-border: #383d6a;
-      --color-text: #ffffff;
-      --color-text-muted: #9ca3af;
-      --color-icon-bg: #1e234e;
+      --bg-main: #1e234e;
+      --bg-card: #2a2f5c;
+      --border-line: #383d6a;
+      --text-main: #ffffff;
+      --text-sub: #9ca3af;
+      --icon-bg: #383d6a;
     }
 
-    /* สั่งให้ body ดึงสีจากตัวแปรไปใช้ */
-    body { 
-        font-family: 'Kanit', sans-serif; 
-        background-color: var(--color-bg); 
-        color: var(--color-text); 
-        transition: background-color 0.3s ease, color 0.3s ease;
-    }
+    /* 🎨 เวทมนตร์แปลงสี (เขียนทับคลาสสีของเดิมแบบอัตโนมัติ) */
+    body { background-color: var(--bg-main) !important; color: var(--text-main) !important; transition: background-color 0.3s, color 0.3s; }
+    
+    /* แปลงพื้นหลังและกรอบ */
+    .bg-\[\#1e234e\] { background-color: var(--bg-main) !important; transition: 0.3s; }
+    .bg-\[\#2a2f5c\] { background-color: var(--bg-card) !important; transition: 0.3s; }
+    .bg-\[\#383d6a\] { background-color: var(--icon-bg) !important; transition: 0.3s; }
+    .border-\[\#383d6a\], .border-\[\#2a2f5c\] { border-color: var(--border-line) !important; transition: 0.3s; }
+    
+    /* แปลงตัวหนังสือ */
+    .text-white { color: var(--text-main); transition: 0.3s; }
+    .text-gray-200, .text-gray-300, .text-gray-400, .text-gray-500 { color: var(--text-sub) !important; transition: 0.3s; }
+    ::placeholder { color: var(--text-sub) !important; }
+    
+    /* แปลงกล่องที่โปร่งแสง (Opacity) */
+    .bg-\[\#2a2f5c\]\/90 { background-color: var(--bg-card) !important; opacity: 0.95; }
+    .bg-\[\#2a2f5c\]\/80 { background-color: var(--bg-card) !important; opacity: 0.9; }
+    .bg-\[\#383d6a\]\/80 { background-color: var(--border-line) !important; }
+    
+    /* 🛑 ข้อยกเว้น: สิ่งที่ต้องคงสีเดิมไว้เสมอ (เช่น ปุ่มสีทึบ, สีแบรนด์ F1) */
+    .logo-f { color: var(--text-main) !important; }
+    .bg-red-500, .bg-blue-500, .bg-\[\#ef4444\], .bg-\[\#4ade80\], .bg-red-600, .bg-red-900\/80 { color: #ffffff !important; }
+    .text-\[\#fae100\] { color: #fae100 !important; } 
+    .bg-\[\#fae100\] { color: #1e234e !important; }
+    
     .map-container { position: fixed; inset: 0; width: 100vw; height: 100vh; z-index: 0; background: #1e234e; }
 
 /* Splash Screen CSS */
@@ -1426,6 +1451,27 @@ window.loadedNewsItems = {};
     window.openPromoModal = function() { document.getElementById('promoModal').classList.remove('hidden'); }
     window.closePromoModal = function() { document.getElementById('promoModal').classList.add('hidden'); }
 
+// 🌟 ฟังก์ชันสลับโหมดมืด-สว่าง (Dark/Light Mode Toggle)
+    window.toggleTheme = function() {
+        const htmlEl = document.documentElement;
+        // สลับคลาส 'dark' ใน HTML
+        if (htmlEl.classList.contains('dark')) {
+            htmlEl.classList.remove('dark');
+            localStorage.setItem('theme', 'light');
+            showAlert('เปลี่ยนธีม', 'สลับเป็นโหมดสว่าง (Light Mode) เรียบร้อย', 'success');
+        } else {
+            htmlEl.classList.add('dark');
+            localStorage.setItem('theme', 'dark');
+            showAlert('เปลี่ยนธีม', 'สลับเป็นโหมดมืด (Dark Mode) เรียบร้อย', 'success');
+        }
+
+        // สลับสีแผนที่ (ถ้าเปิดแผนที่โหมดถนนอยู่)
+        if (map && !isSatelliteMode) {
+            let mapStyle = htmlEl.classList.contains('dark') ? detailedDarkMapStyle : []; 
+            map.setOptions({ styles: mapStyle });
+        }
+    }
+    
 window.openProfileModal = function() {
         document.getElementById('profileModal').classList.remove('hidden');
         let pNameL = document.getElementById('profileNameLarge');
