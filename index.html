@@ -1398,9 +1398,17 @@
     }
 
     window.updateMapThemeForAuto = function() {
+        let isDark = document.documentElement.classList.contains('dark');
+        let mapStyle = isDark ? detailedDarkMapStyle : []; 
+
+        // 1. อัปเดตสีแผนที่หลัก
         if (map && !isSatelliteMode) {
-            let mapStyle = document.documentElement.classList.contains('dark') ? detailedDarkMapStyle : []; 
             map.setOptions({ styles: mapStyle });
+        }
+
+        // 2. 🌟 อัปเดตสีแผนที่ในหน้าประวัติด้วย (ถ้ามี)
+        if (typeof historyMapInstance !== 'undefined' && historyMapInstance) {
+            historyMapInstance.setOptions({ styles: mapStyle });
         }
     }
 
@@ -2702,21 +2710,60 @@
     function drawHistoryMap(waypoints) {
         if (typeof google === 'undefined' || !waypoints || waypoints.length < 2) return;
 
+        // 🌟 ดึงค่าสีปัจจุบันของแอปล่าสุด
+        const isDark = document.documentElement.classList.contains('dark');
+        const currentStyle = isDark ? detailedDarkMapStyle : [];
+
         if (!historyMapInstance) {
-            const isDark = document.documentElement.classList.contains('dark');
             historyMapInstance = new google.maps.Map(document.getElementById('historyMap'), {
                 zoom: 13, 
-                mapTypeId: 'roadmap', // 🌟 เปลี่ยนเป็นแบบธรรมดา
-                styles: isDark ? detailedDarkMapStyle : [],
+                mapTypeId: 'roadmap', 
+                styles: currentStyle, // ใช้สีล่าสุด
                 disableDefaultUI: true, 
                 gestureHandling: 'greedy',
-                clickableIcons: false, // 🌟 ปิดการกดสถานที่ในประวัติ
-              keyboardShortcuts: false
-              
+                clickableIcons: false, 
+                keyboardShortcuts: false
             });
             historyDirectionsService = new google.maps.DirectionsService();
             historyDirectionsRenderer = new google.maps.DirectionsRenderer({ map: historyMapInstance, suppressMarkers: true, preserveViewport: false });
+        } else {
+            // 🌟 ถ้าเคยโหลดแผนที่ไปแล้ว ให้บังคับเปลี่ยนสีก่อนวาดเส้นทางใหม่
+            historyMapInstance.setOptions({ styles: currentStyle });
         }
+
+        if (window.historyMapMarkers && window.historyMapMarkers.length > 0) {
+            window.historyMapMarkers.forEach(m => m.setMap(null));
+        }
+        window.historyMapMarkers = [];
+
+        let origin = new google.maps.LatLng(waypoints[0].lat, waypoints[0].lng);
+        let dest = new google.maps.LatLng(waypoints[waypoints.length - 1].lat, waypoints[waypoints.length - 1].lng);
+        let wps = waypoints.slice(1, -1).map(w => ({ location: new google.maps.LatLng(w.lat, w.lng), stopover: true }));
+
+        waypoints.forEach((wp, idx) => {
+            let isPickup = wp.type === 'pick';
+            let colorHex = isPickup ? '#4ade80' : '#ef4444';
+            if (wp.type === 'waypoint') colorHex = '#eab308';
+            let textColorMap = '#ffffff';
+
+            let m = new google.maps.Marker({
+                position: { lat: wp.lat, lng: wp.lng }, map: historyMapInstance,
+                icon: createNumberedMarkerIcon((idx + 1).toString(), colorHex, textColorMap),
+                label: { text: (idx + 1).toString(), color: textColorMap, fontWeight: 'bold', fontSize: '13px' },
+                zIndex: 10
+            });
+            
+            m.addListener('click', () => { window.toggleHistoryWaypointFocus(idx, wp.lat, wp.lng); });
+            window.historyMapMarkers.push(m);
+        });
+
+        historyDirectionsService.route({ origin: origin, destination: dest, waypoints: wps, travelMode: 'DRIVING' }, (res, status) => {
+            if (status === 'OK') {
+                historyDirectionsRenderer.setDirections(res);
+                window.historyMapBounds = res.routes[0].bounds; 
+            }
+        });
+    }
 
         if (window.historyMapMarkers && window.historyMapMarkers.length > 0) {
             window.historyMapMarkers.forEach(m => m.setMap(null));
