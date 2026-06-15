@@ -41,7 +41,11 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;700&display=swap');
-    body { font-family: 'Kanit', sans-serif; }
+    body { 
+        font-family: 'Kanit', sans-serif; 
+        touch-action: manipulation; /* 🌟 ป้องกันการดับเบิ้ลคลิกแล้วซูมเข้า */
+        -webkit-text-size-adjust: 100%; /* 🌟 ป้องกันฟอนต์ขยายเองตอนหมุนจอ */
+    }
     
     /* Splash Screen CSS */
     #splashScreen { position: fixed; inset: 0; z-index: 999999; display: flex; align-items: center; justify-content: center; transition: opacity 0.8s ease, visibility 0.8s; overflow: hidden; }
@@ -755,6 +759,25 @@
   </div>
 
   <script>
+    // ==========================================
+    // 🌟 ระบบป้องกันการซูมหน้าจอ (Anti-Zoom)
+    // ==========================================
+    // 1. ป้องกันการใช้นิ้วถ่างเพื่อซูม (Pinch-to-zoom)
+    document.addEventListener('touchmove', function(event) {
+        if (event.scale !== 1 && event.touches.length > 1) {
+            event.preventDefault();
+        }
+    }, { passive: false });
+
+    // 2. ดักจับการแตะรัวๆ (Double tap) บนหน้าจอ iOS
+    let lastTouchEnd = 0;
+    document.addEventListener('touchend', function(event) {
+        let now = (new Date()).getTime();
+        if (now - lastTouchEnd <= 300) {
+            event.preventDefault();
+        }
+        lastTouchEnd = now;
+    }, { passive: false });
     // ส่วนต้นของ JS ยังเหมือนเดิมทั้งหมด
     const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwwdopAPESHRrHEYTSa-CzFMbh0JX9WHUa37PMEJmxDkah7ui67cVtOn68cnM-2DtmR/exec"; 
     const MY_LIFF_ID = "2010188449-b9Yq1R2L";
