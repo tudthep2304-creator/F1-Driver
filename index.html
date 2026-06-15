@@ -516,14 +516,34 @@
           </div>
       </div>
 
-      <div id="actionButtonsBox" class="hidden gap-2 mb-1 shrink-0 w-full flex-row">
-          <button id="btnChat" onclick="window.openInAppChatModal()" class="flex-1 w-full bg-blue-900/40 text-blue-400 py-3 rounded-full font-normal border border-blue-500/30 text-[13px] shadow-sm hover:bg-blue-800 transition flex justify-center items-center gap-1.5"><i class="fas fa-comments text-[14px]"></i> แชท</button>
-          <button id="btnCall" onclick="window.openCallConfirmModal()" class="flex-1 w-full bg-[#fae100] text-[#1e234e] py-3 rounded-full font-medium text-[13px] shadow-sm hover:bg-[#e5ce00] transition flex justify-center items-center gap-1.5"><i class="fas fa-phone-alt"></i> โทร</button>
-          <button id="btnCancel" onclick="window.openCancelModal()" class="flex-1 w-full bg-red-900/40 text-red-400 py-3 rounded-full font-normal border border-red-500/30 text-[13px] hover:bg-red-900/60 transition flex justify-center items-center gap-1.5"><i class="fas fa-times"></i> ยกเลิก</button>
+      <div id="actionButtonsBox" class="hidden flex gap-2 mb-1 shrink-0 w-full">
+          <button id="btnChat" onclick="window.openInAppChatModal()" class="flex-1 bg-blue-900/40 text-blue-400 py-3 rounded-full font-normal border border-blue-500/30 text-[13px] shadow-sm hover:bg-blue-800 transition flex justify-center items-center gap-1.5"><i class="fas fa-comments text-[14px]"></i> แชท</button>
+          <button id="btnCall" onclick="window.openCallConfirmModal()" class="flex-1 bg-[#fae100] text-[#1e234e] py-3 rounded-full font-medium text-[13px] shadow-sm hover:bg-[#e5ce00] transition flex justify-center items-center gap-1.5"><i class="fas fa-phone-alt"></i> โทร</button>
+          <button id="btnCancel" onclick="window.openCancelModal()" class="flex-1 bg-red-900/40 text-red-400 py-3 rounded-full font-normal border border-red-500/30 text-[13px] hover:bg-red-900/60 transition flex justify-center items-center gap-1.5"><i class="fas fa-times"></i> ยกเลิก</button>
       </div>
     </div>
   </div>
 
+  <div id="inAppChatModal" class="hidden fixed inset-0 z-[300] bg-[#1e234e] flex flex-col pointer-events-auto transition-transform">
+      <div class="relative z-20 bg-[#2a2f5c]/90 backdrop-blur-md border-b border-[#383d6a] h-16 px-4 flex items-center justify-between shadow-md shrink-0 w-full">
+          <div class="flex items-center gap-3">
+              <button onclick="window.closeInAppChatModal()" class="w-10 h-10 shrink-0 bg-[#383d6a]/80 text-gray-400 rounded-full flex items-center justify-center hover:text-white transition"><i class="fas fa-arrow-left"></i></button>
+              <div>
+                  <h2 class="text-[15px] font-medium text-white leading-tight">แชทกับคนขับ</h2>
+                  <p class="text-[11px] text-[#4ade80] font-normal" id="chatDriverNameStatus">กำลังออนไลน์</p>
+              </div>
+          </div>
+      </div>
+      
+      <div id="inAppChatBox" class="flex-1 overflow-y-auto p-4 bg-transparent hide-scrollbar flex flex-col">
+          <div id="inAppChatMessages" class="space-y-3 flex-1 flex flex-col justify-end"></div>
+      </div>
+
+      <div class="relative z-10 bg-[#2a2f5c]/90 backdrop-blur-md p-3 flex gap-2 shrink-0 shadow-[0_-5px_15px_rgba(0,0,0,0.3)] border-t border-[#383d6a]">
+          <input type="text" id="inAppChatInput" class="flex-1 rounded-full bg-[#1e234e] text-white px-4 py-3 text-[13px] font-normal outline-none focus:border-[#fae100] border border-[#383d6a] transition shadow-inner" placeholder="พิมพ์ข้อความ...">
+          <button onclick="window.sendInAppChat()" class="bg-[#fae100] text-[#1e234e] font-black w-12 h-12 rounded-full hover:bg-[#e5ce00] transition shadow-md active:scale-95 flex items-center justify-center shrink-0"><i class="fas fa-paper-plane"></i></button>
+      </div>
+  </div>
   <div id="recentPlacesModal" class="hidden fixed inset-0 z-[250] bg-[#1e234e] pointer-events-auto transition-transform flex flex-col">
       <div class="bg-[#2a2f5c] border-b border-[#383d6a] h-16 px-4 flex items-center gap-3 shadow-md shrink-0 w-full">
           <button onclick="window.closeRecentPlacesModal()" class="w-10 h-10 shrink-0 bg-[#383d6a] text-gray-400 rounded-full flex items-center justify-center hover:text-white transition"><i class="fas fa-arrow-left"></i></button>
@@ -2886,65 +2906,157 @@ window.openProfileModal = function() {
     // กู้คืนฟังก์ชันที่หายไป (Tracking, Rating, แชทคนขับ)
     // ==========================================
     
-function handleTracking() {
+// 🌟 ระบบ Tracking หลัก
+    function handleTracking() {
         if (!bookData) return;
         const statusText = document.getElementById('unifiedStatusText');
         const actionBtns = document.getElementById('actionButtonsBox');
         const driverBox = document.getElementById('driverInfoBox');
 
-        let btnChat = document.getElementById('btnChat');
-        let btnAddWaypt = document.getElementById('btnAddWaypt');
-        let btnCall = document.getElementById('btnCall');
-        let btnCancel = document.getElementById('btnCancel');
-        
-        // 🌟 เพิ่มตัวแปรปุ่มฉุกเฉิน และตัวอักษรราคาประเมิน
         let btnEmer = document.getElementById('btnEmergency'); 
         let priceText = document.getElementById('unifiedPriceText');
 
         if(statusText) statusText.innerText = bookData.status;
-
-        // 🌟 ดึงราคาประเมินมาแสดงผล
         if(priceText) {
             priceText.innerText = bookData.priceEstimate ? bookData.priceEstimate : ('~฿' + (bookData.price || 0));
         }
 
-        // ซ่อน/แสดง ข้อมูลคนขับและปุ่มต่างๆ ตามสถานะงาน
-        if (bookData.status === "รอผู้ขับขี่ตอบรับ") {
-            if(driverBox) driverBox.classList.add('hidden');
-            if(actionBtns) actionBtns.classList.remove('hidden'); 
-            
-            if(btnChat) btnChat.classList.add('hidden');
-            if(btnAddWaypt) btnAddWaypt.classList.add('hidden');
-            if(btnCall) btnCall.classList.add('hidden');
-            if(btnCancel) btnCancel.classList.remove('hidden'); // โชว์แค่ปุ่มยกเลิก
-            
-            if(btnEmer) btnEmer.classList.add('hidden'); // 🌟 ซ่อนปุ่มฉุกเฉินตอนกำลังรอรถ
-            
-        } else if (bookData.status.includes("ยกเลิก") || bookData.status === "เสร็จสิ้น") {
+        // 🌟 ดักจับสถานะ "ยกเลิก" ทุกกรณี
+        if (bookData.status.includes("ยกเลิก")) {
             if(driverBox) driverBox.classList.add('hidden');
             if(actionBtns) actionBtns.classList.add('hidden');
-            if(btnEmer) btnEmer.classList.add('hidden'); // ซ่อนปุ่มฉุกเฉิน
-        } else {
-            // กรณีคนขับรับงานแล้ว
+            if(btnEmer) btnEmer.classList.add('hidden');
+            
+            // แจ้งเตือนผู้โดยสาร และลบงานออกจากระบบเพื่อเริ่มใหม่
+            if (!window.hasShownCancelAlert) {
+                window.hasShownCancelAlert = true;
+                showAlert('งานถูกยกเลิก', 'ขออภัยครับ งานของคุณถูกยกเลิก กรุณาเรียกรถใหม่อีกครั้ง', 'error', () => {
+                    db.ref('bookings/' + lineUserId).remove().then(() => {
+                        resetTrackingFlags(); 
+                        window.isCompleting = false; 
+                        window.hasShownCancelAlert = false;
+                        window.showPage(4); // กลับไปหน้าสรุป
+                    });
+                });
+            }
+        } 
+        else if (bookData.status === "เสร็จสิ้น") {
+            if(driverBox) driverBox.classList.add('hidden');
+            if(actionBtns) actionBtns.classList.add('hidden');
+            if(btnEmer) btnEmer.classList.add('hidden');
+        } 
+        else if (bookData.status === "รอผู้ขับขี่ตอบรับ") {
+            if(driverBox) driverBox.classList.add('hidden');
+            if(btnEmer) btnEmer.classList.add('hidden');
+            
+            if(actionBtns) actionBtns.classList.remove('hidden'); 
+            document.getElementById('btnChat').classList.add('hidden');
+            document.getElementById('btnCall').classList.add('hidden');
+            document.getElementById('btnCancel').classList.remove('hidden'); // โชว์แค่ยกเลิก
+        } 
+        else {
+            // 🌟 กรณีคนขับรับงานแล้ว
             if(driverBox) driverBox.classList.remove('hidden');
             if(actionBtns) actionBtns.classList.remove('hidden');
+            if(btnEmer) btnEmer.classList.remove('hidden');
             
-            if(btnChat) btnChat.classList.remove('hidden');
-            if(btnAddWaypt) btnAddWaypt.classList.remove('hidden');
-            if(btnCall) btnCall.classList.remove('hidden');
-            if(btnCancel) btnCancel.classList.remove('hidden');
+            document.getElementById('btnChat').classList.remove('hidden');
+            document.getElementById('btnCall').classList.remove('hidden');
+            document.getElementById('btnCancel').classList.remove('hidden');
 
-            if(btnEmer) btnEmer.classList.remove('hidden'); // 🌟 โชว์ปุ่มฉุกเฉินเฉพาะตอนคนขับรับงานแล้ว
+            // 🌟 ดึงข้อมูลคนขับแบบเรียลไทม์ (ถ้าหาไม่เจอใน bookData)
+            let plateEl = document.getElementById('trackDriverPlate');
+            let carEl = document.getElementById('trackDriverCar');
+            let nameEl = document.getElementById('trackDriverName');
 
-            document.getElementById('trackDriverPlate').innerText = bookData.driverPlate || 'กำลังดึงข้อมูล...';
-            document.getElementById('trackDriverCar').innerText = bookData.driverCar || '-';
-            document.getElementById('trackDriverName').innerText = bookData.driverName || '-';
+            if (bookData.driverPin) {
+                db.ref('drivers_profile/' + bookData.driverPin).once('value', snap => {
+                    if (snap.exists()) {
+                        let d = snap.val();
+                        plateEl.innerText = d.plate || bookData.driverPlate || '-';
+                        carEl.innerText = d.carModel || bookData.driverCar || '-';
+                        nameEl.innerText = d.name || bookData.driverName || '-';
+                    }
+                });
+            } else {
+                plateEl.innerText = bookData.driverPlate || '-';
+                carEl.innerText = bookData.driverCar || '-';
+                nameEl.innerText = bookData.driverName || '-';
+            }
         }
         
-        // วาดเส้นทางใหม่ตามสถานะ
         if(typeof drawTrackingRoute === 'function') {
             drawTrackingRoute(bookData.status);
         }
+    }
+
+    // 🌟 ระบบแชท 1 ต่อ 1 (In-App Chat)
+    window.openInAppChatModal = function() {
+        if (!bookData || !bookData.driverPin) {
+            showAlert('รอสักครู่', 'กรุณารอคนขับรับงานก่อนเริ่มแชทครับ', 'info');
+            return;
+        }
+        document.getElementById('inAppChatModal').classList.remove('hidden');
+        
+        // ดึงชื่อคนขับมาแสดงหัวแชท
+        db.ref('drivers_profile/' + bookData.driverPin).once('value', snap => {
+            if(snap.exists()) {
+                document.getElementById('chatDriverNameStatus').innerText = snap.val().name || 'คนขับ';
+            }
+        });
+
+        // โหลดและรอรับข้อความ
+        window.activeInAppChatRef = db.ref('bookings/' + lineUserId + '/chat');
+        window.activeInAppChatRef.off();
+        window.activeInAppChatRef.on('value', snap => {
+            let msgBox = document.getElementById('inAppChatMessages');
+            msgBox.innerHTML = '';
+            if(snap.exists()) {
+                snap.forEach(child => {
+                    let msg = child.val();
+                    let isMe = msg.sender === 'passenger';
+                    let align = isMe ? 'justify-end' : 'justify-start';
+                    let bg = isMe ? 'bg-[#fae100] text-[#1e234e]' : 'bg-[#2a2f5c] border border-[#383d6a] text-white';
+                    
+                    let timeStr = "";
+                    if(msg.timestamp) {
+                        let d = new Date(msg.timestamp);
+                        timeStr = d.toLocaleTimeString('th-TH', {hour:'2-digit', minute:'2-digit'});
+                    }
+
+                    let html = `
+                    <div class="flex w-full ${align} animate-fade-in mb-3">
+                        <div class="flex flex-col ${isMe ? 'items-end' : 'items-start'} max-w-[80%]">
+                            <div class="${bg} px-4 py-2.5 rounded-2xl text-[13px] font-normal shadow-sm break-words w-full">
+                                ${msg.text}
+                            </div>
+                            <span class="text-[9px] text-gray-500 mt-1 ${isMe ? 'mr-1' : 'ml-1'}">${timeStr}</span>
+                        </div>
+                    </div>`;
+                    msgBox.insertAdjacentHTML('beforeend', html);
+                });
+                const chatScroll = document.getElementById('inAppChatBox');
+                if (chatScroll) setTimeout(() => chatScroll.scrollTop = chatScroll.scrollHeight, 100);
+            }
+        });
+    }
+
+    window.closeInAppChatModal = function() {
+        document.getElementById('inAppChatModal').classList.add('hidden');
+        if(window.activeInAppChatRef) window.activeInAppChatRef.off();
+    }
+
+    window.sendInAppChat = function() {
+        let inp = document.getElementById('inAppChatInput');
+        let text = inp.value.trim();
+        if(!text || !bookData || !bookData.driverPin) return;
+        
+        db.ref('bookings/' + lineUserId + '/chat').push({
+            sender: 'passenger',
+            text: text,
+            timestamp: firebase.database.ServerValue.TIMESTAMP
+        });
+        inp.value = '';
     }
     
     function updateRealtimeMap() {
