@@ -1293,18 +1293,26 @@
     }
 
     window.confirmCancelBooking = function() {
-        document.getElementById('cancelModal').classList.add('hidden'); window.isCompleting = true;
+        document.getElementById('cancelModal').classList.add('hidden'); 
+        window.isCompleting = true;
+        
         db.ref('bookings/' + lineUserId).remove().then(() => {
             if(APPS_SCRIPT_URL) fetch(`${APPS_SCRIPT_URL}?action=notify&type=cancel&name=${lineName}`, {mode:'no-cors'});
             
-            // 🌟 ล้างความจำข้อมูลงาน ให้แอปรู้ว่าตอนนี้ไม่มีงานค้างแล้ว
+            // 🌟 ล้างความจำงานเก่าทิ้งให้หมด
             bookData = { pLat:0, pLng:0, pName:"", dLat:0, dLng:0, dName:"", originalPrice:0, price:0, priceEstimate:"", distance:0, duration:0, status:"", promoCode: "", discount: 0, waypoints: [], serviceType: 'car' };
+            
+            // 🌟 ล้างจุดที่เลือกบนแผนที่ทิ้งทั้งหมด
+            localWaypoints.forEach(w => { if(w.marker) w.marker.setMap(null); });
+            localWaypoints = [];
+            
             updateRideButtonState();
+            renderWaypointsUI();
 
             showAlert('ยกเลิกสำเร็จ', 'ระบบได้ทำการยกเลิกการเรียกรถเรียบร้อยแล้ว', 'success', () => { 
                 resetTrackingFlags(); 
                 window.isCompleting = false; 
-                window.showPage(1); // 🌟 เปลี่ยนจาก 4 เป็น 1 เพื่อให้กลับไปหน้าแรกสุด (Home)
+                window.showPage(1); // พากลับหน้าแรก
             });
         });
     }
@@ -1663,14 +1671,19 @@
         } 
         else if (currentStep === 'Tracking' && !window.isCompleting) {
             window.isCompleting = true;
+            // 🌟 เมื่อจบงานหรือโดนยกเลิก ต้องล้าง localWaypoints ทิ้งทันที
+            localWaypoints.forEach(w => { if(w.marker) w.marker.setMap(null); });
+            localWaypoints = [];
+            renderWaypointsUI();
+
             db.ref('completed_jobs').orderByChild('userId').equalTo(lineUserId).limitToLast(1).once('value', cSnap => {
-                let isCompleted = false;
-                if(cSnap.exists()){
-                    cSnap.forEach(child => {
-                        let cData = child.val();
-                        if (Date.now() - (cData.completedAt || cData.timestamp || 0) < 180000) { isCompleted = true; }
-                    });
-                }
+                let isCompleted = cSnap.exists();
+                // (โค้ดส่วนแจ้งเตือนของคุณ... คงเดิมไว้ได้เลยครับ)
+                // ...
+                // หลังจาก showAlert ปิดหน้าต่างให้คะแนน ให้พาไปหน้าแรก
+                window.showPage(1); 
+            });
+        }
 
                 if (isCompleted || (bookData && (bookData.status.includes("ถึงที่หมาย") || bookData.status.includes("เสร็จสิ้น")))) {
                     let finalMessage = `จุดรับ: ${bookData.pName}\nจุดส่ง: ${bookData.dName}\nราคา: ${bookData.price} บาท\n\nขอบคุณที่ใช้บริการ F1 Driver ครับ!`;
