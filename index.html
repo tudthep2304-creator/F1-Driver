@@ -8,6 +8,7 @@
   
   <script>
     tailwind.config = { darkMode: 'class' };
+    
     function applyTheme() {
       if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
         document.documentElement.classList.add('dark');
@@ -15,7 +16,9 @@
         document.documentElement.classList.remove('dark');
       }
     }
+
     applyTheme();
+
     window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
       if (!('theme' in localStorage)) { 
         applyTheme();
@@ -35,19 +38,64 @@
     @import url('https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;700&display=swap');
     body { font-family: 'Kanit', sans-serif; }
     
+    /* Splash Screen CSS */
     #splashScreen { position: fixed; inset: 0; z-index: 999999; display: flex; align-items: center; justify-content: center; transition: opacity 0.8s ease, visibility 0.8s; overflow: hidden; }
     
-    @keyframes driveF { 0% { opacity: 0; transform: translateX(-100vw) skewX(-5deg); } 60% { opacity: 1; transform: translateX(15px) skewX(2deg); } 100% { opacity: 1; transform: translateX(0) skewX(0); } }
-    @keyframes driveOne { 0% { opacity: 0; transform: translateX(100vw) skewX(5deg); } 60% { opacity: 1; transform: translateX(-15px) skewX(-2deg); } 100% { opacity: 1; transform: translateX(0) skewX(0); } }
-    @keyframes trackRetractF { 0% { opacity: 0; transform: skewX(-15deg) scaleX(1); background-position: 0 0; } 20% { opacity: 1; transform: skewX(-15deg) scaleX(1); } 85% { opacity: 1; transform: skewX(-15deg) scaleX(1); background-position: -40px 0; } 100% { opacity: 0; transform: skewX(-15deg) scaleX(0); background-position: -60px 0; } }
-    @keyframes trackRetractOne { 0% { opacity: 0; transform: skewX(-15deg) scaleX(1); background-position: 0 0; } 20% { opacity: 1; transform: skewX(-15deg) scaleX(1); } 85% { opacity: 1; transform: skewX(-15deg) scaleX(1); background-position: 40px 0; } 100% { opacity: 0; transform: skewX(-15deg) scaleX(0); background-position: 60px 0; } }
+    @keyframes driveF { 
+        0% { opacity: 0; transform: translateX(-100vw) skewX(-5deg); } 
+        60% { opacity: 1; transform: translateX(15px) skewX(2deg); } 
+        100% { opacity: 1; transform: translateX(0) skewX(0); } 
+    }
     
-    .logo-f { display: inline-block; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important; font-size: 8.5rem; line-height: 1; padding-right: 15px; position: relative; z-index: 2; opacity: 0; animation: driveF 1.2s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; -webkit-font-smoothing: antialiased; }
+    @keyframes driveOne { 
+        0% { opacity: 0; transform: translateX(100vw) skewX(5deg); } 
+        60% { opacity: 1; transform: translateX(-15px) skewX(-2deg); } 
+        100% { opacity: 1; transform: translateX(0) skewX(0); } 
+    }
+
+    @keyframes trackRetractF {
+        0% { opacity: 0; transform: skewX(-15deg) scaleX(1); background-position: 0 0; }
+        20% { opacity: 1; transform: skewX(-15deg) scaleX(1); }
+        85% { opacity: 1; transform: skewX(-15deg) scaleX(1); background-position: -40px 0; }
+        100% { opacity: 0; transform: skewX(-15deg) scaleX(0); background-position: -60px 0; }
+    }
+
+    @keyframes trackRetractOne {
+        0% { opacity: 0; transform: skewX(-15deg) scaleX(1); background-position: 0 0; }
+        20% { opacity: 1; transform: skewX(-15deg) scaleX(1); }
+        85% { opacity: 1; transform: skewX(-15deg) scaleX(1); background-position: 40px 0; }
+        100% { opacity: 0; transform: skewX(-15deg) scaleX(0); background-position: 60px 0; }
+    }
+    
+    .logo-f { 
+        display: inline-block; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
+        font-size: 8.5rem; line-height: 1; padding-right: 15px; position: relative; z-index: 2; opacity: 0;
+        animation: driveF 1.2s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; -webkit-font-smoothing: antialiased;
+    }
+    
     html.dark .logo-f { color: white; } html:not(.dark) .logo-f { color: #1f2937; }
-    .logo-f::after { content: ''; position: absolute; right: 75%; top: 20%; bottom: 15%; width: 100vw; background-color: #111; background-image: conic-gradient(rgba(255,255,255,0.9) 90deg, transparent 90deg 180deg, rgba(255,255,255,0.9) 180deg 270deg, transparent 270deg); background-size: 44px 44px; transform-origin: right center; clip-path: polygon(0% 25%, 100% 0%, 100% 100%, 0% 75%); -webkit-mask-image: linear-gradient(to right, transparent 0%, black 95%); mask-image: linear-gradient(to right, transparent 0%, black 95%); animation: trackRetractF 2.0s ease-in-out forwards; z-index: -1; }
     
-    .logo-1 { display: inline-block; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important; font-size: 8.5rem; color: #fae100; line-height: 1; margin-left: -20px; margin-top: 45px; padding-right: 15px; position: relative; z-index: 1; opacity: 0; animation: driveOne 1.2s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; -webkit-font-smoothing: antialiased; }
-    .logo-1::after { content: ''; position: absolute; left: 65%; top: 20%; bottom: 15%; width: 100vw; background-color: #111; background-image: conic-gradient(rgba(250,225,0,0.9) 90deg, transparent 90deg 180deg, rgba(250,225,0,0.9) 180deg 270deg, transparent 270deg); background-size: 44px 44px; transform-origin: left center; clip-path: polygon(0% 0%, 100% 25%, 100% 75%, 0% 100%); -webkit-mask-image: linear-gradient(to left, transparent 0%, black 95%); mask-image: linear-gradient(to left, transparent 0%, black 95%); animation: trackRetractOne 2.0s ease-in-out forwards; z-index: -1; }
+    .logo-f::after {
+        content: ''; position: absolute; right: 75%; top: 20%; bottom: 15%; width: 100vw; background-color: #111; 
+        background-image: conic-gradient(rgba(255,255,255,0.9) 90deg, transparent 90deg 180deg, rgba(255,255,255,0.9) 180deg 270deg, transparent 270deg);
+        background-size: 44px 44px; transform-origin: right center; clip-path: polygon(0% 25%, 100% 0%, 100% 100%, 0% 75%);
+        -webkit-mask-image: linear-gradient(to right, transparent 0%, black 95%); mask-image: linear-gradient(to right, transparent 0%, black 95%);
+        animation: trackRetractF 2.0s ease-in-out forwards; z-index: -1;
+    }
+    
+    .logo-1 { 
+        display: inline-block; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
+        font-size: 8.5rem; color: #fae100; line-height: 1; margin-left: -20px; margin-top: 45px; padding-right: 15px; position: relative; z-index: 1; opacity: 0;
+        animation: driveOne 1.2s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; -webkit-font-smoothing: antialiased;
+    }
+
+    .logo-1::after {
+        content: ''; position: absolute; left: 65%; top: 20%; bottom: 15%; width: 100vw; background-color: #111; 
+        background-image: conic-gradient(rgba(250,225,0,0.9) 90deg, transparent 90deg 180deg, rgba(250,225,0,0.9) 180deg 270deg, transparent 270deg);
+        background-size: 44px 44px; transform-origin: left center; clip-path: polygon(0% 0%, 100% 25%, 100% 75%, 0% 100%);
+        -webkit-mask-image: linear-gradient(to left, transparent 0%, black 95%); mask-image: linear-gradient(to left, transparent 0%, black 95%);
+        animation: trackRetractOne 2.0s ease-in-out forwards; z-index: -1;
+    }
     
     .glass-box { backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); }
     html.dark .glass-box { background: rgba(42, 47, 92, 0.85); border: 1px solid rgba(255, 255, 255, 0.1); box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3); }
@@ -61,6 +109,7 @@
     .panel-collapsed, .panel-collapsed-page4 { transform: translateY(calc(100% - 110px)) !important; }
     .full-page { position: fixed; inset: 0; z-index: 30; background: transparent; flex-direction: column; }
     
+    /* แถบค้นหา Google Maps */
     .pac-container { z-index: 100000 !important; font-family: 'Kanit' !important; border-radius: 0 0 16px 16px !important; border-top: none !important; margin-top: -10px !important; max-height: 40vh !important; overflow-y: auto !important; }
     html.dark .pac-container { background-color: #2a2f5c !important; border: 1px solid #383d6a !important; box-shadow: 0 15px 30px rgba(0,0,0,0.8) !important; }
     html:not(.dark) .pac-container { background-color: #ffffff !important; border: 1px solid #e5e7eb !important; box-shadow: 0 15px 30px rgba(0,0,0,0.1) !important; }
@@ -69,6 +118,7 @@
     html.dark .pac-item { border-top: 1px solid #383d6a; color: #d1d5db; }
     html:not(.dark) .pac-item { border-top: 1px solid #f3f4f6; color: #4b5563; }
     .pac-item:first-child { border-top: none; }
+    
     .pac-item-query { font-weight: bold; } 
     html.dark .pac-item-query { color: #fae100; }
     html:not(.dark) .pac-item-query { color: #eab308; }
@@ -657,6 +707,7 @@
   </div>
 
   <script>
+    // ส่วนต้นของ JS ยังเหมือนเดิมทั้งหมด
     const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwwdopAPESHRrHEYTSa-CzFMbh0JX9WHUa37PMEJmxDkah7ui67cVtOn68cnM-2DtmR/exec"; 
     const MY_LIFF_ID = "2010188449-b9Yq1R2L";
     
@@ -707,6 +758,7 @@
     window.activeGlobalChatListenerRef = null;
     let currentSelectedRatingScore = 0;
 
+    // ระบบสีแผนที่ (ใช้ Dark / Standard ตามโหมด)
     const detailedDarkMapStyle = [
       { elementType: "geometry", stylers: [{ color: "#1e234e" }] },
       { elementType: "labels.text.stroke", stylers: [{ color: "#1e234e" }] },
@@ -1038,6 +1090,9 @@
         }
     });
 
+    // ==========================================
+    // 🌟 ระบบ Popup โฆษณาอัจฉริยะ (ดึงจากแอดมิน)
+    // ==========================================
     let currentPopupAd = null;
     let popupAdTimer = null;
 
@@ -1123,6 +1178,38 @@
 
     async function requestWakeLock() { if ('wakeLock' in navigator) { try { wakeLock = await navigator.wakeLock.request('screen'); } catch (err) {} } }
     document.addEventListener('visibilitychange', () => { if (wakeLock !== null && document.visibilityState === 'visible') requestWakeLock(); });
+
+    // ==========================================
+    // 🌟 ระบบเสียงพูด (TTS) แยกเพศ ไม่มีเสียงติ๊งน่อง
+    // ==========================================
+    function speakText(baseText, gender = 'male') {
+        if ('speechSynthesis' in window) {
+            // ล้างคิวเฉพาะตอนที่มีค้างพูดอยู่ ป้องกันมือถือเอ๋อ
+            if (window.speechSynthesis.speaking) {
+                window.speechSynthesis.cancel();
+            }
+            let politeWord = (gender === 'female') ? 'ค่ะ' : 'ครับ';
+            let msg = new SpeechSynthesisUtterance(baseText + politeWord);
+            msg.lang = 'th-TH';
+            msg.rate = 1.0;
+            window.speechSynthesis.speak(msg);
+        }
+    }
+
+    // 🌟 ปลดล็อกเสียงบนมือถือ (เงียบๆ ไม่มีติ๊งน่อง)
+    let isTTSUnlocked = false;
+    function unlockTTS() {
+        if (!isTTSUnlocked && 'speechSynthesis' in window) {
+            let msg = new SpeechSynthesisUtterance('');
+            msg.volume = 0;
+            window.speechSynthesis.speak(msg);
+            isTTSUnlocked = true;
+            document.body.removeEventListener('touchstart', unlockTTS);
+            document.body.removeEventListener('click', unlockTTS);
+        }
+    }
+    document.body.addEventListener('touchstart', unlockTTS);
+    document.body.addEventListener('click', unlockTTS);
 
     document.addEventListener("DOMContentLoaded", () => {
         let savedPhone = localStorage.getItem('passengerPhone');
@@ -1239,8 +1326,10 @@
         db.ref('bookings/' + lineUserId).remove().then(() => {
             if(APPS_SCRIPT_URL) fetch(`${APPS_SCRIPT_URL}?action=notify&type=cancel&name=${lineName}`, {mode:'no-cors'});
             
+            // 🌟 ล้างความจำงานเก่าทิ้งให้หมด
             bookData = { pLat:0, pLng:0, pName:"", dLat:0, dLng:0, dName:"", originalPrice:0, price:0, priceEstimate:"", distance:0, duration:0, status:"", promoCode: "", discount: 0, waypoints: [], serviceType: 'car' };
             
+            // 🌟 ล้างจุดที่เลือกบนแผนที่ทิ้งทั้งหมด
             localWaypoints.forEach(w => { if(w.marker) w.marker.setMap(null); });
             localWaypoints = [];
             
@@ -1250,7 +1339,7 @@
             showAlert('ยกเลิกสำเร็จ', 'ระบบได้ทำการยกเลิกการเรียกรถเรียบร้อยแล้ว', 'success', () => { 
                 resetTrackingFlags(); 
                 window.isCompleting = false; 
-                window.showPage(1); 
+                window.showPage(1); // พากลับหน้าแรก
             });
         });
     }
@@ -1389,6 +1478,7 @@
         }
     }
 
+    // 🌟 สลับโหมดสี และปรับแผนที่ให้ตรงโหมด
     window.toggleTheme = function() {
         const htmlEl = document.documentElement;
         if (htmlEl.classList.contains('dark')) {
@@ -1939,6 +2029,7 @@
     
     window.goHome = function() { window.showPage(1); }
     
+// 🌟 ระบบวาดเส้นทางโชว์ทันทีเมื่อเลือกจุดส่ง
     function previewMapRoute() {
         if(!directionsService || !map) return;
         let activeWps = localWaypoints.filter(w => !w.passed);
@@ -1963,6 +2054,7 @@
                 });
                 currentRouteBounds = res.routes[0].bounds;
                 
+                // ถ้าอยู่หน้า 3 (หน้าจุดส่ง) ให้ซูมขยายให้เห็นทั้งเส้นแบบสวยงาม
                 if (currentStep === 3) {
                     let pb = getDynamicBottomPadding();
                     map.fitBounds(currentRouteBounds, { top: 140, right: 50, bottom: pb, left: 50 });
@@ -2452,7 +2544,7 @@
                 disableDefaultUI: true, 
                 gestureHandling: 'greedy',
                 clickableIcons: false,
-                keyboardShortcuts: false
+                keyboardShortcuts: false // 🌟 เพิ่มคำสั่งนี้เพื่อซ่อน "แป้นพิมพ์ลัด"
             });
             historyDirectionsService = new google.maps.DirectionsService();
             historyDirectionsRenderer = new google.maps.DirectionsRenderer({ map: historyMapInstance, suppressMarkers: true, preserveViewport: false });
@@ -2601,54 +2693,7 @@
         enableSmoothSwipeToClose('newsDetailModal', window.closeNewsDetailModal);
     }, 1000);
 
-    window.openCommunityModal = function() {
-        document.getElementById('communityModal').classList.remove('hidden');
-        window.unreadChatMessages.clear(); 
-        updateChatBadge();
-        localStorage.setItem('lastSeenChatTime', Date.now());
-        const chatBox = document.getElementById('globalChatBox');
-        if (chatBox) { setTimeout(() => { chatBox.scrollTop = chatBox.scrollHeight; }, 100); }
-    };
-    window.closeCommunityModal = function() { 
-        document.getElementById('communityModal').classList.add('hidden'); 
-        localStorage.setItem('lastSeenChatTime', Date.now());
-    };
-    window.sendGlobalChat = function() {
-        let inputEl = document.getElementById('globalChatInput');
-        let textVal = inputEl.value.trim();
-        if(!textVal) return;
-        db.ref('community_chat').push({
-            pin: lineUserId, name: lineName || 'ผู้โดยสาร', role: 'passenger',
-            text: textVal, timestamp: firebase.database.ServerValue.TIMESTAMP
-        }).then(() => { inputEl.value = ''; });
-    };
-    window.filterCommunityChat = function() {
-        let keyword = document.getElementById('chatSearchInput').value.toLowerCase();
-        let messages = document.querySelectorAll('.chat-msg-item');
-        messages.forEach(msg => {
-            let text = msg.innerText.toLowerCase();
-            msg.style.display = text.includes(keyword) ? 'flex' : 'none';
-        });
-    };
-    
-    window.handleCrosshairClick = function() { centerToFocus(); };
-    window.openEmergencyModal = function() { document.getElementById('emergencyModal').classList.remove('hidden'); };
-    window.closeEmergencyModal = function() { document.getElementById('emergencyModal').classList.add('hidden'); };
-    
-    window.focusLocationToggle = function(lat, lng, index) {
-        if (!map) return;
-        if (focusedWaypointIndex === index) {
-            focusedWaypointIndex = -1;
-            window.fitAllWaypoints();
-        } else {
-            focusedWaypointIndex = index;
-            map.panTo({lat: lat, lng: lng});
-            map.setZoom(17);
-            renderWaypointsUI(); 
-        }
-    };
-
-    window.currentDriverGender = 'male'; 
+    window.currentDriverGender = 'male'; // ค่าเริ่มต้น
 
     function handleTracking() {
         if (!bookData) return;
@@ -2667,6 +2712,7 @@
             window.lastKnownStatus = bookData.status;
         }
 
+        // ดึงเพศคนขับ (ถ้ามี)
         if (bookData.driverPin) {
             db.ref('drivers_profile/' + bookData.driverPin).once('value', snap => {
                 if (snap.exists() && snap.val().gender) {
@@ -2676,7 +2722,9 @@
         }
         let driverGender = bookData.driverGender || window.currentDriverGender || 'male';
 
-        // 🌟 1. ระบบเสียงพูดอย่างเดียว (ลบ playSoundAlert ออกทั้งหมด)
+        // ==========================================
+        // 🌟 ระบบเสียงเตือน (ไม่มี setTimeout เพื่อไม่ให้มือถือบล็อกเสียง)
+        // ==========================================
         if (bookData.status.includes("รับงาน") || bookData.status.includes("กำลังเดินทาง")) {
             if (!window.hasSpokenAccept) {
                 speakText("คนขับรับงานแล้ว", driverGender);
@@ -2717,7 +2765,7 @@
         }
 
         // ==========================================
-        // 🌟 2. การอัปเดตหน้าจอ UI
+        // 🌟 การอัปเดตหน้าจอ UI
         // ==========================================
         if (bookData.status.includes("ยกเลิก")) {
             if(driverBox) driverBox.classList.add('hidden'); if(actionBtns) actionBtns.classList.add('hidden'); if(btnEmer) btnEmer.classList.add('hidden');
@@ -2781,39 +2829,3 @@
         }
         if(typeof drawTrackingRoute === 'function') { drawTrackingRoute(bookData.status); }
     }
-
-    // ==========================================
-    // 🌟 ฟังก์ชันเสียงพูด (TTS) แบบคลีนๆ สำหรับมือถือ
-    // ==========================================
-    window.isSpeechUnlocked = false;
-
-    function unlockTTS() {
-        if (!window.isSpeechUnlocked && 'speechSynthesis' in window) {
-            let silentMsg = new SpeechSynthesisUtterance('');
-            silentMsg.volume = 0;
-            window.speechSynthesis.speak(silentMsg);
-            window.isSpeechUnlocked = true;
-        }
-    }
-
-    // ดักการแตะหน้าจอทุกรูปแบบเพื่อปลดล็อกเสียงของเครื่อง
-    document.addEventListener('touchstart', unlockTTS, { once: true });
-    document.addEventListener('click', unlockTTS, { once: true });
-
-    function speakText(baseText, gender = 'male') {
-        if (!('speechSynthesis' in window)) return;
-        
-        let politeWord = (gender === 'female') ? 'ค่ะ' : 'ครับ';
-        let textToSpeak = baseText + politeWord;
-
-        let msg = new SpeechSynthesisUtterance(textToSpeak);
-        msg.lang = 'th-TH';
-        msg.rate = 1.0;
-        msg.volume = 1.0;
-        
-        window.speechSynthesis.speak(msg);
-    }
-  </script>
-  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDsZ_tbFhH6fUXRz3I6C-tMshNwwrSevd4&libraries=places,geometry&callback=initMap" async defer></script>
-</body>
-</html>
