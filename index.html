@@ -1651,6 +1651,7 @@
     
     function initApp() {
       requestWakeLock();
+      startSharingPassengerLocation();
       db.ref('passenger_blocks/' + lineUserId).on('value', snap => { myBlockedDrivers = snap.val() || {}; });
 
       db.ref('bookings/' + lineUserId).on('value', snap => {
@@ -1675,18 +1676,18 @@
         } 
         else if (currentStep === 'Tracking' && !window.isCompleting) {
             window.isCompleting = true;
-          localWaypoints.forEach(w => { if(w.marker) w.marker.setMap(null); });
+            localWaypoints.forEach(w => { if(w.marker) w.marker.setMap(null); });
             localWaypoints = [];
             renderWaypointsUI();  
-          db.ref('completed_jobs').orderByChild('userId').equalTo(lineUserId).limitToLast(1).once('value', cSnap => {
+
+            db.ref('completed_jobs').orderByChild('userId').equalTo(lineUserId).limitToLast(1).once('value', cSnap => {
                 let isCompleted = cSnap.exists();
                 if(cSnap.exists()){
                     cSnap.forEach(child => {
                         let cData = child.val();
                         if (Date.now() - (cData.completedAt || cData.timestamp || 0) < 180000) { isCompleted = true; }
-                    window.showPage(1); 
-            });
-        }
+                    });
+                }
 
                 if (isCompleted || (bookData && (bookData.status.includes("ถึงที่หมาย") || bookData.status.includes("เสร็จสิ้น")))) {
                     let finalMessage = `จุดรับ: ${bookData.pName}\nจุดส่ง: ${bookData.dName}\nราคา: ${bookData.price} บาท\n\nขอบคุณที่ใช้บริการ F1 Driver ครับ!`;
@@ -1709,7 +1710,6 @@
                 }
             });
         }
-      });
 
       if(!window.activeGlobalChatListenerRef) {
           window.activeGlobalChatListenerRef = db.ref('community_chat').limitToLast(50);
@@ -2817,6 +2817,28 @@
             } else {
                 badge.classList.add('hidden');
             }
+        }
+    }
+      // 🌟 ระบบแชร์พิกัดลูกค้าให้แอดมินแบบเรียลไทม์ (เมื่อเปิดแอป)
+    function startSharingPassengerLocation() {
+        if (navigator.geolocation && lineUserId) {
+            // สร้างจุดอ้างอิงใน Firebase
+            let passengerRef = db.ref('active_passengers/' + lineUserId);
+            
+            // สั่งให้ลบพิกัดทิ้งอัตโนมัติ ถ้าลูกค้าปิดแอปหรือเน็ตหลุด (แอดมินจะได้ไม่เห็นจุดค้าง)
+            passengerRef.onDisconnect().remove();
+
+            // ดึงค่า GPS ทุกครั้งที่ลูกค้าขยับตัว (หรือเดิน)
+            navigator.geolocation.watchPosition(position => {
+                passengerRef.set({
+                    name: lineName || 'ไม่ทราบชื่อ',
+                    lat: position.coords.latitude,
+                    lng: position.coords.longitude,
+                    timestamp: firebase.database.ServerValue.TIMESTAMP
+                });
+            }, error => {
+                console.log("GPS Sharing Error: ", error);
+            }, { enableHighAccuracy: true });
         }
     }
   </script>
