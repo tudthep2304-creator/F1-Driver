@@ -1173,31 +1173,27 @@
     window.hasSpokenCancel = false; window.hasNotifiedLinePick = false; window.hasNotifiedLineDrop = false;
     window.isShowingRouteChange = false; 
 
+    // 🌟 ฟังก์ชันใหม่: บังคับปิดหน้าต่างและเคลียร์ข้อความทิ้งทันที
+    window.clearAndCloseChat = function() {
+        let modal = document.getElementById('inAppChatModal');
+        if(modal) modal.classList.add('hidden'); // หุบหน้าจอ
+        let chatBox = document.getElementById('inAppChatMessages');
+        if(chatBox) chatBox.innerHTML = ''; // ล้างข้อความเก่าทิ้ง
+        let inputEl = document.getElementById('inAppChatInput');
+        if(inputEl) inputEl.value = ''; // ล้างช่องพิมพ์
+        
+        window.unreadInAppCount = 0;
+        if(typeof updateInAppChatBadge === 'function') updateInAppChatBadge();
+    };
+
     function resetTrackingFlags() {
         window.hasSpokenAccept = false; window.hasSpokenArrivePick = false; window.hasSpokenAtPickup = false;
         window.hasSpokenDepart = false; window.hasSpokenArriveDrop = false; window.hasSpokenFinish = false;
         window.hasSpokenCancel = false; window.hasShownFinish = false; window.hasShownCancel = false;
         window.hasNotifiedLinePick = false; window.hasNotifiedLineDrop = false; window.isShowingRouteChange = false;
         lastNotifiedStatus = "";
-
-        // 🌟 1. บังคับปิดหน้าต่างแชท (เผื่อผู้โดยสารเปิดค้างไว้)
-        if(typeof window.closeInAppChatModal === 'function') window.closeInAppChatModal();
         
-        // 🌟 2. เคลียร์ข้อความเก่าบนหน้าจอให้ขาวสะอาด
-        let chatBox = document.getElementById('inAppChatMessages');
-        if(chatBox) chatBox.innerHTML = '';
-        let chatInput = document.getElementById('inAppChatInput');
-        if(chatInput) chatInput.value = '';
-        
-        // 🌟 3. รีเซ็ตตัวเลขแจ้งเตือนสีแดง
-        window.unreadInAppCount = 0;
-        if(typeof updateInAppChatBadge === 'function') updateInAppChatBadge();
-        
-        // 🌟 4. ตัดการเชื่อมต่อฐานข้อมูลแชทเดิม
-        if(typeof inAppChatRef !== 'undefined' && inAppChatRef) { 
-            inAppChatRef.off(); 
-            inAppChatRef = null; 
-        }
+        window.clearAndCloseChat(); // 🌟 เรียกใช้ฟังก์ชันกวาดแชท
     }
     async function requestWakeLock() { if ('wakeLock' in navigator) { try { wakeLock = await navigator.wakeLock.request('screen'); } catch (err) {} } }
     document.addEventListener('visibilitychange', () => { if (wakeLock !== null && document.visibilityState === 'visible') requestWakeLock(); });
@@ -1701,6 +1697,10 @@
         } 
         else if (currentStep === 'Tracking' && !window.isCompleting) {
             window.isCompleting = true;
+          window.clearAndCloseChat(); // 🌟 บังคับเด้งแชทออกและล้างข้อความ
+            
+            // 🌟 ล้างจุดบนแผนที่
+            localWaypoints.forEach(w => { if(w.marker) w.marker.setMap(null); });
             if(typeof window.closeInAppChatModal === 'function') window.closeInAppChatModal(); // 🌟 บังคับเด้งแชทออก
             
             // 🌟 ล้างจุดบนแผนที่
@@ -2701,18 +2701,19 @@
         // 🌟 2. การอัปเดตหน้าจอ UI
         // ==========================================
         if (bookData.status.includes("ยกเลิก")) {
-            if(typeof window.closeInAppChatModal === 'function') window.closeInAppChatModal(); // 🌟 บังคับเด้งแชทออก
+            window.clearAndCloseChat(); // 🌟 บังคับเด้งออกและล้างแชท
             if(driverBox) driverBox.classList.add('hidden'); if(actionBtns) actionBtns.classList.add('hidden'); if(btnEmer) btnEmer.classList.add('hidden');
             window.lastKnownStatus = bookData.status;
             
             if (!window.hasAutoRebooked) {
                 window.hasAutoRebooked = true;
                 showAlert('กำลังหาคนขับใหม่', 'คนขับก่อนหน้ายกเลิกงาน ระบบกำลังค้นหาคนขับใหม่ให้คุณอัตโนมัติครับ', 'info');
-                db.ref('bookings/' + lineUserId).update({ status: "รอผู้ขับขี่ตอบรับ", driverPin: null, driverName: null, driverCar: null, driverPlate: null, driverPhone: null }).then(() => { setTimeout(() => { window.hasAutoRebooked = false; }, 3000); });
+                // 🌟 สั่งเคลียร์ chats ในฐานข้อมูลด้วย (chats: null)
+                db.ref('bookings/' + lineUserId).update({ status: "รอผู้ขับขี่ตอบรับ", driverPin: null, driverName: null, driverCar: null, driverPlate: null, driverPhone: null, chats: null }).then(() => { setTimeout(() => { window.hasAutoRebooked = false; }, 3000); });
             }
         } 
         else if (bookData.status === "เสร็จสิ้น" || bookData.status.includes("ถึงที่หมาย")) {
-            if(typeof window.closeInAppChatModal === 'function') window.closeInAppChatModal(); // 🌟 บังคับเด้งแชทออก
+            window.clearAndCloseChat(); // 🌟 บังคับเด้งออกและล้างแชท
             if(driverBox) driverBox.classList.add('hidden'); if(actionBtns) actionBtns.classList.add('hidden'); if(btnEmer) btnEmer.classList.add('hidden');
             window.lastKnownStatus = bookData.status;
 
@@ -2867,18 +2868,18 @@
     }
 
     window.listenToInAppChat = function() {
-        if(inAppChatRef) inAppChatRef.off();
+        if(window.inAppChatRef) { window.inAppChatRef.off(); }
         document.getElementById('inAppChatMessages').innerHTML = '';
         
         // 🌟 ดึงข้อมูลจากโฟลเดอร์งานปัจจุบัน
-        inAppChatRef = db.ref('bookings/' + lineUserId + '/chats');
-        inAppChatRef.on('child_added', snap => {
+        window.inAppChatRef = db.ref('bookings/' + lineUserId + '/chats');
+        window.inAppChatRef.on('child_added', snap => {
             let msg = snap.val();
-            if(!msg) return;
+            if(!msg || !msg.sender) return;
 
-            let isMe = msg.sender === 'passenger';
-            let align = isMe ? 'justify-end' : 'justify-start';
-            let bg = isMe ? 'bg-[#fae100] text-gray-900 dark:text-[#1e234e]' : 'bg-white dark:bg-[#2a2f5c] border border-gray-200 dark:border-[#383d6a] text-gray-800 dark:text-white';
+            let isSenderPassenger = (msg.sender === 'passenger');
+            let align = isSenderPassenger ? 'justify-end' : 'justify-start';
+            let bg = isSenderPassenger ? 'bg-[#fae100] text-gray-900 dark:text-[#1e234e]' : 'bg-white dark:bg-[#2a2f5c] border border-gray-200 dark:border-[#383d6a] text-gray-800 dark:text-white';
             
             let timeStr = "";
             if (msg.timestamp) {
@@ -2890,11 +2891,11 @@
 
             let html = `
             <div class="flex w-full ${align} animate-fade-in mb-3">
-                <div class="flex flex-col ${isMe ? 'items-end' : 'items-start'} max-w-[80%]">
+                <div class="flex flex-col ${isSenderPassenger ? 'items-end' : 'items-start'} max-w-[80%]">
                     <div class="${bg} px-4 py-2.5 rounded-2xl text-[13px] font-normal shadow-sm break-words w-full">
                         ${msg.text}
                     </div>
-                    <span class="text-[9px] text-gray-400 dark:text-gray-500 mt-1 ${isMe ? 'mr-1' : 'ml-1'} font-normal">${timeStr}</span>
+                    <span class="text-[9px] text-gray-400 dark:text-gray-500 mt-1 ${isSenderPassenger ? 'mr-1' : 'ml-1'} font-normal">${timeStr}</span>
                 </div>
             </div>`;
 
@@ -2904,9 +2905,9 @@
             if(chatBox) setTimeout(() => { chatBox.scrollTop = chatBox.scrollHeight; }, 100);
 
             let modal = document.getElementById('inAppChatModal');
-            if(modal && modal.classList.contains('hidden') && !isMe) {
-                window.unreadInAppCount++;
-                updateInAppChatBadge();
+            if(modal && modal.classList.contains('hidden') && !isSenderPassenger) {
+                window.unreadInAppCount = (window.unreadInAppCount || 0) + 1;
+                if(typeof updateInAppChatBadge === 'function') updateInAppChatBadge();
             }
         });
     }
