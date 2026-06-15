@@ -1674,8 +1674,40 @@
             renderWaypointsUI();
             handleTracking(); 
         } 
+        function initApp() {
+      requestWakeLock();
+      
+      // 🌟 ระบบแชร์พิกัดลูกค้าให้แอดมิน (ถ้ามีฟังก์ชันนี้อยู่)
+      if (typeof startSharingPassengerLocation === 'function') {
+          startSharingPassengerLocation();
+      }
+      
+      db.ref('passenger_blocks/' + lineUserId).on('value', snap => { myBlockedDrivers = snap.val() || {}; });
+
+      db.ref('bookings/' + lineUserId).on('value', snap => {
+        const b = snap.val();
+        if(b) { 
+            if(b.driverPin && b.status === "รับงานแล้ว" && (myBlockedDrivers[b.driverPin] || myBlockedDrivers[b.driverPhone])) {
+                db.ref('bookings/' + lineUserId).update({ driverPin: null, driverPhone: null, status: "รอผู้ขับขี่ตอบรับ" });
+                return; 
+            }
+            bookData = b; 
+
+            if (b.waypoints) {
+                localWaypoints.forEach(w => { if(w.marker) w.marker.setMap(null); });
+                localWaypoints = b.waypoints.map(w => ({ lat: w.lat, lng: w.lng, name: w.name, type: w.type, iconType: w.iconType || null, passed: w.passed || false }));
+            } else {
+                localWaypoints = [];
+            }
+            
+            updateRideButtonState();
+            renderWaypointsUI();
+            handleTracking(); 
+        } 
         else if (currentStep === 'Tracking' && !window.isCompleting) {
             window.isCompleting = true;
+            
+            // 🌟 ล้างจุดบนแผนที่
             localWaypoints.forEach(w => { if(w.marker) w.marker.setMap(null); });
             localWaypoints = [];
             renderWaypointsUI();  
@@ -1705,11 +1737,12 @@
                     updateRideButtonState();
 
                     showAlert('แจ้งเตือน', 'ขออภัยในความไม่สะดวกครับ งานนี้ถูกยกเลิก รบกวนคุณลูกค้ากดยืนยันเพื่อเรียกรถใหม่อีกครั้งนะครับ', 'error', () => { 
-                        resetTrackingFlags(); window.isCompleting = false; window.showPage(1); // พากลับหน้าแรก
+                        resetTrackingFlags(); window.isCompleting = false; window.showPage(1); 
                     });
                 }
             });
         }
+      }); // 🌟 ตรงนี้แหละครับที่เป็นตัวปัญหา วงเล็บปิดชอบหล่นหายตอนวางโค้ดทับ
 
       if(!window.activeGlobalChatListenerRef) {
           window.activeGlobalChatListenerRef = db.ref('community_chat').limitToLast(50);
@@ -1720,7 +1753,6 @@
               let isSenderMe = (messageData.pin === lineUserId);
               let align = isSenderMe ? 'justify-end' : 'justify-start';
               
-              // กล่องข้อความคนอื่น: ขาวในโหมดสว่าง, กรมท่าในโหมดมืด
               let bg = isSenderMe ? 'bg-[#fae100] text-gray-900 dark:text-[#1e234e]' : 'bg-white dark:bg-[#2a2f5c] border border-gray-200 dark:border-[#383d6a] text-gray-800 dark:text-white';
               let senderName = isSenderMe ? 'คุณ' : (messageData.name || 'ผู้ใช้');
               let isDriver = messageData.role === 'driver';
