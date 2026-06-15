@@ -2756,8 +2756,20 @@
     
     function updateRealtimeMap() {
         if(!map || !currentRouteBounds) return;
-        let pb = getDynamicBottomPadding();
-        map.fitBounds(currentRouteBounds, { top: 120, right: 50, bottom: pb, left: 50 });
+        
+        let isPassengerInCar = bookData && bookData.status && (bookData.status.includes("ออกเดินทาง") || bookData.status.includes("ไปส่ง") || bookData.status.includes("ไปยัง") || bookData.status.includes("ขึ้นรถ"));
+        
+        // 🌟 1. ถ้านั่งอยู่บนรถแล้ว (และไม่ได้เอานิ้วเลื่อนแผนที่เล่น) ให้กล้องล็อคเป้าซูมตามรถยนต์
+        if (isPassengerInCar && isTrackingMode && markerDriver && markerDriver.getPosition()) {
+            updateMapPadding();
+            map.panTo(markerDriver.getPosition());
+            map.setZoom(17);
+        } 
+        // 🌟 2. แต่ถ้ากำลังรอคนขับมารับ ให้ซูมออกเพื่อให้เห็นภาพรวมของเส้นทาง
+        else {
+            let pb = getDynamicBottomPadding();
+            map.fitBounds(currentRouteBounds, { top: 120, right: 50, bottom: pb, left: 50 });
+        }
     }
 
     window.updateSelectedRatingScore = function(score) {
@@ -2919,6 +2931,7 @@
             }, { enableHighAccuracy: true });
         }
     }
+    .gm-style-cc button { display: none !important; }
   </script>
   <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDsZ_tbFhH6fUXRz3I6C-tMshNwwrSevd4&libraries=places,geometry&callback=initMap" async defer></script>
 </body>
