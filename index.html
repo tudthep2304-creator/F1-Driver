@@ -2749,60 +2749,58 @@
         }
         let driverGender = bookData.driverGender || window.currentDriverGender || 'male';
 
-        // 🌟 ระบบเสียงเตือนเมื่อเปลี่ยนสถานะ
+        // ==========================================
+        // 🌟 1. ระบบเสียงเตือนเมื่อเปลี่ยนสถานะ (เอา setTimeout ออก เพื่อให้ทำงานบนมือถือได้ 100%)
+        // ==========================================
         if (bookData.status.includes("รับงาน") || bookData.status.includes("กำลังเดินทาง")) {
             if (!window.hasSpokenAccept) {
-                playSoundAlert(); setTimeout(() => speakText("คนขับรับงานแล้ว", driverGender), 800);
+                playSoundAlert(); 
+                speakText("คนขับรับงานแล้ว", driverGender);
                 window.hasSpokenAccept = true;
             }
             if (!window.hasSpokenArrivePick && driverData.lat && bookData.pLat && typeof google !== 'undefined') {
                 let dLoc = new google.maps.LatLng(driverData.lat, driverData.lng);
                 let pLoc = new google.maps.LatLng(bookData.pLat, bookData.pLng);
                 if (google.maps.geometry.spherical.computeDistanceBetween(dLoc, pLoc) <= 500) {
-                    playSoundAlert(); setTimeout(() => speakText("คนขับใกล้ถึงแล้ว", driverGender), 800);
+                    playSoundAlert(); 
+                    speakText("คนขับใกล้ถึงแล้ว", driverGender);
                     window.hasSpokenArrivePick = true;
                 }
             }
         } 
         else if (bookData.status.includes("ถึงจุดรับ") || bookData.status.includes("มาถึง")) {
             if (!window.hasSpokenAtPickup) {
-                playSoundAlert(); setTimeout(() => speakText("คนขับถึงจุดรับแล้ว", driverGender), 800);
+                playSoundAlert(); 
+                speakText("คนขับถึงจุดรับแล้ว", driverGender);
                 window.hasSpokenAtPickup = true;
             }
         } 
         else if (bookData.status.includes("ออกเดินทาง") || bookData.status.includes("ขึ้นรถ") || bookData.status.includes("ไปยัง")) {
             if (!window.hasSpokenDepart) {
-                playSoundAlert(); setTimeout(() => speakText("ผู้โดยสารขึ้นรถแล้ว กำลังเดินทางไปยังจุดหมาย", driverGender), 800);
+                playSoundAlert(); 
+                speakText("ผู้โดยสารขึ้นรถแล้ว กำลังเดินทางไปยังจุดหมาย", driverGender);
                 window.hasSpokenDepart = true;
             }
         } 
-        // 🌟 จบงาน: เล่นเสียงขอบคุณและเปิดหน้าให้คะแนน
         else if (bookData.status === "เสร็จสิ้น" || bookData.status.includes("ถึงที่หมาย")) {
-            if(driverBox) driverBox.classList.add('hidden'); if(actionBtns) actionBtns.classList.add('hidden'); if(btnEmer) btnEmer.classList.add('hidden');
-
-            if (!window.hasShownFinishAlert) {
-                window.hasShownFinishAlert = true;
-                
+            if (!window.hasSpokenFinish) {
                 playSoundAlert(); 
-                setTimeout(() => speakText("ถึงจุดหมายปลายทางแล้ว ขอบคุณที่ใช้บริการ", driverGender), 800);
-
-                let finalMessage = `คุณเดินทางถึงที่หมายเรียบร้อยแล้ว\nราคาสุทธิ: ฿${bookData.price}\n\nขอบคุณที่ใช้บริการ F1 Driver ครับ!`;
-                showAlert('ถึงที่หมายเรียบร้อย!', finalMessage, 'success', () => { 
-                    document.getElementById('driverRatingModal').classList.remove('hidden');
-                    // เมื่อคะแนนเด้งขึ้นมา ให้แอบลบข้อมูลออกจากหน้าจอผู้โดยสาร เพื่อให้พร้อมเรียกคันใหม่
-                    db.ref('bookings/' + lineUserId).remove().then(() => {
-                        window.hasShownFinishAlert = false;
-                        if(typeof resetTrackingFlags === 'function') resetTrackingFlags();
-                    });
-                });
+                speakText("ถึงจุดหมายปลายทางแล้ว ขอบคุณที่ใช้บริการ", driverGender);
+                window.hasSpokenFinish = true;
             }
         }
-        // กรณียกเลิก
         else if (bookData.status.includes("ยกเลิก")) {
             if (!window.hasSpokenCancel) {
-                playSoundAlert(); setTimeout(() => speakText("ขออภัย งานถูกยกเลิก", driverGender), 800);
+                playSoundAlert(); 
+                speakText("ขออภัย งานถูกยกเลิก", driverGender);
                 window.hasSpokenCancel = true;
             }
+        }
+
+        // ==========================================
+        // 🌟 2. การอัปเดตหน้าจอ UI
+        // ==========================================
+        if (bookData.status.includes("ยกเลิก")) {
             if(driverBox) driverBox.classList.add('hidden'); if(actionBtns) actionBtns.classList.add('hidden'); if(btnEmer) btnEmer.classList.add('hidden');
             
             if (!window.hasAutoRebooked) {
@@ -2811,19 +2809,35 @@
                 db.ref('bookings/' + lineUserId).update({ status: "รอผู้ขับขี่ตอบรับ", driverPin: null, driverName: null, driverCar: null, driverPlate: null, driverPhone: null }).then(() => { setTimeout(() => { window.hasAutoRebooked = false; }, 3000); });
             }
         } 
+        else if (bookData.status === "เสร็จสิ้น" || bookData.status.includes("ถึงที่หมาย")) {
+            if(driverBox) driverBox.classList.add('hidden'); if(actionBtns) actionBtns.classList.add('hidden'); if(btnEmer) btnEmer.classList.add('hidden');
+
+            if (!window.hasShownFinishAlert) {
+                window.hasShownFinishAlert = true;
+                let finalMessage = `คุณเดินทางถึงที่หมายเรียบร้อยแล้ว\nราคาสุทธิ: ฿${bookData.price}\n\nขอบคุณที่ใช้บริการ F1 Driver ครับ!`;
+                
+                showAlert('ถึงที่หมายเรียบร้อย!', finalMessage, 'success', () => { 
+                    document.getElementById('driverRatingModal').classList.remove('hidden');
+                    db.ref('bookings/' + lineUserId).remove().then(() => {
+                        window.hasShownFinishAlert = false;
+                        if(typeof resetTrackingFlags === 'function') resetTrackingFlags();
+                    });
+                });
+            }
+        } 
         else if (bookData.status === "รอผู้ขับขี่ตอบรับ") {
             if(driverBox) driverBox.classList.add('hidden'); if(btnEmer) btnEmer.classList.add('hidden');
             if(actionBtns) actionBtns.classList.remove('hidden'); 
             document.getElementById('btnChat').classList.add('hidden'); document.getElementById('btnCall').classList.add('hidden'); document.getElementById('btnCancel').classList.remove('hidden');
         } 
         else {
-            // ซ่อนปุ่มต่างๆ เมื่อขึ้นรถแล้ว
             if(driverBox) driverBox.classList.remove('hidden'); if(btnEmer) btnEmer.classList.remove('hidden');
+            
             let isPassengerInCar = bookData.status.includes("ออกเดินทาง") || bookData.status.includes("ไปส่ง") || bookData.status.includes("ไปยัง") || bookData.status.includes("ขึ้นรถ");
 
             if (isPassengerInCar) {
                 if(actionBtns) actionBtns.classList.add('hidden');
-                // ล็อกเป้าแผนที่อัตโนมัติ
+                
                 if (isStatusChanged) {
                     isTrackingMode = true; 
                     if (map && markerDriver && markerDriver.getMap()) { updateMapPadding(); map.panTo(markerDriver.getPosition()); map.setZoom(17); }
@@ -2834,6 +2848,7 @@
             }
 
             let plateEl = document.getElementById('trackDriverPlate'); let carEl = document.getElementById('trackDriverCar'); let nameEl = document.getElementById('trackDriverName');
+
             if (bookData.driverPin) {
                 db.ref('drivers_profile/' + bookData.driverPin).once('value', snap => {
                     if (snap.exists()) {
