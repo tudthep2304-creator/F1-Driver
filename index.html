@@ -124,6 +124,12 @@
     .animate-fade-in { animation: fadeIn 0.2s ease-out forwards; }
     @keyframes loading-scan { 0% { transform: translateX(-100%); } 100% { transform: translateX(300%); } }
     .animate-loading-scan { animation: loading-scan 1.5s infinite ease-in-out; }
+  /* 🌟 เพิ่มแอนิเมชันไฟกระพริบแบบถี่ */
+    @keyframes fastAlert {
+        0%, 100% { opacity: 1; transform: scale(1); box-shadow: 0 0 10px rgba(250, 225, 0, 0.4); }
+        50% { opacity: 0.7; transform: scale(1.08); box-shadow: 0 0 25px rgba(250, 225, 0, 1); }
+    }
+    .animate-fast-alert { animation: fastAlert 0.8s infinite ease-in-out; }
   </style>
 </head>
 <body class="h-screen w-screen m-0 overflow-hidden bg-gray-50 dark:bg-[#1e234e] text-gray-800 dark:text-gray-100 transition-colors duration-300">
@@ -818,17 +824,15 @@
 
         let hasActiveJob = bookData && bookData.status && bookData.status !== "เสร็จสิ้น" && !bookData.status.includes("ยกเลิก");
 
-        // ดึงตัวกล่องวงกลมที่ครอบไอคอนอยู่มาปรับแต่ง
         let circleDiv = btnMainRide.querySelector('div');
 
         if (hasActiveJob) {
             btnMainRide.disabled = false;
-            // ปิด animate-pulse ที่ตัวปุ่มหลัก เพื่อไปกระพริบที่วงกลมแทน
             btnMainRide.className = "flex flex-col items-center justify-start gap-1.5 transition active:scale-95 bg-transparent outline-none mt-1 group";
             
-            // 🌟 ทำให้วงกลมกระพริบเป็นสีเหลืองเรืองแสง
+            // 🌟 เปลี่ยนมาใช้คลาส animate-fast-alert ที่เราสร้างใหม่
             if(circleDiv) {
-                circleDiv.className = "w-12 h-12 rounded-full flex items-center justify-center transition border border-[#fae100] bg-yellow-50 dark:bg-[#fae100]/20 shadow-[0_0_15px_rgba(250,225,0,0.6)] animate-pulse";
+                circleDiv.className = "w-12 h-12 rounded-full flex items-center justify-center transition border border-[#fae100] bg-yellow-50 dark:bg-[#fae100]/20 animate-fast-alert";
             }
             if(btnMainRideIcon) btnMainRideIcon.className = "fas fa-route text-[20px] text-[#eab308] dark:text-[#fae100]"; 
             if(btnMainRideText) {
@@ -840,7 +844,6 @@
             btnMainRide.disabled = false;
             btnMainRide.className = "flex flex-col items-center justify-start gap-1.5 transition active:scale-95 bg-transparent outline-none mt-1 group";
             
-            // 🌟 คืนค่าวงกลมกลับเป็นสีปกติเมื่อไม่มีงาน
             if(circleDiv) {
                 circleDiv.className = "w-12 h-12 rounded-full bg-white dark:bg-[#2a2f5c] border border-gray-200 dark:border-[#383d6a] flex items-center justify-center group-hover:bg-gray-100 dark:group-hover:bg-[#383d6a] transition shadow-sm";
             }
