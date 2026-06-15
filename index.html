@@ -2741,7 +2741,7 @@
             window.lastKnownStatus = bookData.status;
         }
 
-        // 🌟 1. ดึงข้อมูลเพศคนขับ (จะทำงานร่วมกับระบบแอดมิน/คนขับในอนาคต)
+        // ดึงเพศคนขับ (ถ้ามี)
         if (bookData.driverPin) {
             db.ref('drivers_profile/' + bookData.driverPin).once('value', snap => {
                 if (snap.exists() && snap.val().gender) {
@@ -2751,9 +2751,7 @@
         }
         let driverGender = bookData.driverGender || window.currentDriverGender || 'male';
 
-        // ==========================================
-        // 🌟 2. ระบบเสียงพูดแจ้งเตือน (แยกเพศ)
-        // ==========================================
+        // 🌟 ระบบเสียงเตือนเมื่อเปลี่ยนสถานะ
         if (bookData.status.includes("รับงาน") || bookData.status.includes("กำลังเดินทาง")) {
             if (!window.hasSpokenAccept) {
                 playSoundAlert(); setTimeout(() => speakText("คนขับรับงานแล้ว", driverGender), 800);
@@ -2780,24 +2778,33 @@
                 window.hasSpokenDepart = true;
             }
         } 
+        // 🌟 จบงาน: เล่นเสียงขอบคุณและเปิดหน้าให้คะแนน
         else if (bookData.status === "เสร็จสิ้น" || bookData.status.includes("ถึงที่หมาย")) {
-            if (!window.hasSpokenFinish) {
-                // 🌟 เพิ่มคำขอบคุณตอนถึงจุดหมาย
-                playSoundAlert(); setTimeout(() => speakText("ถึงจุดหมายปลายทางแล้ว ขอบคุณที่ใช้บริการ", driverGender), 800);
-                window.hasSpokenFinish = true;
+            if(driverBox) driverBox.classList.add('hidden'); if(actionBtns) actionBtns.classList.add('hidden'); if(btnEmer) btnEmer.classList.add('hidden');
+
+            if (!window.hasShownFinishAlert) {
+                window.hasShownFinishAlert = true;
+                
+                playSoundAlert(); 
+                setTimeout(() => speakText("ถึงจุดหมายปลายทางแล้ว ขอบคุณที่ใช้บริการ", driverGender), 800);
+
+                let finalMessage = `คุณเดินทางถึงที่หมายเรียบร้อยแล้ว\nราคาสุทธิ: ฿${bookData.price}\n\nขอบคุณที่ใช้บริการ F1 Driver ครับ!`;
+                showAlert('ถึงที่หมายเรียบร้อย!', finalMessage, 'success', () => { 
+                    document.getElementById('driverRatingModal').classList.remove('hidden');
+                    // เมื่อคะแนนเด้งขึ้นมา ให้แอบลบข้อมูลออกจากหน้าจอผู้โดยสาร เพื่อให้พร้อมเรียกคันใหม่
+                    db.ref('bookings/' + lineUserId).remove().then(() => {
+                        window.hasShownFinishAlert = false;
+                        if(typeof resetTrackingFlags === 'function') resetTrackingFlags();
+                    });
+                });
             }
         }
+        // กรณียกเลิก
         else if (bookData.status.includes("ยกเลิก")) {
             if (!window.hasSpokenCancel) {
                 playSoundAlert(); setTimeout(() => speakText("ขออภัย งานถูกยกเลิก", driverGender), 800);
                 window.hasSpokenCancel = true;
             }
-        }
-
-        // ==========================================
-        // 🌟 3. การอัปเดตหน้าจอ UI
-        // ==========================================
-        if (bookData.status.includes("ยกเลิก")) {
             if(driverBox) driverBox.classList.add('hidden'); if(actionBtns) actionBtns.classList.add('hidden'); if(btnEmer) btnEmer.classList.add('hidden');
             
             if (!window.hasAutoRebooked) {
@@ -2806,42 +2813,22 @@
                 db.ref('bookings/' + lineUserId).update({ status: "รอผู้ขับขี่ตอบรับ", driverPin: null, driverName: null, driverCar: null, driverPlate: null, driverPhone: null }).then(() => { setTimeout(() => { window.hasAutoRebooked = false; }, 3000); });
             }
         } 
-        else if (bookData.status === "เสร็จสิ้น" || bookData.status.includes("ถึงที่หมาย")) {
-            if(driverBox) driverBox.classList.add('hidden'); if(actionBtns) actionBtns.classList.add('hidden'); if(btnEmer) btnEmer.classList.add('hidden');
-
-            if (!window.hasShownFinishAlert) {
-                window.hasShownFinishAlert = true;
-                let finalMessage = `คุณเดินทางถึงที่หมายเรียบร้อยแล้ว\nราคาสุทธิ: ฿${bookData.price}\n\nขอบคุณที่ใช้บริการ F1 Driver ครับ!`;
-                
-                showAlert('ถึงที่หมายเรียบร้อย!', finalMessage, 'success', () => { 
-                    document.getElementById('driverRatingModal').classList.remove('hidden');
-                    db.ref('bookings/' + lineUserId).remove().then(() => {
-                        window.hasShownFinishAlert = false;
-                        if(typeof resetTrackingFlags === 'function') resetTrackingFlags();
-                    });
-                });
-            }
-        } 
         else if (bookData.status === "รอผู้ขับขี่ตอบรับ") {
             if(driverBox) driverBox.classList.add('hidden'); if(btnEmer) btnEmer.classList.add('hidden');
             if(actionBtns) actionBtns.classList.remove('hidden'); 
             document.getElementById('btnChat').classList.add('hidden'); document.getElementById('btnCall').classList.add('hidden'); document.getElementById('btnCancel').classList.remove('hidden');
         } 
         else {
+            // ซ่อนปุ่มต่างๆ เมื่อขึ้นรถแล้ว
             if(driverBox) driverBox.classList.remove('hidden'); if(btnEmer) btnEmer.classList.remove('hidden');
-            
             let isPassengerInCar = bookData.status.includes("ออกเดินทาง") || bookData.status.includes("ไปส่ง") || bookData.status.includes("ไปยัง") || bookData.status.includes("ขึ้นรถ");
 
             if (isPassengerInCar) {
                 if(actionBtns) actionBtns.classList.add('hidden');
-                
+                // ล็อกเป้าแผนที่อัตโนมัติ
                 if (isStatusChanged) {
                     isTrackingMode = true; 
-                    if (map && markerDriver && markerDriver.getMap()) { 
-                        updateMapPadding(); 
-                        map.panTo(markerDriver.getPosition()); 
-                        map.setZoom(17); 
-                    }
+                    if (map && markerDriver && markerDriver.getMap()) { updateMapPadding(); map.panTo(markerDriver.getPosition()); map.setZoom(17); }
                 }
             } else {
                 if(actionBtns) actionBtns.classList.remove('hidden');
@@ -2849,7 +2836,6 @@
             }
 
             let plateEl = document.getElementById('trackDriverPlate'); let carEl = document.getElementById('trackDriverCar'); let nameEl = document.getElementById('trackDriverName');
-
             if (bookData.driverPin) {
                 db.ref('drivers_profile/' + bookData.driverPin).once('value', snap => {
                     if (snap.exists()) {
@@ -3054,6 +3040,25 @@
             renderWaypointsUI(); 
         }
     };
+    // ==========================================
+    // 🌟 ระบบปลดล็อกเสียง (Text-to-Speech) สำหรับมือถือ iOS/Android
+    // ==========================================
+    window.ttsUnlocked = false;
+    function unlockTTSOnMobile() {
+        if (!window.ttsUnlocked && 'speechSynthesis' in window) {
+            let unlockMsg = new SpeechSynthesisUtterance('');
+            unlockMsg.volume = 0; // เล่นเสียงเงียบๆ 1 ครั้งเพื่อปลดล็อกสิทธิ์
+            window.speechSynthesis.speak(unlockMsg);
+            window.ttsUnlocked = true;
+            // เมื่อปลดล็อกแล้ว ให้เลิกดักจับการแตะหน้าจอ
+            document.body.removeEventListener('touchstart', unlockTTSOnMobile);
+            document.body.removeEventListener('click', unlockTTSOnMobile);
+        }
+    }
+    // สั่งปลดล็อกทันทีที่ลูกค้าเอานิ้วแตะหน้าจอครั้งแรก (ตอนเลื่อนแผนที่หรือกดปุ่มเรียกรถ)
+    document.body.addEventListener('touchstart', unlockTTSOnMobile);
+    document.body.addEventListener('click', unlockTTSOnMobile);
+    
   </script>
   <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDsZ_tbFhH6fUXRz3I6C-tMshNwwrSevd4&libraries=places,geometry&callback=initMap" async defer></script>
 </body>
