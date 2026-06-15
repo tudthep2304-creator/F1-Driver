@@ -311,6 +311,11 @@
               <div class="w-[1px] h-3 bg-gray-200 dark:bg-[#383d6a]"></div>
               <button onclick="window.editSavedPlace('favorite1', event)" class="px-2.5 py-1.5 text-gray-400 hover:text-gray-600 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-[#383d6a] transition flex items-center"><i class="fas fa-cog text-[10px]"></i></button>
           </div>
+          <div class="flex shrink-0 bg-gray-50 dark:bg-[#2a2f5c] border border-gray-200 dark:border-[#383d6a] rounded-full overflow-hidden shadow-sm items-center">
+              <button onclick="window.handleSavedPlace('favorite2')" class="px-3 py-1.5 flex items-center gap-1.5 hover:bg-gray-100 dark:hover:bg-[#383d6a] transition"><i class="fas fa-star text-yellow-500 text-[10px]"></i><span class="label-favorite2 text-[11px] font-normal text-gray-600 dark:text-gray-200">รายการโปรด 2</span></button>
+              <div class="w-[1px] h-3 bg-gray-200 dark:bg-[#383d6a]"></div>
+              <button onclick="window.editSavedPlace('favorite2', event)" class="px-2.5 py-1.5 text-gray-400 hover:text-gray-600 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-[#383d6a] transition flex items-center"><i class="fas fa-cog text-[10px]"></i></button>
+          </div>
       </div>
       
       <div id="pickupWaypointsList" class="flex flex-col gap-1.5 mb-1 max-h-[110px] overflow-y-auto slim-scroll"></div>
@@ -337,6 +342,16 @@
       </div>
       
       <div class="flex gap-2 overflow-x-auto pb-2 hide-scrollbar mb-1 items-center w-full">
+          <div class="flex shrink-0 bg-gray-50 dark:bg-[#2a2f5c] border border-gray-200 dark:border-[#383d6a] rounded-full overflow-hidden shadow-sm items-center">
+              <button onclick="window.handleSavedPlace('home')" class="px-3 py-1.5 flex items-center gap-1.5 hover:bg-gray-100 dark:hover:bg-[#383d6a] transition"><i class="fas fa-home text-blue-500 dark:text-blue-400 text-[10px]"></i><span class="label-home text-[11px] font-normal text-gray-600 dark:text-gray-200">บ้าน</span></button>
+              <div class="w-[1px] h-3 bg-gray-200 dark:bg-[#383d6a]"></div>
+              <button onclick="window.editSavedPlace('home', event)" class="px-2.5 py-1.5 text-gray-400 hover:text-gray-600 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-[#383d6a] transition flex items-center"><i class="fas fa-cog text-[10px]"></i></button>
+          </div>
+          <div class="flex shrink-0 bg-gray-50 dark:bg-[#2a2f5c] border border-gray-200 dark:border-[#383d6a] rounded-full overflow-hidden shadow-sm items-center">
+              <button onclick="window.handleSavedPlace('favorite1')" class="px-3 py-1.5 flex items-center gap-1.5 hover:bg-gray-100 dark:hover:bg-[#383d6a] transition"><i class="fas fa-heart text-pink-500 text-[10px]"></i><span class="label-favorite1 text-[11px] font-normal text-gray-600 dark:text-gray-200">รายการโปรด 1</span></button>
+              <div class="w-[1px] h-3 bg-gray-200 dark:bg-[#383d6a]"></div>
+              <button onclick="window.editSavedPlace('favorite1', event)" class="px-2.5 py-1.5 text-gray-400 hover:text-gray-600 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-[#383d6a] transition flex items-center"><i class="fas fa-cog text-[10px]"></i></button>
+          </div>
           <div class="flex shrink-0 bg-gray-50 dark:bg-[#2a2f5c] border border-gray-200 dark:border-[#383d6a] rounded-full overflow-hidden shadow-sm items-center">
               <button onclick="window.handleSavedPlace('favorite2')" class="px-3 py-1.5 flex items-center gap-1.5 hover:bg-gray-100 dark:hover:bg-[#383d6a] transition"><i class="fas fa-star text-yellow-500 text-[10px]"></i><span class="label-favorite2 text-[11px] font-normal text-gray-600 dark:text-gray-200">รายการโปรด 2</span></button>
               <div class="w-[1px] h-3 bg-gray-200 dark:bg-[#383d6a]"></div>
@@ -1441,7 +1456,13 @@
     function updateMapControlsPosition(page) {
         const controls = document.getElementById('mapControls'); if (!controls) return;
         controls.classList.remove('top-[76px]', 'top-[170px]', 'top-[140px]');
-        if (page === 2 || page === 3 || page === 'Tracking') controls.classList.add('top-[140px]'); else controls.classList.add('top-[76px]');
+        
+        // 🌟 แก้ไข: หน้า Tracking ให้ดันปุ่มขึ้นไปชิดด้านบน (76px) เหมือนหน้าแรก
+        if (page === 2 || page === 3) {
+            controls.classList.add('top-[140px]'); 
+        } else {
+            controls.classList.add('top-[76px]');
+        }
         
         let btnC = document.getElementById('btnCrosshair'); 
         if (page === 2 || page === 3 || page === 'Tracking') { if(btnC) btnC.classList.remove('hidden'); } 
@@ -2722,13 +2743,21 @@
     window.openEmergencyModal = function() { document.getElementById('emergencyModal').classList.remove('hidden'); };
     window.closeEmergencyModal = function() { document.getElementById('emergencyModal').classList.add('hidden'); };
     
-    // ระบบกดชื่อสถานที่แล้วให้แผนที่เลื่อนไปโฟกัส
+    // 🌟 ระบบกดชื่อสถานที่แล้วให้แผนที่เลื่อนไปโฟกัส (กดซ้ำเพื่อซูมออก)
     window.focusLocationToggle = function(lat, lng, index) {
         if (!map) return;
-        map.panTo({lat: lat, lng: lng});
-        map.setZoom(17);
-        focusedWaypointIndex = index;
-        renderWaypointsUI();
+        
+        if (focusedWaypointIndex === index) {
+            // ถ้ายกเลิกการโฟกัส (กดซ้ำ) ให้ซูมออกให้เห็นทุกหมุด
+            focusedWaypointIndex = -1;
+            window.fitAllWaypoints();
+        } else {
+            // ถ้ากดครั้งแรก ให้ซูมเข้าไปที่หมุดนั้น
+            focusedWaypointIndex = index;
+            map.panTo({lat: lat, lng: lng});
+            map.setZoom(17);
+            renderWaypointsUI(); // รีเฟรชสีตัวหนังสือ
+        }
     };
     // ==========================================
     // 🌟 กู้คืนตัวแปรและฟังก์ชันของระบบคอมมูนิตี้แชท
