@@ -1554,13 +1554,10 @@
       const isDark = document.documentElement.classList.contains('dark');
       map = new google.maps.Map(document.getElementById('map'), { 
         zoom: 16, center: {lat: driverData.lat, lng: driverData.lng}, 
-        mapTypeId: 'roadmap', 
+        mapTypeId: 'roadmap', // 🌟 1. เริ่มต้นด้วยแผนที่ธรรมดา
         styles: isDark ? detailedDarkMapStyle : [], 
-        disableDefaultUI: true, 
-        gestureHandling: 'greedy', 
-        zoomControl: false,
-        clickableIcons: false,
-        keyboardShortcuts: false // 🌟 เพิ่มคำสั่งนี้เพื่อซ่อน "แป้นพิมพ์ลัด" ด้วยเช่นกัน
+        disableDefaultUI: true, gestureHandling: 'greedy', zoomControl: false,
+        clickableIcons: false // 🌟 2. ปิดการคลิกสถานที่ (POI) บนแผนที่
       });
       
       let btnMapStyle = document.getElementById('btnMapStyle');
@@ -1899,7 +1896,6 @@
         let dropContainer = document.getElementById('dropoffWaypointsList'); if(dropContainer) dropContainer.innerHTML = dropHtml;
         let sumContainer = document.getElementById('sumWaypointsContainer'); if(sumContainer) sumContainer.innerHTML = sumHtml;
         let trackContainer = document.getElementById('trackWaypointsContainer'); if(trackContainer) trackContainer.innerHTML = sumHtml;
-    previewMapRoute();
     }
     
     window.removeWaypoint = function(index) {
@@ -2008,41 +2004,7 @@
     }
     
     window.goHome = function() { window.showPage(1); }
-    
-// 🌟 ระบบวาดเส้นทางโชว์ทันทีเมื่อเลือกจุดส่ง
-    function previewMapRoute() {
-        if(!directionsService || !map) return;
-        let activeWps = localWaypoints.filter(w => !w.passed);
-        
-        if(activeWps.length < 2) {
-            if(polylineRoute) { polylineRoute.setMap(null); polylineRoute = null; }
-            return;
-        }
 
-        let origin = new google.maps.LatLng(activeWps[0].lat, activeWps[0].lng);
-        let dest = new google.maps.LatLng(activeWps[activeWps.length - 1].lat, activeWps[activeWps.length - 1].lng);
-        let waypts = activeWps.slice(1, -1).map(w => ({location: new google.maps.LatLng(w.lat, w.lng), stopover: true}));
-        
-        directionsService.route({origin: origin, destination: dest, waypoints: waypts, travelMode: 'DRIVING'}, (res, stat) => {
-            if(stat === 'OK') {
-                if(polylineRoute) polylineRoute.setMap(null);
-                polylineRoute = new google.maps.Polyline({ 
-                    path: res.routes[0].legs.flatMap(leg => leg.steps.flatMap(step => step.path)), 
-                    strokeColor: '#3b82f6', 
-                    strokeWeight: 6, 
-                    map: map 
-                });
-                currentRouteBounds = res.routes[0].bounds;
-                
-                // ถ้าอยู่หน้า 3 (หน้าจุดส่ง) ให้ซูมขยายให้เห็นทั้งเส้นแบบสวยงาม
-                if (currentStep === 3) {
-                    let pb = getDynamicBottomPadding();
-                    map.fitBounds(currentRouteBounds, { top: 140, right: 50, bottom: pb, left: 50 });
-                }
-            }
-        });
-    }
-    
     function updateAddressBox(isInteraction = false) {
       if(!map || !geocoder) return;
       let isPick = (currentStep === 2); let pos = map.getCenter();
@@ -2519,12 +2481,11 @@
             const isDark = document.documentElement.classList.contains('dark');
             historyMapInstance = new google.maps.Map(document.getElementById('historyMap'), {
                 zoom: 13, 
-                mapTypeId: 'roadmap', 
+                mapTypeId: 'roadmap', // 🌟 เปลี่ยนเป็นแบบธรรมดา
                 styles: isDark ? detailedDarkMapStyle : [],
                 disableDefaultUI: true, 
                 gestureHandling: 'greedy',
-                clickableIcons: false,
-                keyboardShortcuts: false // 🌟 เพิ่มคำสั่งนี้เพื่อซ่อน "แป้นพิมพ์ลัด"
+                clickableIcons: false // 🌟 ปิดการกดสถานที่ในประวัติ
             });
             historyDirectionsService = new google.maps.DirectionsService();
             historyDirectionsRenderer = new google.maps.DirectionsRenderer({ map: historyMapInstance, suppressMarkers: true, preserveViewport: false });
@@ -2891,57 +2852,6 @@
             }, { enableHighAccuracy: true });
         }
     }
-    // ==========================================
-    // 🌟 กู้คืนฟังก์ชันที่หายไป (ปุ่มต่างๆ บนหน้าจอ)
-    // ==========================================
-    window.openCommunityModal = function() {
-        document.getElementById('communityModal').classList.remove('hidden');
-        window.unreadChatMessages.clear(); 
-        updateChatBadge();
-        localStorage.setItem('lastSeenChatTime', Date.now());
-        const chatBox = document.getElementById('globalChatBox');
-        if (chatBox) { setTimeout(() => { chatBox.scrollTop = chatBox.scrollHeight; }, 100); }
-    };
-    window.closeCommunityModal = function() { 
-        document.getElementById('communityModal').classList.add('hidden'); 
-        localStorage.setItem('lastSeenChatTime', Date.now());
-    };
-    window.sendGlobalChat = function() {
-        let inputEl = document.getElementById('globalChatInput');
-        let textVal = inputEl.value.trim();
-        if(!textVal) return;
-        db.ref('community_chat').push({
-            pin: lineUserId, name: lineName || 'ผู้โดยสาร', role: 'passenger',
-            text: textVal, timestamp: firebase.database.ServerValue.TIMESTAMP
-        }).then(() => { inputEl.value = ''; });
-    };
-    window.filterCommunityChat = function() {
-        let keyword = document.getElementById('chatSearchInput').value.toLowerCase();
-        let messages = document.querySelectorAll('.chat-msg-item');
-        messages.forEach(msg => {
-            let text = msg.innerText.toLowerCase();
-            msg.style.display = text.includes(keyword) ? 'flex' : 'none';
-        });
-    };
-    
-    // ปุ่มเป้าเล็ง และ ฉุกเฉิน
-    window.handleCrosshairClick = function() { centerToFocus(); };
-    window.openEmergencyModal = function() { document.getElementById('emergencyModal').classList.remove('hidden'); };
-    window.closeEmergencyModal = function() { document.getElementById('emergencyModal').classList.add('hidden'); };
-    
-    // ระบบกดชื่อสถานที่แล้วให้แผนที่เลื่อนไปโฟกัส (กดซ้ำเพื่อซูมออก)
-    window.focusLocationToggle = function(lat, lng, index) {
-        if (!map) return;
-        if (focusedWaypointIndex === index) {
-            focusedWaypointIndex = -1;
-            window.fitAllWaypoints();
-        } else {
-            focusedWaypointIndex = index;
-            map.panTo({lat: lat, lng: lng});
-            map.setZoom(17);
-            renderWaypointsUI(); 
-        }
-    };
   </script>
   <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDsZ_tbFhH6fUXRz3I6C-tMshNwwrSevd4&libraries=places,geometry&callback=initMap" async defer></script>
 </body>
