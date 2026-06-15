@@ -631,6 +631,20 @@
                   </div>
               </div>
           </div>
+        <div class="relative mt-0.5 px-0.5">
+                      <div class="absolute left-[0.4rem] top-3 bottom-3 w-0.5 border-l-[1.5px] border-dashed border-gray-300 dark:border-[#4b507d]"></div>
+                      <div id="historyDetailWaypointsContainer" class="flex flex-col relative z-10 gap-3"></div>
+                  </div>
+              </div>
+
+              <!-- 🌟 เพิ่มปุ่ม "เดินทางอีกครั้ง" ตรงนี้ครับ -->
+              <button onclick="window.rideAgainFromHistory()" class="w-full bg-[#fae100] hover:bg-[#e5ce00] text-gray-900 dark:text-[#1e234e] font-bold py-3.5 rounded-xl shadow-md transition mt-2 flex items-center justify-center gap-2 text-[13px] active:scale-[0.98]">
+                  <i class="fas fa-redo-alt"></i> เดินทางอีกครั้ง (ด้วยเส้นทางนี้)
+              </button>
+              
+          </div>
+      </div>
+  </div>
       </div>
   </div>
 
@@ -2581,6 +2595,55 @@
         document.getElementById('historyDetailModal').classList.add('hidden'); 
         selectedHistoryJobId = null; 
     }
+
+    // 🌟 ฟังก์ชัน: เดินทางอีกครั้ง (ก๊อปปี้หมุดเดิมแล้วไปหน้าสรุปเลย)
+    window.rideAgainFromHistory = function() {
+        if (!selectedHistoryJobId || !loadedHistoryJobs[selectedHistoryJobId]) return;
+        let job = loadedHistoryJobs[selectedHistoryJobId];
+
+        if (!job.waypoints || job.waypoints.length < 2) {
+            showAlert('ผิดพลาด', 'ไม่พบข้อมูลเส้นทางเดิมที่สมบูรณ์', 'error');
+            return;
+        }
+
+        // 1. ปิดหน้าต่างประวัติทั้งหมด
+        window.closeHistoryDetail();
+        window.closePassengerHistory();
+
+        // 2. ล้างหมุดเดิมบนแผนที่
+        localWaypoints.forEach(w => { if(w.marker) w.marker.setMap(null); });
+        localWaypoints = [];
+
+        // 3. ก๊อปปี้หมุดจากประวัติมาใส่แทนที่
+        job.waypoints.forEach(wp => {
+            localWaypoints.push({
+                lat: wp.lat,
+                lng: wp.lng,
+                name: wp.name,
+                type: wp.type,
+                iconType: wp.iconType || null,
+                passed: false,
+                marker: null // ระบบจะสร้าง Marker ใหม่อัตโนมัติใน renderWaypointsUI
+            });
+        });
+
+        // 4. ตั้งค่าจุดเริ่มต้น และจุดปลายทางให้ระบบ
+        let firstWp = localWaypoints[0];
+        let lastWp = localWaypoints[localWaypoints.length - 1];
+
+        bookData.pLat = firstWp.lat;
+        bookData.pLng = firstWp.lng;
+        bookData.pName = firstWp.name;
+        bookData.dLat = lastWp.lat;
+        bookData.dLng = lastWp.lng;
+        bookData.dName = lastWp.name;
+        
+        // 5. จำประเภทรถที่เคยเรียกไว้ด้วย
+        window.currentServiceType = job.serviceType || 'car';
+
+        // 6. กระโดดข้ามไป Step 3 (หน้ายืนยันการเรียกรถ) ทันที
+        window.showPage(4);
+    };
 
     function drawHistoryMap(waypoints) {
         if (typeof google === 'undefined' || !waypoints || waypoints.length < 2) return;
