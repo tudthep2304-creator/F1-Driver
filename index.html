@@ -1180,13 +1180,25 @@
         window.hasNotifiedLinePick = false; window.hasNotifiedLineDrop = false; window.isShowingRouteChange = false;
         lastNotifiedStatus = "";
 
-        // 🌟 ล้างหน้าจอแชทให้ขาวสะอาด เมื่อจบงานหรือยกเลิกงาน
+        // 🌟 1. บังคับปิดหน้าต่างแชท (เผื่อผู้โดยสารเปิดค้างไว้)
+        if(typeof window.closeInAppChatModal === 'function') window.closeInAppChatModal();
+        
+        // 🌟 2. เคลียร์ข้อความเก่าบนหน้าจอให้ขาวสะอาด
         let chatBox = document.getElementById('inAppChatMessages');
         if(chatBox) chatBox.innerHTML = '';
+        let chatInput = document.getElementById('inAppChatInput');
+        if(chatInput) chatInput.value = '';
+        
+        // 🌟 3. รีเซ็ตตัวเลขแจ้งเตือนสีแดง
         window.unreadInAppCount = 0;
         if(typeof updateInAppChatBadge === 'function') updateInAppChatBadge();
+        
+        // 🌟 4. ตัดการเชื่อมต่อฐานข้อมูลแชทเดิม
+        if(typeof inAppChatRef !== 'undefined' && inAppChatRef) { 
+            inAppChatRef.off(); 
+            inAppChatRef = null; 
+        }
     }
-
     async function requestWakeLock() { if ('wakeLock' in navigator) { try { wakeLock = await navigator.wakeLock.request('screen'); } catch (err) {} } }
     document.addEventListener('visibilitychange', () => { if (wakeLock !== null && document.visibilityState === 'visible') requestWakeLock(); });
 
@@ -1661,7 +1673,6 @@
     function initApp() {
       requestWakeLock();
       
-      // 🌟 ระบบแชร์พิกัดลูกค้าให้แอดมิน (ถ้ามีฟังก์ชันนี้อยู่)
       if (typeof startSharingPassengerLocation === 'function') {
           startSharingPassengerLocation();
       }
@@ -1690,6 +1701,7 @@
         } 
         else if (currentStep === 'Tracking' && !window.isCompleting) {
             window.isCompleting = true;
+            if(typeof window.closeInAppChatModal === 'function') window.closeInAppChatModal(); // 🌟 บังคับเด้งแชทออก
             
             // 🌟 ล้างจุดบนแผนที่
             localWaypoints.forEach(w => { if(w.marker) w.marker.setMap(null); });
@@ -1726,7 +1738,7 @@
                 }
             });
         }
-      }); // 🌟 ตรงนี้แหละครับที่เป็นตัวปัญหา วงเล็บปิดชอบหล่นหายตอนวางโค้ดทับ
+      });
 
       if(!window.activeGlobalChatListenerRef) {
           window.activeGlobalChatListenerRef = db.ref('community_chat').limitToLast(50);
@@ -1759,11 +1771,9 @@
               let timeStr = "";
               if (messageData.timestamp) {
                   let d = new Date(messageData.timestamp);
-                  let day = String(d.getDate()).padStart(2, '0');
-                  let month = String(d.getMonth() + 1).padStart(2, '0');
                   let hrs = String(d.getHours()).padStart(2, '0');
                   let mins = String(d.getMinutes()).padStart(2, '0');
-                  timeStr = `${day}/${month} ${hrs}:${mins}`;
+                  timeStr = `${hrs}:${mins}`;
               }
 
               let messageHtml = `
@@ -1773,7 +1783,7 @@
                       <div class="${bg} px-4 py-2.5 rounded-2xl text-[13px] font-normal shadow-sm break-words w-full">
                           ${messageData.text}
                       </div>
-                      <span class="text-[9px] text-gray-400 dark:text-gray-500 mt-1 ${isSenderMe ? 'mr-1' : 'ml-1'} font-normal">${timeStr}</span>
+                      <span class="text-[9px] text-gray-400 dark:text-gray-500 mt-1 ${isMe ? 'mr-1' : 'ml-1'} font-normal">${timeStr}</span>
                   </div>
               </div>`;
 
@@ -1786,7 +1796,7 @@
       }
       window.listenToInAppChat();
     }
-
+    
     function addWaypointFromLocation(lat, lng, name, type, iconType = null) {
         let marker = new google.maps.Marker({ position: {lat: lat, lng: lng}, map: map, animation: google.maps.Animation.DROP, zIndex: 4 });
         localWaypoints.push({ lat, lng, name: name, type, marker, iconType, passed: false });
@@ -2691,21 +2701,20 @@
         // 🌟 2. การอัปเดตหน้าจอ UI
         // ==========================================
         if (bookData.status.includes("ยกเลิก")) {
+            if(typeof window.closeInAppChatModal === 'function') window.closeInAppChatModal(); // 🌟 บังคับเด้งแชทออก
             if(driverBox) driverBox.classList.add('hidden'); if(actionBtns) actionBtns.classList.add('hidden'); if(btnEmer) btnEmer.classList.add('hidden');
             window.lastKnownStatus = bookData.status;
             
             if (!window.hasAutoRebooked) {
                 window.hasAutoRebooked = true;
                 showAlert('กำลังหาคนขับใหม่', 'คนขับก่อนหน้ายกเลิกงาน ระบบกำลังค้นหาคนขับใหม่ให้คุณอัตโนมัติครับ', 'info');
-                
-                // 🌟 เพิ่ม chats: null เข้าไป เพื่อล้างห้องแชทให้คนขับคนใหม่
-                db.ref('bookings/' + lineUserId).update({ 
-                    status: "รอผู้ขับขี่ตอบรับ", driverPin: null, driverName: null, driverCar: null, driverPlate: null, driverPhone: null, chats: null 
-                }).then(() => { setTimeout(() => { window.hasAutoRebooked = false; }, 3000); });
+                db.ref('bookings/' + lineUserId).update({ status: "รอผู้ขับขี่ตอบรับ", driverPin: null, driverName: null, driverCar: null, driverPlate: null, driverPhone: null }).then(() => { setTimeout(() => { window.hasAutoRebooked = false; }, 3000); });
             }
-        }
+        } 
         else if (bookData.status === "เสร็จสิ้น" || bookData.status.includes("ถึงที่หมาย")) {
+            if(typeof window.closeInAppChatModal === 'function') window.closeInAppChatModal(); // 🌟 บังคับเด้งแชทออก
             if(driverBox) driverBox.classList.add('hidden'); if(actionBtns) actionBtns.classList.add('hidden'); if(btnEmer) btnEmer.classList.add('hidden');
+            window.lastKnownStatus = bookData.status;
 
             if (!window.hasShownFinishAlert) {
                 window.hasShownFinishAlert = true;
@@ -2724,6 +2733,7 @@
             if(driverBox) driverBox.classList.add('hidden'); if(btnEmer) btnEmer.classList.add('hidden');
             if(actionBtns) actionBtns.classList.remove('hidden'); 
             document.getElementById('btnChat').classList.add('hidden'); document.getElementById('btnCall').classList.add('hidden'); document.getElementById('btnCancel').classList.remove('hidden');
+            window.lastKnownStatus = bookData.status;
         } 
         else {
             if(driverBox) driverBox.classList.remove('hidden'); if(btnEmer) btnEmer.classList.remove('hidden');
@@ -2842,7 +2852,7 @@
             });
         });
     }
-
+    
     function updateInAppChatBadge() {
         let btn = document.getElementById('btnChat');
         if(btn) {
