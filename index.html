@@ -6,10 +6,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <script src="https://cdn.tailwindcss.com"></script>
   
+  <!-- 🌟 1. สคริปต์ตั้งค่า Tailwind และปรับโหมดตามเครื่องมือถืออัตโนมัติ -->
   <script>
     tailwind.config = { darkMode: 'class' };
     
     function applyTheme() {
+      // เช็คว่าผู้ใช้เคยตั้งค่าเองไหม ถ้าไม่เคย ให้เช็คจากระบบ OS ของเครื่อง
       if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
         document.documentElement.classList.add('dark');
       } else {
@@ -17,11 +19,16 @@
       }
     }
 
+    // รันเช็คสีทันทีตอนเปิดแอป
     applyTheme();
 
+    // 🌟 ดักจับการเปลี่ยนโหมดของมือถือแบบ Real-time (เช่น ตั้งเวลาให้มือถือมืดตอน 18.00 น.)
     window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+      // เปลี่ยนตามเครื่อง เฉพาะคนที่ยังไม่เคยบังคับเปลี่ยนสีผ่านปุ่มในแอป
       if (!('theme' in localStorage)) { 
         applyTheme();
+        
+        // สั่งเปลี่ยนสีแผนที่ให้ตรงกับโหมดอัตโนมัติ
         if (typeof map !== 'undefined' && map && typeof isSatelliteMode !== 'undefined' && !isSatelliteMode) {
             let mapStyle = document.documentElement.classList.contains('dark') ? (typeof detailedDarkMapStyle !== 'undefined' ? detailedDarkMapStyle : []) : []; 
             map.setOptions({ styles: mapStyle });
@@ -725,6 +732,7 @@
     let vehicleTypesFromDB = [];
     let bannerInterval = null; 
     let bottomBannerInterval = null;
+    let notiAudio = null;
 
     let map, directionsService, directionsRenderer, geocoder, placesService;
     let crosshairMarker = null; 
@@ -1180,41 +1188,36 @@
     document.addEventListener('visibilitychange', () => { if (wakeLock !== null && document.visibilityState === 'visible') requestWakeLock(); });
 
     // ==========================================
-    // 🌟 ระบบเสียงพูด (TTS) แยกเพศ ไม่มีเสียงติ๊งน่อง
+    // 🌟 ฟังก์ชันเสียงพูด (TTS) แบบคลีนๆ สำหรับมือถือ
     // ==========================================
     function speakText(baseText, gender = 'male') {
         if ('speechSynthesis' in window) {
-            // ล้างคิวเฉพาะตอนที่มีค้างพูดอยู่ ป้องกันมือถือเอ๋อ
-            if (window.speechSynthesis.speaking) {
-                window.speechSynthesis.cancel();
-            }
+            window.speechSynthesis.cancel(); // ล้างคิวเก่าที่อาจจะค้างอยู่
+            
             let politeWord = (gender === 'female') ? 'ค่ะ' : 'ครับ';
-            let msg = new SpeechSynthesisUtterance(baseText + politeWord);
-            msg.lang = 'th-TH';
-            msg.rate = 1.0;
+            let msg = new SpeechSynthesisUtterance(baseText + politeWord); 
+            msg.lang = 'th-TH'; 
+            msg.rate = 1.0;     
+            
             window.speechSynthesis.speak(msg);
         }
     }
 
-    // 🌟 ปลดล็อกเสียงบนมือถือ (เงียบๆ ไม่มีติ๊งน่อง)
-    let isTTSUnlocked = false;
-    function unlockTTS() {
-        if (!isTTSUnlocked && 'speechSynthesis' in window) {
-            let msg = new SpeechSynthesisUtterance('');
-            msg.volume = 0;
-            window.speechSynthesis.speak(msg);
-            isTTSUnlocked = true;
-            document.body.removeEventListener('touchstart', unlockTTS);
-            document.body.removeEventListener('click', unlockTTS);
+    // 🌟 ปลดล็อกสิทธิ์เสียงของเบราว์เซอร์เมื่อผู้โดยสารแตะหน้าจอครั้งแรก
+    window.ttsUnlocked = false;
+    document.body.addEventListener('touchstart', function() {
+        if (!window.ttsUnlocked && 'speechSynthesis' in window) {
+            let unlockMsg = new SpeechSynthesisUtterance('');
+            window.speechSynthesis.speak(unlockMsg);
+            window.ttsUnlocked = true;
         }
-    }
-    document.body.addEventListener('touchstart', unlockTTS);
-    document.body.addEventListener('click', unlockTTS);
+    }, { once: true });
 
     document.addEventListener("DOMContentLoaded", () => {
         let savedPhone = localStorage.getItem('passengerPhone');
         if(savedPhone) { let pInp = document.getElementById('userPhone'); if(pInp) pInp.value = savedPhone; }
         renderSavedPlacesUI();
+        notiAudio = document.getElementById('notiSound');
         
         setTimeout(() => {
             const splash = document.getElementById('splashScreen');
@@ -1501,6 +1504,7 @@
         const controls = document.getElementById('mapControls'); if (!controls) return;
         controls.classList.remove('top-[76px]', 'top-[170px]', 'top-[140px]');
         
+        // 🌟 แก้ไข: หน้า Tracking ให้ดันปุ่มขึ้นไปชิดด้านบน (76px) เหมือนหน้าแรก
         if (page === 2 || page === 3) {
             controls.classList.add('top-[140px]'); 
         } else {
@@ -1586,7 +1590,7 @@
         gestureHandling: 'greedy', 
         zoomControl: false,
         clickableIcons: false,
-        keyboardShortcuts: false
+        keyboardShortcuts: false // 🌟 เพิ่มคำสั่งนี้เพื่อซ่อน "แป้นพิมพ์ลัด" ด้วยเช่นกัน
       });
       
       let btnMapStyle = document.getElementById('btnMapStyle');
@@ -1681,6 +1685,7 @@
     function initApp() {
       requestWakeLock();
       
+      // 🌟 ระบบแชร์พิกัดลูกค้าให้แอดมิน (ถ้ามีฟังก์ชันนี้อยู่)
       if (typeof startSharingPassengerLocation === 'function') {
           startSharingPassengerLocation();
       }
@@ -1710,6 +1715,7 @@
         else if (currentStep === 'Tracking' && !window.isCompleting) {
             window.isCompleting = true;
             
+            // 🌟 ล้างจุดบนแผนที่
             localWaypoints.forEach(w => { if(w.marker) w.marker.setMap(null); });
             localWaypoints = [];
             renderWaypointsUI();  
@@ -1726,6 +1732,7 @@
                 if (isCompleted || (bookData && (bookData.status.includes("ถึงที่หมาย") || bookData.status.includes("เสร็จสิ้น")))) {
                     let finalMessage = `จุดรับ: ${bookData.pName}\nจุดส่ง: ${bookData.dName}\nราคา: ${bookData.price} บาท\n\nขอบคุณที่ใช้บริการ F1 Driver ครับ!`;
                     
+                    // 🌟 ล้างความจำเมื่อจบงาน
                     bookData = { pLat:0, pLng:0, pName:"", dLat:0, dLng:0, dName:"", originalPrice:0, price:0, priceEstimate:"", distance:0, duration:0, status:"", promoCode: "", discount: 0, waypoints: [], serviceType: 'car' };
                     updateRideButtonState();
 
@@ -1733,6 +1740,7 @@
                         document.getElementById('driverRatingModal').classList.remove('hidden');
                     });
                 } else {
+                    // 🌟 ล้างความจำเมื่อโดนยกเลิก
                     bookData = { pLat:0, pLng:0, pName:"", dLat:0, dLng:0, dName:"", originalPrice:0, price:0, priceEstimate:"", distance:0, duration:0, status:"", promoCode: "", discount: 0, waypoints: [], serviceType: 'car' };
                     updateRideButtonState();
 
@@ -1742,7 +1750,7 @@
                 }
             });
         }
-      });
+      }); // 🌟 ตรงนี้แหละครับที่เป็นตัวปัญหา วงเล็บปิดชอบหล่นหายตอนวางโค้ดทับ
 
       if(!window.activeGlobalChatListenerRef) {
           window.activeGlobalChatListenerRef = db.ref('community_chat').limitToLast(50);
@@ -1876,7 +1884,7 @@
             
             let colorClass = isPickup ? 'bg-[#4ade80] text-white dark:text-[#1e234e]' : 'bg-[#ef4444] text-white';
             let colorHex = isPickup ? '#4ade80' : '#ef4444';
-            let textColorMap = isPickup ? '#ffffff' : '#ffffff'; 
+            let textColorMap = isPickup ? '#ffffff' : '#ffffff'; // สีในแผนที่ใช้ขาวเพื่อให้เห็นชัด
 
             let textItem = isFocused ? 'text-gray-900 dark:text-white font-medium' : 'text-gray-700 dark:text-gray-100 font-light';
             let bgItem = isFocused ? 'bg-gray-100 dark:bg-[#383d6a] border-gray-300 dark:border-transparent' : 'bg-white dark:bg-[#2a2f5c] border-gray-200 dark:border-[#383d6a]';
@@ -1973,9 +1981,11 @@
             updateMapPadding(); 
             if (typeof google !== 'undefined') {
                 google.maps.event.trigger(map, 'resize');
+                // 🌟 บังคับให้แผนที่ขยับตัว 1 ที เพื่อแก้บั๊กภาพโหลดไม่เต็มจอ
                 setTimeout(() => { map.setCenter(map.getCenter()); }, 50); 
             }
         }
+      // 🌟 ตรงนี้แหละครับที่วงเล็บและคำสั่งปิดหน้าต่างหายไปรอบที่แล้ว
       } else {
           if(navBar) navBar.classList.add('hidden'); if(mapControls) mapControls.classList.add('hidden'); if(mapEl) mapEl.classList.add('hidden');
       }
@@ -2341,6 +2351,11 @@
             });
         });
     }
+    function updateRealtimeMap() {
+        if(!map || !currentRouteBounds) return;
+        let pb = getDynamicBottomPadding();
+        map.fitBounds(currentRouteBounds, { top: 120, right: 50, bottom: pb, left: 50 });
+    }
 
     function resetPromoError(msg, codeInput) {
         showAlert('ขออภัย', msg, 'error'); codeInput.value = '';
@@ -2695,6 +2710,42 @@
 
     window.currentDriverGender = 'male'; // ค่าเริ่มต้น
 
+    // ==========================================
+    // 🌟 ระบบเสียงพูด (TTS) แบบคลีนๆ สำหรับมือถือ (เอาติ๊งน่องออก 100%)
+    // ==========================================
+    function speakText(baseText, gender = 'male') {
+        if ('speechSynthesis' in window) {
+            window.speechSynthesis.cancel(); // ล้างคิวเก่าก่อนพูดเสมอ
+            
+            let politeWord = (gender === 'female') ? 'ค่ะ' : 'ครับ';
+            let msg = new SpeechSynthesisUtterance(baseText + " " + politeWord); 
+            msg.lang = 'th-TH'; 
+            msg.rate = 1.0;     
+            
+            window.speechSynthesis.speak(msg);
+        }
+    }
+
+    // 🌟 ปลดล็อกสิทธิ์เสียงเมื่อสัมผัสหน้าจอ (ระบบ iOS/Android บังคับ)
+    window.ttsUnlocked = false;
+    function unlockMobileTTS() {
+        if (!window.ttsUnlocked && 'speechSynthesis' in window) {
+            let unlockMsg = new SpeechSynthesisUtterance(' '); // ใช้เสียงช่องว่างปลดล็อก
+            unlockMsg.volume = 0.01;
+            window.speechSynthesis.speak(unlockMsg);
+            window.ttsUnlocked = true;
+            document.body.removeEventListener('touchstart', unlockMobileTTS, true);
+            document.body.removeEventListener('click', unlockMobileTTS, true);
+        }
+    }
+    document.body.addEventListener('touchstart', unlockMobileTTS, true);
+    document.body.addEventListener('click', unlockMobileTTS, true);
+
+    // ==========================================
+    // 🌟 ฟังก์ชัน Tracking
+    // ==========================================
+    window.currentDriverGender = 'male'; // ค่าเริ่มต้น
+
     function handleTracking() {
         if (!bookData) return;
         const statusText = document.getElementById('unifiedStatusText');
@@ -2722,9 +2773,7 @@
         }
         let driverGender = bookData.driverGender || window.currentDriverGender || 'male';
 
-        // ==========================================
-        // 🌟 ระบบเสียงเตือน (ไม่มี setTimeout เพื่อไม่ให้มือถือบล็อกเสียง)
-        // ==========================================
+        // 🌟 สั่งให้พูดเสียงทันทีเมื่อสถานะเปลี่ยน (ไม่มี setTimeout มากวนใจมือถือแล้ว)
         if (bookData.status.includes("รับงาน") || bookData.status.includes("กำลังเดินทาง")) {
             if (!window.hasSpokenAccept) {
                 speakText("คนขับรับงานแล้ว", driverGender);
@@ -2829,3 +2878,134 @@
         }
         if(typeof drawTrackingRoute === 'function') { drawTrackingRoute(bookData.status); }
     }
+    // ==========================================
+    // 🌟 กู้คืนตัวแปรและฟังก์ชันของระบบคอมมูนิตี้แชท
+    // ==========================================
+    window.unreadChatMessages = new Set();
+    
+    function updateChatBadge() {
+        let badge = document.getElementById('chatBadge');
+        if(badge) {
+            let count = window.unreadChatMessages.size;
+            if(count > 0) {
+                badge.innerText = count > 99 ? '99+' : count;
+                badge.classList.remove('hidden');
+            } else {
+                badge.classList.add('hidden');
+            }
+        }
+    }
+      // 🌟 ระบบแชร์พิกัดลูกค้าให้แอดมินแบบเรียลไทม์ (เมื่อเปิดแอป)
+    function startSharingPassengerLocation() {
+        if (navigator.geolocation && lineUserId) {
+            // สร้างจุดอ้างอิงใน Firebase
+            let passengerRef = db.ref('active_passengers/' + lineUserId);
+            
+            // สั่งให้ลบพิกัดทิ้งอัตโนมัติ ถ้าลูกค้าปิดแอปหรือเน็ตหลุด (แอดมินจะได้ไม่เห็นจุดค้าง)
+            passengerRef.onDisconnect().remove();
+
+            // ดึงค่า GPS ทุกครั้งที่ลูกค้าขยับตัว (หรือเดิน)
+            navigator.geolocation.watchPosition(position => {
+                passengerRef.set({
+                    name: lineName || 'ไม่ทราบชื่อ',
+                    lat: position.coords.latitude,
+                    lng: position.coords.longitude,
+                    timestamp: firebase.database.ServerValue.TIMESTAMP
+                });
+            }, error => {
+                console.log("GPS Sharing Error: ", error);
+            }, { enableHighAccuracy: true });
+        }
+    }
+    // ==========================================
+    // 🌟 กู้คืนฟังก์ชันที่หายไป (ปุ่มต่างๆ บนหน้าจอ)
+    // ==========================================
+    window.openCommunityModal = function() {
+        document.getElementById('communityModal').classList.remove('hidden');
+        window.unreadChatMessages.clear(); 
+        updateChatBadge();
+        localStorage.setItem('lastSeenChatTime', Date.now());
+        const chatBox = document.getElementById('globalChatBox');
+        if (chatBox) { setTimeout(() => { chatBox.scrollTop = chatBox.scrollHeight; }, 100); }
+    };
+    window.closeCommunityModal = function() { 
+        document.getElementById('communityModal').classList.add('hidden'); 
+        localStorage.setItem('lastSeenChatTime', Date.now());
+    };
+    window.sendGlobalChat = function() {
+        let inputEl = document.getElementById('globalChatInput');
+        let textVal = inputEl.value.trim();
+        if(!textVal) return;
+        db.ref('community_chat').push({
+            pin: lineUserId, name: lineName || 'ผู้โดยสาร', role: 'passenger',
+            text: textVal, timestamp: firebase.database.ServerValue.TIMESTAMP
+        }).then(() => { inputEl.value = ''; });
+    };
+    window.filterCommunityChat = function() {
+        let keyword = document.getElementById('chatSearchInput').value.toLowerCase();
+        let messages = document.querySelectorAll('.chat-msg-item');
+        messages.forEach(msg => {
+            let text = msg.innerText.toLowerCase();
+            msg.style.display = text.includes(keyword) ? 'flex' : 'none';
+        });
+    };
+    
+    // ปุ่มเป้าเล็ง และ ฉุกเฉิน
+    window.handleCrosshairClick = function() { centerToFocus(); };
+    window.openEmergencyModal = function() { document.getElementById('emergencyModal').classList.remove('hidden'); };
+    window.closeEmergencyModal = function() { document.getElementById('emergencyModal').classList.add('hidden'); };
+    
+    // ระบบกดชื่อสถานที่แล้วให้แผนที่เลื่อนไปโฟกัส (กดซ้ำเพื่อซูมออก)
+    window.focusLocationToggle = function(lat, lng, index) {
+        if (!map) return;
+        if (focusedWaypointIndex === index) {
+            focusedWaypointIndex = -1;
+            window.fitAllWaypoints();
+        } else {
+            focusedWaypointIndex = index;
+            map.panTo({lat: lat, lng: lng});
+            map.setZoom(17);
+            renderWaypointsUI(); 
+        }
+    };
+    // ==========================================
+    // 🌟 ระบบปลดล็อกเสียงสำหรับ iOS และ Android
+    // ==========================================
+    window.mediaUnlocked = false;
+    
+    function unlockMediaOnMobile() {
+        if (!window.mediaUnlocked) {
+            // 1. ปลดล็อกเสียงติ๊งน่อง (เล่นแบบเงียบๆ 1 ครั้ง)
+            if(notiAudio) {
+                notiAudio.volume = 0;
+                notiAudio.play().then(() => {
+                    notiAudio.pause();
+                    notiAudio.currentTime = 0;
+                    notiAudio.volume = 0.2; // คืนค่าความดัง
+                }).catch(e=>{});
+            }
+            
+            // 2. ปลดล็อกเสียงพูด (พูดแบบเงียบๆ 1 ครั้ง)
+            if ('speechSynthesis' in window) {
+                let msg = new SpeechSynthesisUtterance('');
+                msg.volume = 0;
+                window.speechSynthesis.speak(msg);
+                window.speechSynthesis.cancel();
+            }
+
+            window.mediaUnlocked = true;
+            // เมื่อปลดล็อกสำเร็จ ให้ยกเลิกการดักจับนิ้ว
+            document.body.removeEventListener('touchstart', unlockMediaOnMobile, true);
+            document.body.removeEventListener('click', unlockMediaOnMobile, true);
+        }
+    }
+    // ดักจับทุกครั้งที่ลูกค้าแตะหน้าจอเพื่อปลดล็อกสิทธิ์
+
+    document.body.addEventListener('touchstart', unlockMediaOnMobile, true);
+
+    document.body.addEventListener('click', unlockMediaOnMobile, true);
+    
+  </script>
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDsZ_tbFhH6fUXRz3I6C-tMshNwwrSevd4&libraries=places,geometry&callback=initMap" async defer></script>
+</body>
+</html>
