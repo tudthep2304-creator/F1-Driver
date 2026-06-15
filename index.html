@@ -2637,23 +2637,6 @@
         }
         if(typeof drawTrackingRoute === 'function') { drawTrackingRoute(bookData.status); }
     }
-
-            window.lastKnownStatus = bookData.status; 
-            let plateEl = document.getElementById('trackDriverPlate'); let carEl = document.getElementById('trackDriverCar'); let nameEl = document.getElementById('trackDriverName');
-
-            if (bookData.driverPin) {
-                db.ref('drivers_profile/' + bookData.driverPin).once('value', snap => {
-                    if (snap.exists()) {
-                        let d = snap.val();
-                        plateEl.innerText = d.plate || bookData.driverPlate || '-'; carEl.innerText = d.carModel || bookData.driverCar || '-'; nameEl.innerText = d.name || bookData.driverName || '-';
-                    }
-                });
-            } else {
-                plateEl.innerText = bookData.driverPlate || '-'; carEl.innerText = bookData.driverCar || '-'; nameEl.innerText = bookData.driverName || '-';
-            }
-        }
-        if(typeof drawTrackingRoute === 'function') { drawTrackingRoute(bookData.status); }
-    }
     
     function updateRealtimeMap() {
         if(!map || !currentRouteBounds) return;
