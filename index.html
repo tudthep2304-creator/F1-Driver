@@ -1579,19 +1579,25 @@
         }
     }
 
-    // 🌟 สลับโหมดสี และปรับแผนที่ให้ตรงโหมด
+    // 🌟 สลับโหมดสีเอง (ปิดป๊อปอัปแจ้งเตือน 100% + เด้งสวิตช์ออโต้ปิดเอง)
     window.toggleTheme = function() {
         const htmlEl = document.documentElement;
+        let autoToggle = document.getElementById('theme-auto-toggle');
+        
         if (htmlEl.classList.contains('dark')) {
             htmlEl.classList.remove('dark');
             localStorage.setItem('theme', 'light');
-            showAlert('เปลี่ยนธีม', 'สลับเป็นโหมดสว่าง (Light Mode) แบบกำหนดเองเรียบร้อย', 'success');
         } else {
             htmlEl.classList.add('dark');
             localStorage.setItem('theme', 'dark');
-            showAlert('เปลี่ยนธีม', 'สลับเป็นโหมดมืด (Dark Mode) แบบกำหนดเองเรียบร้อย', 'success');
         }
-        updateMapThemeForAuto();
+        
+        // 🌟 บังคับเด้งปิดสวิตช์อัตโนมัติทันที
+        if (autoToggle) autoToggle.checked = false;
+        
+        if(typeof window.updateMapThemeForAuto === 'function') {
+            window.updateMapThemeForAuto();
+        }
     }
 
     // 🌟 เปิดใช้งานโหมดออโต้ตามมือถือ
