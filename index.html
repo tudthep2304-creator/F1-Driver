@@ -2764,41 +2764,7 @@
             }
         });
     }
-
-        if (window.historyMapMarkers && window.historyMapMarkers.length > 0) {
-            window.historyMapMarkers.forEach(m => m.setMap(null));
-        }
-        window.historyMapMarkers = [];
-
-        let origin = new google.maps.LatLng(waypoints[0].lat, waypoints[0].lng);
-        let dest = new google.maps.LatLng(waypoints[waypoints.length - 1].lat, waypoints[waypoints.length - 1].lng);
-        let wps = waypoints.slice(1, -1).map(w => ({ location: new google.maps.LatLng(w.lat, w.lng), stopover: true }));
-
-        waypoints.forEach((wp, idx) => {
-            let isPickup = wp.type === 'pick';
-            let colorHex = isPickup ? '#4ade80' : '#ef4444';
-            if (wp.type === 'waypoint') colorHex = '#eab308';
-            let textColorMap = '#ffffff';
-
-            let m = new google.maps.Marker({
-                position: { lat: wp.lat, lng: wp.lng }, map: historyMapInstance,
-                icon: createNumberedMarkerIcon((idx + 1).toString(), colorHex, textColorMap),
-                label: { text: (idx + 1).toString(), color: textColorMap, fontWeight: 'bold', fontSize: '13px' },
-                zIndex: 10
-            });
-            
-            m.addListener('click', () => { window.toggleHistoryWaypointFocus(idx, wp.lat, wp.lng); });
-            window.historyMapMarkers.push(m);
-        });
-
-        historyDirectionsService.route({ origin: origin, destination: dest, waypoints: wps, travelMode: 'DRIVING' }, (res, status) => {
-            if (status === 'OK') {
-                historyDirectionsRenderer.setDirections(res);
-                window.historyMapBounds = res.routes[0].bounds; 
-            }
-        });
-    }
-
+    
     window.blockCurrentHistoryDriver = function() {
         let job = loadedHistoryJobs[selectedHistoryJobId]; 
         if(!job || !job.driverPin) { showAlert("ผิดพลาด", "ไม่สามารถบล็อกได้ เนื่องจากไม่พบรหัสคนขับสำหรับงานนี้", "error"); return; }
