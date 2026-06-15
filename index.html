@@ -818,17 +818,37 @@
 
         let hasActiveJob = bookData && bookData.status && bookData.status !== "เสร็จสิ้น" && !bookData.status.includes("ยกเลิก");
 
+        // ดึงตัวกล่องวงกลมที่ครอบไอคอนอยู่มาปรับแต่ง
+        let circleDiv = btnMainRide.querySelector('div');
+
         if (hasActiveJob) {
             btnMainRide.disabled = false;
-            btnMainRide.className = "flex flex-col items-center justify-start gap-1.5 transition active:scale-95 bg-transparent outline-none animate-pulse mt-1 group";
-            if(btnMainRideIcon) btnMainRideIcon.className = "fas fa-route text-[20px] text-gray-700 dark:text-white"; 
-            if(btnMainRideText) btnMainRideText.innerText = "ดูสถานะ";
+            // ปิด animate-pulse ที่ตัวปุ่มหลัก เพื่อไปกระพริบที่วงกลมแทน
+            btnMainRide.className = "flex flex-col items-center justify-start gap-1.5 transition active:scale-95 bg-transparent outline-none mt-1 group";
+            
+            // 🌟 ทำให้วงกลมกระพริบเป็นสีเหลืองเรืองแสง
+            if(circleDiv) {
+                circleDiv.className = "w-12 h-12 rounded-full flex items-center justify-center transition border border-[#fae100] bg-yellow-50 dark:bg-[#fae100]/20 shadow-[0_0_15px_rgba(250,225,0,0.6)] animate-pulse";
+            }
+            if(btnMainRideIcon) btnMainRideIcon.className = "fas fa-route text-[20px] text-[#eab308] dark:text-[#fae100]"; 
+            if(btnMainRideText) {
+                btnMainRideText.innerText = "ดูสถานะ";
+                btnMainRideText.className = "font-bold text-[11px] text-[#eab308] dark:text-[#fae100] text-center leading-tight tracking-wide";
+            }
             btnMainRide.onclick = function() { window.showPage('Tracking'); };
         } else {
             btnMainRide.disabled = false;
             btnMainRide.className = "flex flex-col items-center justify-start gap-1.5 transition active:scale-95 bg-transparent outline-none mt-1 group";
+            
+            // 🌟 คืนค่าวงกลมกลับเป็นสีปกติเมื่อไม่มีงาน
+            if(circleDiv) {
+                circleDiv.className = "w-12 h-12 rounded-full bg-white dark:bg-[#2a2f5c] border border-gray-200 dark:border-[#383d6a] flex items-center justify-center group-hover:bg-gray-100 dark:group-hover:bg-[#383d6a] transition shadow-sm";
+            }
             if(btnMainRideIcon) btnMainRideIcon.className = "fas fa-car text-[20px] text-gray-700 dark:text-white";
-            if(btnMainRideText) btnMainRideText.innerText = "เรียกรถ";
+            if(btnMainRideText) {
+                btnMainRideText.innerText = "เรียกรถ";
+                btnMainRideText.className = "font-normal text-[11px] text-gray-700 dark:text-white text-center leading-tight tracking-wide";
+            }
             btnMainRide.onclick = function() { window.selectVehicleAndStart('car'); };
         }
     }
