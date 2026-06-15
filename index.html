@@ -155,8 +155,6 @@
       </div>
   </div>
 
-  <audio id="notiSound" src="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3" preload="auto"></audio>
-
   <div id="map" class="fixed inset-0 w-full h-full z-0 bg-gray-200 dark:bg-[#1e234e] hidden"></div>
 
   <div id="navBar" class="hidden fixed top-0 w-full h-16 bg-white/90 dark:bg-[#2a2f5c]/90 backdrop-blur-md border-b border-gray-200 dark:border-[#383d6a] flex items-center gap-3 px-4 z-20 shadow-md pointer-events-auto transition-colors duration-300">
@@ -715,7 +713,6 @@
     let vehicleTypesFromDB = [];
     let bannerInterval = null; 
     let bottomBannerInterval = null;
-    let notiAudio = null;
 
     let map, directionsService, directionsRenderer, geocoder, placesService;
     let crosshairMarker = null; 
@@ -1170,24 +1167,10 @@
     async function requestWakeLock() { if ('wakeLock' in navigator) { try { wakeLock = await navigator.wakeLock.request('screen'); } catch (err) {} } }
     document.addEventListener('visibilitychange', () => { if (wakeLock !== null && document.visibilityState === 'visible') requestWakeLock(); });
 
-    function playSoundAlert() {
-        if(!notiAudio) notiAudio = document.getElementById('notiSound');
-        if(notiAudio) { notiAudio.currentTime = 0; notiAudio.play().catch(e => console.log('Audio playback prevented')); }
-    }
-
-    function speakText(text) {
-        if ('speechSynthesis' in window) {
-            window.speechSynthesis.cancel(); 
-            let msg = new SpeechSynthesisUtterance(text); msg.lang = 'th-TH'; msg.rate = 1.0;     
-            window.speechSynthesis.speak(msg);
-        }
-    }
-
     document.addEventListener("DOMContentLoaded", () => {
         let savedPhone = localStorage.getItem('passengerPhone');
         if(savedPhone) { let pInp = document.getElementById('userPhone'); if(pInp) pInp.value = savedPhone; }
         renderSavedPlacesUI();
-        notiAudio = document.getElementById('notiSound');
         
         setTimeout(() => {
             const splash = document.getElementById('splashScreen');
