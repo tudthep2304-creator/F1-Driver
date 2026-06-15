@@ -1179,6 +1179,12 @@
         window.hasSpokenCancel = false; window.hasShownFinish = false; window.hasShownCancel = false;
         window.hasNotifiedLinePick = false; window.hasNotifiedLineDrop = false; window.isShowingRouteChange = false;
         lastNotifiedStatus = "";
+
+        // 🌟 ล้างหน้าจอแชทให้ขาวสะอาด เมื่อจบงานหรือยกเลิกงาน
+        let chatBox = document.getElementById('inAppChatMessages');
+        if(chatBox) chatBox.innerHTML = '';
+        window.unreadInAppCount = 0;
+        if(typeof updateInAppChatBadge === 'function') updateInAppChatBadge();
     }
 
     async function requestWakeLock() { if ('wakeLock' in navigator) { try { wakeLock = await navigator.wakeLock.request('screen'); } catch (err) {} } }
@@ -2686,13 +2692,18 @@
         // ==========================================
         if (bookData.status.includes("ยกเลิก")) {
             if(driverBox) driverBox.classList.add('hidden'); if(actionBtns) actionBtns.classList.add('hidden'); if(btnEmer) btnEmer.classList.add('hidden');
+            window.lastKnownStatus = bookData.status;
             
             if (!window.hasAutoRebooked) {
                 window.hasAutoRebooked = true;
                 showAlert('กำลังหาคนขับใหม่', 'คนขับก่อนหน้ายกเลิกงาน ระบบกำลังค้นหาคนขับใหม่ให้คุณอัตโนมัติครับ', 'info');
-                db.ref('bookings/' + lineUserId).update({ status: "รอผู้ขับขี่ตอบรับ", driverPin: null, driverName: null, driverCar: null, driverPlate: null, driverPhone: null }).then(() => { setTimeout(() => { window.hasAutoRebooked = false; }, 3000); });
+                
+                // 🌟 เพิ่ม chats: null เข้าไป เพื่อล้างห้องแชทให้คนขับคนใหม่
+                db.ref('bookings/' + lineUserId).update({ 
+                    status: "รอผู้ขับขี่ตอบรับ", driverPin: null, driverName: null, driverCar: null, driverPlate: null, driverPhone: null, chats: null 
+                }).then(() => { setTimeout(() => { window.hasAutoRebooked = false; }, 3000); });
             }
-        } 
+        }
         else if (bookData.status === "เสร็จสิ้น" || bookData.status.includes("ถึงที่หมาย")) {
             if(driverBox) driverBox.classList.add('hidden'); if(actionBtns) actionBtns.classList.add('hidden'); if(btnEmer) btnEmer.classList.add('hidden');
 
@@ -2813,13 +2824,22 @@
         let textVal = inputEl.value.trim();
         if(!textVal || !lineUserId) return;
         
-        // 🌟 ชี้เป้าไปที่โฟลเดอร์ของงานปัจจุบัน
-        db.ref('bookings/' + lineUserId + '/chats').push({
+        let msgData = {
             sender: 'passenger',
             text: textVal,
             timestamp: firebase.database.ServerValue.TIMESTAMP
-        }).then(() => {
+        };
+
+        db.ref('bookings/' + lineUserId + '/chats').push(msgData).then(() => {
             inputEl.value = '';
+            
+            // 🌟 แอบส่งสำเนาแชทไปเก็บบนคลังแอดมิน (ไม่มีวันถูกลบ)
+            db.ref('admin_chat_logs').push({
+                jobId: lineUserId,
+                passengerName: lineName || 'ไม่ทราบชื่อ',
+                driverPin: bookData.driverPin || 'ยังไม่มีคนขับ',
+                ...msgData
+            });
         });
     }
 
