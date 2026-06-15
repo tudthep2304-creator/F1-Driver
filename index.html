@@ -1205,17 +1205,16 @@
 
     function speakText(baseText, gender = 'male') {
         if ('speechSynthesis' in window) {
-            window.speechSynthesis.cancel(); 
+            // 🌟 สำคัญ: ลบคำสั่ง cancel() ออก เพราะในมือถือมันมักจะไปล้างคิวเสียงทิ้งจนเงียบไปเลย
             
-            // 🌟 เติมคำลงท้ายตามเพศคนขับ
             let politeWord = (gender === 'female') ? 'ค่ะ' : 'ครับ';
             let textToSpeak = baseText + politeWord;
 
             let msg = new SpeechSynthesisUtterance(textToSpeak); 
             msg.lang = 'th-TH'; 
             msg.rate = 1.0;     
+            msg.volume = 1.0; // เร่งเสียงพูดให้สุด
 
-            // 🌟 พยายามเลือกเสียงให้ตรงกับเพศ (ถ้าในมือถือลูกค้ามีเสียงให้เลือกหลายแบบ)
             let voices = window.speechSynthesis.getVoices();
             let thaiVoices = voices.filter(v => v.lang.includes('th'));
             
@@ -1224,10 +1223,9 @@
                 if(preferredVoice) {
                     msg.voice = preferredVoice;
                 } else {
-                    msg.voice = thaiVoices[0]; // ถ้าไม่มีให้ใช้เสียงเริ่มต้นของเครื่อง
+                    msg.voice = thaiVoices[0]; 
                 }
             }
-
             window.speechSynthesis.speak(msg);
         }
     }
@@ -3041,23 +3039,22 @@
         }
     };
     // ==========================================
-    // 🌟 ระบบปลดล็อกเสียง (Text-to-Speech) สำหรับมือถือ iOS/Android
+    // 🌟 ระบบปลดล็อกเสียง (Text-to-Speech) สำหรับมือถือ iOS/Android (อัปเดตใหม่)
     // ==========================================
     window.ttsUnlocked = false;
     function unlockTTSOnMobile() {
         if (!window.ttsUnlocked && 'speechSynthesis' in window) {
-            let unlockMsg = new SpeechSynthesisUtterance('');
-            unlockMsg.volume = 0; // เล่นเสียงเงียบๆ 1 ครั้งเพื่อปลดล็อกสิทธิ์
+            // 🌟 มือถือบางรุ่นฉลาด ถ้าใส่เสียง 0 มันจะไม่ยอมปลดล็อกให้ ต้องใช้เสียง 0.01 ครับ
+            let unlockMsg = new SpeechSynthesisUtterance(' '); 
+            unlockMsg.volume = 0.01; 
             window.speechSynthesis.speak(unlockMsg);
             window.ttsUnlocked = true;
-            // เมื่อปลดล็อกแล้ว ให้เลิกดักจับการแตะหน้าจอ
-            document.body.removeEventListener('touchstart', unlockTTSOnMobile);
-            document.body.removeEventListener('click', unlockTTSOnMobile);
+            document.body.removeEventListener('touchstart', unlockTTSOnMobile, true);
+            document.body.removeEventListener('click', unlockTTSOnMobile, true);
         }
     }
-    // สั่งปลดล็อกทันทีที่ลูกค้าเอานิ้วแตะหน้าจอครั้งแรก (ตอนเลื่อนแผนที่หรือกดปุ่มเรียกรถ)
-    document.body.addEventListener('touchstart', unlockTTSOnMobile);
-    document.body.addEventListener('click', unlockTTSOnMobile);
+    document.body.addEventListener('touchstart', unlockTTSOnMobile, true);
+    document.body.addEventListener('click', unlockTTSOnMobile, true);
     
   </script>
   <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDsZ_tbFhH6fUXRz3I6C-tMshNwwrSevd4&libraries=places,geometry&callback=initMap" async defer></script>
