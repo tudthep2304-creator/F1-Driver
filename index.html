@@ -2617,6 +2617,8 @@
         enableSmoothSwipeToClose('newsDetailModal', window.closeNewsDetailModal);
     }, 1000);
 
+    window.currentDriverGender = 'male'; // ค่าเริ่มต้น
+
     function handleTracking() {
         if (!bookData) return;
         const statusText = document.getElementById('unifiedStatusText');
@@ -2629,9 +2631,68 @@
         if(statusText) statusText.innerText = bookData.status;
         if(priceText) { priceText.innerText = bookData.priceEstimate ? bookData.priceEstimate : ('~฿' + (bookData.price || 0)); }
 
+        let isStatusChanged = (window.lastKnownStatus !== bookData.status);
+        if (isStatusChanged) {
+            window.lastKnownStatus = bookData.status;
+        }
+
+        // ดึงเพศคนขับ (ถ้ามี)
+        if (bookData.driverPin) {
+            db.ref('drivers_profile/' + bookData.driverPin).once('value', snap => {
+                if (snap.exists() && snap.val().gender) {
+                    window.currentDriverGender = snap.val().gender;
+                }
+            });
+        }
+        let driverGender = bookData.driverGender || window.currentDriverGender || 'male';
+
+        // ==========================================
+        // 🌟 ระบบเสียงเตือน (ไม่มี setTimeout เพื่อไม่ให้มือถือบล็อกเสียง)
+        // ==========================================
+        if (bookData.status.includes("รับงาน") || bookData.status.includes("กำลังเดินทาง")) {
+            if (!window.hasSpokenAccept) {
+                speakText("คนขับรับงานแล้ว", driverGender);
+                window.hasSpokenAccept = true;
+            }
+            if (!window.hasSpokenArrivePick && driverData.lat && bookData.pLat && typeof google !== 'undefined') {
+                let dLoc = new google.maps.LatLng(driverData.lat, driverData.lng);
+                let pLoc = new google.maps.LatLng(bookData.pLat, bookData.pLng);
+                if (google.maps.geometry.spherical.computeDistanceBetween(dLoc, pLoc) <= 500) {
+                    speakText("คนขับใกล้ถึงแล้ว", driverGender);
+                    window.hasSpokenArrivePick = true;
+                }
+            }
+        } 
+        else if (bookData.status.includes("ถึงจุดรับ") || bookData.status.includes("มาถึง")) {
+            if (!window.hasSpokenAtPickup) {
+                speakText("คนขับถึงจุดรับแล้ว", driverGender);
+                window.hasSpokenAtPickup = true;
+            }
+        } 
+        else if (bookData.status.includes("ออกเดินทาง") || bookData.status.includes("ขึ้นรถ") || bookData.status.includes("ไปยัง")) {
+            if (!window.hasSpokenDepart) {
+                speakText("ผู้โดยสารขึ้นรถแล้ว กำลังเดินทางไปยังจุดหมาย", driverGender);
+                window.hasSpokenDepart = true;
+            }
+        } 
+        else if (bookData.status === "เสร็จสิ้น" || bookData.status.includes("ถึงที่หมาย")) {
+            if (!window.hasSpokenFinish) {
+                speakText("ถึงจุดหมายปลายทางแล้ว ขอบคุณที่ใช้บริการ", driverGender);
+                window.hasSpokenFinish = true;
+            }
+        }
+        else if (bookData.status.includes("ยกเลิก")) {
+            if (!window.hasSpokenCancel) {
+                speakText("ขออภัย งานถูกยกเลิก", driverGender);
+                window.hasSpokenCancel = true;
+            }
+        }
+
+        // ==========================================
+        // 🌟 การอัปเดตหน้าจอ UI
+        // ==========================================
         if (bookData.status.includes("ยกเลิก")) {
             if(driverBox) driverBox.classList.add('hidden'); if(actionBtns) actionBtns.classList.add('hidden'); if(btnEmer) btnEmer.classList.add('hidden');
-            window.lastKnownStatus = bookData.status;
             
             if (!window.hasAutoRebooked) {
                 window.hasAutoRebooked = true;
@@ -2639,10 +2700,8 @@
                 db.ref('bookings/' + lineUserId).update({ status: "รอผู้ขับขี่ตอบรับ", driverPin: null, driverName: null, driverCar: null, driverPlate: null, driverPhone: null }).then(() => { setTimeout(() => { window.hasAutoRebooked = false; }, 3000); });
             }
         } 
-        // 🌟 แก้ไขจุดที่ค้าง: เพิ่มระบบเด้งหน้าให้คะแนนเมื่อสถานะ "เสร็จสิ้น"
         else if (bookData.status === "เสร็จสิ้น" || bookData.status.includes("ถึงที่หมาย")) {
             if(driverBox) driverBox.classList.add('hidden'); if(actionBtns) actionBtns.classList.add('hidden'); if(btnEmer) btnEmer.classList.add('hidden');
-            window.lastKnownStatus = bookData.status;
 
             if (!window.hasShownFinishAlert) {
                 window.hasShownFinishAlert = true;
@@ -2650,7 +2709,6 @@
                 
                 showAlert('ถึงที่หมายเรียบร้อย!', finalMessage, 'success', () => { 
                     document.getElementById('driverRatingModal').classList.remove('hidden');
-                    // เคลียร์งานออกจากระบบเพื่อพากลับหน้าแรก
                     db.ref('bookings/' + lineUserId).remove().then(() => {
                         window.hasShownFinishAlert = false;
                         if(typeof resetTrackingFlags === 'function') resetTrackingFlags();
@@ -2662,24 +2720,24 @@
             if(driverBox) driverBox.classList.add('hidden'); if(btnEmer) btnEmer.classList.add('hidden');
             if(actionBtns) actionBtns.classList.remove('hidden'); 
             document.getElementById('btnChat').classList.add('hidden'); document.getElementById('btnCall').classList.add('hidden'); document.getElementById('btnCancel').classList.remove('hidden');
-            window.lastKnownStatus = bookData.status;
         } 
         else {
             if(driverBox) driverBox.classList.remove('hidden'); if(btnEmer) btnEmer.classList.remove('hidden');
+            
             let isPassengerInCar = bookData.status.includes("ออกเดินทาง") || bookData.status.includes("ไปส่ง") || bookData.status.includes("ไปยัง") || bookData.status.includes("ขึ้นรถ");
 
             if (isPassengerInCar) {
                 if(actionBtns) actionBtns.classList.add('hidden');
-                if (window.lastKnownStatus !== bookData.status) {
+                
+                if (isStatusChanged) {
                     isTrackingMode = true; 
-                    if (markerDriver && markerDriver.getMap()) { updateMapPadding(); map.panTo(markerDriver.getPosition()); map.setZoom(17); }
+                    if (map && markerDriver && markerDriver.getMap()) { updateMapPadding(); map.panTo(markerDriver.getPosition()); map.setZoom(17); }
                 }
             } else {
                 if(actionBtns) actionBtns.classList.remove('hidden');
                 document.getElementById('btnChat').classList.remove('hidden'); document.getElementById('btnCall').classList.remove('hidden'); document.getElementById('btnCancel').classList.remove('hidden');
             }
 
-            window.lastKnownStatus = bookData.status; 
             let plateEl = document.getElementById('trackDriverPlate'); let carEl = document.getElementById('trackDriverCar'); let nameEl = document.getElementById('trackDriverName');
 
             if (bookData.driverPin) {
@@ -2743,6 +2801,32 @@
         let lineUrl = `https://line.me/R/oaMessage/${lineOaId}/?${encodedMessage}`;
         window.open(lineUrl, '_blank');
     }
+    // ==========================================
+    // 🌟 1. ฟังก์ชันเสียงพูด (TTS) แบบคลีนๆ สำหรับมือถือ
+    // ==========================================
+    function speakText(baseText, gender = 'male') {
+        if ('speechSynthesis' in window) {
+            window.speechSynthesis.cancel(); // ล้างคิวเก่าที่อาจจะค้างอยู่
+            
+            let politeWord = (gender === 'female') ? 'ค่ะ' : 'ครับ';
+            let msg = new SpeechSynthesisUtterance(baseText + " " + politeWord); 
+            msg.lang = 'th-TH'; 
+            msg.rate = 1.0;     
+            
+            window.speechSynthesis.speak(msg);
+        }
+    }
+
+    // 🌟 ปลดล็อกสิทธิ์เสียงของเบราว์เซอร์เมื่อผู้โดยสารแตะหน้าจอครั้งแรก
+    window.ttsUnlocked = false;
+    document.body.addEventListener('touchstart', function() {
+        if (!window.ttsUnlocked && 'speechSynthesis' in window) {
+            let unlockMsg = new SpeechSynthesisUtterance('');
+            window.speechSynthesis.speak(unlockMsg);
+            window.ttsUnlocked = true;
+        }
+    }, { once: true });
+    
     // ==========================================
     // 🌟 กู้คืนฟังก์ชันที่หายไป (ปุ่มต่างๆ บนหน้าจอ)
     // ==========================================
