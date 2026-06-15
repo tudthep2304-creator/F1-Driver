@@ -2813,12 +2813,58 @@
         let textVal = inputEl.value.trim();
         if(!textVal || !lineUserId) return;
         
-        db.ref('chats/' + lineUserId).push({
+        // 🌟 ย้ายมาเก็บใน bookings แทน
+        db.ref('bookings/' + lineUserId + '/chats').push({
             sender: 'passenger',
             text: textVal,
             timestamp: firebase.database.ServerValue.TIMESTAMP
         }).then(() => {
             inputEl.value = '';
+        });
+    }
+
+    window.listenToInAppChat = function() {
+        if(inAppChatRef) inAppChatRef.off();
+        document.getElementById('inAppChatMessages').innerHTML = '';
+        
+        // 🌟 ดึงข้อมูลจาก bookings
+        inAppChatRef = db.ref('bookings/' + lineUserId + '/chats');
+        inAppChatRef.on('child_added', snap => {
+            let msg = snap.val();
+            if(!msg) return;
+
+            let isMe = msg.sender === 'passenger';
+            let align = isMe ? 'justify-end' : 'justify-start';
+            let bg = isMe ? 'bg-[#fae100] text-gray-900 dark:text-[#1e234e]' : 'bg-white dark:bg-[#2a2f5c] border border-gray-200 dark:border-[#383d6a] text-gray-800 dark:text-white';
+            
+            let timeStr = "";
+            if (msg.timestamp) {
+                let d = new Date(msg.timestamp);
+                let hrs = String(d.getHours()).padStart(2, '0');
+                let mins = String(d.getMinutes()).padStart(2, '0');
+                timeStr = `${hrs}:${mins}`;
+            }
+
+            let html = `
+            <div class="flex w-full ${align} animate-fade-in mb-3">
+                <div class="flex flex-col ${isMe ? 'items-end' : 'items-start'} max-w-[80%]">
+                    <div class="${bg} px-4 py-2.5 rounded-2xl text-[13px] font-normal shadow-sm break-words w-full">
+                        ${msg.text}
+                    </div>
+                    <span class="text-[9px] text-gray-400 dark:text-gray-500 mt-1 ${isMe ? 'mr-1' : 'ml-1'} font-normal">${timeStr}</span>
+                </div>
+            </div>`;
+
+            document.getElementById('inAppChatMessages').insertAdjacentHTML('beforeend', html);
+            
+            const chatBox = document.getElementById('inAppChatBox');
+            if(chatBox) setTimeout(() => { chatBox.scrollTop = chatBox.scrollHeight; }, 100);
+
+            let modal = document.getElementById('inAppChatModal');
+            if(modal && modal.classList.contains('hidden') && !isMe) {
+                window.unreadInAppCount++;
+                updateInAppChatBadge();
+            }
         });
     }
 
