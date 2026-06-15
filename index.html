@@ -2813,7 +2813,7 @@
         let textVal = inputEl.value.trim();
         if(!textVal || !lineUserId) return;
         
-        // 🌟 ย้ายมาเก็บใน bookings แทน
+        // 🌟 ชี้เป้าไปที่โฟลเดอร์ของงานปัจจุบัน
         db.ref('bookings/' + lineUserId + '/chats').push({
             sender: 'passenger',
             text: textVal,
@@ -2823,11 +2823,24 @@
         });
     }
 
+    function updateInAppChatBadge() {
+        let btn = document.getElementById('btnChat');
+        if(btn) {
+            if(window.unreadInAppCount > 0) {
+                btn.innerHTML = `<i class="fas fa-comments text-[14px]"></i> แชท <span class="ml-1 bg-red-500 text-white text-[10px] px-1.5 py-0.5 rounded-full">${window.unreadInAppCount}</span>`;
+                btn.classList.add('animate-pulse');
+            } else {
+                btn.innerHTML = `<i class="fas fa-comments text-[14px]"></i> แชท`;
+                btn.classList.remove('animate-pulse');
+            }
+        }
+    }
+
     window.listenToInAppChat = function() {
         if(inAppChatRef) inAppChatRef.off();
         document.getElementById('inAppChatMessages').innerHTML = '';
         
-        // 🌟 ดึงข้อมูลจาก bookings
+        // 🌟 ดึงข้อมูลจากโฟลเดอร์งานปัจจุบัน
         inAppChatRef = db.ref('bookings/' + lineUserId + '/chats');
         inAppChatRef.on('child_added', snap => {
             let msg = snap.val();
@@ -2867,65 +2880,6 @@
             }
         });
     }
-    
-    function updateInAppChatBadge() {
-        let btn = document.getElementById('btnChat');
-        if(btn) {
-            if(window.unreadInAppCount > 0) {
-                btn.innerHTML = `<i class="fas fa-comments text-[14px]"></i> แชท <span class="ml-1 bg-red-500 text-white text-[10px] px-1.5 py-0.5 rounded-full">${window.unreadInAppCount}</span>`;
-                btn.classList.add('animate-pulse');
-            } else {
-                btn.innerHTML = `<i class="fas fa-comments text-[14px]"></i> แชท`;
-                btn.classList.remove('animate-pulse');
-            }
-        }
-    }
-
-    window.listenToInAppChat = function() {
-        if(inAppChatRef) inAppChatRef.off();
-        document.getElementById('inAppChatMessages').innerHTML = '';
-        
-        inAppChatRef = db.ref('chats/' + lineUserId);
-        inAppChatRef.on('child_added', snap => {
-            let msg = snap.val();
-            if(!msg) return;
-
-            let isMe = msg.sender === 'passenger';
-            let align = isMe ? 'justify-end' : 'justify-start';
-            let bg = isMe ? 'bg-[#fae100] text-gray-900 dark:text-[#1e234e]' : 'bg-white dark:bg-[#2a2f5c] border border-gray-200 dark:border-[#383d6a] text-gray-800 dark:text-white';
-            
-            let timeStr = "";
-            if (msg.timestamp) {
-                let d = new Date(msg.timestamp);
-                let hrs = String(d.getHours()).padStart(2, '0');
-                let mins = String(d.getMinutes()).padStart(2, '0');
-                timeStr = `${hrs}:${mins}`;
-            }
-
-            let html = `
-            <div class="flex w-full ${align} animate-fade-in mb-3">
-                <div class="flex flex-col ${isMe ? 'items-end' : 'items-start'} max-w-[80%]">
-                    <div class="${bg} px-4 py-2.5 rounded-2xl text-[13px] font-normal shadow-sm break-words w-full">
-                        ${msg.text}
-                    </div>
-                    <span class="text-[9px] text-gray-400 dark:text-gray-500 mt-1 ${isMe ? 'mr-1' : 'ml-1'} font-normal">${timeStr}</span>
-                </div>
-            </div>`;
-
-            document.getElementById('inAppChatMessages').insertAdjacentHTML('beforeend', html);
-            
-            const chatBox = document.getElementById('inAppChatBox');
-            if(chatBox) setTimeout(() => { chatBox.scrollTop = chatBox.scrollHeight; }, 100);
-
-            // 🌟 แจ้งเตือนปุ่มเด้งสีแดง ถ้าหน้าต่างแชทปิดอยู่แล้วคนขับทักมา
-            let modal = document.getElementById('inAppChatModal');
-            if(modal && modal.classList.contains('hidden') && !isMe) {
-                window.unreadInAppCount++;
-                updateInAppChatBadge();
-            }
-        });
-    }
-
     window.confirmReportTrip = function() {
         if (!selectedHistoryJobId || !loadedHistoryJobs[selectedHistoryJobId]) return;
         window.openConfirmActionModal("รายงานปัญหา?", "คุณต้องการรายงานปัญหาการเดินทางในรอบนี้ ใช่หรือไม่?", () => { window.reportCurrentTrip(); }, 'yellow');
