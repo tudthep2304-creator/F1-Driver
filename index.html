@@ -9,11 +9,11 @@
   <script>
     tailwind.config = { darkMode: 'class' };
     
-    // 🌟 ระบบเช็คสีแบบฉลาด (รองรับโหมดออโต้ตามเครื่อง)
-    function applySystemTheme() {
+    // 🌟 ฟังก์ชันเช็คสีระบบหลัก
+    window.applySystemTheme = function() {
         let theme = localStorage.getItem('theme');
         if (theme === 'auto' || !theme) {
-            localStorage.setItem('theme', 'auto'); // ค่าเริ่มต้นให้เป็นออโต้
+            localStorage.setItem('theme', 'auto');
             if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
                 document.documentElement.classList.add('dark');
             } else {
@@ -25,14 +25,16 @@
             document.documentElement.classList.add('dark');
         }
     }
-    applySystemTheme();
+    window.applySystemTheme();
     
-    // ดักจับเวลามือถือสลับโหมดเอง แล้วเปลี่ยนสีแอปตามทันที
+    // ดักฟังถ้าเครื่องมือถือสลับโหมดเอง ให้แอปเปลี่ยนสีตามทันที
     window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
-        if(localStorage.getItem('theme') === 'auto') { applySystemTheme(); }
+        if(localStorage.getItem('theme') === 'auto') { 
+            window.applySystemTheme(); 
+            if(typeof window.updateMapThemeForAuto === 'function') window.updateMapThemeForAuto(); 
+        }
     });
   </script>
-
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
   <script charset="utf-8" src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
@@ -515,13 +517,21 @@
               </div>
           </div>
           
-          <div class="flex gap-2 w-full mb-3">
-              <button onclick="window.toggleTheme()" class="flex-1 bg-white dark:bg-[#2a2f5c] border border-gray-200 dark:border-[#383d6a] text-gray-800 dark:text-white py-3.5 rounded-xl font-normal shadow-sm hover:bg-gray-50 dark:hover:bg-[#383d6a] transition flex items-center justify-center gap-1.5 text-[12px]">
-                  <i class="fas fa-adjust text-[#eab308] dark:text-[#fae100]"></i> สลับเอง
+          <div class="w-full bg-white dark:bg-[#2a2f5c] border border-gray-200 dark:border-[#383d6a] rounded-2xl p-4 mb-3 flex flex-col gap-3 shadow-sm">
+              <button onclick="window.toggleTheme()" class="w-full bg-gray-50 dark:bg-[#1e234e] border border-gray-200 dark:border-[#383d6a] text-gray-800 dark:text-white py-3 rounded-full font-normal shadow-sm hover:bg-gray-100 dark:hover:bg-[#383d6a]/50 transition flex items-center justify-center gap-2 text-[13px]">
+                  <i class="fas fa-adjust text-[#eab308] dark:text-[#fae100]"></i> สลับโหมดมืด/สว่างเอง
               </button>
-              <button onclick="window.setAutoTheme()" class="flex-1 bg-white dark:bg-[#2a2f5c] border border-gray-200 dark:border-[#383d6a] text-gray-800 dark:text-white py-3.5 rounded-xl font-normal shadow-sm hover:bg-gray-50 dark:hover:bg-[#383d6a] transition flex items-center justify-center gap-1.5 text-[12px]">
-                  <i class="fas fa-mobile-alt text-blue-500"></i> ออโต้ (ตามเครื่อง)
-              </button>
+              <div class="border-b border-gray-200 dark:border-[#383d6a] opacity-40 my-1"></div>
+              <div class="flex justify-between items-center px-1">
+                  <div class="flex items-center gap-2">
+                      <i class="fas fa-mobile-alt text-blue-500 text-sm"></i>
+                      <span class="text-[12px] font-normal text-gray-700 dark:text-gray-200">ปรับตามระบบเครื่องอัตโนมัติ</span>
+                  </div>
+                  <label class="relative inline-flex items-center cursor-pointer select-none">
+                      <input type="checkbox" id="theme-auto-toggle" onchange="window.handleAutoThemeChange(this)" class="sr-only peer">
+                      <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
+                  </label>
+              </div>
           </div>
       </div>
   </div>
@@ -1330,15 +1340,19 @@
         let pPhoneL = document.getElementById('profilePhoneLarge');
         if(pPhoneL) pPhoneL.innerText = savedPhone ? 'เบอร์โทร: ' + savedPhone : 'เบอร์โทร: ยังไม่ระบุ';
 
+        // 🌟 ตรวจสอบเปิด-ปิดสวิตช์ตามจริงในคลังความจำ
+        let autoToggle = document.getElementById('theme-auto-toggle');
+        if(autoToggle) {
+            autoToggle.checked = (localStorage.getItem('theme') === 'auto');
+        }
+
         let ridesEl = document.getElementById('profileTotalRides');
         if (ridesEl) {
             ridesEl.innerText = '...';
-            // 🌟 1. ดึงแค่ "ตัวเลขสถิติ" ที่เซิร์ฟเวอร์จดไว้มาแสดง (ไม่โหลดประวัติทั้งหมดแล้ว)
             db.ref('passenger_stats/' + lineUserId + '/totalRides').once('value', snap => {
                 if(snap.exists()) {
                     ridesEl.innerText = snap.val();
                 } else {
-                    // 🌟 2. ถ้าเป็นลูกค้าระบบเก่าที่ยังไม่มีตัวนับ ให้ไปนับงานเก่ามาสรุปยอดเก็บไว้ (ทำแค่ครั้งเดียว)
                     db.ref('completed_jobs').orderByChild('userId').equalTo(lineUserId).once('value', cSnap => {
                         let total = cSnap.exists() ? Object.keys(cSnap.val()).length : 0;
                         ridesEl.innerText = total;
@@ -1346,6 +1360,45 @@
                     });
                 }
             });
+        }
+    }
+
+    // 🌟 สลับโหมดสีเอง (ปิดป๊อปอัปแจ้งเตือน + เด้งสวิตช์ออโต้ปิดเอง)
+    window.toggleTheme = function() {
+        const htmlEl = document.documentElement;
+        let autoToggle = document.getElementById('theme-auto-toggle');
+        
+        if (htmlEl.classList.contains('dark')) {
+            htmlEl.classList.remove('dark');
+            localStorage.setItem('theme', 'light');
+        } else {
+            htmlEl.classList.add('dark');
+            localStorage.setItem('theme', 'dark');
+        }
+        
+        // 🌟 บังคับเด้งปิดสวิตช์อัตโนมัติทันที
+        if (autoToggle) autoToggle.checked = false;
+        
+        window.updateMapThemeForAuto();
+    }
+
+    // 🌟 ฟังก์ชันคุมสวิตช์เลื่อนเปิด-ปิด ออโต้ (ไม่มีป๊อปอัป)
+    window.handleAutoThemeChange = function(toggleEl) {
+        if (toggleEl.checked) {
+            localStorage.setItem('theme', 'auto');
+            window.applySystemTheme();
+        } else {
+            // ถ้าเลื่อนปิดออโต้ ให้ล็อกสีหน้าจอปัจจุบันค้างไว้เลย
+            let currentTheme = document.documentElement.classList.contains('dark') ? 'dark' : 'light';
+            localStorage.setItem('theme', currentTheme);
+        }
+        window.updateMapThemeForAuto();
+    }
+
+    window.updateMapThemeForAuto = function() {
+        if (map && !isSatelliteMode) {
+            let mapStyle = document.documentElement.classList.contains('dark') ? detailedDarkMapStyle : []; 
+            map.setOptions({ styles: mapStyle });
         }
     }
 
