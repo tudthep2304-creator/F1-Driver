@@ -1363,7 +1363,7 @@
         }
     }
 
-    // 🌟 สลับโหมดสีเอง (ปิดป๊อปอัปแจ้งเตือน + เด้งสวิตช์ออโต้ปิดเอง)
+    // 🌟 สลับโหมดสีเอง (ปิดป๊อปอัปแจ้งเตือน 100% + เด้งสวิตช์ออโต้ปิดเอง)
     window.toggleTheme = function() {
         const htmlEl = document.documentElement;
         let autoToggle = document.getElementById('theme-auto-toggle');
@@ -1379,7 +1379,9 @@
         // 🌟 บังคับเด้งปิดสวิตช์อัตโนมัติทันที
         if (autoToggle) autoToggle.checked = false;
         
-        window.updateMapThemeForAuto();
+        if(typeof window.updateMapThemeForAuto === 'function') {
+            window.updateMapThemeForAuto();
+        }
     }
 
     // 🌟 ฟังก์ชันคุมสวิตช์เลื่อนเปิด-ปิด ออโต้ (ไม่มีป๊อปอัป)
