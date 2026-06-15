@@ -693,6 +693,23 @@
           <button onclick="window.closeAlertModal()" class="w-full py-2.5 bg-[#fae100] text-gray-900 dark:text-[#1e234e] font-normal rounded-full shadow-md hover:bg-[#e5ce00] transition text-[13px]">ตกลง</button>
       </div>
   </div>
+  <!-- 🌟 หน้าต่างแชทส่วนตัว (คนขับ-ผู้โดยสาร) -->
+  <div id="inAppChatModal" class="hidden fixed inset-0 z-[300] bg-gray-50 dark:bg-[#1e234e] flex flex-col pointer-events-auto transition-transform">
+      <div class="relative z-10 bg-white/90 dark:bg-[#2a2f5c]/90 backdrop-blur-md border-b border-gray-200 dark:border-[#383d6a] h-16 px-4 flex items-center gap-3 shadow-md shrink-0 w-full">
+          <button onclick="window.closeInAppChatModal()" class="w-10 h-10 bg-gray-100 dark:bg-[#383d6a]/80 text-gray-500 dark:text-gray-400 rounded-full flex items-center justify-center hover:bg-gray-200 dark:hover:text-white transition"><i class="fas fa-arrow-left"></i></button>
+          <div class="flex flex-col">
+              <h2 class="text-[15px] font-black text-gray-800 dark:text-white leading-tight" id="chatDriverNameHeader">แชทกับคนขับ</h2>
+              <p class="text-[11px] text-green-500 font-normal leading-tight">กำลังให้บริการ</p>
+          </div>
+      </div>
+      <div id="inAppChatBox" class="relative z-10 flex-1 overflow-y-auto p-4 bg-transparent hide-scrollbar flex flex-col">
+          <div id="inAppChatMessages" class="space-y-3 flex-1 flex flex-col justify-end"></div>
+      </div>
+      <div class="relative z-10 bg-white/90 dark:bg-[#2a2f5c]/90 backdrop-blur-md p-3 flex gap-2 shrink-0 shadow-[0_-5px_15px_rgba(0,0,0,0.05)] dark:shadow-[0_-5px_15px_rgba(0,0,0,0.3)] border-t border-gray-200 dark:border-[#383d6a]">
+          <input type="text" id="inAppChatInput" class="flex-1 rounded-xl bg-gray-100 dark:bg-[#383d6a]/80 text-gray-800 dark:text-white px-4 py-3 text-sm font-normal outline-none focus:border-[#fae100] border border-transparent transition shadow-inner" placeholder="พิมพ์ข้อความส่งหาคนขับ...">
+          <button onclick="window.sendInAppChat()" class="bg-[#fae100] text-gray-900 dark:text-[#1e234e] font-black px-5 rounded-xl hover:bg-[#e5ce00] transition shadow-md active:scale-95"><i class="fas fa-paper-plane"></i></button>
+      </div>
+  </div>
 
   <script>
     // ส่วนต้นของ JS ยังเหมือนเดิมทั้งหมด
@@ -1761,6 +1778,7 @@
               if (chatBox) { setTimeout(() => { chatBox.scrollTop = chatBox.scrollHeight; }, 100); }
           });
       }
+      window.listenToInAppChat();
     }
 
     function addWaypointFromLocation(lat, lng, name, type, iconType = null) {
@@ -2768,7 +2786,99 @@
         showAlert('ขอบคุณครับ', 'ระบบได้ส่งคะแนนประเมินให้คนขับเรียบร้อยแล้ว', 'success', () => { window.showPage(1); });
     }
 
-    window.openInAppChatModal = function() { showAlert('ระบบแชท', 'ฟังก์ชันแชทกับคนขับกำลังอยู่ระหว่างการปรับปรุงครับ', 'info'); }
+    // ==========================================
+    // 🌟 ระบบแชทส่วนตัว (ผู้โดยสาร - คนขับ)
+    // ==========================================
+    let inAppChatRef = null;
+    window.unreadInAppCount = 0;
+
+    window.openInAppChatModal = function() {
+        document.getElementById('inAppChatModal').classList.remove('hidden');
+        window.unreadInAppCount = 0;
+        updateInAppChatBadge();
+        
+        let dName = bookData && bookData.driverName ? bookData.driverName : 'คนขับ';
+        document.getElementById('chatDriverNameHeader').innerText = 'แชทกับ ' + dName;
+
+        const chatBox = document.getElementById('inAppChatBox');
+        if(chatBox) setTimeout(() => { chatBox.scrollTop = chatBox.scrollHeight; }, 100);
+    }
+
+    window.closeInAppChatModal = function() {
+        document.getElementById('inAppChatModal').classList.add('hidden');
+    }
+
+    window.sendInAppChat = function() {
+        let inputEl = document.getElementById('inAppChatInput');
+        let textVal = inputEl.value.trim();
+        if(!textVal || !lineUserId) return;
+        
+        db.ref('chats/' + lineUserId).push({
+            sender: 'passenger',
+            text: textVal,
+            timestamp: firebase.database.ServerValue.TIMESTAMP
+        }).then(() => {
+            inputEl.value = '';
+        });
+    }
+
+    function updateInAppChatBadge() {
+        let btn = document.getElementById('btnChat');
+        if(btn) {
+            if(window.unreadInAppCount > 0) {
+                btn.innerHTML = `<i class="fas fa-comments text-[14px]"></i> แชท <span class="ml-1 bg-red-500 text-white text-[10px] px-1.5 py-0.5 rounded-full">${window.unreadInAppCount}</span>`;
+                btn.classList.add('animate-pulse');
+            } else {
+                btn.innerHTML = `<i class="fas fa-comments text-[14px]"></i> แชท`;
+                btn.classList.remove('animate-pulse');
+            }
+        }
+    }
+
+    window.listenToInAppChat = function() {
+        if(inAppChatRef) inAppChatRef.off();
+        document.getElementById('inAppChatMessages').innerHTML = '';
+        
+        inAppChatRef = db.ref('chats/' + lineUserId);
+        inAppChatRef.on('child_added', snap => {
+            let msg = snap.val();
+            if(!msg) return;
+
+            let isMe = msg.sender === 'passenger';
+            let align = isMe ? 'justify-end' : 'justify-start';
+            let bg = isMe ? 'bg-[#fae100] text-gray-900 dark:text-[#1e234e]' : 'bg-white dark:bg-[#2a2f5c] border border-gray-200 dark:border-[#383d6a] text-gray-800 dark:text-white';
+            
+            let timeStr = "";
+            if (msg.timestamp) {
+                let d = new Date(msg.timestamp);
+                let hrs = String(d.getHours()).padStart(2, '0');
+                let mins = String(d.getMinutes()).padStart(2, '0');
+                timeStr = `${hrs}:${mins}`;
+            }
+
+            let html = `
+            <div class="flex w-full ${align} animate-fade-in mb-3">
+                <div class="flex flex-col ${isMe ? 'items-end' : 'items-start'} max-w-[80%]">
+                    <div class="${bg} px-4 py-2.5 rounded-2xl text-[13px] font-normal shadow-sm break-words w-full">
+                        ${msg.text}
+                    </div>
+                    <span class="text-[9px] text-gray-400 dark:text-gray-500 mt-1 ${isMe ? 'mr-1' : 'ml-1'} font-normal">${timeStr}</span>
+                </div>
+            </div>`;
+
+            document.getElementById('inAppChatMessages').insertAdjacentHTML('beforeend', html);
+            
+            const chatBox = document.getElementById('inAppChatBox');
+            if(chatBox) setTimeout(() => { chatBox.scrollTop = chatBox.scrollHeight; }, 100);
+
+            // 🌟 แจ้งเตือนปุ่มเด้งสีแดง ถ้าหน้าต่างแชทปิดอยู่แล้วคนขับทักมา
+            let modal = document.getElementById('inAppChatModal');
+            if(modal && modal.classList.contains('hidden') && !isMe) {
+                window.unreadInAppCount++;
+                updateInAppChatBadge();
+            }
+        });
+    }
 
     window.confirmReportTrip = function() {
         if (!selectedHistoryJobId || !loadedHistoryJobs[selectedHistoryJobId]) return;
