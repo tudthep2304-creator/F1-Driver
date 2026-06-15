@@ -1651,31 +1651,6 @@
     
     function initApp() {
       requestWakeLock();
-      startSharingPassengerLocation();
-      db.ref('passenger_blocks/' + lineUserId).on('value', snap => { myBlockedDrivers = snap.val() || {}; });
-
-      db.ref('bookings/' + lineUserId).on('value', snap => {
-        const b = snap.val();
-        if(b) { 
-            if(b.driverPin && b.status === "รับงานแล้ว" && (myBlockedDrivers[b.driverPin] || myBlockedDrivers[b.driverPhone])) {
-                db.ref('bookings/' + lineUserId).update({ driverPin: null, driverPhone: null, status: "รอผู้ขับขี่ตอบรับ" });
-                return; 
-            }
-            bookData = b; 
-
-            if (b.waypoints) {
-                localWaypoints.forEach(w => { if(w.marker) w.marker.setMap(null); });
-                localWaypoints = b.waypoints.map(w => ({ lat: w.lat, lng: w.lng, name: w.name, type: w.type, iconType: w.iconType || null, passed: w.passed || false }));
-            } else {
-                localWaypoints = [];
-            }
-            
-            updateRideButtonState();
-            renderWaypointsUI();
-            handleTracking(); 
-        } 
-        function initApp() {
-      requestWakeLock();
       
       // 🌟 ระบบแชร์พิกัดลูกค้าให้แอดมิน (ถ้ามีฟังก์ชันนี้อยู่)
       if (typeof startSharingPassengerLocation === 'function') {
