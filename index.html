@@ -2581,9 +2581,24 @@
                 db.ref('bookings/' + lineUserId).update({ status: "รอผู้ขับขี่ตอบรับ", driverPin: null, driverName: null, driverCar: null, driverPlate: null, driverPhone: null }).then(() => { setTimeout(() => { window.hasAutoRebooked = false; }, 3000); });
             }
         } 
-        else if (bookData.status === "เสร็จสิ้น") {
+        // 🌟 แก้ไขจุดที่ค้าง: เพิ่มระบบเด้งหน้าให้คะแนนเมื่อสถานะ "เสร็จสิ้น"
+        else if (bookData.status === "เสร็จสิ้น" || bookData.status.includes("ถึงที่หมาย")) {
             if(driverBox) driverBox.classList.add('hidden'); if(actionBtns) actionBtns.classList.add('hidden'); if(btnEmer) btnEmer.classList.add('hidden');
             window.lastKnownStatus = bookData.status;
+
+            if (!window.hasShownFinishAlert) {
+                window.hasShownFinishAlert = true;
+                let finalMessage = `คุณเดินทางถึงที่หมายเรียบร้อยแล้ว\nราคาสุทธิ: ฿${bookData.price}\n\nขอบคุณที่ใช้บริการ F1 Driver ครับ!`;
+                
+                showAlert('ถึงที่หมายเรียบร้อย!', finalMessage, 'success', () => { 
+                    document.getElementById('driverRatingModal').classList.remove('hidden');
+                    // เคลียร์งานออกจากระบบเพื่อพากลับหน้าแรก
+                    db.ref('bookings/' + lineUserId).remove().then(() => {
+                        window.hasShownFinishAlert = false;
+                        if(typeof resetTrackingFlags === 'function') resetTrackingFlags();
+                    });
+                });
+            }
         } 
         else if (bookData.status === "รอผู้ขับขี่ตอบรับ") {
             if(driverBox) driverBox.classList.add('hidden'); if(btnEmer) btnEmer.classList.add('hidden');
@@ -2605,6 +2620,23 @@
                 if(actionBtns) actionBtns.classList.remove('hidden');
                 document.getElementById('btnChat').classList.remove('hidden'); document.getElementById('btnCall').classList.remove('hidden'); document.getElementById('btnCancel').classList.remove('hidden');
             }
+
+            window.lastKnownStatus = bookData.status; 
+            let plateEl = document.getElementById('trackDriverPlate'); let carEl = document.getElementById('trackDriverCar'); let nameEl = document.getElementById('trackDriverName');
+
+            if (bookData.driverPin) {
+                db.ref('drivers_profile/' + bookData.driverPin).once('value', snap => {
+                    if (snap.exists()) {
+                        let d = snap.val();
+                        plateEl.innerText = d.plate || bookData.driverPlate || '-'; carEl.innerText = d.carModel || bookData.driverCar || '-'; nameEl.innerText = d.name || bookData.driverName || '-';
+                    }
+                });
+            } else {
+                plateEl.innerText = bookData.driverPlate || '-'; carEl.innerText = bookData.driverCar || '-'; nameEl.innerText = bookData.driverName || '-';
+            }
+        }
+        if(typeof drawTrackingRoute === 'function') { drawTrackingRoute(bookData.status); }
+    }
 
             window.lastKnownStatus = bookData.status; 
             let plateEl = document.getElementById('trackDriverPlate'); let carEl = document.getElementById('trackDriverCar'); let nameEl = document.getElementById('trackDriverName');
@@ -2670,6 +2702,51 @@
         let lineUrl = `https://line.me/R/oaMessage/${lineOaId}/?${encodedMessage}`;
         window.open(lineUrl, '_blank');
     }
+    // ==========================================
+    // 🌟 กู้คืนฟังก์ชันที่หายไป (ปุ่มต่างๆ บนหน้าจอ)
+    // ==========================================
+    window.openCommunityModal = function() {
+        document.getElementById('communityModal').classList.remove('hidden');
+        window.unreadChatMessages.clear(); 
+        updateChatBadge();
+        localStorage.setItem('lastSeenChatTime', Date.now());
+        const chatBox = document.getElementById('globalChatBox');
+        if (chatBox) { setTimeout(() => { chatBox.scrollTop = chatBox.scrollHeight; }, 100); }
+    };
+    window.closeCommunityModal = function() { 
+        document.getElementById('communityModal').classList.add('hidden'); 
+        localStorage.setItem('lastSeenChatTime', Date.now());
+    };
+    window.sendGlobalChat = function() {
+        let inputEl = document.getElementById('globalChatInput');
+        let textVal = inputEl.value.trim();
+        if(!textVal) return;
+        db.ref('community_chat').push({
+            pin: lineUserId, name: lineName || 'ผู้โดยสาร', role: 'passenger',
+            text: textVal, timestamp: firebase.database.ServerValue.TIMESTAMP
+        }).then(() => { inputEl.value = ''; });
+    };
+    window.filterCommunityChat = function() {
+        let keyword = document.getElementById('chatSearchInput').value.toLowerCase();
+        let messages = document.querySelectorAll('.chat-msg-item');
+        messages.forEach(msg => {
+            let text = msg.innerText.toLowerCase();
+            msg.style.display = text.includes(keyword) ? 'flex' : 'none';
+        });
+    };
+    
+    window.handleCrosshairClick = function() { centerToFocus(); };
+    window.openEmergencyModal = function() { document.getElementById('emergencyModal').classList.remove('hidden'); };
+    window.closeEmergencyModal = function() { document.getElementById('emergencyModal').classList.add('hidden'); };
+    
+    // ระบบกดชื่อสถานที่แล้วให้แผนที่เลื่อนไปโฟกัส
+    window.focusLocationToggle = function(lat, lng, index) {
+        if (!map) return;
+        map.panTo({lat: lat, lng: lng});
+        map.setZoom(17);
+        focusedWaypointIndex = index;
+        renderWaypointsUI();
+    };
   </script>
   <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDsZ_tbFhH6fUXRz3I6C-tMshNwwrSevd4&libraries=places,geometry&callback=initMap" async defer></script>
 </body>
