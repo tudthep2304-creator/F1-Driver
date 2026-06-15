@@ -6,35 +6,16 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <script src="https://cdn.tailwindcss.com"></script>
   
-  <!-- 🌟 1. สคริปต์ตั้งค่า Tailwind และปรับโหมดตามเครื่องมือถืออัตโนมัติ -->
   <script>
     tailwind.config = { darkMode: 'class' };
     
-    function applyTheme() {
-      // เช็คว่าผู้ใช้เคยตั้งค่าเองไหม ถ้าไม่เคย ให้เช็คจากระบบ OS ของเครื่อง
-      if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-        document.documentElement.classList.add('dark');
-      } else {
-        document.documentElement.classList.remove('dark');
-      }
+    // ดักเช็คสีก่อนเว็บโหลด
+    if (localStorage.getItem('theme') === 'light') {
+      document.documentElement.classList.remove('dark');
+    } else {
+      document.documentElement.classList.add('dark');
+      localStorage.setItem('theme', 'dark'); // ค่าเริ่มต้นให้เป็น Dark Mode
     }
-
-    // รันเช็คสีทันทีตอนเปิดแอป
-    applyTheme();
-
-    // 🌟 ดักจับการเปลี่ยนโหมดของมือถือแบบ Real-time (เช่น ตั้งเวลาให้มือถือมืดตอน 18.00 น.)
-    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
-      // เปลี่ยนตามเครื่อง เฉพาะคนที่ยังไม่เคยบังคับเปลี่ยนสีผ่านปุ่มในแอป
-      if (!('theme' in localStorage)) { 
-        applyTheme();
-        
-        // สั่งเปลี่ยนสีแผนที่ให้ตรงกับโหมดอัตโนมัติ
-        if (typeof map !== 'undefined' && map && typeof isSatelliteMode !== 'undefined' && !isSatelliteMode) {
-            let mapStyle = document.documentElement.classList.contains('dark') ? (typeof detailedDarkMapStyle !== 'undefined' ? detailedDarkMapStyle : []) : []; 
-            map.setOptions({ styles: mapStyle });
-        }
-      }
-    });
   </script>
 
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
@@ -173,6 +154,8 @@
           <span class="logo-1">1</span>
       </div>
   </div>
+
+  <audio id="notiSound" src="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3" preload="auto"></audio>
 
   <div id="map" class="fixed inset-0 w-full h-full z-0 bg-gray-200 dark:bg-[#1e234e] hidden"></div>
 
@@ -1187,31 +1170,18 @@
     async function requestWakeLock() { if ('wakeLock' in navigator) { try { wakeLock = await navigator.wakeLock.request('screen'); } catch (err) {} } }
     document.addEventListener('visibilitychange', () => { if (wakeLock !== null && document.visibilityState === 'visible') requestWakeLock(); });
 
-    // ==========================================
-    // 🌟 ฟังก์ชันเสียงพูด (TTS) แบบคลีนๆ สำหรับมือถือ
-    // ==========================================
-    function speakText(baseText, gender = 'male') {
+    function playSoundAlert() {
+        if(!notiAudio) notiAudio = document.getElementById('notiSound');
+        if(notiAudio) { notiAudio.currentTime = 0; notiAudio.play().catch(e => console.log('Audio playback prevented')); }
+    }
+
+    function speakText(text) {
         if ('speechSynthesis' in window) {
-            window.speechSynthesis.cancel(); // ล้างคิวเก่าที่อาจจะค้างอยู่
-            
-            let politeWord = (gender === 'female') ? 'ค่ะ' : 'ครับ';
-            let msg = new SpeechSynthesisUtterance(baseText + politeWord); 
-            msg.lang = 'th-TH'; 
-            msg.rate = 1.0;     
-            
+            window.speechSynthesis.cancel(); 
+            let msg = new SpeechSynthesisUtterance(text); msg.lang = 'th-TH'; msg.rate = 1.0;     
             window.speechSynthesis.speak(msg);
         }
     }
-
-    // 🌟 ปลดล็อกสิทธิ์เสียงของเบราว์เซอร์เมื่อผู้โดยสารแตะหน้าจอครั้งแรก
-    window.ttsUnlocked = false;
-    document.body.addEventListener('touchstart', function() {
-        if (!window.ttsUnlocked && 'speechSynthesis' in window) {
-            let unlockMsg = new SpeechSynthesisUtterance('');
-            window.speechSynthesis.speak(unlockMsg);
-            window.ttsUnlocked = true;
-        }
-    }, { once: true });
 
     document.addEventListener("DOMContentLoaded", () => {
         let savedPhone = localStorage.getItem('passengerPhone');
@@ -2351,11 +2321,6 @@
             });
         });
     }
-    function updateRealtimeMap() {
-        if(!map || !currentRouteBounds) return;
-        let pb = getDynamicBottomPadding();
-        map.fitBounds(currentRouteBounds, { top: 120, right: 50, bottom: pb, left: 50 });
-    }
 
     function resetPromoError(msg, codeInput) {
         showAlert('ขออภัย', msg, 'error'); codeInput.value = '';
@@ -2708,44 +2673,6 @@
         enableSmoothSwipeToClose('newsDetailModal', window.closeNewsDetailModal);
     }, 1000);
 
-    window.currentDriverGender = 'male'; // ค่าเริ่มต้น
-
-    // ==========================================
-    // 🌟 ระบบเสียงพูด (TTS) แบบคลีนๆ สำหรับมือถือ (เอาติ๊งน่องออก 100%)
-    // ==========================================
-    function speakText(baseText, gender = 'male') {
-        if ('speechSynthesis' in window) {
-            window.speechSynthesis.cancel(); // ล้างคิวเก่าก่อนพูดเสมอ
-            
-            let politeWord = (gender === 'female') ? 'ค่ะ' : 'ครับ';
-            let msg = new SpeechSynthesisUtterance(baseText + " " + politeWord); 
-            msg.lang = 'th-TH'; 
-            msg.rate = 1.0;     
-            
-            window.speechSynthesis.speak(msg);
-        }
-    }
-
-    // 🌟 ปลดล็อกสิทธิ์เสียงเมื่อสัมผัสหน้าจอ (ระบบ iOS/Android บังคับ)
-    window.ttsUnlocked = false;
-    function unlockMobileTTS() {
-        if (!window.ttsUnlocked && 'speechSynthesis' in window) {
-            let unlockMsg = new SpeechSynthesisUtterance(' '); // ใช้เสียงช่องว่างปลดล็อก
-            unlockMsg.volume = 0.01;
-            window.speechSynthesis.speak(unlockMsg);
-            window.ttsUnlocked = true;
-            document.body.removeEventListener('touchstart', unlockMobileTTS, true);
-            document.body.removeEventListener('click', unlockMobileTTS, true);
-        }
-    }
-    document.body.addEventListener('touchstart', unlockMobileTTS, true);
-    document.body.addEventListener('click', unlockMobileTTS, true);
-
-    // ==========================================
-    // 🌟 ฟังก์ชัน Tracking
-    // ==========================================
-    window.currentDriverGender = 'male'; // ค่าเริ่มต้น
-
     function handleTracking() {
         if (!bookData) return;
         const statusText = document.getElementById('unifiedStatusText');
@@ -2758,66 +2685,9 @@
         if(statusText) statusText.innerText = bookData.status;
         if(priceText) { priceText.innerText = bookData.priceEstimate ? bookData.priceEstimate : ('~฿' + (bookData.price || 0)); }
 
-        let isStatusChanged = (window.lastKnownStatus !== bookData.status);
-        if (isStatusChanged) {
-            window.lastKnownStatus = bookData.status;
-        }
-
-        // ดึงเพศคนขับ (ถ้ามี)
-        if (bookData.driverPin) {
-            db.ref('drivers_profile/' + bookData.driverPin).once('value', snap => {
-                if (snap.exists() && snap.val().gender) {
-                    window.currentDriverGender = snap.val().gender;
-                }
-            });
-        }
-        let driverGender = bookData.driverGender || window.currentDriverGender || 'male';
-
-        // 🌟 สั่งให้พูดเสียงทันทีเมื่อสถานะเปลี่ยน (ไม่มี setTimeout มากวนใจมือถือแล้ว)
-        if (bookData.status.includes("รับงาน") || bookData.status.includes("กำลังเดินทาง")) {
-            if (!window.hasSpokenAccept) {
-                speakText("คนขับรับงานแล้ว", driverGender);
-                window.hasSpokenAccept = true;
-            }
-            if (!window.hasSpokenArrivePick && driverData.lat && bookData.pLat && typeof google !== 'undefined') {
-                let dLoc = new google.maps.LatLng(driverData.lat, driverData.lng);
-                let pLoc = new google.maps.LatLng(bookData.pLat, bookData.pLng);
-                if (google.maps.geometry.spherical.computeDistanceBetween(dLoc, pLoc) <= 500) {
-                    speakText("คนขับใกล้ถึงแล้ว", driverGender);
-                    window.hasSpokenArrivePick = true;
-                }
-            }
-        } 
-        else if (bookData.status.includes("ถึงจุดรับ") || bookData.status.includes("มาถึง")) {
-            if (!window.hasSpokenAtPickup) {
-                speakText("คนขับถึงจุดรับแล้ว", driverGender);
-                window.hasSpokenAtPickup = true;
-            }
-        } 
-        else if (bookData.status.includes("ออกเดินทาง") || bookData.status.includes("ขึ้นรถ") || bookData.status.includes("ไปยัง")) {
-            if (!window.hasSpokenDepart) {
-                speakText("ผู้โดยสารขึ้นรถแล้ว กำลังเดินทางไปยังจุดหมาย", driverGender);
-                window.hasSpokenDepart = true;
-            }
-        } 
-        else if (bookData.status === "เสร็จสิ้น" || bookData.status.includes("ถึงที่หมาย")) {
-            if (!window.hasSpokenFinish) {
-                speakText("ถึงจุดหมายปลายทางแล้ว ขอบคุณที่ใช้บริการ", driverGender);
-                window.hasSpokenFinish = true;
-            }
-        }
-        else if (bookData.status.includes("ยกเลิก")) {
-            if (!window.hasSpokenCancel) {
-                speakText("ขออภัย งานถูกยกเลิก", driverGender);
-                window.hasSpokenCancel = true;
-            }
-        }
-
-        // ==========================================
-        // 🌟 การอัปเดตหน้าจอ UI
-        // ==========================================
         if (bookData.status.includes("ยกเลิก")) {
             if(driverBox) driverBox.classList.add('hidden'); if(actionBtns) actionBtns.classList.add('hidden'); if(btnEmer) btnEmer.classList.add('hidden');
+            window.lastKnownStatus = bookData.status;
             
             if (!window.hasAutoRebooked) {
                 window.hasAutoRebooked = true;
@@ -2825,8 +2695,10 @@
                 db.ref('bookings/' + lineUserId).update({ status: "รอผู้ขับขี่ตอบรับ", driverPin: null, driverName: null, driverCar: null, driverPlate: null, driverPhone: null }).then(() => { setTimeout(() => { window.hasAutoRebooked = false; }, 3000); });
             }
         } 
+        // 🌟 แก้ไขจุดที่ค้าง: เพิ่มระบบเด้งหน้าให้คะแนนเมื่อสถานะ "เสร็จสิ้น"
         else if (bookData.status === "เสร็จสิ้น" || bookData.status.includes("ถึงที่หมาย")) {
             if(driverBox) driverBox.classList.add('hidden'); if(actionBtns) actionBtns.classList.add('hidden'); if(btnEmer) btnEmer.classList.add('hidden');
+            window.lastKnownStatus = bookData.status;
 
             if (!window.hasShownFinishAlert) {
                 window.hasShownFinishAlert = true;
@@ -2834,6 +2706,7 @@
                 
                 showAlert('ถึงที่หมายเรียบร้อย!', finalMessage, 'success', () => { 
                     document.getElementById('driverRatingModal').classList.remove('hidden');
+                    // เคลียร์งานออกจากระบบเพื่อพากลับหน้าแรก
                     db.ref('bookings/' + lineUserId).remove().then(() => {
                         window.hasShownFinishAlert = false;
                         if(typeof resetTrackingFlags === 'function') resetTrackingFlags();
@@ -2845,24 +2718,24 @@
             if(driverBox) driverBox.classList.add('hidden'); if(btnEmer) btnEmer.classList.add('hidden');
             if(actionBtns) actionBtns.classList.remove('hidden'); 
             document.getElementById('btnChat').classList.add('hidden'); document.getElementById('btnCall').classList.add('hidden'); document.getElementById('btnCancel').classList.remove('hidden');
+            window.lastKnownStatus = bookData.status;
         } 
         else {
             if(driverBox) driverBox.classList.remove('hidden'); if(btnEmer) btnEmer.classList.remove('hidden');
-            
             let isPassengerInCar = bookData.status.includes("ออกเดินทาง") || bookData.status.includes("ไปส่ง") || bookData.status.includes("ไปยัง") || bookData.status.includes("ขึ้นรถ");
 
             if (isPassengerInCar) {
                 if(actionBtns) actionBtns.classList.add('hidden');
-                
-                if (isStatusChanged) {
+                if (window.lastKnownStatus !== bookData.status) {
                     isTrackingMode = true; 
-                    if (map && markerDriver && markerDriver.getMap()) { updateMapPadding(); map.panTo(markerDriver.getPosition()); map.setZoom(17); }
+                    if (markerDriver && markerDriver.getMap()) { updateMapPadding(); map.panTo(markerDriver.getPosition()); map.setZoom(17); }
                 }
             } else {
                 if(actionBtns) actionBtns.classList.remove('hidden');
                 document.getElementById('btnChat').classList.remove('hidden'); document.getElementById('btnCall').classList.remove('hidden'); document.getElementById('btnCancel').classList.remove('hidden');
             }
 
+            window.lastKnownStatus = bookData.status; 
             let plateEl = document.getElementById('trackDriverPlate'); let carEl = document.getElementById('trackDriverCar'); let nameEl = document.getElementById('trackDriverName');
 
             if (bookData.driverPin) {
@@ -2878,6 +2751,107 @@
         }
         if(typeof drawTrackingRoute === 'function') { drawTrackingRoute(bookData.status); }
     }
+    
+    function updateRealtimeMap() {
+        if(!map || !currentRouteBounds) return;
+        let pb = getDynamicBottomPadding();
+        map.fitBounds(currentRouteBounds, { top: 120, right: 50, bottom: pb, left: 50 });
+    }
+
+    window.updateSelectedRatingScore = function(score) {
+        currentSelectedRatingScore = score;
+        const stars = document.getElementById('starRatingBox').querySelectorAll('i');
+        stars.forEach((star, index) => {
+            if(index < score) {
+                star.classList.remove('text-gray-300', 'dark:text-gray-600');
+                star.classList.add('text-[#eab308]', 'dark:text-[#fae100]');
+            } else {
+                star.classList.add('text-gray-300', 'dark:text-gray-600');
+                star.classList.remove('text-[#eab308]', 'dark:text-[#fae100]');
+            }
+        });
+    }
+
+    window.submitDriverRatingScore = function() {
+        document.getElementById('driverRatingModal').classList.add('hidden');
+        showAlert('ขอบคุณครับ', 'ระบบได้ส่งคะแนนประเมินให้คนขับเรียบร้อยแล้ว', 'success', () => { window.showPage(1); });
+    }
+
+    window.openInAppChatModal = function() { showAlert('ระบบแชท', 'ฟังก์ชันแชทกับคนขับกำลังอยู่ระหว่างการปรับปรุงครับ', 'info'); }
+
+    window.confirmReportTrip = function() {
+        if (!selectedHistoryJobId || !loadedHistoryJobs[selectedHistoryJobId]) return;
+        window.openConfirmActionModal("รายงานปัญหา?", "คุณต้องการรายงานปัญหาการเดินทางในรอบนี้ ใช่หรือไม่?", () => { window.reportCurrentTrip(); }, 'yellow');
+    }
+
+    window.reportCurrentTrip = function() {
+        if (!selectedHistoryJobId || !loadedHistoryJobs[selectedHistoryJobId]) return;
+        let job = loadedHistoryJobs[selectedHistoryJobId];
+        let shortId = selectedHistoryJobId.substring(selectedHistoryJobId.length - 8).toUpperCase();
+        let dateStr = new Date(job.completedAt || job.timestamp).toLocaleString('th-TH');
+        let serviceMap = {'car': 'รถยนต์', 'premium_car': 'รถยนต์พรีเมียม', 'bike': 'มอเตอร์ไซค์', 'premium_bike': 'มอไซค์พรีเมียม'};
+        let serviceInfo = serviceMap[job.serviceType || 'car'] || 'รถยนต์';
+        let driverInfo = document.getElementById('histDetDriver').innerText; 
+        
+        let message = `🚨 รายงานปัญหาการเดินทาง\nรหัสงาน: #${shortId}\nวันที่: ${dateStr}\nประเภทรถ: ${serviceInfo}\nคนขับ: ${driverInfo}\n\nรายละเอียดปัญหา:\n(กรุณาพิมพ์ปัญหาที่คุณพบ...)`;
+        let encodedMessage = encodeURIComponent(message);
+        let lineOaId = "@805zvmii"; 
+        let lineUrl = `https://line.me/R/oaMessage/${lineOaId}/?${encodedMessage}`;
+        window.open(lineUrl, '_blank');
+    }
+    // ==========================================
+    // 🌟 กู้คืนฟังก์ชันที่หายไป (ปุ่มต่างๆ บนหน้าจอ)
+    // ==========================================
+    window.openCommunityModal = function() {
+        document.getElementById('communityModal').classList.remove('hidden');
+        window.unreadChatMessages.clear(); 
+        updateChatBadge();
+        localStorage.setItem('lastSeenChatTime', Date.now());
+        const chatBox = document.getElementById('globalChatBox');
+        if (chatBox) { setTimeout(() => { chatBox.scrollTop = chatBox.scrollHeight; }, 100); }
+    };
+    window.closeCommunityModal = function() { 
+        document.getElementById('communityModal').classList.add('hidden'); 
+        localStorage.setItem('lastSeenChatTime', Date.now());
+    };
+    window.sendGlobalChat = function() {
+        let inputEl = document.getElementById('globalChatInput');
+        let textVal = inputEl.value.trim();
+        if(!textVal) return;
+        db.ref('community_chat').push({
+            pin: lineUserId, name: lineName || 'ผู้โดยสาร', role: 'passenger',
+            text: textVal, timestamp: firebase.database.ServerValue.TIMESTAMP
+        }).then(() => { inputEl.value = ''; });
+    };
+    window.filterCommunityChat = function() {
+        let keyword = document.getElementById('chatSearchInput').value.toLowerCase();
+        let messages = document.querySelectorAll('.chat-msg-item');
+        messages.forEach(msg => {
+            let text = msg.innerText.toLowerCase();
+            msg.style.display = text.includes(keyword) ? 'flex' : 'none';
+        });
+    };
+    
+    window.handleCrosshairClick = function() { centerToFocus(); };
+    window.openEmergencyModal = function() { document.getElementById('emergencyModal').classList.remove('hidden'); };
+    window.closeEmergencyModal = function() { document.getElementById('emergencyModal').classList.add('hidden'); };
+    
+    // 🌟 ระบบกดชื่อสถานที่แล้วให้แผนที่เลื่อนไปโฟกัส (กดซ้ำเพื่อซูมออก)
+    window.focusLocationToggle = function(lat, lng, index) {
+        if (!map) return;
+        
+        if (focusedWaypointIndex === index) {
+            // ถ้ายกเลิกการโฟกัส (กดซ้ำ) ให้ซูมออกให้เห็นทุกหมุด
+            focusedWaypointIndex = -1;
+            window.fitAllWaypoints();
+        } else {
+            // ถ้ากดครั้งแรก ให้ซูมเข้าไปที่หมุดนั้น
+            focusedWaypointIndex = index;
+            map.panTo({lat: lat, lng: lng});
+            map.setZoom(17);
+            renderWaypointsUI(); // รีเฟรชสีตัวหนังสือ
+        }
+    };
     // ==========================================
     // 🌟 กู้คืนตัวแปรและฟังก์ชันของระบบคอมมูนิตี้แชท
     // ==========================================
@@ -2968,43 +2942,6 @@
             renderWaypointsUI(); 
         }
     };
-    // ==========================================
-    // 🌟 ระบบปลดล็อกเสียงสำหรับ iOS และ Android
-    // ==========================================
-    window.mediaUnlocked = false;
-    
-    function unlockMediaOnMobile() {
-        if (!window.mediaUnlocked) {
-            // 1. ปลดล็อกเสียงติ๊งน่อง (เล่นแบบเงียบๆ 1 ครั้ง)
-            if(notiAudio) {
-                notiAudio.volume = 0;
-                notiAudio.play().then(() => {
-                    notiAudio.pause();
-                    notiAudio.currentTime = 0;
-                    notiAudio.volume = 0.2; // คืนค่าความดัง
-                }).catch(e=>{});
-            }
-            
-            // 2. ปลดล็อกเสียงพูด (พูดแบบเงียบๆ 1 ครั้ง)
-            if ('speechSynthesis' in window) {
-                let msg = new SpeechSynthesisUtterance('');
-                msg.volume = 0;
-                window.speechSynthesis.speak(msg);
-                window.speechSynthesis.cancel();
-            }
-
-            window.mediaUnlocked = true;
-            // เมื่อปลดล็อกสำเร็จ ให้ยกเลิกการดักจับนิ้ว
-            document.body.removeEventListener('touchstart', unlockMediaOnMobile, true);
-            document.body.removeEventListener('click', unlockMediaOnMobile, true);
-        }
-    }
-    // ดักจับทุกครั้งที่ลูกค้าแตะหน้าจอเพื่อปลดล็อกสิทธิ์
-
-    document.body.addEventListener('touchstart', unlockMediaOnMobile, true);
-
-    document.body.addEventListener('click', unlockMediaOnMobile, true);
-    
   </script>
   <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDsZ_tbFhH6fUXRz3I6C-tMshNwwrSevd4&libraries=places,geometry&callback=initMap" async defer></script>
 </body>
