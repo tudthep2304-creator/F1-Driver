@@ -1181,74 +1181,109 @@
     // ==========================================
     // 🌟 ระบบ Popup โฆษณาอัจฉริยะ (ดึงจากแอดมิน)
     // ==========================================
-    let currentPopupAd = null;
-    let popupAdTimer = null;
+    window.popupAdCountdownTimer = null;
+    let popupAdList = [];
 
+    // 1. ดึงรายการโฆษณาทั้งหมดจาก Firebase มาเก็บไว้
     db.ref('config/popup_ad').on('value', snap => {
+        popupAdList = [];
         if(snap.exists()) {
-            currentPopupAd = snap.val();
-            checkAndShowPopupAd(currentStep);
-        } else {
-            currentPopupAd = null;
+            snap.forEach(child => {
+                popupAdList.push({ id: child.key, ...child.val() });
+            });
+            window.checkAndShowPopupAd(currentStep); // เช็คทันทีที่มีอัปเดตโฆษณา
         }
     });
 
-    function checkAndShowPopupAd(page) {
-        if (!currentPopupAd || currentPopupAd.isActive === false) return;
+    // 2. ฟังก์ชันตรวจสอบเงื่อนไข (หน้าจอ + เวลา)
+    window.checkAndShowPopupAd = function(page) {
+        if (popupAdList.length === 0) return;
         
-        let targetPages = currentPopupAd.targetPages ? currentPopupAd.targetPages.toString().split(',') : ['1'];
-        if (targetPages.includes(page.toString())) {
-            let adId = currentPopupAd.adId || 'default_ad';
-            let lastSeen = sessionStorage.getItem('seen_ad_' + adId);
-            if (!lastSeen) { window.openPopupAd(); }
+        // 🌟 แปลงชื่อหน้าจอของแอป ให้ตรงกับค่าที่แอดมินติ๊กเลือก
+        let mappedPageName = '';
+        if (page === 1) mappedPageName = 'home';
+        else if (page === 'Tracking') mappedPageName = 'tracking';
+        else return; // ถ้าเป็นหน้า 2,3,4 ไม่ต้องโชว์ป๊อปอัปให้กวนใจลูกค้า
+
+        let now = Date.now();
+        let activeAd = null;
+
+        // วนหาโฆษณาที่ตรงเงื่อนไข
+        for (let i = 0; i < popupAdList.length; i++) {
+            let ad = popupAdList[i];
+            let isStarted = ad.startTime ? new Date(ad.startTime).getTime() <= now : true;
+            let isEnded = ad.endTime ? new Date(ad.endTime).getTime() < now : false;
+            let targetPages = ad.targetPages || ['home'];
+
+            if (isStarted && !isEnded && targetPages.includes(mappedPageName)) {
+                // เช็คว่าเคยดูโฆษณาตัวนี้ไปหรือยังในรอบการเปิดแอปนี้ (จำด้วย ID)
+                if (!sessionStorage.getItem('seen_ad_' + ad.id)) {
+                    activeAd = ad;
+                    break; // เจอ 1 อันแล้วเบรกเลย
+                }
+            }
+        }
+
+        // 3. ถ้าเจอโฆษณาที่พร้อมแสดงผล
+        if (activeAd) {
+            let modal = document.getElementById('popupAdModal');
+            let imgEl = document.getElementById('popupAdImage');
+            let countdownEl = document.getElementById('popupAdCountdown');
+            if(!modal || !imgEl || !countdownEl) return;
+
+            imgEl.src = activeAd.imageUrl;
+            
+            // ตั้งค่าลิงก์เมื่อคลิกรูปภาพ
+            imgEl.onclick = function() {
+                if (activeAd.linkUrl) window.open(activeAd.linkUrl, '_blank');
+                window.closePopupAd();
+            };
+
+            // บันทึกลงเครื่องว่าโชว์แล้ว จะได้ไม่เด้งซ้ำรัวๆ
+            sessionStorage.setItem('seen_ad_' + activeAd.id, 'true');
+
+            // ล้างตัวนับเวลาอันเก่าทิ้งก่อน (ป้องกันบั๊กเวลารวน)
+            if(window.popupAdCountdownTimer) clearInterval(window.popupAdCountdownTimer);
+            
+            // โชว์หน้าต่างขึ้นมา
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+                document.getElementById('popupAdContent').classList.remove('scale-95');
+            }, 10);
+
+            // 🌟 เช็คเรื่องการตั้งเวลา (กี่วินาที)
+            let duration = activeAd.duration !== undefined ? parseInt(activeAd.duration) : 0;
+
+            if (duration > 0) {
+                // ถ้าแอดมินตั้งเวลาไว้ ให้นับถอยหลัง
+                countdownEl.parentElement.innerHTML = `ปิดอัตโนมัติใน <span id="popupAdCountdown" class="text-[#fae100] font-bold">${duration}</span> วิ`;
+                let currentCount = duration;
+                
+                window.popupAdCountdownTimer = setInterval(() => {
+                    currentCount--;
+                    let counterSpan = document.getElementById('popupAdCountdown');
+                    if (counterSpan) counterSpan.innerText = currentCount;
+                    
+                    if (currentCount <= 0) {
+                        clearInterval(window.popupAdCountdownTimer);
+                        window.closePopupAd();
+                    }
+                }, 1000);
+            } else {
+                // ถ้าแอดมินตั้งค่าเป็น 0 (เว้นว่าง) ให้โชว์คำใบ้ว่าต้องกดกากบาทปิดเอง
+                countdownEl.parentElement.innerHTML = `แตะ <i class="fas fa-times text-red-400 mx-1"></i> ด้านบนเพื่อปิดโฆษณา`;
+            }
         }
     }
 
-    window.openPopupAd = function() {
-        if (!currentPopupAd || !currentPopupAd.imageUrl) return;
-        
-        let modal = document.getElementById('popupAdModal');
-        let img = document.getElementById('popupAdImage');
-        let countdownEl = document.getElementById('popupAdCountdown');
-        
-        img.src = currentPopupAd.imageUrl;
-        let timeLeft = parseInt(currentPopupAd.duration || 5);
-        countdownEl.innerText = timeLeft;
-        
-        modal.classList.remove('hidden');
-        setTimeout(() => {
-            modal.classList.remove('opacity-0');
-            document.getElementById('popupAdContent').classList.remove('scale-95');
-        }, 10);
-        
-        let adId = currentPopupAd.adId || 'default_ad';
-        sessionStorage.setItem('seen_ad_' + adId, 'true');
-
-        clearInterval(popupAdTimer);
-        popupAdTimer = setInterval(() => {
-            timeLeft--;
-            if (timeLeft <= 0) {
-                clearInterval(popupAdTimer);
-                window.closePopupAd();
-            } else {
-                countdownEl.innerText = timeLeft;
-            }
-        }, 1000);
-    }
-
+    // 4. คำสั่งปิดหน้าต่างโฆษณา
     window.closePopupAd = function() {
         let modal = document.getElementById('popupAdModal');
-        clearInterval(popupAdTimer);
+        if(window.popupAdCountdownTimer) clearInterval(window.popupAdCountdownTimer);
         modal.classList.add('opacity-0');
         document.getElementById('popupAdContent').classList.add('scale-95');
         setTimeout(() => { modal.classList.add('hidden'); }, 300);
-    }
-
-    window.clickPopupAd = function() {
-        if (currentPopupAd && currentPopupAd.linkUrl) {
-            window.open(currentPopupAd.linkUrl, '_blank');
-            window.closePopupAd();
-        }
     }
 
     window.hasSpokenAccept = false; window.hasSpokenArrivePick = false; window.hasSpokenAtPickup = false;
