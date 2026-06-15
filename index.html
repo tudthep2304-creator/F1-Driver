@@ -2730,6 +2730,23 @@
         focusedWaypointIndex = index;
         renderWaypointsUI();
     };
+    // ==========================================
+    // 🌟 กู้คืนตัวแปรและฟังก์ชันของระบบคอมมูนิตี้แชท
+    // ==========================================
+    window.unreadChatMessages = new Set();
+    
+    function updateChatBadge() {
+        let badge = document.getElementById('chatBadge');
+        if(badge) {
+            let count = window.unreadChatMessages.size;
+            if(count > 0) {
+                badge.innerText = count > 99 ? '99+' : count;
+                badge.classList.remove('hidden');
+            } else {
+                badge.classList.add('hidden');
+            }
+        }
+    }
   </script>
   <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDsZ_tbFhH6fUXRz3I6C-tMshNwwrSevd4&libraries=places,geometry&callback=initMap" async defer></script>
 </body>
