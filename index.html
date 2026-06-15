@@ -341,6 +341,52 @@
   </div>
       
 <!-- News Modal -->
+  <div id="profileModal" class="hidden fixed inset-0 z-[200] bg-[#1e234e] flex flex-col pointer-events-auto transition-transform">
+      <div class="relative z-10 bg-[#2a2f5c]/90 backdrop-blur-md border-b border-[#383d6a] h-16 px-4 flex items-center justify-between shadow-md shrink-0 w-full">
+          <div class="flex items-center gap-3">
+              <button onclick="window.closeProfileModal()" class="w-10 h-10 shrink-0 bg-[#383d6a]/80 text-gray-400 rounded-full flex items-center justify-center hover:text-white transition"><i class="fas fa-arrow-left"></i></button>
+              <h2 class="text-lg font-black text-white tracking-wide">โปรไฟล์ของฉัน</h2>
+          </div>
+      </div>
+      
+      <div class="flex-1 overflow-y-auto p-4 hide-scrollbar w-full flex flex-col items-center">
+          <div class="w-24 h-24 rounded-full bg-[#2a2f5c] border-2 border-[#fae100] shadow-lg mb-4 overflow-hidden flex items-center justify-center shrink-0">
+              <img id="profilePicLarge" src="https://img.icons8.com/bubbles/150/user.png" class="w-full h-full object-cover">
+          </div>
+          <h2 id="profileNameLarge" class="text-xl font-bold text-white mb-1">...</h2>
+          <div class="flex items-center gap-2 mb-6">
+              <span id="profilePhoneLarge" class="text-[13px] text-gray-400 font-normal">เบอร์โทร: -</span>
+              <button onclick="window.editProfilePhone()" class="text-[#fae100] text-[11px] bg-[#383d6a] px-2 py-1 rounded hover:bg-[#4b507d] transition shadow-sm"><i class="fas fa-pen"></i> แก้ไข</button>
+          </div>
+
+          <div class="w-full bg-[#2a2f5c] rounded-2xl border border-[#383d6a] p-4 mb-4 shadow-sm">
+              <div class="flex justify-between items-center border-b border-[#383d6a] pb-3 mb-3">
+                  <div class="flex items-center gap-3">
+                      <div class="w-10 h-10 rounded-full bg-[#1e234e] flex items-center justify-center text-[#4ade80]"><i class="fas fa-route"></i></div>
+                      <div>
+                          <p class="text-[11px] text-gray-400 font-normal">เดินทางไปแล้ว</p>
+                          <p class="text-[15px] font-bold text-white leading-tight"><span id="profileTotalRides">0</span> ครั้ง</p>
+                      </div>
+                  </div>
+                  <button onclick="window.closeProfileModal(); window.openPassengerHistory();" class="text-[11px] bg-[#383d6a] text-white px-3 py-1.5 rounded-full hover:bg-[#4b507d] transition shadow-sm">ดูประวัติ</button>
+              </div>
+              
+              <div class="flex justify-between items-center">
+                  <div class="flex items-center gap-3">
+                      <div class="w-10 h-10 rounded-full bg-[#1e234e] flex items-center justify-center text-red-400"><i class="fas fa-user-slash"></i></div>
+                      <div>
+                          <p class="text-[11px] text-gray-400 font-normal">คนขับที่ถูกบล็อก</p>
+                      </div>
+                  </div>
+                  <button onclick="window.closeProfileModal(); window.openBlockedDrivers();" class="text-[11px] bg-[#383d6a] text-white px-3 py-1.5 rounded-full hover:bg-[#4b507d] transition shadow-sm">จัดการ</button>
+              </div>
+          </div>
+
+          <button onclick="window.toggleTheme()" class="w-full bg-[#2a2f5c] border border-[#383d6a] text-white py-3.5 rounded-full font-normal shadow-sm hover:bg-[#383d6a] transition flex items-center justify-center gap-2 text-[13px] mb-3">
+              <i class="fas fa-adjust text-[#fae100]"></i> สลับโหมดมืด/สว่าง (ทดสอบ)
+          </button>
+      </div>
+  </div>
 <div id="newsModal" class="hidden fixed inset-0 z-[200] bg-[#1e234e] transition-opacity flex flex-col">
       
       <div class="absolute inset-0 z-0 overflow-hidden pointer-events-none">
