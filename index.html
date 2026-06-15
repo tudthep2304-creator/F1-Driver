@@ -6,16 +6,35 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <script src="https://cdn.tailwindcss.com"></script>
   
+  <!-- 🌟 1. สคริปต์ตั้งค่า Tailwind และปรับโหมดตามเครื่องมือถืออัตโนมัติ -->
   <script>
     tailwind.config = { darkMode: 'class' };
     
-    // ดักเช็คสีก่อนเว็บโหลด
-    if (localStorage.getItem('theme') === 'light') {
-      document.documentElement.classList.remove('dark');
-    } else {
-      document.documentElement.classList.add('dark');
-      localStorage.setItem('theme', 'dark'); // ค่าเริ่มต้นให้เป็น Dark Mode
+    function applyTheme() {
+      // เช็คว่าผู้ใช้เคยตั้งค่าเองไหม ถ้าไม่เคย ให้เช็คจากระบบ OS ของเครื่อง
+      if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+      }
     }
+
+    // รันเช็คสีทันทีตอนเปิดแอป
+    applyTheme();
+
+    // 🌟 ดักจับการเปลี่ยนโหมดของมือถือแบบ Real-time (เช่น ตั้งเวลาให้มือถือมืดตอน 18.00 น.)
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+      // เปลี่ยนตามเครื่อง เฉพาะคนที่ยังไม่เคยบังคับเปลี่ยนสีผ่านปุ่มในแอป
+      if (!('theme' in localStorage)) { 
+        applyTheme();
+        
+        // สั่งเปลี่ยนสีแผนที่ให้ตรงกับโหมดอัตโนมัติ
+        if (typeof map !== 'undefined' && map && typeof isSatelliteMode !== 'undefined' && !isSatelliteMode) {
+            let mapStyle = document.documentElement.classList.contains('dark') ? (typeof detailedDarkMapStyle !== 'undefined' ? detailedDarkMapStyle : []) : []; 
+            map.setOptions({ styles: mapStyle });
+        }
+      }
+    });
   </script>
 
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
