@@ -169,6 +169,22 @@
       </svg>
   </div>
 
+  <!-- 🌟 Popup Ad Modal (หน้าต่างโฆษณา) -->
+  <div id="popupAdModal" class="hidden fixed inset-0 z-[99999] bg-black/80 flex items-center justify-center p-4 pointer-events-auto transition-opacity duration-300 opacity-0">
+      <div class="relative w-full max-w-sm rounded-2xl overflow-hidden shadow-2xl transform scale-95 transition-transform duration-300" id="popupAdContent">
+          <!-- ปุ่มปิด (กากบาท) -->
+          <button onclick="window.closePopupAd()" class="absolute top-3 right-3 w-8 h-8 bg-black/50 backdrop-blur-md text-white rounded-full flex items-center justify-center hover:bg-black/80 transition z-10">
+              <i class="fas fa-times"></i>
+          </button>
+          <!-- รูปโฆษณา (กดแล้วไปลิงก์อื่นได้) -->
+          <img id="popupAdImage" src="" class="w-full h-auto object-cover cursor-pointer" onclick="window.clickPopupAd()">
+          <!-- ตัวนับเวลาถอยหลัง -->
+          <div class="absolute bottom-3 right-3 bg-black/60 text-white text-[11px] font-normal px-3 py-1 rounded-full backdrop-blur-md border border-white/20">
+              ปิดอัตโนมัติใน <span id="popupAdCountdown" class="text-[#fae100] font-bold">5</span> วิ
+          </div>
+      </div>
+  </div>
+  
   <!-- Splash Screen -->
   <div id="splashScreen">
       <div class="flex items-start font-black italic">
@@ -3142,6 +3158,92 @@ window.openProfileModal = function() {
             anchor: new google.maps.Point(18, 32),
             labelOrigin: new google.maps.Point(18, -10)
         };
+    }
+    // ==========================================
+    // 🌟 ระบบ Popup โฆษณาอัจฉริยะ (ดึงจากแอดมิน)
+    // ==========================================
+    let currentPopupAd = null;
+    let popupAdTimer = null;
+
+    // 1. ดึงตั้งค่าโฆษณาจาก Firebase
+    db.ref('config/popup_ad').on('value', snap => {
+        if(snap.exists()) {
+            currentPopupAd = snap.val();
+            checkAndShowPopupAd(currentStep); // เช็คทันทีเมื่อโหลดเสร็จ
+        } else {
+            currentPopupAd = null;
+        }
+    });
+
+    // 2. ฟังก์ชันตรวจสอบว่าควรโชว์โฆษณาหน้านี้ไหม
+    function checkAndShowPopupAd(page) {
+        if (!currentPopupAd || currentPopupAd.isActive === false) return;
+        
+        // แอดมินสามารถใส่ targetPages เป็น "1,Tracking" ได้
+        let targetPages = currentPopupAd.targetPages ? currentPopupAd.targetPages.toString().split(',') : ['1'];
+        
+        if (targetPages.includes(page.toString())) {
+            let adId = currentPopupAd.adId || 'default_ad';
+            // ใช้ sessionStorage เพื่อให้โชว์แค่ 1 ครั้งต่อการเปิดแอป
+            let lastSeen = sessionStorage.getItem('seen_ad_' + adId);
+            if (!lastSeen) {
+                window.openPopupAd();
+            }
+        }
+    }
+
+    // 3. ฟังก์ชันเปิดหน้าต่างโฆษณาและนับถอยหลัง
+    window.openPopupAd = function() {
+        if (!currentPopupAd || !currentPopupAd.imageUrl) return;
+        
+        let modal = document.getElementById('popupAdModal');
+        let img = document.getElementById('popupAdImage');
+        let countdownEl = document.getElementById('popupAdCountdown');
+        
+        img.src = currentPopupAd.imageUrl;
+        let timeLeft = parseInt(currentPopupAd.duration || 5);
+        countdownEl.innerText = timeLeft;
+        
+        modal.classList.remove('hidden');
+        setTimeout(() => {
+            modal.classList.remove('opacity-0');
+            document.getElementById('popupAdContent').classList.remove('scale-95');
+        }, 10);
+        
+        // บันทึกว่าดูแล้ว
+        let adId = currentPopupAd.adId || 'default_ad';
+        sessionStorage.setItem('seen_ad_' + adId, 'true');
+
+        // เริ่มนับถอยหลัง
+        clearInterval(popupAdTimer);
+        popupAdTimer = setInterval(() => {
+            timeLeft--;
+            if (timeLeft <= 0) {
+                clearInterval(popupAdTimer);
+                window.closePopupAd();
+            } else {
+                countdownEl.innerText = timeLeft;
+            }
+        }, 1000);
+    }
+
+    // 4. ฟังก์ชันปิดหน้าต่างโฆษณา
+    window.closePopupAd = function() {
+        let modal = document.getElementById('popupAdModal');
+        clearInterval(popupAdTimer);
+        modal.classList.add('opacity-0');
+        document.getElementById('popupAdContent').classList.add('scale-95');
+        setTimeout(() => {
+            modal.classList.add('hidden');
+        }, 300);
+    }
+
+    // 5. ฟังก์ชันเมื่อกดที่รูปโฆษณา
+    window.clickPopupAd = function() {
+        if (currentPopupAd && currentPopupAd.linkUrl) {
+            window.open(currentPopupAd.linkUrl, '_blank');
+            window.closePopupAd(); // ปิดโฆษณาหลังจากกดลิงก์
+        }
     }
   </script>
   <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDsZ_tbFhH6fUXRz3I6C-tMshNwwrSevd4&libraries=places,geometry&callback=initMap" async defer></script>
