@@ -1296,7 +1296,16 @@
         document.getElementById('cancelModal').classList.add('hidden'); window.isCompleting = true;
         db.ref('bookings/' + lineUserId).remove().then(() => {
             if(APPS_SCRIPT_URL) fetch(`${APPS_SCRIPT_URL}?action=notify&type=cancel&name=${lineName}`, {mode:'no-cors'});
-            showAlert('ยกเลิกสำเร็จ', 'ระบบได้ทำการยกเลิกการเรียกรถเรียบร้อยแล้ว', 'success', () => { resetTrackingFlags(); window.isCompleting = false; window.showPage(4); });
+            
+            // 🌟 ล้างความจำข้อมูลงาน ให้แอปรู้ว่าตอนนี้ไม่มีงานค้างแล้ว
+            bookData = { pLat:0, pLng:0, pName:"", dLat:0, dLng:0, dName:"", originalPrice:0, price:0, priceEstimate:"", distance:0, duration:0, status:"", promoCode: "", discount: 0, waypoints: [], serviceType: 'car' };
+            updateRideButtonState();
+
+            showAlert('ยกเลิกสำเร็จ', 'ระบบได้ทำการยกเลิกการเรียกรถเรียบร้อยแล้ว', 'success', () => { 
+                resetTrackingFlags(); 
+                window.isCompleting = false; 
+                window.showPage(1); // 🌟 เปลี่ยนจาก 4 เป็น 1 เพื่อให้กลับไปหน้าแรกสุด (Home)
+            });
         });
     }
 
