@@ -1184,6 +1184,12 @@
         
         window.unreadInAppCount = 0;
         if(typeof updateInAppChatBadge === 'function') updateInAppChatBadge();
+
+        // 🌟 ตัดการเชื่อมต่อฐานข้อมูลแชทเดิมทิ้ง 100% (เพื่อไม่ให้ผีหลอก)
+        if(window.inAppChatRef) { 
+            window.inAppChatRef.off(); 
+            window.inAppChatRef = null; 
+        }
     };
 
     function resetTrackingFlags() {
@@ -1783,7 +1789,7 @@
                       <div class="${bg} px-4 py-2.5 rounded-2xl text-[13px] font-normal shadow-sm break-words w-full">
                           ${messageData.text}
                       </div>
-                      <span class="text-[9px] text-gray-400 dark:text-gray-500 mt-1 ${isMe ? 'mr-1' : 'ml-1'} font-normal">${timeStr}</span>
+                      <span class="text-[9px] text-gray-400 dark:text-gray-500 mt-1 ${isSenderMe ? 'mr-1' : 'ml-1'} font-normal">${timeStr}</span>
                   </div>
               </div>`;
 
@@ -2660,6 +2666,12 @@
 
     function handleTracking() {
         if (!bookData) return;
+
+        // 🌟 ปลั๊กอินต่อสายแชทอัตโนมัติเมื่อมีงานใหม่ (และจะไม่ต่อถ้ายกเลิก/จบงานแล้ว)
+        if (!window.inAppChatRef && !bookData.status.includes("ยกเลิก") && bookData.status !== "เสร็จสิ้น") {
+            if(typeof window.listenToInAppChat === 'function') window.listenToInAppChat();
+        }
+
         const statusText = document.getElementById('unifiedStatusText');
         const actionBtns = document.getElementById('actionButtonsBox');
         const driverBox = document.getElementById('driverInfoBox');
