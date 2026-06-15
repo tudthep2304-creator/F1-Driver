@@ -2636,55 +2636,35 @@
         if(statusText) statusText.innerText = bookData.status;
         if(priceText) { priceText.innerText = bookData.priceEstimate ? bookData.priceEstimate : ('~฿' + (bookData.price || 0)); }
 
-        let isStatusChanged = (window.lastKnownStatus !== bookData.status);
-        if (isStatusChanged) {
-            window.lastKnownStatus = bookData.status;
+        // ==========================================
+        // 🌟 1. ระบบเสียงพูด (ใช้โครงสร้างเดิมของคุณ 100% และเอาติ๊งน่องออก)
+        // ==========================================
+        if (lastNotifiedStatus !== bookData.status) {
+            if ((bookData.status.includes("กำลังเดินทางไปหา") || bookData.status.includes("รับงานแล้ว")) && !window.hasSpokenAccept) { 
+                speakText("คนขับตอบรับแล้ว ราคาค่าโดยสารได้ถูกกำหนดแล้ว"); 
+                window.hasSpokenAccept = true; 
+            } 
+            else if (bookData.status.includes("มาถึงจุดรับ") && !window.hasSpokenAtPickup) { 
+                speakText("คนขับมาถึงแล้ว"); 
+                window.hasSpokenAtPickup = true; 
+            }
+            else if ((bookData.status.includes("ออกเดินทาง") || bookData.status.includes("ไปยังจุดส่ง")) && !window.hasSpokenDepart) { 
+                speakText("กำลังออกเดินทางไปยังจุดหมาย"); 
+                window.hasSpokenDepart = true; 
+            }
+            else if (bookData.status.includes("ถึงที่หมาย") && !window.hasSpokenFinish) { 
+                speakText("ถึงจุดหมายแล้ว ขอบคุณที่ใช้บริการ"); 
+                window.hasSpokenFinish = true; 
+            } 
+            else if (bookData.status.includes("ยกเลิก") && !window.hasSpokenCancel) { 
+                speakText("งานถูกยกเลิก"); 
+                window.hasSpokenCancel = true; 
+            }
+            lastNotifiedStatus = bookData.status;
         }
 
         // ==========================================
-        // 🌟 ระบบเสียงเตือน (ออริจินัลแบบเพียวๆ)
-        // ==========================================
-        if (bookData.status.includes("รับงาน") || bookData.status.includes("กำลังเดินทาง")) {
-            if (!window.hasSpokenAccept) {
-                speakText("คนขับรับงานแล้วค่ะ");
-                window.hasSpokenAccept = true;
-            }
-            if (!window.hasSpokenArrivePick && driverData.lat && bookData.pLat && typeof google !== 'undefined') {
-                let dLoc = new google.maps.LatLng(driverData.lat, driverData.lng);
-                let pLoc = new google.maps.LatLng(bookData.pLat, bookData.pLng);
-                if (google.maps.geometry.spherical.computeDistanceBetween(dLoc, pLoc) <= 500) {
-                    speakText("คนขับใกล้ถึงแล้วค่ะ");
-                    window.hasSpokenArrivePick = true;
-                }
-            }
-        } 
-        else if (bookData.status.includes("ถึงจุดรับ") || bookData.status.includes("มาถึง")) {
-            if (!window.hasSpokenAtPickup) {
-                speakText("คนขับถึงจุดรับแล้วค่ะ");
-                window.hasSpokenAtPickup = true;
-            }
-        } 
-        else if (bookData.status.includes("ออกเดินทาง") || bookData.status.includes("ขึ้นรถ") || bookData.status.includes("ไปยัง")) {
-            if (!window.hasSpokenDepart) {
-                speakText("ผู้โดยสารขึ้นรถแล้ว กำลังเดินทางไปยังจุดหมายค่ะ");
-                window.hasSpokenDepart = true;
-            }
-        } 
-        else if (bookData.status === "เสร็จสิ้น" || bookData.status.includes("ถึงที่หมาย")) {
-            if (!window.hasSpokenFinish) {
-                speakText("ถึงจุดหมายปลายทางแล้ว ขอบคุณที่ใช้บริการค่ะ");
-                window.hasSpokenFinish = true;
-            }
-        }
-        else if (bookData.status.includes("ยกเลิก")) {
-            if (!window.hasSpokenCancel) {
-                speakText("ขออภัย งานถูกยกเลิกค่ะ");
-                window.hasSpokenCancel = true;
-            }
-        }
-
-        // ==========================================
-        // 🌟 การอัปเดตหน้าจอ UI
+        // 🌟 2. การอัปเดตหน้าจอ UI
         // ==========================================
         if (bookData.status.includes("ยกเลิก")) {
             if(driverBox) driverBox.classList.add('hidden'); if(actionBtns) actionBtns.classList.add('hidden'); if(btnEmer) btnEmer.classList.add('hidden');
@@ -2724,9 +2704,11 @@
             if (isPassengerInCar) {
                 if(actionBtns) actionBtns.classList.add('hidden');
                 
-                if (isStatusChanged) {
-                    isTrackingMode = true; 
-                    if (map && markerDriver && markerDriver.getMap()) { updateMapPadding(); map.panTo(markerDriver.getPosition()); map.setZoom(17); }
+                // 🌟 ระบบกล้องตามรถอัตโนมัติ
+                if (isTrackingMode && map && markerDriver && markerDriver.getMap()) { 
+                    updateMapPadding(); 
+                    map.panTo(markerDriver.getPosition()); 
+                    map.setZoom(17); 
                 }
             } else {
                 if(actionBtns) actionBtns.classList.remove('hidden');
@@ -2813,10 +2795,9 @@
     // ==========================================
     function speakText(text) {
         if ('speechSynthesis' in window) {
-            window.speechSynthesis.cancel(); 
-            let msg = new SpeechSynthesisUtterance(text); 
-            msg.lang = 'th-TH'; 
-            msg.rate = 1.0;     
+            window.speechSynthesis.cancel();
+            let msg = new SpeechSynthesisUtterance(text);
+            msg.lang = 'th-TH';
             window.speechSynthesis.speak(msg);
         }
     }
