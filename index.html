@@ -9,13 +9,28 @@
   <script>
     tailwind.config = { darkMode: 'class' };
     
-    // ดักเช็คสีก่อนเว็บโหลด
-    if (localStorage.getItem('theme') === 'light') {
-      document.documentElement.classList.remove('dark');
-    } else {
-      document.documentElement.classList.add('dark');
-      localStorage.setItem('theme', 'dark'); // ค่าเริ่มต้นให้เป็น Dark Mode
+    // 🌟 ระบบเช็คสีแบบฉลาด (รองรับโหมดออโต้ตามเครื่อง)
+    function applySystemTheme() {
+        let theme = localStorage.getItem('theme');
+        if (theme === 'auto' || !theme) {
+            localStorage.setItem('theme', 'auto'); // ค่าเริ่มต้นให้เป็นออโต้
+            if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+        } else if (theme === 'light') {
+            document.documentElement.classList.remove('dark');
+        } else {
+            document.documentElement.classList.add('dark');
+        }
     }
+    applySystemTheme();
+    
+    // ดักจับเวลามือถือสลับโหมดเอง แล้วเปลี่ยนสีแอปตามทันที
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+        if(localStorage.getItem('theme') === 'auto') { applySystemTheme(); }
+    });
   </script>
 
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
@@ -500,9 +515,14 @@
               </div>
           </div>
           
-          <button onclick="window.toggleTheme()" class="w-full bg-white dark:bg-[#2a2f5c] border border-gray-200 dark:border-[#383d6a] text-gray-800 dark:text-white py-3.5 rounded-full font-normal shadow-sm hover:bg-gray-50 dark:hover:bg-[#383d6a] transition flex items-center justify-center gap-2 text-[13px] mb-3">
-              <i class="fas fa-adjust text-[#eab308] dark:text-[#fae100]"></i> สลับโหมดมืด/สว่าง
-          </button>
+          <div class="flex gap-2 w-full mb-3">
+              <button onclick="window.toggleTheme()" class="flex-1 bg-white dark:bg-[#2a2f5c] border border-gray-200 dark:border-[#383d6a] text-gray-800 dark:text-white py-3.5 rounded-xl font-normal shadow-sm hover:bg-gray-50 dark:hover:bg-[#383d6a] transition flex items-center justify-center gap-1.5 text-[12px]">
+                  <i class="fas fa-adjust text-[#eab308] dark:text-[#fae100]"></i> สลับเอง
+              </button>
+              <button onclick="window.setAutoTheme()" class="flex-1 bg-white dark:bg-[#2a2f5c] border border-gray-200 dark:border-[#383d6a] text-gray-800 dark:text-white py-3.5 rounded-xl font-normal shadow-sm hover:bg-gray-50 dark:hover:bg-[#383d6a] transition flex items-center justify-center gap-1.5 text-[12px]">
+                  <i class="fas fa-mobile-alt text-blue-500"></i> ออโต้ (ตามเครื่อง)
+              </button>
+          </div>
       </div>
   </div>
 
@@ -1505,18 +1525,41 @@
         if (htmlEl.classList.contains('dark')) {
             htmlEl.classList.remove('dark');
             localStorage.setItem('theme', 'light');
-            showAlert('เปลี่ยนธีม', 'สลับเป็นโหมดสว่าง (Light Mode) เรียบร้อย', 'success');
+            showAlert('เปลี่ยนธีม', 'สลับเป็นโหมดสว่าง (Light Mode) แบบกำหนดเองเรียบร้อย', 'success');
         } else {
             htmlEl.classList.add('dark');
             localStorage.setItem('theme', 'dark');
-            showAlert('เปลี่ยนธีม', 'สลับเป็นโหมดมืด (Dark Mode) เรียบร้อย', 'success');
+            showAlert('เปลี่ยนธีม', 'สลับเป็นโหมดมืด (Dark Mode) แบบกำหนดเองเรียบร้อย', 'success');
         }
+        updateMapThemeForAuto();
+    }
 
+    // 🌟 เปิดใช้งานโหมดออโต้ตามมือถือ
+    window.setAutoTheme = function() {
+        localStorage.setItem('theme', 'auto');
+        const htmlEl = document.documentElement;
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            htmlEl.classList.add('dark');
+        } else {
+            htmlEl.classList.remove('dark');
+        }
+        showAlert('เปลี่ยนโหมดอัตโนมัติ', 'เปิดใช้งานโหมดออโต้ แอปจะปรับสีตามระบบเครื่องครับ', 'success');
+        updateMapThemeForAuto();
+    }
+
+    function updateMapThemeForAuto() {
         if (map && !isSatelliteMode) {
-            let mapStyle = htmlEl.classList.contains('dark') ? detailedDarkMapStyle : []; 
+            let mapStyle = document.documentElement.classList.contains('dark') ? detailedDarkMapStyle : []; 
             map.setOptions({ styles: mapStyle });
         }
     }
+
+    // ทำให้แผนที่เปลี่ยนสีตามทันทีถ้าเครื่องลูกค้าสลับโหมดตอนเปิดแอปอยู่
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+        if(localStorage.getItem('theme') === 'auto') { 
+            updateMapThemeForAuto(); 
+        }
+    });
 
     function updateMapControlsPosition(page) {
         const controls = document.getElementById('mapControls'); if (!controls) return;
