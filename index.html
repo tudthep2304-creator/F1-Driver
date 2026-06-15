@@ -2538,7 +2538,6 @@
     // 🌟 ระบบจำตำแหน่งเดิม (Global Variable)
     window.cameFromProfile = false;
 
-    // --- ส่วนของประวัติการเดินทาง ---
     window.openPassengerHistory = function(fromProfile = false) {
         window.cameFromProfile = fromProfile; // จดไว้ว่าเปิดมาจากหน้าโปรไฟล์ไหม
         document.getElementById('historyModal').classList.remove('hidden');
@@ -2550,7 +2549,8 @@
         if (window.cameFromProfile) {
             window.openProfileModal();
             window.cameFromProfile = false; // รีเซ็ตสถานะ
-    window.closePassengerHistory = function() { document.getElementById('historyModal').classList.add('hidden'); }
+        }
+    }
 
     function renderPassengerHistory() {
         let container = document.getElementById('historyListContainer');
@@ -2844,8 +2844,7 @@
             window.cameFromProfile = false; // รีเซ็ตสถานะ
         }
     }
-    window.closeBlockedDrivers = function() { document.getElementById('blockedDriversModal').classList.add('hidden'); }
-
+    
     function renderBlockedDrivers() {
         let container = document.getElementById('blockedListContainer');
         container.innerHTML = '<div class="flex justify-center py-10"><i class="fas fa-spinner fa-spin text-3xl text-red-500"></i></div>';
