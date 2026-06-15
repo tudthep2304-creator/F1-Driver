@@ -2147,13 +2147,10 @@ window.openProfileModal = function() {
                       });
                   }
               } else {
-                  // ถ้าแอดมินยังไม่ได้ตั้งค่าอะไรเลยในฐานข้อมูล ให้ใช้ค่า Default 5 ประเภทนี้ไปก่อน (กันแอปพัง)
+                  // 🌟 แก้ไข: ให้โชว์ข้อมูลสำรองแค่ 2 ประเภท (รถยนต์, มอเตอร์ไซค์)
                   vehicleTypes = [
                       { id: 'car', name: 'รถยนต์', icon: 'fa-car-side', color: 'text-white', base: 50, km: 10, pick: 5 },
-                      { id: 'premium_car', name: 'รถยนต์พรีเมียม', icon: 'fa-car', color: 'text-[#fae100]', base: 80, km: 15, pick: 5 },
-                      { id: 'bike', name: 'รถมอเตอร์ไซค์', icon: 'fa-motorcycle', color: 'text-blue-400', base: 30, km: 8, pick: 5 },
-                      { id: 'premium_bike', name: 'มอเตอร์ไซค์พรีเมียม', icon: 'fa-motorcycle', color: 'text-purple-400', base: 50, km: 10, pick: 5 },
-                      { id: 'bicycle', name: 'รถจักรยาน', icon: 'fa-bicycle', color: 'text-green-400', base: 20, km: 5, pick: 5 }
+                      { id: 'bike', name: 'รถมอเตอร์ไซค์', icon: 'fa-motorcycle', color: 'text-blue-400', base: 30, km: 8, pick: 5 }
                   ];
               }
 
