@@ -2906,7 +2906,7 @@ window.openProfileModal = function() {
     // กู้คืนฟังก์ชันที่หายไป (Tracking, Rating, แชทคนขับ)
     // ==========================================
     
-// 🌟 ระบบ Tracking หลัก
+// 🌟 ระบบ Tracking หลัก (เพิ่มระบบหาคนขับใหม่อัตโนมัติ)
     function handleTracking() {
         if (!bookData) return;
         const statusText = document.getElementById('unifiedStatusText');
@@ -2921,22 +2921,30 @@ window.openProfileModal = function() {
             priceText.innerText = bookData.priceEstimate ? bookData.priceEstimate : ('~฿' + (bookData.price || 0));
         }
 
-        // 🌟 ดักจับสถานะ "ยกเลิก" ทุกกรณี
+        // 🌟 ดักจับสถานะ "ยกเลิก" ทุกกรณี และทำการหาคนขับใหม่อัตโนมัติ
         if (bookData.status.includes("ยกเลิก")) {
             if(driverBox) driverBox.classList.add('hidden');
             if(actionBtns) actionBtns.classList.add('hidden');
             if(btnEmer) btnEmer.classList.add('hidden');
             
-            // แจ้งเตือนผู้โดยสาร และลบงานออกจากระบบเพื่อเริ่มใหม่
-            if (!window.hasShownCancelAlert) {
-                window.hasShownCancelAlert = true;
-                showAlert('งานถูกยกเลิก', 'ขออภัยครับ งานของคุณถูกยกเลิก กรุณาเรียกรถใหม่อีกครั้ง', 'error', () => {
-                    db.ref('bookings/' + lineUserId).remove().then(() => {
-                        resetTrackingFlags(); 
-                        window.isCompleting = false; 
-                        window.hasShownCancelAlert = false;
-                        window.showPage(4); // กลับไปหน้าสรุป
-                    });
+            // ป้องกันระบบทำงานซ้ำซ้อน
+            if (!window.hasAutoRebooked) {
+                window.hasAutoRebooked = true;
+                
+                // แจ้งเตือนผู้โดยสารสั้นๆ
+                showAlert('กำลังหาคนขับใหม่', 'คนขับก่อนหน้ายกเลิกงาน ระบบกำลังค้นหาคนขับใหม่ให้คุณอัตโนมัติครับ', 'info');
+                
+                // 🌟 อัปเดตฐานข้อมูลให้กลับไปสถานะรอคนขับ และลบข้อมูลคนขับเดิมออกทั้งหมด
+                db.ref('bookings/' + lineUserId).update({
+                    status: "รอผู้ขับขี่ตอบรับ",
+                    driverPin: null,
+                    driverName: null,
+                    driverCar: null,
+                    driverPlate: null,
+                    driverPhone: null
+                }).then(() => {
+                    // รีเซ็ตตัวป้องกันเผื่อมีการยกเลิกซ้ำอีก
+                    setTimeout(() => { window.hasAutoRebooked = false; }, 3000); 
                 });
             }
         } 
@@ -2952,10 +2960,10 @@ window.openProfileModal = function() {
             if(actionBtns) actionBtns.classList.remove('hidden'); 
             document.getElementById('btnChat').classList.add('hidden');
             document.getElementById('btnCall').classList.add('hidden');
-            document.getElementById('btnCancel').classList.remove('hidden'); // โชว์แค่ยกเลิก
+            document.getElementById('btnCancel').classList.remove('hidden'); // โชว์แค่ยกเลิกให้ผู้โดยสารกดได้
         } 
         else {
-            // 🌟 กรณีคนขับรับงานแล้ว
+            // กรณีคนขับรับงานแล้ว
             if(driverBox) driverBox.classList.remove('hidden');
             if(actionBtns) actionBtns.classList.remove('hidden');
             if(btnEmer) btnEmer.classList.remove('hidden');
@@ -2964,7 +2972,6 @@ window.openProfileModal = function() {
             document.getElementById('btnCall').classList.remove('hidden');
             document.getElementById('btnCancel').classList.remove('hidden');
 
-            // 🌟 ดึงข้อมูลคนขับแบบเรียลไทม์ (ถ้าหาไม่เจอใน bookData)
             let plateEl = document.getElementById('trackDriverPlate');
             let carEl = document.getElementById('trackDriverCar');
             let nameEl = document.getElementById('trackDriverName');
@@ -2988,75 +2995,6 @@ window.openProfileModal = function() {
         if(typeof drawTrackingRoute === 'function') {
             drawTrackingRoute(bookData.status);
         }
-    }
-
-    // 🌟 ระบบแชท 1 ต่อ 1 (In-App Chat)
-    window.openInAppChatModal = function() {
-        if (!bookData || !bookData.driverPin) {
-            showAlert('รอสักครู่', 'กรุณารอคนขับรับงานก่อนเริ่มแชทครับ', 'info');
-            return;
-        }
-        document.getElementById('inAppChatModal').classList.remove('hidden');
-        
-        // ดึงชื่อคนขับมาแสดงหัวแชท
-        db.ref('drivers_profile/' + bookData.driverPin).once('value', snap => {
-            if(snap.exists()) {
-                document.getElementById('chatDriverNameStatus').innerText = snap.val().name || 'คนขับ';
-            }
-        });
-
-        // โหลดและรอรับข้อความ
-        window.activeInAppChatRef = db.ref('bookings/' + lineUserId + '/chat');
-        window.activeInAppChatRef.off();
-        window.activeInAppChatRef.on('value', snap => {
-            let msgBox = document.getElementById('inAppChatMessages');
-            msgBox.innerHTML = '';
-            if(snap.exists()) {
-                snap.forEach(child => {
-                    let msg = child.val();
-                    let isMe = msg.sender === 'passenger';
-                    let align = isMe ? 'justify-end' : 'justify-start';
-                    let bg = isMe ? 'bg-[#fae100] text-[#1e234e]' : 'bg-[#2a2f5c] border border-[#383d6a] text-white';
-                    
-                    let timeStr = "";
-                    if(msg.timestamp) {
-                        let d = new Date(msg.timestamp);
-                        timeStr = d.toLocaleTimeString('th-TH', {hour:'2-digit', minute:'2-digit'});
-                    }
-
-                    let html = `
-                    <div class="flex w-full ${align} animate-fade-in mb-3">
-                        <div class="flex flex-col ${isMe ? 'items-end' : 'items-start'} max-w-[80%]">
-                            <div class="${bg} px-4 py-2.5 rounded-2xl text-[13px] font-normal shadow-sm break-words w-full">
-                                ${msg.text}
-                            </div>
-                            <span class="text-[9px] text-gray-500 mt-1 ${isMe ? 'mr-1' : 'ml-1'}">${timeStr}</span>
-                        </div>
-                    </div>`;
-                    msgBox.insertAdjacentHTML('beforeend', html);
-                });
-                const chatScroll = document.getElementById('inAppChatBox');
-                if (chatScroll) setTimeout(() => chatScroll.scrollTop = chatScroll.scrollHeight, 100);
-            }
-        });
-    }
-
-    window.closeInAppChatModal = function() {
-        document.getElementById('inAppChatModal').classList.add('hidden');
-        if(window.activeInAppChatRef) window.activeInAppChatRef.off();
-    }
-
-    window.sendInAppChat = function() {
-        let inp = document.getElementById('inAppChatInput');
-        let text = inp.value.trim();
-        if(!text || !bookData || !bookData.driverPin) return;
-        
-        db.ref('bookings/' + lineUserId + '/chat').push({
-            sender: 'passenger',
-            text: text,
-            timestamp: firebase.database.ServerValue.TIMESTAMP
-        });
-        inp.value = '';
     }
     
     function updateRealtimeMap() {
