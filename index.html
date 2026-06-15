@@ -501,23 +501,40 @@
               <button onclick="window.editProfilePhone()" class="text-[#eab308] dark:text-[#fae100] text-[11px] bg-gray-100 dark:bg-[#383d6a] px-2 py-1 rounded hover:bg-gray-200 dark:hover:bg-[#4b507d] transition shadow-sm"><i class="fas fa-pen"></i> แก้ไข</button>
           </div>
 
-          <div class="w-full bg-white dark:bg-[#2a2f5c] rounded-2xl border border-gray-200 dark:border-[#383d6a] p-4 mb-4 shadow-sm">
-              <div class="flex justify-between items-center border-b border-gray-200 dark:border-[#383d6a] pb-3 mb-3">
-                  <div class="flex items-center gap-3">
-                      <div class="w-10 h-10 rounded-full bg-green-50 dark:bg-[#1e234e] flex items-center justify-center text-[#4ade80]"><i class="fas fa-route"></i></div>
-                      <div>
-                          <p class="text-[11px] text-gray-500 dark:text-gray-400 font-normal">เดินทางไปแล้ว</p>
-                          <p class="text-[15px] font-bold text-gray-800 dark:text-white leading-tight"><span id="profileTotalRides">0</span> ครั้ง</p>
-                      </div>
+          <div class="w-full flex items-center bg-white dark:bg-[#2a2f5c] border border-gray-200 dark:border-[#383d6a] rounded-full p-1.5 mb-4 shadow-sm h-16">
+              <div class="flex-1 flex items-center justify-start px-2 cursor-pointer hover:opacity-80 transition" onclick="window.closeProfileModal(); window.openPassengerHistory(true);">
+                  <div class="w-9 h-9 rounded-full bg-green-50 dark:bg-[#1e234e] flex items-center justify-center text-[#4ade80] mr-2 shrink-0"><i class="fas fa-route"></i></div>
+                  <div class="flex flex-col">
+                      <span class="text-[9px] text-gray-500 dark:text-gray-400 font-normal leading-tight">เดินทางไปแล้ว</span>
+                      <span class="text-[13px] font-bold text-gray-800 dark:text-white leading-tight"><span id="profileTotalRides">0</span> ครั้ง</span>
                   </div>
-                  <button onclick="window.closeProfileModal(); window.openPassengerHistory();" class="text-[11px] bg-gray-100 dark:bg-[#383d6a] text-gray-700 dark:text-white px-3 py-1.5 rounded-full hover:bg-gray-200 dark:hover:bg-[#4b507d] transition shadow-sm">ดูประวัติ</button>
               </div>
-              <div class="flex justify-between items-center">
-                  <div class="flex items-center gap-3">
-                      <div class="w-10 h-10 rounded-full bg-red-50 dark:bg-[#1e234e] flex items-center justify-center text-red-500 dark:text-red-400"><i class="fas fa-user-slash"></i></div>
-                      <div><p class="text-[11px] text-gray-500 dark:text-gray-400 font-normal">คนขับที่ถูกบล็อก</p></div>
+              
+              <div class="w-[1px] h-8 bg-gray-200 dark:bg-[#383d6a] mx-1 shrink-0"></div>
+              
+              <div class="flex-1 flex items-center justify-start px-2 cursor-pointer hover:opacity-80 transition" onclick="window.closeProfileModal(); window.openBlockedDrivers(true);">
+                  <div class="w-9 h-9 rounded-full bg-red-50 dark:bg-[#1e234e] flex items-center justify-center text-red-500 dark:text-red-400 mr-2 shrink-0"><i class="fas fa-user-slash"></i></div>
+                  <div class="flex flex-col">
+                      <span class="text-[9px] text-gray-500 dark:text-gray-400 font-normal leading-tight">คนขับที่ถูกบล็อก</span>
+                      <span class="text-[11px] font-bold text-gray-700 dark:text-white leading-tight mt-0.5">จัดการ <i class="fas fa-chevron-right text-[9px] ml-0.5 text-gray-400"></i></span>
                   </div>
-                  <button onclick="window.closeProfileModal(); window.openBlockedDrivers();" class="text-[11px] bg-gray-100 dark:bg-[#383d6a] text-gray-700 dark:text-white px-3 py-1.5 rounded-full hover:bg-gray-200 dark:hover:bg-[#4b507d] transition shadow-sm">จัดการ</button>
+              </div>
+          </div>
+          
+          <div class="w-full flex items-center justify-between bg-white dark:bg-[#2a2f5c] border border-gray-200 dark:border-[#383d6a] rounded-full p-1.5 mb-3 shadow-sm h-14">
+              <button onclick="window.toggleTheme()" class="flex-[1.5] h-full bg-gray-50 dark:bg-[#1e234e] border border-gray-200 dark:border-[#383d6a] text-gray-800 dark:text-white rounded-full font-normal shadow-sm hover:bg-gray-100 dark:hover:bg-[#383d6a]/50 transition flex items-center justify-center gap-1.5 text-[12px] active:scale-95">
+                  <i class="fas fa-adjust text-[#eab308] dark:text-[#fae100]"></i> สลับสี
+              </button>
+              
+              <div class="w-[1px] h-6 bg-gray-200 dark:bg-[#383d6a] mx-2 shrink-0"></div>
+              
+              <div class="flex-[1] flex items-center justify-end pr-2 gap-2 shrink-0">
+                  <i class="fas fa-mobile-alt text-blue-500 text-sm"></i>
+                  <span class="text-[10px] font-normal text-gray-600 dark:text-gray-300">ออโต้</span>
+                  <label class="relative inline-flex items-center cursor-pointer select-none">
+                      <input type="checkbox" id="theme-auto-toggle" onchange="window.handleAutoThemeChange(this)" class="sr-only peer">
+                      <div class="w-9 h-5 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
+                  </label>
               </div>
           </div>
           
@@ -2518,10 +2535,21 @@
       });
     }
 
-    window.openPassengerHistory = function() {
+    // 🌟 ระบบจำตำแหน่งเดิม (Global Variable)
+    window.cameFromProfile = false;
+
+    // --- ส่วนของประวัติการเดินทาง ---
+    window.openPassengerHistory = function(fromProfile = false) {
+        window.cameFromProfile = fromProfile; // จดไว้ว่าเปิดมาจากหน้าโปรไฟล์ไหม
         document.getElementById('historyModal').classList.remove('hidden');
         renderPassengerHistory();
     }
+    window.closePassengerHistory = function() { 
+        document.getElementById('historyModal').classList.add('hidden'); 
+        // ถ้าเปิดมาจากโปรไฟล์ ให้เด้งกลับไปที่โปรไฟล์
+        if (window.cameFromProfile) {
+            window.openProfileModal();
+            window.cameFromProfile = false; // รีเซ็ตสถานะ
     window.closePassengerHistory = function() { document.getElementById('historyModal').classList.add('hidden'); }
 
     function renderPassengerHistory() {
@@ -2802,9 +2830,19 @@
         }, "block");
     }
 
-    window.openBlockedDrivers = function() {
+    // --- ส่วนของจัดการคนขับที่บล็อก ---
+    window.openBlockedDrivers = function(fromProfile = false) {
+        window.cameFromProfile = fromProfile; // จดไว้ว่าเปิดมาจากหน้าโปรไฟล์ไหม
         document.getElementById('blockedDriversModal').classList.remove('hidden');
         renderBlockedDrivers();
+    }
+    window.closeBlockedDrivers = function() { 
+        document.getElementById('blockedDriversModal').classList.add('hidden'); 
+        // ถ้าเปิดมาจากโปรไฟล์ ให้เด้งกลับไปที่โปรไฟล์
+        if (window.cameFromProfile) {
+            window.openProfileModal();
+            window.cameFromProfile = false; // รีเซ็ตสถานะ
+        }
     }
     window.closeBlockedDrivers = function() { document.getElementById('blockedDriversModal').classList.add('hidden'); }
 
