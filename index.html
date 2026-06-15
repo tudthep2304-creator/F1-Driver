@@ -1283,12 +1283,17 @@
         let ridesEl = document.getElementById('profileTotalRides');
         if (ridesEl) {
             ridesEl.innerText = '...';
-            db.ref('completed_jobs').orderByChild('userId').equalTo(lineUserId).once('value', snap => {
+            // 🌟 1. ดึงแค่ "ตัวเลขสถิติ" ที่เซิร์ฟเวอร์จดไว้มาแสดง (ไม่โหลดประวัติทั้งหมดแล้ว)
+            db.ref('passenger_stats/' + lineUserId + '/totalRides').once('value', snap => {
                 if(snap.exists()) {
-                    let totalRides = Object.keys(snap.val()).length;
-                    ridesEl.innerText = totalRides;
+                    ridesEl.innerText = snap.val();
                 } else {
-                    ridesEl.innerText = '0';
+                    // 🌟 2. ถ้าเป็นลูกค้าระบบเก่าที่ยังไม่มีตัวนับ ให้ไปนับงานเก่ามาสรุปยอดเก็บไว้ (ทำแค่ครั้งเดียว)
+                    db.ref('completed_jobs').orderByChild('userId').equalTo(lineUserId).once('value', cSnap => {
+                        let total = cSnap.exists() ? Object.keys(cSnap.val()).length : 0;
+                        ridesEl.innerText = total;
+                        db.ref('passenger_stats/' + lineUserId + '/totalRides').set(total);
+                    });
                 }
             });
         }
@@ -2358,13 +2363,25 @@
         let container = document.getElementById('historyListContainer');
         container.innerHTML = '<div class="flex justify-center py-10"><i class="fas fa-spinner fa-spin text-3xl text-blue-500"></i></div>';
         
+        // 🌟 กำหนดเวลาย้อนหลัง 90 วัน (นับเป็นมิลลิวินาที)
+        let ninetyDaysAgo = Date.now() - (90 * 24 * 60 * 60 * 1000);
+        
         db.ref('completed_jobs').orderByChild('userId').equalTo(lineUserId).once('value', snap => {
             let jobs = [];
-            snap.forEach(child => { jobs.push({id: child.key, ...child.val()}); });
+            snap.forEach(child => { 
+                let jobData = child.val();
+                let jobTime = jobData.completedAt || jobData.timestamp || 0;
+                
+                // 🌟 กรองเอาเฉพาะงานที่เกิดขึ้นในช่วง 90 วันที่ผ่านมา
+                if (jobTime >= ninetyDaysAgo) {
+                    jobs.push({id: child.key, ...jobData}); 
+                }
+            });
+            
             jobs.sort((a,b) => (b.completedAt || b.timestamp || 0) - (a.completedAt || a.timestamp || 0));
             
             if(jobs.length === 0) {
-                container.innerHTML = `<div class="text-center py-10"><i class="fas fa-history text-4xl text-gray-300 dark:text-gray-600 mb-3"></i><p class="text-gray-500 dark:text-gray-400 font-bold">ยังไม่มีประวัติการเดินทาง</p></div>`;
+                container.innerHTML = `<div class="text-center py-10"><i class="fas fa-history text-4xl text-gray-300 dark:text-gray-600 mb-3"></i><p class="text-gray-500 dark:text-gray-400 font-bold">ยังไม่มีประวัติการเดินทางในช่วง 3 เดือน</p></div>`;
                 return;
             }
             
@@ -2393,7 +2410,6 @@
             container.innerHTML = html;
         });
     }
-
     let historyMapInstance = null; let historyDirectionsService = null; let historyDirectionsRenderer = null;
     window.historyMapMarkers = []; window.historyMapBounds = null; window.historyFocusedIndex = -1; 
 
@@ -2817,6 +2833,10 @@
 
     window.submitDriverRatingScore = function() {
         document.getElementById('driverRatingModal').classList.add('hidden');
+        
+        // 🌟 สั่งให้เซิร์ฟเวอร์บวกสถิติการเดินทางเพิ่ม 1 รอบ (+1) อัตโนมัติ
+        db.ref('passenger_stats/' + lineUserId + '/totalRides').set(firebase.database.ServerValue.increment(1));
+
         showAlert('ขอบคุณครับ', 'ระบบได้ส่งคะแนนประเมินให้คนขับเรียบร้อยแล้ว', 'success', () => { window.showPage(1); });
     }
 
