@@ -2636,54 +2636,44 @@
             window.lastKnownStatus = bookData.status;
         }
 
-        // ดึงเพศคนขับ (ถ้ามี)
-        if (bookData.driverPin) {
-            db.ref('drivers_profile/' + bookData.driverPin).once('value', snap => {
-                if (snap.exists() && snap.val().gender) {
-                    window.currentDriverGender = snap.val().gender;
-                }
-            });
-        }
-        let driverGender = bookData.driverGender || window.currentDriverGender || 'male';
-
         // ==========================================
-        // 🌟 ระบบเสียงเตือน (ไม่มี setTimeout เพื่อไม่ให้มือถือบล็อกเสียง)
+        // 🌟 ระบบเสียงเตือน (ออริจินัลแบบเพียวๆ)
         // ==========================================
         if (bookData.status.includes("รับงาน") || bookData.status.includes("กำลังเดินทาง")) {
             if (!window.hasSpokenAccept) {
-                speakText("คนขับรับงานแล้ว", driverGender);
+                speakText("คนขับรับงานแล้วค่ะ");
                 window.hasSpokenAccept = true;
             }
             if (!window.hasSpokenArrivePick && driverData.lat && bookData.pLat && typeof google !== 'undefined') {
                 let dLoc = new google.maps.LatLng(driverData.lat, driverData.lng);
                 let pLoc = new google.maps.LatLng(bookData.pLat, bookData.pLng);
                 if (google.maps.geometry.spherical.computeDistanceBetween(dLoc, pLoc) <= 500) {
-                    speakText("คนขับใกล้ถึงแล้ว", driverGender);
+                    speakText("คนขับใกล้ถึงแล้วค่ะ");
                     window.hasSpokenArrivePick = true;
                 }
             }
         } 
         else if (bookData.status.includes("ถึงจุดรับ") || bookData.status.includes("มาถึง")) {
             if (!window.hasSpokenAtPickup) {
-                speakText("คนขับถึงจุดรับแล้ว", driverGender);
+                speakText("คนขับถึงจุดรับแล้วค่ะ");
                 window.hasSpokenAtPickup = true;
             }
         } 
         else if (bookData.status.includes("ออกเดินทาง") || bookData.status.includes("ขึ้นรถ") || bookData.status.includes("ไปยัง")) {
             if (!window.hasSpokenDepart) {
-                speakText("ผู้โดยสารขึ้นรถแล้ว กำลังเดินทางไปยังจุดหมาย", driverGender);
+                speakText("ผู้โดยสารขึ้นรถแล้ว กำลังเดินทางไปยังจุดหมายค่ะ");
                 window.hasSpokenDepart = true;
             }
         } 
         else if (bookData.status === "เสร็จสิ้น" || bookData.status.includes("ถึงที่หมาย")) {
             if (!window.hasSpokenFinish) {
-                speakText("ถึงจุดหมายปลายทางแล้ว ขอบคุณที่ใช้บริการ", driverGender);
+                speakText("ถึงจุดหมายปลายทางแล้ว ขอบคุณที่ใช้บริการค่ะ");
                 window.hasSpokenFinish = true;
             }
         }
         else if (bookData.status.includes("ยกเลิก")) {
             if (!window.hasSpokenCancel) {
-                speakText("ขออภัย งานถูกยกเลิก", driverGender);
+                speakText("ขออภัย งานถูกยกเลิกค่ะ");
                 window.hasSpokenCancel = true;
             }
         }
@@ -2814,31 +2804,33 @@
         window.open(lineUrl, '_blank');
     }
     // ==========================================
-    // 🌟 1. ฟังก์ชันเสียงพูด (TTS) แบบคลีนๆ สำหรับมือถือ
+    // 🌟 1. ฟังก์ชันเสียงพูด (TTS) ออริจินัล 100%
     // ==========================================
-    function speakText(baseText, gender = 'male') {
+    function speakText(text) {
         if ('speechSynthesis' in window) {
-            window.speechSynthesis.cancel(); // ล้างคิวเก่าที่อาจจะค้างอยู่
-            
-            let politeWord = (gender === 'female') ? 'ค่ะ' : 'ครับ';
-            let msg = new SpeechSynthesisUtterance(baseText + " " + politeWord); 
+            window.speechSynthesis.cancel(); 
+            let msg = new SpeechSynthesisUtterance(text); 
             msg.lang = 'th-TH'; 
             msg.rate = 1.0;     
-            
             window.speechSynthesis.speak(msg);
         }
     }
 
-    // 🌟 ปลดล็อกสิทธิ์เสียงของเบราว์เซอร์เมื่อผู้โดยสารแตะหน้าจอครั้งแรก
-    window.ttsUnlocked = false;
+    // แอบปลดล็อกเสียงบนมือถือ เมื่อลูกค้าเอานิ้วแตะจอครั้งแรก
     document.body.addEventListener('touchstart', function() {
-        if (!window.ttsUnlocked && 'speechSynthesis' in window) {
-            let unlockMsg = new SpeechSynthesisUtterance('');
-            window.speechSynthesis.speak(unlockMsg);
-            window.ttsUnlocked = true;
+        if ('speechSynthesis' in window) {
+            let msg = new SpeechSynthesisUtterance('');
+            window.speechSynthesis.speak(msg);
         }
     }, { once: true });
     
+    document.body.addEventListener('click', function() {
+        if ('speechSynthesis' in window) {
+            let msg = new SpeechSynthesisUtterance('');
+            window.speechSynthesis.speak(msg);
+        }
+    }, { once: true });
+   
     // ==========================================
     // 🌟 กู้คืนฟังก์ชันที่หายไป (ปุ่มต่างๆ บนหน้าจอ)
     // ==========================================
@@ -2931,7 +2923,6 @@
             }, { enableHighAccuracy: true });
         }
     }
-    .gm-style-cc button { display: none !important; }
   </script>
   <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDsZ_tbFhH6fUXRz3I6C-tMshNwwrSevd4&libraries=places,geometry&callback=initMap" async defer></script>
 </body>
