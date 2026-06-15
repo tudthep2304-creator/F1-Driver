@@ -1198,14 +1198,28 @@
         }
     }
 
-    // โหลดเสียงเตรียมไว้ล่วงหน้า
+    // ==========================================
+    // 🌟 ระบบเสียงแจ้งเตือน และ Text-to-Speech (อัปเดตแก้บั๊กมือถือ)
+    // ==========================================
+    function playSoundAlert() {
+        if(!notiAudio) notiAudio = document.getElementById('notiSound');
+        if(notiAudio) { 
+            notiAudio.volume = 0.2; // ลดเสียงติ๊งน่องเหลือ 20%
+            notiAudio.currentTime = 0; 
+            notiAudio.play().catch(e => console.log('Audio playback prevented')); 
+        }
+    }
+
+    // เตรียมโหลดเสียงของเครื่อง
     if ('speechSynthesis' in window) {
         window.speechSynthesis.onvoiceschanged = function() { window.speechSynthesis.getVoices(); };
     }
 
     function speakText(baseText, gender = 'male') {
         if ('speechSynthesis' in window) {
-            // 🌟 สำคัญ: ลบคำสั่ง cancel() ออก เพราะในมือถือมันมักจะไปล้างคิวเสียงทิ้งจนเงียบไปเลย
+            // 🌟 สำคัญมาก: ต้องมี resume และ cancel เพื่อป้องกันคิวเสียงค้างในมือถือ (สาเหตุที่ทำให้เงียบ)
+            window.speechSynthesis.resume();
+            window.speechSynthesis.cancel(); 
             
             let politeWord = (gender === 'female') ? 'ค่ะ' : 'ครับ';
             let textToSpeak = baseText + politeWord;
@@ -1213,7 +1227,7 @@
             let msg = new SpeechSynthesisUtterance(textToSpeak); 
             msg.lang = 'th-TH'; 
             msg.rate = 1.0;     
-            msg.volume = 1.0; // เร่งเสียงพูดให้สุด
+            msg.volume = 1.0; // เร่งเสียงพูดให้ดัง 100%
 
             let voices = window.speechSynthesis.getVoices();
             let thaiVoices = voices.filter(v => v.lang.includes('th'));
@@ -3054,22 +3068,40 @@
         }
     };
     // ==========================================
-    // 🌟 ระบบปลดล็อกเสียง (Text-to-Speech) สำหรับมือถือ iOS/Android (อัปเดตใหม่)
+    // 🌟 ระบบปลดล็อกเสียงสำหรับ iOS และ Android
     // ==========================================
-    window.ttsUnlocked = false;
-    function unlockTTSOnMobile() {
-        if (!window.ttsUnlocked && 'speechSynthesis' in window) {
-            // 🌟 มือถือบางรุ่นฉลาด ถ้าใส่เสียง 0 มันจะไม่ยอมปลดล็อกให้ ต้องใช้เสียง 0.01 ครับ
-            let unlockMsg = new SpeechSynthesisUtterance(' '); 
-            unlockMsg.volume = 0.01; 
-            window.speechSynthesis.speak(unlockMsg);
-            window.ttsUnlocked = true;
-            document.body.removeEventListener('touchstart', unlockTTSOnMobile, true);
-            document.body.removeEventListener('click', unlockTTSOnMobile, true);
+    window.mediaUnlocked = false;
+    
+    function unlockMediaOnMobile() {
+        if (!window.mediaUnlocked) {
+            // 1. ปลดล็อกเสียงติ๊งน่อง (เล่นแบบเงียบๆ 1 ครั้ง)
+            if(notiAudio) {
+                notiAudio.volume = 0;
+                notiAudio.play().then(() => {
+                    notiAudio.pause();
+                    notiAudio.currentTime = 0;
+                    notiAudio.volume = 0.2; // คืนค่าความดัง
+                }).catch(e=>{});
+            }
+            
+            // 2. ปลดล็อกเสียงพูด (พูดแบบเงียบๆ 1 ครั้ง)
+            if ('speechSynthesis' in window) {
+                let msg = new SpeechSynthesisUtterance('');
+                msg.volume = 0;
+                window.speechSynthesis.speak(msg);
+                window.speechSynthesis.cancel();
+            }
+
+            window.mediaUnlocked = true;
+            // เมื่อปลดล็อกสำเร็จ ให้ยกเลิกการดักจับนิ้ว
+            document.body.removeEventListener('touchstart', unlockMediaOnMobile, true);
+            document.body.removeEventListener('click', unlockMediaOnMobile, true);
         }
     }
-    document.body.addEventListener('touchstart', unlockTTSOnMobile, true);
-    document.body.addEventListener('click', unlockTTSOnMobile, true);
+    
+    // ดักจับทุกครั้งที่ลูกค้าแตะหน้าจอเพื่อปลดล็อกสิทธิ์
+    document.body.addEventListener('touchstart', unlockMediaOnMobile, true);
+    document.body.addEventListener('click', unlockMediaOnMobile, true);
     
   </script>
   <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDsZ_tbFhH6fUXRz3I6C-tMshNwwrSevd4&libraries=places,geometry&callback=initMap" async defer></script>
