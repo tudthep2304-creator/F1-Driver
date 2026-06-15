@@ -1951,6 +1951,10 @@
                 setTimeout(() => { map.setCenter(map.getCenter()); }, 50); 
             }
         }
+      // 🌟 ตรงนี้แหละครับที่วงเล็บและคำสั่งปิดหน้าต่างหายไปรอบที่แล้ว
+      } else {
+          if(navBar) navBar.classList.add('hidden'); if(mapControls) mapControls.classList.add('hidden'); if(mapEl) mapEl.classList.add('hidden');
+      }
 
       if (page === 2 || page === 3) {
           if (polylineRoute) { polylineRoute.setMap(null); polylineRoute = null; }
