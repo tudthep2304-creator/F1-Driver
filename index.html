@@ -2448,17 +2448,8 @@
                       }
                   });
 
-                  // ลอจิก 2: เช็คการบังคับออนไลน์จากแอดมิน
-                  let adminForcedOnline = false;
-                  for (let pin in window.allDriverProfiles) {
-                      let profile = window.allDriverProfiles[pin];
-                      if (profile && profile.vehicles) {
-                          if (Object.values(profile.vehicles).some(veh => veh.serviceType === v.id && veh.isOnline === true)) {
-                              adminForcedOnline = true;
-                              break;
-                          }
-                      }
-                  }
+                 // 🌟 ลอจิก 2: เช็คการบังคับออนไลน์จากสวิตช์หน้าแดชบอร์ดแอดมิน
+let adminForcedOnline = v.forceOnline === true;
                   
                   let isOnline = activeTypeDrivers.length > 0 || adminForcedOnline;
                   let displayPrice = ""; let displaySub = ""; let cardClass = ""; let iconClass = ""; let minPrice = 0;
