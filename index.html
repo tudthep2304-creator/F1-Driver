@@ -802,6 +802,19 @@
           </button>
       </div>
   </div>
+  <!-- 🌟 หน้าจอ Lock บังคับล็อกอินด้วย LINE (สำหรับเปิดเว็บนอก ป้องกันคนก่อกวน) -->
+  <div id="externalLoginScreen" class="hidden fixed inset-0 z-[9999999] bg-white dark:bg-[#1e234e] flex flex-col items-center justify-center p-6 text-center">
+      <div class="w-24 h-24 bg-green-50 dark:bg-green-900/30 text-[#00B900] rounded-full flex items-center justify-center text-5xl mb-6 shadow-inner">
+          <i class="fab fa-line"></i>
+      </div>
+      <h2 class="text-xl font-black text-gray-800 dark:text-white mb-2">เข้าสู่ระบบด้วย LINE</h2>
+      <p class="text-[13px] text-gray-600 dark:text-gray-400 mb-8 max-w-[280px] leading-relaxed">คุณกำลังใช้งานผ่านเบราว์เซอร์ภายนอก เพื่อความปลอดภัย กรุณากดปุ่มด้านล่างเพื่อยืนยันตัวตนผ่านบัญชี LINE ครับ</p>
+      
+      <!-- ปุ่มกดล็อกอิน (ให้คนกดเอง จะแก้บั๊กเบราว์เซอร์วนลูปได้) -->
+      <button onclick="liff.login()" class="bg-[#00B900] text-white font-bold py-3.5 px-8 rounded-full shadow-md active:scale-95 transition text-[14px] flex items-center justify-center gap-2 w-full max-w-[280px]">
+          <i class="fab fa-line text-lg"></i> ล็อกอินด้วย LINE
+      </button>
+  </div>
   <script>
     // ==========================================
     // 🌟 ระบบป้องกันการซูมหน้าจอ (Anti-Zoom)
@@ -1961,30 +1974,52 @@
       else if (currentStep === 2 || currentStep === 3) { renderWaypointsUI(); renderSavedPlaceMarkersOnMap(); }
     };
 
-    function mockLoginForBrowser() {
-        lineUserId = "U" + Math.random().toString(36).substr(2, 9); lineName = "ลูกค้าทดสอบ (Browser)";
-        let un = document.getElementById('userName'); if(un) un.innerText = lineName;
-        let usm = document.getElementById('userNameSmall'); if(usm) usm.innerText = lineName;
-        initApp();
-    }
-
+    // 🌟 ระบบเชื่อมต่อ LINE LIFF (ระบบความปลอดภัยสูง ห้ามมีบัญชีผี 100%)
     if (typeof liff !== 'undefined') {
         liff.init({ liffId: MY_LIFF_ID }).then(() => {
-          if(liff.isLoggedIn()){
-            liff.getProfile().then(p => {
-              lineUserId = p.userId; lineName = p.displayName;
-              let un = document.getElementById('userName'); if(un) un.innerText = lineName;
-              let usm = document.getElementById('userNameSmall'); if(usm) usm.innerText = lineName;
-              if(p.pictureUrl) { 
-                  let pic = document.getElementById('userPic'); if(pic) pic.src = p.pictureUrl; 
-                  let picSm = document.getElementById('userPicSmall'); if(picSm) picSm.src = p.pictureUrl; 
-                  linePictureUrl = p.pictureUrl; // 🌟 สั่งให้ระบบจำลิงก์รูปโปรไฟล์ LINE เอาไว้
-              }
-              initApp();
-            }).catch(err => { mockLoginForBrowser(); });
-          } else { liff.login(); }
-        }).catch(e => { mockLoginForBrowser(); });
-    } else { mockLoginForBrowser(); }
+            
+            if (liff.isLoggedIn()) {
+                // ✅ ถ้าล็อกอินแล้ว ดึงข้อมูลโปรไฟล์ได้เลย (ปลอดภัย)
+                liff.getProfile().then(p => {
+                    lineUserId = p.userId; 
+                    lineName = p.displayName;
+                    
+                    let un = document.getElementById('userName'); if(un) un.innerText = lineName;
+                    let usm = document.getElementById('userNameSmall'); if(usm) usm.innerText = lineName;
+                    
+                    if(p.pictureUrl) { 
+                        let pic = document.getElementById('userPic'); if(pic) pic.src = p.pictureUrl; 
+                        let picSm = document.getElementById('userPicSmall'); if(picSm) picSm.src = p.pictureUrl; 
+                        linePictureUrl = p.pictureUrl; 
+                    }
+                    
+                    // ปิดหน้าจอล็อกอิน (ถ้ามี)
+                    let extScreen = document.getElementById('externalLoginScreen');
+                    if(extScreen) extScreen.classList.add('hidden');
+                    
+                    initApp(); // โหลดหน้าแอปต่อ
+                }).catch(err => { 
+                    showAlert('ข้อผิดพลาด', 'ไม่สามารถดึงข้อมูลโปรไฟล์ LINE ได้', 'error');
+                });
+            } else {
+                // ❌ ถ้ายังไม่ได้ล็อกอิน
+                if (liff.isInClient()) {
+                    // ถ้าเปิดในแอป LINE ให้เด้งล็อกอินอัตโนมัติได้เลย (ไม่มีปัญหาลูป)
+                    liff.login();
+                } else {
+                    // ถ้าเปิดเว็บนอก (Safari/Chrome) ห้ามล็อกอินออโต้! ให้โชว์หน้าจอบังคับกดปุ่ม
+                    document.getElementById('externalLoginScreen').classList.remove('hidden');
+                    window.hideSplashScreen(); // สั่งปิดโลโก้ F1 สีดำออกไป เพื่อให้เห็นปุ่มกด
+                }
+            }
+            
+        }).catch(e => { 
+            showAlert('เกิดข้อผิดพลาด', 'ไม่สามารถเชื่อมต่อระบบ LINE ได้', 'error');
+        });
+    } else { 
+        // กรณีที่ไม่รันผ่านเซิร์ฟเวอร์ หรือไม่มี LIFF ให้บล็อกการใช้งานไปเลย
+        document.body.innerHTML = '<div style="padding:40px;text-align:center;font-family:sans-serif;font-weight:bold;">กรุณาเปิดใช้งานผ่านแอปพลิเคชัน LINE เท่านั้นครับ</div>';
+    }
 
     window.isCompleting = false;
     
