@@ -776,6 +776,17 @@
   </div>
 
   <script>
+    <!-- 🌟 หน้าจอ Lock บังคับเปิด GPS (ห้ามใช้งานถ้าไม่เปิด) -->
+  <div id="gpsLockScreen" class="hidden fixed inset-0 z-[9999999] bg-white dark:bg-[#1e234e] flex flex-col items-center justify-center p-6 text-center transition-colors duration-300">
+      <div class="w-24 h-24 bg-red-50 dark:bg-red-900/30 text-red-500 rounded-full flex items-center justify-center text-5xl mb-6 shadow-inner border border-red-200 dark:border-red-500/30 animate-pulse">
+          <i class="fas fa-map-marker-alt"></i>
+      </div>
+      <h2 class="text-xl font-black text-gray-800 dark:text-white mb-2">กรุณาเปิดตำแหน่ง (GPS)</h2>
+      <p class="text-[13px] text-gray-600 dark:text-gray-400 mb-8 max-w-[280px] leading-relaxed">แอปพลิเคชันจำเป็นต้องเข้าถึงตำแหน่งของคุณเพื่อค้นหารถที่อยู่ใกล้ที่สุด หากคุณปฏิเสธไปแล้ว กรุณาไปที่การตั้งค่าเครื่องเพื่ออนุญาต</p>
+      <button onclick="window.retryLocationPermission()" class="bg-[#fae100] text-gray-900 dark:text-[#1e234e] font-bold py-3.5 px-8 rounded-full shadow-md active:scale-95 transition text-[14px]">
+          <i class="fas fa-sync-alt mr-2"></i> ลองดึงตำแหน่งอีกครั้ง
+      </button>
+  </div>
     // ==========================================
     // 🌟 ระบบป้องกันการซูมหน้าจอ (Anti-Zoom)
     // ==========================================
@@ -3431,23 +3442,55 @@
             }
         }
     }
-      // 🌟 ระบบแชร์พิกัดลูกค้าให้แอดมินแบบเรียลไทม์ (เมื่อเปิดแอป)
+      // 🌟 ปุ่มลองดึงตำแหน่งใหม่
+    window.retryLocationPermission = function() {
+        if(typeof startSharingPassengerLocation === 'function') {
+            startSharingPassengerLocation();
+        }
+    }
+
+    // 🌟 ระบบแชร์พิกัดลูกค้าให้แอดมินแบบเรียลไทม์ (แบบบังคับเปิด GPS)
     function startSharingPassengerLocation() {
         if (navigator.geolocation && lineUserId) {
             let passengerRef = db.ref('active_passengers/' + lineUserId);
             passengerRef.onDisconnect().remove();
 
-            navigator.geolocation.watchPosition(position => {
-                passengerRef.set({
-                    name: lineName || 'ไม่ทราบชื่อ',
-                    lat: position.coords.latitude,
-                    lng: position.coords.longitude,
-                    pictureUrl: linePictureUrl || null, // 🌟 ส่งลิงก์รูปโปรไฟล์แนบไปกับ GPS ด้วย!
-                    timestamp: firebase.database.ServerValue.TIMESTAMP
-                });
-            }, error => {
-                console.log("GPS Sharing Error: ", error);
-            }, { enableHighAccuracy: true });
+            // ทดลองดึงพิกัด 1 ครั้งก่อน เพื่อเช็คสิทธิ์แบบเด็ดขาด
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    // ✅ ถ้าอนุญาตแล้ว ให้ปิดหน้าจอบล็อกทิ้งไป
+                    let lockScreen = document.getElementById('gpsLockScreen');
+                    if(lockScreen) lockScreen.classList.add('hidden');
+                    
+                    // เริ่มส่งพิกัดขึ้น Firebase แบบเรียลไทม์ตลอดเวลา
+                    if(window.passengerWatchId) navigator.geolocation.clearWatch(window.passengerWatchId);
+                    window.passengerWatchId = navigator.geolocation.watchPosition(pos => {
+                        passengerRef.set({
+                            name: lineName || 'ไม่ทราบชื่อ',
+                            lat: pos.coords.latitude,
+                            lng: pos.coords.longitude,
+                            pictureUrl: linePictureUrl || null,
+                            timestamp: firebase.database.ServerValue.TIMESTAMP
+                        });
+                        
+                        // ป้องกันเผื่อหน้าจอเด้งกลับมา
+                        if(lockScreen) lockScreen.classList.add('hidden');
+                    }, err => {
+                        console.log("Watch Error: ", err);
+                    }, { enableHighAccuracy: true });
+                },
+                (error) => {
+                    // ❌ ถ้าลูกค้ากด "ไม่อนุญาต" หรือปิด GPS ที่เครื่อง ให้โชว์หน้าจอบล็อก 100%
+                    console.log("GPS Permission Error: ", error);
+                    let lockScreen = document.getElementById('gpsLockScreen');
+                    if(lockScreen) lockScreen.classList.remove('hidden');
+                },
+                { enableHighAccuracy: true, timeout: 10000 } // รอจับสัญญาณ 10 วินาที
+            );
+        } else {
+            // ❌ กรณีเปิดจาก Browser รุ่นเก่ามากๆ ที่ไม่มีระบบ GPS
+            let lockScreen = document.getElementById('gpsLockScreen');
+            if(lockScreen) lockScreen.classList.remove('hidden');
         }
     }
   </script>
