@@ -776,14 +776,31 @@
   </div>
 <!-- 🌟 หน้าจอ Lock บังคับเปิด GPS (ห้ามใช้งานถ้าไม่เปิด) -->
   <div id="gpsLockScreen" class="hidden fixed inset-0 z-[9999999] bg-white dark:bg-[#1e234e] flex flex-col items-center justify-center p-6 text-center transition-colors duration-300">
-      <div class="w-24 h-24 bg-red-50 dark:bg-red-900/30 text-red-500 rounded-full flex items-center justify-center text-5xl mb-6 shadow-inner border border-red-200 dark:border-red-500/30 animate-pulse">
-          <i class="fas fa-map-marker-alt"></i>
+      <div class="w-20 h-20 bg-red-50 dark:bg-red-900/30 text-red-500 rounded-full flex items-center justify-center text-4xl mb-4 shadow-inner border border-red-200 dark:border-red-500/30 animate-pulse">
+          <i class="fas fa-location-arrow"></i>
       </div>
-      <h2 class="text-xl font-black text-gray-800 dark:text-white mb-2">กรุณาเปิดตำแหน่ง (GPS)</h2>
-      <p class="text-[13px] text-gray-600 dark:text-gray-400 mb-8 max-w-[280px] leading-relaxed">แอปพลิเคชันจำเป็นต้องเข้าถึงตำแหน่งของคุณเพื่อค้นหารถที่อยู่ใกล้ที่สุด หากคุณปฏิเสธไปแล้ว กรุณาไปที่การตั้งค่าเครื่องเพื่ออนุญาต</p>
-      <button onclick="window.retryLocationPermission()" class="bg-[#fae100] text-gray-900 dark:text-[#1e234e] font-bold py-3.5 px-8 rounded-full shadow-md active:scale-95 transition text-[14px]">
-          <i class="fas fa-sync-alt mr-2"></i> ลองดึงตำแหน่งอีกครั้ง
-      </button>
+      <h2 class="text-xl font-black text-gray-800 dark:text-white mb-2">ไม่สามารถระบุพิกัดได้</h2>
+      <p class="text-[13px] text-gray-600 dark:text-gray-400 mb-6 max-w-[280px] leading-relaxed">แอปจำเป็นต้องใช้พิกัดเพื่อค้นหารถที่ใกล้ที่สุด หากคุณเผลอกดไม่อนุญาตไปแล้ว ลองเลือกวิธีแก้ปัญหาด้านล่างนี้ครับ</p>
+
+      <div class="flex flex-col gap-3 w-full max-w-[280px]">
+          <button onclick="window.retryLocationPermission()" class="bg-[#fae100] text-gray-900 dark:text-[#1e234e] font-bold py-3.5 px-4 rounded-full shadow-md active:scale-95 transition text-[13px] flex items-center justify-center gap-2">
+              <i class="fas fa-sync-alt"></i> ลองดึงตำแหน่งอีกครั้ง
+          </button>
+          
+          <div class="relative flex items-center py-2">
+              <div class="flex-grow border-t border-gray-300 dark:border-gray-600"></div>
+              <span class="flex-shrink-0 mx-4 text-gray-400 text-[11px]">หรือ</span>
+              <div class="flex-grow border-t border-gray-300 dark:border-gray-600"></div>
+          </div>
+
+          <button onclick="window.openInExternalBrowser()" class="bg-gray-100 dark:bg-[#2a2f5c] border border-gray-300 dark:border-[#383d6a] text-gray-800 dark:text-white font-bold py-3 px-4 rounded-full shadow-sm hover:bg-gray-200 dark:hover:bg-[#383d6a]/80 transition text-[12px] flex items-center justify-center gap-2">
+              <i class="fab fa-safari text-blue-500"></i> เปิดผ่าน Safari / Chrome
+          </button>
+
+          <button onclick="window.contactAdminForGPS()" class="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-500/30 text-green-600 dark:text-green-400 font-bold py-3 px-4 rounded-full shadow-sm hover:bg-green-100 transition text-[12px] flex items-center justify-center gap-2 mt-2">
+              <i class="fab fa-line text-green-500 text-lg"></i> แอดมินช่วยด้วย!
+          </button>
+      </div>
   </div>
   <script>
     // ==========================================
@@ -3476,6 +3493,27 @@
             },
             { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 } // บังคับดึงค่าใหม่ล่าสุด
         );
+    }
+    // 🌟 ทริคเปิดออกเบราว์เซอร์นอก LINE (Safari/Chrome) เพื่อเรียกป๊อปอัปขอสิทธิ์ GPS ใหม่อีกรอบ
+    window.openInExternalBrowser = function() {
+        if (typeof liff !== 'undefined' && liff.isInClient()) {
+            liff.openWindow({
+                url: window.location.href, // เปิด URL ปัจจุบัน
+                external: true // บังคับเด้งออก Safari / Chrome
+            });
+        } else {
+            showAlert('แจ้งเตือน', 'คุณกำลังใช้งานผ่านเบราว์เซอร์ปกติอยู่แล้ว กรุณาไปที่ตั้งค่าของเครื่องเพื่อเปิด GPS ครับ', 'info');
+        }
+    }
+
+    // 🌟 ปุ่มทักหาแอดมินกรณีลูกค้าทำไม่เป็นจริงๆ
+    window.contactAdminForGPS = function() {
+        let lineOaUrl = "https://line.me/R/ti/p/@805zvmii"; // เปลี่ยนเป็นลิงก์ LINE OA ของร้านคุณ
+        if (typeof liff !== 'undefined') {
+            liff.openWindow({ url: lineOaUrl, external: false });
+        } else {
+            window.location.href = lineOaUrl;
+        }
     }
 
     // 🌟 ฟังก์ชันดึงพิกัดหลัก
