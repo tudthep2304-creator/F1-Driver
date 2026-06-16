@@ -1339,6 +1339,26 @@
         if(content) content.classList.add('scale-95');
         setTimeout(() => { modal.classList.add('hidden'); }, 300);
     }
+    // 🌟 ฟังก์ชันล้างประวัติแชทและปิดหน้าต่างแชทเมื่อจบงานหรือยกเลิกงาน
+    window.clearAndCloseChat = function() {
+        // 1. สั่งปิดหน้าต่างแชทถ้ามันเปิดค้างอยู่
+        let chatModal = document.getElementById('inAppChatModal');
+        if (chatModal) chatModal.classList.add('hidden');
+
+        // 2. ตัดการเชื่อมต่อคลังข้อมูลแชทของงานนี้
+        if (window.inAppChatRef) {
+            window.inAppChatRef.off();
+            window.inAppChatRef = null;
+        }
+
+        // 3. กวาดข้อความแชทเก่าบนหน้าจอทิ้งให้สะอาด
+        let chatMessagesDiv = document.getElementById('inAppChatMessages');
+        if (chatMessagesDiv) chatMessagesDiv.innerHTML = '';
+        
+        // 4. รีเซ็ตตัวนับแจ้งเตือนข้อความใหม่
+        window.unreadInAppCount = 0;
+        if (typeof updateInAppChatBadge === 'function') updateInAppChatBadge();
+    }
     function resetTrackingFlags() {
         window.hasSpokenAccept = false; window.hasSpokenArrivePick = false; window.hasSpokenAtPickup = false;
         window.hasSpokenDepart = false; window.hasSpokenArriveDrop = false; window.hasSpokenFinish = false;
