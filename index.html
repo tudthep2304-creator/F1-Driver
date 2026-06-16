@@ -502,12 +502,14 @@
               <h2 class="text-lg font-black text-gray-800 dark:text-white tracking-wide">โปรไฟล์ของฉัน</h2>
           </div>
       </div>
-      <div class="flex-1 overflow-y-auto p-4 hide-scrollbar w-full flex flex-col items-center">
+      <div class="flex-1 overflow-y-auto p-4 hide-scrollbar w-full flex flex-col items-center">      
           <div class="w-24 h-24 rounded-full bg-white dark:bg-[#2a2f5c] border-2 border-[#fae100] shadow-lg mb-4 overflow-hidden flex items-center justify-center shrink-0">
               <img id="profilePicLarge" src="https://img.icons8.com/bubbles/150/user.png" class="w-full h-full object-cover">
           </div>
           <h2 id="profileNameLarge" class="text-xl font-bold text-gray-800 dark:text-white mb-1">...</h2>
-          <div class="flex items-center gap-2 mb-6">
+          
+          <p id="profileIdLarge" class="text-[10px] font-mono bg-gray-200/60 dark:bg-gray-800 text-gray-500 dark:text-gray-400 px-3 py-1 rounded-full select-all mb-4 border border-transparent dark:border-gray-700/30">ID: -</p>
+        <div class="flex items-center gap-2 mb-6">
               <span id="profilePhoneLarge" class="text-[13px] text-gray-500 dark:text-gray-400 font-normal">เบอร์โทร: -</span>
               <button onclick="window.editProfilePhone()" class="text-[#eab308] dark:text-[#fae100] text-[11px] bg-gray-100 dark:bg-[#383d6a] px-2 py-1 rounded hover:bg-gray-200 dark:hover:bg-[#4b507d] transition shadow-sm"><i class="fas fa-pen"></i> แก้ไข</button>
           </div>
@@ -1409,7 +1411,10 @@
         document.getElementById('profileModal').classList.remove('hidden');
         let pNameL = document.getElementById('profileNameLarge');
         if(pNameL) pNameL.innerText = lineName || 'ไม่ทราบชื่อ';
-        
+
+        let pIdL = document.getElementById('profileIdLarge');
+        if(pIdL) pIdL.innerText = 'ID: ' + (lineUserId || '-');
+      
         let picSrc = 'https://img.icons8.com/bubbles/150/user.png';
         let uPic = document.getElementById('userPic'); let uPicSmall = document.getElementById('userPicSmall');
         if(uPic && uPic.src) picSrc = uPic.src; else if (uPicSmall && uPicSmall.src) picSrc = uPicSmall.src;
