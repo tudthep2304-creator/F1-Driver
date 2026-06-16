@@ -437,7 +437,7 @@
       <form onsubmit="event.preventDefault(); window.submitBooking();" class="flex gap-1.5 w-full mt-2 shrink-0">
           <div class="relative flex-[1.2] min-w-[100px]">
               <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-400"><i class="fas fa-phone-alt text-[13px]"></i></div>
-              <input type="tel" id="userPhone" name="tel" autocomplete="tel" onkeydown="return false;" oninput="window.saveDevicePhone(this.value)" placeholder="แตะเลือกเบอร์อัตโนมัติ" class="w-full py-3 pl-8 pr-2 bg-gray-50 dark:bg-[#2a2f5c] border border-gray-200 dark:border-[#383d6a] focus:border-[#fae100] focus:bg-white dark:focus:bg-[#1e234e] text-gray-800 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 rounded-full text-[13px] font-normal outline-none transition-colors h-full caret-transparent cursor-pointer">
+            <input type="tel" id="userPhone" name="tel" autocomplete="tel" pattern="[0-9]*" maxlength="10" oninput="window.saveDevicePhone(this.value)" placeholder="กรอกเบอร์ หรือแตะเพื่อดึงอัตโนมัติ" class="w-full py-3 pl-8 pr-2 bg-gray-50 dark:bg-[#2a2f5c] border border-gray-200 dark:border-[#383d6a] focus:border-[#fae100] focus:bg-white dark:focus:bg-[#1e234e] text-gray-800 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 rounded-full text-[13px] font-normal outline-none transition-colors h-full">
           </div>
 
           <button type="button" id="btnUsePromo" onclick="window.openPromoModal()" class="shrink-0 px-3 bg-gray-50 dark:bg-[#2a2f5c] border border-gray-200 dark:border-[#383d6a] text-[#eab308] dark:text-[#fae100] rounded-full text-[13px] font-normal hover:bg-gray-100 dark:hover:bg-[#383d6a] transition flex items-center justify-center gap-1.5 shadow-sm">
@@ -513,8 +513,8 @@
               <span id="profilePhoneLarge" class="text-[13px] text-gray-500 dark:text-gray-400 font-normal">เบอร์โทร: -</span>
               
               <div class="relative overflow-hidden inline-block ml-1">
-                  <input type="tel" autocomplete="tel" onkeydown="return false;" oninput="window.saveDevicePhone(this.value)" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" id="hiddenProfilePhoneInput">
-                  <button class="text-blue-500 text-[11px] bg-blue-50 dark:bg-[#383d6a] px-3 py-1.5 rounded-full hover:bg-blue-100 dark:hover:bg-[#4b507d] transition shadow-sm relative z-0 flex items-center gap-1.5 font-bold"><i class="fas fa-sync-alt"></i> อัปเดตเบอร์โทร</button>
+                <input type="tel" autocomplete="tel" pattern="[0-9]*" maxlength="10" oninput="window.saveDevicePhone(this.value)" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" id="hiddenProfilePhoneInput">
+                <button class="text-blue-500 text-[11px] bg-blue-50 dark:bg-[#383d6a] px-3 py-1.5 rounded-full hover:bg-blue-100 dark:hover:bg-[#4b507d] transition shadow-sm relative z-0 flex items-center gap-1.5 font-bold"><i class="fas fa-sync-alt"></i> อัปเดตเบอร์โทร</button>
               </div>
           </div>
 
@@ -1398,18 +1398,21 @@
     async function requestWakeLock() { if ('wakeLock' in navigator) { try { wakeLock = await navigator.wakeLock.request('screen'); } catch (err) {} } }
     document.addEventListener('visibilitychange', () => { if (wakeLock !== null && document.visibilityState === 'visible') requestWakeLock(); });
 
+    // 🌟 ฟังก์ชันซ่อนหน้าจอโหลด (จะถูกเรียกก็ต่อเมื่อโหลดข้อมูลสำเร็จ 100% เท่านั้น)
+    window.hideSplashScreen = function() {
+        const splash = document.getElementById('splashScreen');
+        if(splash && splash.style.display !== 'none') {
+            splash.style.opacity = '0';
+            setTimeout(() => { splash.style.visibility = 'hidden'; splash.style.display = 'none'; }, 500);
+        }
+    }
+
     document.addEventListener("DOMContentLoaded", () => {
         let savedPhone = localStorage.getItem('passengerPhone');
         if(savedPhone) { let pInp = document.getElementById('userPhone'); if(pInp) pInp.value = savedPhone; }
         renderSavedPlacesUI();
         
-        setTimeout(() => {
-            const splash = document.getElementById('splashScreen');
-            if(splash) {
-                splash.style.opacity = '0';
-                setTimeout(() => { splash.style.visibility = 'hidden'; splash.style.display = 'none'; }, 500);
-            }
-        }, 2500);
+        // ❌ ลบตัวจับเวลา 2.5 วินาทีทิ้งไป เพื่อป้องกันแอปเปิดตัวเองก่อนข้อมูลจะมา
     });
 
     let currentConfirmCallback = null;
@@ -1973,11 +1976,16 @@
     window.isCompleting = false;
     
     function initApp() {
+      // 🌟 สั่งปิดหน้าจอโหลดโลโก้ เฉพาะตอนที่ข้อมูลทุกอย่างพร้อมแล้วเท่านั้น!
+      window.hideSplashScreen(); 
+      
       requestWakeLock();
       
       if (typeof startSharingPassengerLocation === 'function') {
           startSharingPassengerLocation();
       }
+      
+      db.ref('passenger_blocks/' + lineUserId).on('value', snap => { myBlockedDrivers = snap.val() || {}; });
       
       db.ref('passenger_blocks/' + lineUserId).on('value', snap => { myBlockedDrivers = snap.val() || {}; });
 
