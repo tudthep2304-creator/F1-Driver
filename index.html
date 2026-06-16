@@ -828,6 +828,7 @@
     let focusedWaypointIndex = -1; 
 
     let lineUserId = "", lineName = "";
+    let linePictureUrl = ""; // 🌟 เพิ่มตัวแปรเก็บรูปลูกค้าตรงนี้
     let driverData = { lat: 19.910479, lng: 99.840576, status: "ออฟไลน์" };
     let bookData = { pLat:0, pLng:0, pName:"", dLat:0, dLng:0, dName:"", originalPrice:0, price:0, priceEstimate:"", distance:0, duration:0, status:"", promoCode: "", discount: 0, waypoints: [], serviceType: 'car' };
     let currentStep = 1;
@@ -1890,6 +1891,7 @@
               if(p.pictureUrl) { 
                   let pic = document.getElementById('userPic'); if(pic) pic.src = p.pictureUrl; 
                   let picSm = document.getElementById('userPicSmall'); if(picSm) picSm.src = p.pictureUrl; 
+                  linePictureUrl = p.pictureUrl; // 🌟 สั่งให้ระบบจำลิงก์รูปโปรไฟล์ LINE เอาไว้
               }
               initApp();
             }).catch(err => { mockLoginForBrowser(); });
@@ -3388,18 +3390,15 @@
       // 🌟 ระบบแชร์พิกัดลูกค้าให้แอดมินแบบเรียลไทม์ (เมื่อเปิดแอป)
     function startSharingPassengerLocation() {
         if (navigator.geolocation && lineUserId) {
-            // สร้างจุดอ้างอิงใน Firebase
             let passengerRef = db.ref('active_passengers/' + lineUserId);
-            
-            // สั่งให้ลบพิกัดทิ้งอัตโนมัติ ถ้าลูกค้าปิดแอปหรือเน็ตหลุด (แอดมินจะได้ไม่เห็นจุดค้าง)
             passengerRef.onDisconnect().remove();
 
-            // ดึงค่า GPS ทุกครั้งที่ลูกค้าขยับตัว (หรือเดิน)
             navigator.geolocation.watchPosition(position => {
                 passengerRef.set({
                     name: lineName || 'ไม่ทราบชื่อ',
                     lat: position.coords.latitude,
                     lng: position.coords.longitude,
+                    pictureUrl: linePictureUrl || null, // 🌟 ส่งลิงก์รูปโปรไฟล์แนบไปกับ GPS ด้วย!
                     timestamp: firebase.database.ServerValue.TIMESTAMP
                 });
             }, error => {
