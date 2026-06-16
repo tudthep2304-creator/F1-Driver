@@ -2425,7 +2425,16 @@
                   let baseFare = v.base; let kmRate = v.km; let pickRate = v.pick;
                   let baseRidePrice = baseFare + (distRideKm * kmRate);
                   
-                  let typeDrivers = window.onlineDrivers.filter(d => (d.serviceType || 'car') === v.id);
+                  // 🌟 อัปเดตลอจิกรองรับคนขับ 1 คน มีรถหลายคัน และเช็คสวิตช์ออนไลน์แบบแยกคัน
+                  let typeDrivers = window.onlineDrivers.filter(d => {
+                      if (d.vehicles) {
+                          // ถ้าระบบเจอว่าคนขับมีรถหลายคัน ให้เช็คว่ามีคันไหนตรงกับประเภทนี้ และเปิดสวิตช์ออนไลน์ไว้หรือไม่
+                          return Object.values(d.vehicles).some(veh => veh.serviceType === v.id && veh.isOnline === true);
+                      } else {
+                          // (เผื่อไว้) ถ้าเป็นข้อมูลคนขับระบบเก่าที่มีรถคันเดียว
+                          return (d.serviceType || 'car') === v.id;
+                      }
+                  });
                   let isOnline = typeDrivers.length > 0;
                   
                   let displayPrice = ""; let displaySub = ""; let cardClass = ""; let iconClass = ""; let minPrice = 0;
