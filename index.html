@@ -2432,11 +2432,86 @@
               vehicleTypesFromDB = vehicleTypes;
               let prevSelected = window.currentServiceType || 'car';
 
-              // 🌟 1. คำนวณราคาและสถานะ Online ของรถทุกคันเตรียมไว้ก่อน (ฉบับไม่บังคับปัดเศษหลักสิบ)
+              // 🌟 1. คำนวณราคาและสถานะ Online พร้อมระบบป้องกันราคาโดด (Outlier Protection)
               let processedVehicles = vehicleTypes.map(v => {
                   let baseFare = v.base; let kmRate = v.km; let pickRate = v.pick;
-                  let adminMockDist = v.mockDistance ? parseFloat(v.mockDistance) : 2; // 🌟 ดึงระยะทางจำลองที่แอดมินกำหนดแยกตามประเภทรถได้เลย
+                  let adminMockDist = v.mockDistance ? parseFloat(v.mockDistance) : 2; 
+                  
+                  // ดึงการตั้งค่าอัลกอริทึมจากแอดมิน (Fallback ไว้เผื่อยังไม่ได้ตั้ง)
+                  let algoType = v.algoType || 'radius_cap';
+                  let algoParam = v.algoParam ? parseFloat(v.algoParam) : 12;
+
                   let baseRidePrice = baseFare + (distRideKm * kmRate);
+                  
+                  let activeTypeDrivers = window.onlineDrivers.filter(d => {
+                      let profile = window.allDriverProfiles[d.pin || d.driverPin];
+                      if (profile && profile.vehicles) {
+                          return Object.values(profile.vehicles).some(veh => veh.serviceType === v.id && veh.isOnline === true);
+                      } else { return ((profile && profile.serviceType) || d.serviceType || 'car') === v.id; }
+                  });
+
+                  let adminForcedOnline = v.forceOnline === true;
+                  let isOnline = activeTypeDrivers.length > 0 || adminForcedOnline;
+                  
+                  let finalMinDist = adminMockDist;
+                  let finalMaxDist = adminMockDist + 3; // ค่าห่างเริ่มต้นสำหรับตอนจำลอง/ออฟไลน์
+
+                  // 🌟 ดึงระยะทางพิกัดคนขับจริงๆ 
+                  if (activeTypeDrivers.length > 0) {
+                      let distances = activeTypeDrivers.map(d => {
+                          let dLoc = new google.maps.LatLng(d.lat, d.lng); 
+                          return google.maps.geometry.spherical.computeDistanceBetween(dLoc, origin) / 1000;
+                      });
+                      finalMinDist = Math.min(...distances);
+                      finalMaxDist = Math.max(...distances);
+                  }
+
+                  // 🌟 ประมวลผลอัลกอริทึมคุมราคาสูงสุด (Applies to finalMaxDist or rawMax)
+                  let rawMinPrice = baseRidePrice + (finalMinDist * pickRate);
+                  let rawMaxPrice = baseRidePrice + (finalMaxDist * pickRate);
+
+                  if (algoType === 'radius_cap') {
+                      // แบบที่ 1: จำกัดระยะไปรับสูงสุด (เช่น ไม่เกิน 12 กม.)
+                      if (finalMaxDist > algoParam) finalMaxDist = algoParam;
+                      rawMaxPrice = baseRidePrice + (finalMaxDist * pickRate);
+                  } else if (algoType === 'percentage_cap') {
+                      // แบบที่ 2: จำกัดเพดานราคา % (เช่น ไม่เกิน 30% ของขั้นต่ำ)
+                      let maxLimit = rawMinPrice * (1 + (algoParam / 100));
+                      if (rawMaxPrice > maxLimit) rawMaxPrice = maxLimit;
+                  } 
+                  // แบบที่ 3 (direct) ไม่ต้องปรับอะไร ปล่อยผ่านไปปัดเศษเลย
+
+                  // ปัดเศษลงเป็นหลักสิบที่สวยงาม
+                  let minPrice = Math.floor(rawMinPrice / 10) * 10;
+                  let maxPrice = Math.ceil(rawMaxPrice / 10) * 10;
+                  
+                  // กันหลุด: ราคาห้ามต่ำกว่าเริ่มต้น และ Max ต้องมากกว่า Min
+                  if(minPrice < baseFare) minPrice = baseFare;
+                  if(maxPrice <= minPrice) maxPrice = minPrice + 10;
+
+                  let displayPrice = ""; let displaySub = ""; let cardClass = ""; let iconClass = "";
+
+                  if (isOnline) {
+                      displayPrice = `~฿${minPrice} - ${maxPrice}`;
+                      displaySub = activeTypeDrivers.length > 0 ? 
+                          `<i class="fas fa-bolt text-[#eab308] dark:text-[#fae100] mr-1"></i> มีรถว่างใกล้คุณ` : 
+                          `<i class="fas fa-headset text-blue-500 dark:text-blue-400 mr-1"></i> ศูนย์พร้อมจัดหารถให้คุณ`;
+                      cardClass = "border-gray-300 dark:border-[#383d6a] cursor-pointer";
+                      iconClass = v.color;
+                  } else {
+                      // 🌟 ออฟไลน์: บวกรักษาเรทไว้ 10% และยังคงจัดช่วงราคา (Min-Max) เหมือนเดิม
+                      let offMin = Math.floor((minPrice * 1.1) / 10) * 10;
+                      let offMax = offMin + 10;
+                      if(offMin < baseFare) offMin = baseFare;
+
+                      displayPrice = `~฿${offMin} - ${offMax}`; // 🌟 โชว์เป็นช่วงราคาสวยๆ แม้จะออฟไลน์
+                      displaySub = `(ไม่มีรถว่างในขณะนี้)`;
+                      cardClass = "border-gray-200 dark:border-[#2a2f5c] text-gray-400 dark:text-gray-500 opacity-60 cursor-not-allowed";
+                      iconClass = "text-gray-400 dark:text-gray-500";
+                  }
+                  
+                  return { ...v, isOnline, minPrice, displayPrice, displaySub, cardClass, iconClass };
+              });
                   
                   // ลอจิก 1: เช็คคนขับที่เปิดแอปและมีพิกัด GPS จริงๆ
                   let activeTypeDrivers = window.onlineDrivers.filter(d => {
