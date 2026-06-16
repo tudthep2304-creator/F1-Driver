@@ -437,7 +437,7 @@
       <form onsubmit="event.preventDefault(); window.submitBooking();" class="flex gap-1.5 w-full mt-2 shrink-0">
                     <div class="relative flex-[1.2] min-w-[100px]">
               <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-400"><i class="fas fa-phone-alt text-[13px]"></i></div>
-              <input type="tel" id="userPhone" name="tel" readonly onclick="window.updateDevicePhone()" placeholder="แตะอัปเดตเบอร์โทร" class="w-full py-3 pl-8 pr-2 bg-gray-100 dark:bg-[#2a2f5c] border border-gray-200 dark:border-[#383d6a] text-gray-800 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 rounded-full text-[13px] font-bold outline-none text-center cursor-pointer transition-colors h-full">
+              <input type="tel" id="userPhone" name="tel" autocomplete="tel" onkeydown="return false;" oninput="window.saveDevicePhone(this.value)" placeholder="แตะเลือกเบอร์อัตโนมัติ" class="w-full py-3 pl-8 pr-2 bg-gray-50 dark:bg-[#2a2f5c] border border-gray-200 dark:border-[#383d6a] focus:border-[#fae100] focus:bg-white dark:focus:bg-[#1e234e] text-gray-800 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 rounded-full text-[13px] font-normal outline-none transition-colors h-full caret-transparent cursor-pointer">
           </div>
 
 
@@ -510,9 +510,13 @@
           <h2 id="profileNameLarge" class="text-xl font-bold text-gray-800 dark:text-white mb-1">...</h2>
           
           <p id="profileIdLarge" class="text-[10px] font-mono bg-gray-200/60 dark:bg-gray-800 text-gray-500 dark:text-gray-400 px-3 py-1 rounded-full select-all mb-4 border border-transparent dark:border-gray-700/30">ID: -</p>
-                  <div class="flex flex-col sm:flex-row items-center gap-2 mb-6 w-full justify-center">
-              <span id="profilePhoneLarge" class="text-[13px] text-gray-500 dark:text-gray-400 font-bold">เบอร์โทร: ยังไม่ระบุ</span>
-              <button onclick="window.updateDevicePhone()" class="text-blue-500 dark:text-blue-400 text-[11px] bg-blue-500/10 dark:bg-[#383d6a] px-3 py-1.5 rounded-full hover:bg-blue-500 hover:text-white dark:hover:bg-[#4b507d] transition shadow-sm font-bold flex items-center gap-1"><i class="fas fa-sync-alt"></i> อัปเดตเบอร์โทร</button>
+                  <div class="flex items-center gap-2 mb-6">
+              <span id="profilePhoneLarge" class="text-[13px] text-gray-500 dark:text-gray-400 font-normal">เบอร์โทร: -</span>
+              
+              <div class="relative overflow-hidden inline-block ml-1">
+                  <input type="tel" autocomplete="tel" onkeydown="return false;" oninput="window.saveDevicePhone(this.value)" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" id="hiddenProfilePhoneInput">
+                  <button class="text-blue-500 text-[11px] bg-blue-50 dark:bg-[#383d6a] px-3 py-1.5 rounded-full hover:bg-blue-100 dark:hover:bg-[#4b507d] transition shadow-sm relative z-0 flex items-center gap-1.5 font-bold"><i class="fas fa-sync-alt"></i> อัปเดตเบอร์โทร</button>
+              </div>
           </div>
 
           <div class="w-full flex items-center bg-white dark:bg-[#2a2f5c] border border-gray-200 dark:border-[#383d6a] rounded-full p-1.5 mb-4 shadow-sm h-16">
@@ -1335,6 +1339,38 @@
         let content = document.getElementById('popupAdContent');
         if(content) content.classList.add('scale-95');
         setTimeout(() => { modal.classList.add('hidden'); }, 300);
+    }
+    // ==========================================
+    // 🌟 ระบบจับค่าจาก AutoFill และเซฟลงเครื่องอัตโนมัติ
+    // ==========================================
+    window.saveDevicePhone = function(val) {
+        if(!val) return;
+        
+        // กรองเอาเฉพาะตัวเลข (เผื่อบางเครื่อง AutoFill ติดขีดหรือเว้นวรรคมาด้วย)
+        let cleanVal = val.replace(/\D/g, '');
+        
+        // ถ้าเบอร์มือถือเซฟมาเป็นรหัสประเทศ +66 ให้แปลงกลับเป็น 0
+        if(cleanVal.startsWith('66')) {
+            cleanVal = '0' + cleanVal.substring(2);
+        }
+        
+        // ถ้าเบอร์ที่ดึงมามี 9 หลักขึ้นไป ถือว่าถูกต้อง ให้บันทึกเลย
+        if(cleanVal.length >= 9) {
+            localStorage.setItem('passengerPhone', cleanVal);
+            
+            // สั่งอัปเดตตัวเลขแสดงผลบนหน้าจอทุกจุด
+            let pInp = document.getElementById('userPhone');
+            if(pInp) pInp.value = cleanVal;
+            
+            let pPhoneL = document.getElementById('profilePhoneLarge');
+            if(pPhoneL) pPhoneL.innerText = 'เบอร์โทร: ' + cleanVal;
+            
+            // ล้างค่าในช่องซ่อนของโปรไฟล์ เพื่อให้กดอัปเดตซ้ำได้ถล้าต้องการเปลี่ยนเบอร์
+            let hiddenInp = document.getElementById('hiddenProfilePhoneInput');
+            if(hiddenInp) hiddenInp.value = '';
+            
+            showAlert('อัปเดตสำเร็จ', 'ดึงเบอร์โทรศัพท์จากมือถือของคุณเรียบร้อยแล้ว!', 'success');
+        }
     }
     function resetTrackingFlags() {
         window.hasSpokenAccept = false; window.hasSpokenArrivePick = false; window.hasSpokenAtPickup = false;
