@@ -3441,27 +3441,54 @@
             }
         }
     }
-      // 🌟 ปุ่มลองดึงตำแหน่งใหม่
+      // 🌟 ระบบบังคับขอสิทธิ์ GPS ขั้นสุด! (เรียก Native Popup ของมือถือ)
     window.retryLocationPermission = function() {
-        if(typeof startSharingPassengerLocation === 'function') {
-            startSharingPassengerLocation();
-        }
+        let btn = event.currentTarget;
+        let originalText = btn.innerHTML;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> กำลังเรียกขออนุญาต...';
+        btn.disabled = true;
+
+        navigator.geolocation.getCurrentPosition(
+            (pos) => {
+                // ✅ ถ้าลูกค้ายอมกด Allow (อนุญาต) แป้นบล็อกหน้าจอจะหายไปทันที และเริ่มทำงาน
+                let lockScreen = document.getElementById('gpsLockScreen');
+                if(lockScreen) lockScreen.classList.add('hidden');
+                
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+                
+                // สั่งแชร์พิกัดต่อเนื่อง
+                if(typeof startSharingPassengerLocation === 'function') {
+                    startSharingPassengerLocation();
+                }
+            },
+            (err) => {
+                // ❌ ถ้าดึงไม่ได้ หรือลูกค้ากด Block
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+
+                if(err.code === err.PERMISSION_DENIED) {
+                    // 🚨 ไฮไลท์สำคัญ: ลูกค้าบล็อกสิทธิ์ถาวรไปแล้ว (ระบบมือถือไม่ยอมให้เด้งป๊อปอัปอีก)
+                    showAlert('ถูกปฏิเสธสิทธิ์ถาวร', 'เนื่องจากคุณเคยกด "ไม่อนุญาต" ไปแล้ว ระบบของโทรศัพท์จึงไม่อนุญาตให้แอปเปิดหน้าตั้งค่าให้คุณอัตโนมัติ\n\nรบกวนสละเวลาไปที่ การตั้งค่าเครื่อง > LINE > ตำแหน่งที่ตั้ง แล้วเปลี่ยนเป็น "อนุญาต" ด้วยตัวเองนะครับ', 'error');
+                } else {
+                    showAlert('เกิดข้อผิดพลาด', 'ไม่สามารถค้นหาสัญญาณ GPS ได้ กรุณาลองใหม่อีกครั้งครับ', 'error');
+                }
+            },
+            { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 } // บังคับดึงค่าใหม่ล่าสุด
+        );
     }
 
-    // 🌟 ระบบแชร์พิกัดลูกค้าให้แอดมินแบบเรียลไทม์ (แบบบังคับเปิด GPS)
+    // 🌟 ฟังก์ชันดึงพิกัดหลัก
     function startSharingPassengerLocation() {
         if (navigator.geolocation && lineUserId) {
             let passengerRef = db.ref('active_passengers/' + lineUserId);
             passengerRef.onDisconnect().remove();
 
-            // ทดลองดึงพิกัด 1 ครั้งก่อน เพื่อเช็คสิทธิ์แบบเด็ดขาด
             navigator.geolocation.getCurrentPosition(
                 (position) => {
-                    // ✅ ถ้าอนุญาตแล้ว ให้ปิดหน้าจอบล็อกทิ้งไป
                     let lockScreen = document.getElementById('gpsLockScreen');
                     if(lockScreen) lockScreen.classList.add('hidden');
                     
-                    // เริ่มส่งพิกัดขึ้น Firebase แบบเรียลไทม์ตลอดเวลา
                     if(window.passengerWatchId) navigator.geolocation.clearWatch(window.passengerWatchId);
                     window.passengerWatchId = navigator.geolocation.watchPosition(pos => {
                         passengerRef.set({
@@ -3471,23 +3498,16 @@
                             pictureUrl: linePictureUrl || null,
                             timestamp: firebase.database.ServerValue.TIMESTAMP
                         });
-                        
-                        // ป้องกันเผื่อหน้าจอเด้งกลับมา
                         if(lockScreen) lockScreen.classList.add('hidden');
-                    }, err => {
-                        console.log("Watch Error: ", err);
-                    }, { enableHighAccuracy: true });
+                    }, err => {}, { enableHighAccuracy: true });
                 },
                 (error) => {
-                    // ❌ ถ้าลูกค้ากด "ไม่อนุญาต" หรือปิด GPS ที่เครื่อง ให้โชว์หน้าจอบล็อก 100%
-                    console.log("GPS Permission Error: ", error);
                     let lockScreen = document.getElementById('gpsLockScreen');
                     if(lockScreen) lockScreen.classList.remove('hidden');
                 },
-                { enableHighAccuracy: true, timeout: 10000 } // รอจับสัญญาณ 10 วินาที
+                { enableHighAccuracy: true, timeout: 10000 }
             );
         } else {
-            // ❌ กรณีเปิดจาก Browser รุ่นเก่ามากๆ ที่ไม่มีระบบ GPS
             let lockScreen = document.getElementById('gpsLockScreen');
             if(lockScreen) lockScreen.classList.remove('hidden');
         }
