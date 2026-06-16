@@ -2475,7 +2475,7 @@
                           minPrice = Math.round(baseRidePrice + (minDriverDist * pickRate));
                           let maxPrice = Math.round(baseRidePrice + (maxDriverDist * pickRate));
                           if(minPrice < baseFare) minPrice = baseFare; 
-                          if(maxPrice <= minPrice) maxPrice = minPrice + 10; 
+                          if(maxPrice <= minPrice) maxPrice = Math.round(minPrice * 1.10); 
 
                           displayPrice = `~฿${minPrice} - ${maxPrice}`;
                           displaySub = `<i class="fas fa-bolt text-[#eab308] dark:text-[#fae100] mr-1"></i> มีรถว่างใกล้คุณ`;
@@ -2483,7 +2483,7 @@
                           // 🌟 กรณีที่ 2: แอดมินบังคับออนไลน์ แต่ไม่มีพิกัด GPS
                           // ดึงค่าระยะจำลอง (adminMockDist) ที่เซ็ตไว้จากหน้าต่างตั้งราคาหลังบ้านมาคำนวณโดยตรง
                           minPrice = Math.round(baseRidePrice + (adminMockDist * pickRate));
-                          let maxPrice = minPrice + 10;
+                          let maxPrice = Math.round(minPrice * 1.10);
                           if(minPrice < baseFare) minPrice = baseFare;
                           
                           displayPrice = `~฿${minPrice} - ${maxPrice}`;
