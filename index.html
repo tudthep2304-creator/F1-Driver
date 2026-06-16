@@ -810,8 +810,7 @@
       <h2 class="text-xl font-black text-gray-800 dark:text-white mb-2">เข้าสู่ระบบด้วย LINE</h2>
       <p class="text-[13px] text-gray-600 dark:text-gray-400 mb-8 max-w-[280px] leading-relaxed">คุณกำลังใช้งานผ่านเบราว์เซอร์ภายนอก เพื่อความปลอดภัย กรุณากดปุ่มด้านล่างเพื่อยืนยันตัวตนผ่านบัญชี LINE ครับ</p>
       
-      <!-- ปุ่มกดล็อกอิน (ให้คนกดเอง จะแก้บั๊กเบราว์เซอร์วนลูปได้) -->
-      <button onclick="liff.login()" class="bg-[#00B900] text-white font-bold py-3.5 px-8 rounded-full shadow-md active:scale-95 transition text-[14px] flex items-center justify-center gap-2 w-full max-w-[280px]">
+      <button id="extLoginBtn" onclick="window.forceLineLogin()" class="bg-[#00B900] text-white font-bold py-3.5 px-8 rounded-full shadow-md active:scale-95 transition text-[14px] flex items-center justify-center gap-2 w-full max-w-[280px]">
           <i class="fab fa-line text-lg"></i> ล็อกอินด้วย LINE
       </button>
   </div>
@@ -1975,11 +1974,24 @@
     };
 
     // 🌟 ระบบเชื่อมต่อ LINE LIFF (ระบบความปลอดภัยสูง ห้ามมีบัญชีผี 100%)
+    // 🌟 1. ฟังก์ชันบังคับล็อกอิน (ระบุ URL ให้ชัดเจน ป้องกัน LINE บล็อก)
+    window.forceLineLogin = function() {
+        let btn = document.getElementById('extLoginBtn');
+        if(btn) {
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin text-lg"></i> กำลังพาไปล็อกอิน...';
+            btn.disabled = true;
+        }
+        
+        // สั่งให้ล็อกอินและบังคับให้กลับมาที่ลิงก์ปัจจุบันแบบ 100%
+        liff.login({ redirectUri: window.location.href });
+    }
+
+    // 🌟 2. ระบบเชื่อมต่อ LINE LIFF (ระบบความปลอดภัยสูงสุด)
     if (typeof liff !== 'undefined') {
         liff.init({ liffId: MY_LIFF_ID }).then(() => {
             
             if (liff.isLoggedIn()) {
-                // ✅ ถ้าล็อกอินแล้ว ดึงข้อมูลโปรไฟล์ได้เลย (ปลอดภัย)
+                // ✅ ล็อกอินสำเร็จ ดึงข้อมูลโปรไฟล์ได้เลย
                 liff.getProfile().then(p => {
                     lineUserId = p.userId; 
                     lineName = p.displayName;
@@ -1993,23 +2005,29 @@
                         linePictureUrl = p.pictureUrl; 
                     }
                     
-                    // ปิดหน้าจอล็อกอิน (ถ้ามี)
+                    // ปิดหน้าจอล็อกอิน
                     let extScreen = document.getElementById('externalLoginScreen');
                     if(extScreen) extScreen.classList.add('hidden');
                     
-                    initApp(); // โหลดหน้าแอปต่อ
+                    // เปิดแอปหลักให้ใช้งานได้
+                    document.getElementById('page1').classList.remove('hidden');
+                    initApp(); 
                 }).catch(err => { 
                     showAlert('ข้อผิดพลาด', 'ไม่สามารถดึงข้อมูลโปรไฟล์ LINE ได้', 'error');
                 });
             } else {
-                // ❌ ถ้ายังไม่ได้ล็อกอิน
+                // ❌ ยังไม่ได้ล็อกอิน
                 if (liff.isInClient()) {
-                    // ถ้าเปิดในแอป LINE ให้เด้งล็อกอินอัตโนมัติได้เลย (ไม่มีปัญหาลูป)
+                    // เปิดในแอป LINE ให้เด้งล็อกอินอัตโนมัติเลย (ไม่มีปัญหาลูป)
                     liff.login();
                 } else {
-                    // ถ้าเปิดเว็บนอก (Safari/Chrome) ห้ามล็อกอินออโต้! ให้โชว์หน้าจอบังคับกดปุ่ม
+                    // เปิดเว็บนอก (Safari/Chrome)
+                    // 🚨 ซ่อนหน้าแอปหลัก (Page 1) ทิ้งไปเลย! ป้องกันการแอบใช้งาน
+                    document.getElementById('page1').classList.add('hidden');
+                    
+                    // โชว์แค่หน้าจอบังคับกดปุ่มล็อกอิน
                     document.getElementById('externalLoginScreen').classList.remove('hidden');
-                    window.hideSplashScreen(); // สั่งปิดโลโก้ F1 สีดำออกไป เพื่อให้เห็นปุ่มกด
+                    window.hideSplashScreen(); 
                 }
             }
             
@@ -2017,7 +2035,6 @@
             showAlert('เกิดข้อผิดพลาด', 'ไม่สามารถเชื่อมต่อระบบ LINE ได้', 'error');
         });
     } else { 
-        // กรณีที่ไม่รันผ่านเซิร์ฟเวอร์ หรือไม่มี LIFF ให้บล็อกการใช้งานไปเลย
         document.body.innerHTML = '<div style="padding:40px;text-align:center;font-family:sans-serif;font-weight:bold;">กรุณาเปิดใช้งานผ่านแอปพลิเคชัน LINE เท่านั้นครับ</div>';
     }
 
