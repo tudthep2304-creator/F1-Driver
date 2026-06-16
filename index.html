@@ -1501,19 +1501,30 @@
 
     window.closeProfileModal = function() { document.getElementById('profileModal').classList.add('hidden'); }
     
-    window.editProfilePhone = function() {
+    // 🌟 ระบบล็อกการพิมพ์ตรง และบังคับให้อัปเดตเบอร์ผ่านระบบบันทึกจำลงเครื่อง (LocalStorage)
+    window.updateDevicePhone = function() {
         let current = localStorage.getItem('passengerPhone') || '';
-        let newVal = prompt('กรุณากรอกเบอร์โทรศัพท์ใหม่ของคุณ:', current);
+        let newVal = prompt('กรุณากรอกเบอร์โทรศัพท์ 10 หลัก ของคุณเพื่อบันทึกเข้าสู่เครื่อง:', current);
+        
         if(newVal !== null) {
+            // กรองเอาเฉพาะตัวเลขเท่านั้น ป้องกันคนพิมพ์ตัวอักษรปนมา
             let cleanVal = newVal.replace(/\D/g, '');
-            if(cleanVal.length > 0) {
+            
+            if(cleanVal.length === 10) {
+                // บันทึกความจำลงในเครื่องคอมพิวเตอร์/มือถือเครื่องที่ใช้ทันที
                 localStorage.setItem('passengerPhone', cleanVal);
-                let pPhoneL = document.getElementById('profilePhoneLarge');
-                if(pPhoneL) pPhoneL.innerText = 'เบอร์โทร: ' + cleanVal;
+                
+                // สั่งอัปเดตข้อมูลแสดงผลบนหน้าจอทุกจุดแบบอัตโนมัติ
                 let pInp = document.getElementById('userPhone');
                 if(pInp) pInp.value = cleanVal;
-                showAlert('สำเร็จ', 'อัปเดตเบอร์โทรศัพท์เรียบร้อยแล้ว', 'success');
-            } else { showAlert('ผิดพลาด', 'กรุณากรอกเฉพาะตัวเลข', 'error'); }
+                
+                let pPhoneL = document.getElementById('profilePhoneLarge');
+                if(pPhoneL) pPhoneL.innerText = 'เบอร์โทร: ' + cleanVal;
+                
+                showAlert('สำเร็จ', 'อัปเดตเบอร์โทรศัพท์ลงเครื่องเรียบร้อยแล้ว', 'success');
+            } else { 
+                showAlert('ผิดพลาด', 'กรุณากรอกเบอร์โทรศัพท์ให้ครบ 10 หลัก (เฉพาะตัวเลข)', 'error'); 
+            }
         }
     }
 
