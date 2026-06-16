@@ -1398,12 +1398,25 @@
     async function requestWakeLock() { if ('wakeLock' in navigator) { try { wakeLock = await navigator.wakeLock.request('screen'); } catch (err) {} } }
     document.addEventListener('visibilitychange', () => { if (wakeLock !== null && document.visibilityState === 'visible') requestWakeLock(); });
 
-    // 🌟 ฟังก์ชันซ่อนหน้าจอโหลด (จะถูกเรียกก็ต่อเมื่อโหลดข้อมูลสำเร็จ 100% เท่านั้น)
+    // 🌟 บันทึกเวลาเริ่มต้นทันทีที่แอปเปิด
+    window.appStartTime = Date.now();
+
+    // 🌟 ฟังก์ชันซ่อนหน้าจอโหลด (รับประกันโชว์โลโก้ขั้นต่ำ 2 วินาที + รอข้อมูลเสร็จ)
     window.hideSplashScreen = function() {
         const splash = document.getElementById('splashScreen');
         if(splash && splash.style.display !== 'none') {
-            splash.style.opacity = '0';
-            setTimeout(() => { splash.style.visibility = 'hidden'; splash.style.display = 'none'; }, 500);
+            
+            // คำนวณว่าตั้งแต่เปิดแอปมา ผ่านไปกี่มิลลิวินาทีแล้ว
+            let elapsedTime = Date.now() - window.appStartTime;
+            let minSplashTime = 2000; // 🌟 บังคับโชว์อย่างน้อย 2 วินาที (ปรับตัวเลขได้ตามชอบ)
+            
+            // ถ้าผ่านไปไม่ถึง 2 วิ ให้หน่วงเวลาเพิ่มจนกว่าจะครบ แต่ถ้าเกิน 2 วิไปแล้ว (เน็ตช้า) เวลาหน่วงจะเป็น 0 ทันที
+            let delayTime = Math.max(0, minSplashTime - elapsedTime);
+
+            setTimeout(() => {
+                splash.style.opacity = '0';
+                setTimeout(() => { splash.style.visibility = 'hidden'; splash.style.display = 'none'; }, 500);
+            }, delayTime);
         }
     }
 
