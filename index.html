@@ -165,22 +165,23 @@
       </svg>
   </div>
 
+  <!-- 🌟 โฆษณาคั่นอัจฉริยะ (แยกฟังก์ชันเวลาปิด กับ เช็คบ็อกซ์ซ่อนโฆษณา) -->
   <div id="popupAdModal" class="hidden fixed inset-0 z-[99999] bg-black/80 flex items-center justify-center p-4 pointer-events-auto transition-opacity duration-300 opacity-0">
-      <div class="relative w-full max-w-sm rounded-2xl overflow-hidden shadow-2xl transform scale-95 transition-transform duration-300 bg-white dark:bg-[#1e234e] flex flex-col" id="popupAdContent">
+      <div class="relative w-full max-w-sm transform scale-95 transition-transform duration-300 flex flex-col items-center gap-3" id="popupAdContent">
           
-          <button onclick="window.closePopupAd(true)" class="absolute top-3 right-3 w-8 h-8 bg-black/50 backdrop-blur-md text-white rounded-full flex items-center justify-center hover:bg-black/80 transition z-10 shadow-sm border border-white/20"><i class="fas fa-times"></i></button>
+          <!-- รูปภาพโฆษณา -->
+          <img id="popupAdImage" src="" class="w-full h-auto object-cover cursor-pointer rounded-2xl shadow-2xl max-h-[70vh]">
           
-          <img id="popupAdImage" src="" class="w-full h-auto object-cover cursor-pointer max-h-[70vh]">
-          
-          <div class="p-3 bg-gray-50 dark:bg-[#2a2f5c] border-t border-gray-200 dark:border-[#383d6a] flex justify-between items-center shrink-0">
-              <label class="flex items-center gap-2 cursor-pointer text-gray-600 dark:text-gray-300 text-[11px] font-normal hover:opacity-80 transition select-none">
-                  <span id="popupAdSnoozeText">ไม่แสดงหน้านี้อีก 14 วัน</span>
-              </label>
-              
-              <div id="popupAdCountdownContainer" class="bg-gray-200 dark:bg-[#1e234e] text-gray-600 dark:text-gray-400 text-[10px] px-2.5 py-1 rounded-full font-normal hidden border border-gray-300 dark:border-[#4b507d]">
-                  ปิดใน <span id="popupAdCountdown" class="font-bold text-gray-800 dark:text-[#fae100]">5</span> วิ
-              </div>
-          </div>
+          <!-- 🌟 กล่อง Checkbox ซ่อนโฆษณา (จะถูกซ่อนไว้ถ้าแอดมินไม่ได้ตั้งค่าวัน) -->
+          <label id="popupAdSnoozeContainer" class="hidden flex items-center gap-2 cursor-pointer bg-black/60 backdrop-blur-md px-4 py-2 rounded-full text-white text-[12px] font-normal hover:bg-black/80 transition select-none shadow-sm w-fit mt-1">
+              <input type="checkbox" id="popupAdNoShowCheckbox" class="w-4 h-4 accent-[#fae100] cursor-pointer rounded">
+              <span id="popupAdSnoozeText">ไม่แสดงโฆษณานี้อีก 14 วัน</span>
+          </label>
+
+          <!-- ปุ่มแคปซูล ปิด ด้านล่างตรงกลาง -->
+          <button onclick="window.closePopupAd()" class="bg-white/90 dark:bg-[#2a2f5c]/90 backdrop-blur-md text-gray-800 dark:text-white px-8 py-2.5 rounded-full font-bold shadow-lg border border-gray-200 dark:border-[#383d6a] flex items-center justify-center gap-2 hover:bg-gray-100 dark:hover:bg-[#1e234e] transition active:scale-95 z-10 text-[14px]">
+              <i class="fas fa-times"></i> <span id="popupAdCloseText">ปิด</span>
+          </button>
           
       </div>
   </div>
@@ -1189,11 +1190,11 @@
     });
 
     // ==========================================
-    // 🌟 ระบบ Popup โฆษณาอัจฉริยะ (คุมวันซ่อนแบบไดนามิก)
+    // 🌟 ระบบ Popup โฆษณาอัจฉริยะ (แยกส่วนเวลาปิด กับ เช็คบ็อกซ์ซ่อนโฆษณา)
     // ==========================================
     window.popupAdCountdownTimer = null;
     window.currentActiveAdId = null; 
-    window.currentActiveAdSnoozeDays = 14; 
+    window.currentActiveAdSnoozeDays = 0; // ค่าเริ่มต้น (0 = ไม่แสดงปุ่มติ๊ก)
     window.seenAds = window.seenAds || {}; 
 
     let popupAdList = [];
@@ -1226,8 +1227,8 @@
             let targetPages = ad.targetPages || ['home'];
 
             if (isStarted && !isEnded && targetPages.includes(mappedPageName)) {
-                // 🌟 ดึงวันที่ซ่อนจาก LocalStorage (ดักเวอร์ชันเก่าด้วย)
-                let hideUntil = localStorage.getItem('hide_ad_' + ad.id) || localStorage.getItem('hide_ad_14d_' + ad.id);
+                // ดึงวันที่ซ่อนจาก LocalStorage
+                let hideUntil = localStorage.getItem('hide_ad_' + ad.id);
                 
                 // ถ้ายกเลิกโชว์ไปแล้ว และเวลายังไม่หมด ให้ข้ามอันนี้ไป
                 if (!hideUntil || now > parseInt(hideUntil)) {
@@ -1244,27 +1245,34 @@
         if (activeAd) {
             let modal = document.getElementById('popupAdModal');
             let imgEl = document.getElementById('popupAdImage');
-            let countdownContainer = document.getElementById('popupAdCountdownContainer');
-            let countdownEl = document.getElementById('popupAdCountdown');
+            let closeTextEl = document.getElementById('popupAdCloseText');
+            let checkboxContainer = document.getElementById('popupAdSnoozeContainer');
             let checkbox = document.getElementById('popupAdNoShowCheckbox');
             let snoozeTextEl = document.getElementById('popupAdSnoozeText');
             
             if(!modal || !imgEl) return;
 
-            // รีเซ็ตการแสดงผล
-            if(checkbox) checkbox.checked = false;
             window.currentActiveAdId = activeAd.id; 
-            
-            // 🌟 เซ็ตข้อความบอกลูกค้าให้ตรงกับที่แอดมินตั้ง
-            window.currentActiveAdSnoozeDays = activeAd.snoozeDays !== undefined ? parseInt(activeAd.snoozeDays) : 14;
-            if(snoozeTextEl) snoozeTextEl.innerText = `ไม่แสดงหน้านี้อีก ${window.currentActiveAdSnoozeDays} วัน`;
-
             window.seenAds[activeAd.id] = true; 
+            
+            // 🌟 ตรวจสอบว่าแอดมินตั้งค่าวันซ่อน (Snooze Days) มาหรือไม่?
+            window.currentActiveAdSnoozeDays = activeAd.snoozeDays ? parseInt(activeAd.snoozeDays) : 0;
+            
+            if (checkbox) checkbox.checked = false; // รีเซ็ตติ๊กถูก
+            
+            if (window.currentActiveAdSnoozeDays > 0) {
+                // ถ้ามีตั้งวัน ให้แสดงกล่อง Checkbox
+                if(checkboxContainer) checkboxContainer.classList.remove('hidden');
+                if(snoozeTextEl) snoozeTextEl.innerText = `ไม่แสดงโฆษณานี้อีก ${window.currentActiveAdSnoozeDays} วัน`;
+            } else {
+                // ถ้าไม่ได้ตั้ง (หรือเป็น 0 หรือปล่อยว่าง) ให้ซ่อนกล่อง Checkbox ทิ้งไปเลย
+                if(checkboxContainer) checkboxContainer.classList.add('hidden');
+            }
 
             imgEl.src = activeAd.imageUrl;
             imgEl.onclick = function() {
                 if (activeAd.linkUrl) window.open(activeAd.linkUrl, '_blank');
-                window.closePopupAd(true); // ปิดป๊อปอัปแล้วทำการเซฟการตั้งค่า Checkbox ทันที
+                window.closePopupAd(); 
             };
 
             if(window.popupAdCountdownTimer) clearInterval(window.popupAdCountdownTimer);
@@ -1276,37 +1284,36 @@
                 if(content) content.classList.remove('scale-95');
             }, 10);
 
-            // 🌟 ตั้งค่าตัวนับถอยหลัง
-            let duration = activeAd.duration !== undefined ? parseInt(activeAd.duration) : 0;
+            // 🌟 ตั้งค่าตัวนับถอยหลังบนปุ่ม ปิด
+            let duration = activeAd.duration ? parseInt(activeAd.duration) : 0;
 
             if (duration > 0) {
-                if(countdownContainer) countdownContainer.classList.remove('hidden');
-                if(countdownEl) countdownEl.innerText = duration;
+                if(closeTextEl) closeTextEl.innerText = `ปิด (${duration})`;
                 
                 let currentCount = duration;
                 window.popupAdCountdownTimer = setInterval(() => {
                     currentCount--;
-                    if (countdownEl) countdownEl.innerText = currentCount;
+                    if (closeTextEl) closeTextEl.innerText = `ปิด (${currentCount})`;
+                    
                     if (currentCount <= 0) {
                         clearInterval(window.popupAdCountdownTimer);
-                        window.closePopupAd(true); // ปิดอัตโนมัติก็เซฟค่าติ๊กด้วย
+                        window.closePopupAd(); // ครบเวลาก็แค่กดปิด
                     }
                 }, 1000);
             } else {
-                if(countdownContainer) countdownContainer.classList.add('hidden');
+                if(closeTextEl) closeTextEl.innerText = 'ปิด';
             }
         }
     }
 
-    // 4. ฟังก์ชันปิดหน้าต่าง และจัดการ Checkbox
-    window.closePopupAd = function(processCheckbox = false) {
+    // 4. ฟังก์ชันปิดหน้าต่าง + เซฟวันซ่อน (ถ้าติ๊กถูก)
+    window.closePopupAd = function() {
         let modal = document.getElementById('popupAdModal');
         let checkbox = document.getElementById('popupAdNoShowCheckbox');
         
-        // 🌟 ถ้าลูกค้าติ๊กถูก ให้บันทึกปิดแบนเนอร์นี้กี่วันตามที่แอดมินเซ็ตมา
-        if (processCheckbox && checkbox && checkbox.checked && window.currentActiveAdId) {
-            let sDays = window.currentActiveAdSnoozeDays || 14;
-            let hideUntilTime = Date.now() + (sDays * 24 * 60 * 60 * 1000);
+        // 🌟 เช็คว่าถ้ากล่อง Checkbox โชว์อยู่ และลูกค้า "ติ๊กถูก" ค่อยบันทึกการซ่อนโฆษณา
+        if (checkbox && checkbox.checked && window.currentActiveAdId && window.currentActiveAdSnoozeDays > 0) {
+            let hideUntilTime = Date.now() + (window.currentActiveAdSnoozeDays * 24 * 60 * 60 * 1000);
             localStorage.setItem('hide_ad_' + window.currentActiveAdId, hideUntilTime);
         }
         
@@ -1317,7 +1324,6 @@
         if(content) content.classList.add('scale-95');
         setTimeout(() => { modal.classList.add('hidden'); }, 300);
     }
-
     function resetTrackingFlags() {
         window.hasSpokenAccept = false; window.hasSpokenArrivePick = false; window.hasSpokenAtPickup = false;
         window.hasSpokenDepart = false; window.hasSpokenArriveDrop = false; window.hasSpokenFinish = false;
