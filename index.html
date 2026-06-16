@@ -1973,8 +1973,7 @@
       else if (currentStep === 2 || currentStep === 3) { renderWaypointsUI(); renderSavedPlaceMarkersOnMap(); }
     };
 
-    // 🌟 ระบบเชื่อมต่อ LINE LIFF (ระบบความปลอดภัยสูง ห้ามมีบัญชีผี 100%)
-    // 🌟 1. ฟังก์ชันบังคับล็อกอิน (ระบุ URL ให้ชัดเจน ป้องกัน LINE บล็อก)
+    // 🌟 1. ฟังก์ชันบังคับล็อกอิน (ฉบับซักฟอกลิงก์ ป้องกัน LINE บล็อก 100%)
     window.forceLineLogin = function() {
         let btn = document.getElementById('extLoginBtn');
         if(btn) {
@@ -1982,63 +1981,12 @@
             btn.disabled = true;
         }
         
-        // สั่งให้ล็อกอินและบังคับให้กลับมาที่ลิงก์ปัจจุบันแบบ 100%
-        liff.login({ redirectUri: window.location.href });
+        // 🚨 จุดสำคัญ: ตัดพวก ?openExternalBrowser=1 ทิ้งให้หมด เอาแค่ลิงก์เว็บเพียวๆ
+        let cleanUrl = window.location.origin + window.location.pathname;
+        
+        // ส่งลิงก์เพียวๆ ไปให้ LINE ตรวจสอบ
+        liff.login({ redirectUri: cleanUrl });
     }
-
-    // 🌟 2. ระบบเชื่อมต่อ LINE LIFF (ระบบความปลอดภัยสูงสุด)
-    if (typeof liff !== 'undefined') {
-        liff.init({ liffId: MY_LIFF_ID }).then(() => {
-            
-            if (liff.isLoggedIn()) {
-                // ✅ ล็อกอินสำเร็จ ดึงข้อมูลโปรไฟล์ได้เลย
-                liff.getProfile().then(p => {
-                    lineUserId = p.userId; 
-                    lineName = p.displayName;
-                    
-                    let un = document.getElementById('userName'); if(un) un.innerText = lineName;
-                    let usm = document.getElementById('userNameSmall'); if(usm) usm.innerText = lineName;
-                    
-                    if(p.pictureUrl) { 
-                        let pic = document.getElementById('userPic'); if(pic) pic.src = p.pictureUrl; 
-                        let picSm = document.getElementById('userPicSmall'); if(picSm) picSm.src = p.pictureUrl; 
-                        linePictureUrl = p.pictureUrl; 
-                    }
-                    
-                    // ปิดหน้าจอล็อกอิน
-                    let extScreen = document.getElementById('externalLoginScreen');
-                    if(extScreen) extScreen.classList.add('hidden');
-                    
-                    // เปิดแอปหลักให้ใช้งานได้
-                    document.getElementById('page1').classList.remove('hidden');
-                    initApp(); 
-                }).catch(err => { 
-                    showAlert('ข้อผิดพลาด', 'ไม่สามารถดึงข้อมูลโปรไฟล์ LINE ได้', 'error');
-                });
-            } else {
-                // ❌ ยังไม่ได้ล็อกอิน
-                if (liff.isInClient()) {
-                    // เปิดในแอป LINE ให้เด้งล็อกอินอัตโนมัติเลย (ไม่มีปัญหาลูป)
-                    liff.login();
-                } else {
-                    // เปิดเว็บนอก (Safari/Chrome)
-                    // 🚨 ซ่อนหน้าแอปหลัก (Page 1) ทิ้งไปเลย! ป้องกันการแอบใช้งาน
-                    document.getElementById('page1').classList.add('hidden');
-                    
-                    // โชว์แค่หน้าจอบังคับกดปุ่มล็อกอิน
-                    document.getElementById('externalLoginScreen').classList.remove('hidden');
-                    window.hideSplashScreen(); 
-                }
-            }
-            
-        }).catch(e => { 
-            showAlert('เกิดข้อผิดพลาด', 'ไม่สามารถเชื่อมต่อระบบ LINE ได้', 'error');
-        });
-    } else { 
-        document.body.innerHTML = '<div style="padding:40px;text-align:center;font-family:sans-serif;font-weight:bold;">กรุณาเปิดใช้งานผ่านแอปพลิเคชัน LINE เท่านั้นครับ</div>';
-    }
-
-    window.isCompleting = false;
     
     function initApp() {
       // 🌟 สั่งปิดหน้าจอโหลดโลโก้ เฉพาะตอนที่ข้อมูลทุกอย่างพร้อมแล้วเท่านั้น!
