@@ -3493,24 +3493,44 @@
             },
             { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 } // บังคับดึงค่าใหม่ล่าสุด
         );
-    }
-    // 🌟 ทริคเปิดออกเบราว์เซอร์นอก LINE (Safari/Chrome) เพื่อเรียกป๊อปอัปขอสิทธิ์ GPS ใหม่อีกรอบ
+    }// 🌟 ทริคเปิดออกเบราว์เซอร์นอก LINE (Safari/Chrome) ฉบับบังคับเด้ง 100%
     window.openInExternalBrowser = function() {
-        if (typeof liff !== 'undefined' && liff.isInClient()) {
-            liff.openWindow({
-                url: window.location.href, // เปิด URL ปัจจุบัน
-                external: true // บังคับเด้งออก Safari / Chrome
-            });
-        } else {
+        let currentUrl = window.location.href;
+        
+        // เช็คก่อนว่าลูกค้าเปิดเว็บข้างนอกอยู่แล้วหรือไม่
+        if (currentUrl.includes('openExternalBrowser=1')) {
             showAlert('แจ้งเตือน', 'คุณกำลังใช้งานผ่านเบราว์เซอร์ปกติอยู่แล้ว กรุณาไปที่ตั้งค่าของเครื่องเพื่อเปิด GPS ครับ', 'info');
+            return;
+        }
+
+        // เติมรหัสลับของ LINE เข้าไปท้ายลิงก์ เพื่อบังคับเด้งออกแบบไม่ต้องถาม!
+        let sep = currentUrl.includes('?') ? '&' : '?';
+        let externalUrl = currentUrl + sep + 'openExternalBrowser=1';
+
+        if (typeof liff !== 'undefined' && liff.isInClient()) {
+            try {
+                // แผน 1: ลองเตะออกด้วยคำสั่ง LIFF
+                liff.openWindow({ url: externalUrl, external: true });
+            } catch (e) {
+                // แผน 2: ถ้า LIFF เออเร่อ ให้ใช้ลิงก์รหัสลับเตะออกไปเลย
+                window.location.href = externalUrl;
+            }
+        } else {
+            // แผน 3: สำหรับกรณีอื่นๆ
+            window.open(externalUrl, '_blank') || (window.location.href = externalUrl);
         }
     }
 
-    // 🌟 ปุ่มทักหาแอดมินกรณีลูกค้าทำไม่เป็นจริงๆ
+    // 🌟 ปุ่มทักหาแอดมินกรณีลูกค้าทำไม่เป็นจริงๆ (ใส่ลิงก์ LINE OA ของคุณที่นี่)
     window.contactAdminForGPS = function() {
-        let lineOaUrl = "https://line.me/R/ti/p/@805zvmii"; // เปลี่ยนเป็นลิงก์ LINE OA ของร้านคุณ
-        if (typeof liff !== 'undefined') {
-            liff.openWindow({ url: lineOaUrl, external: false });
+        let lineOaUrl = "https://line.me/R/ti/p/@805zvmii"; 
+        
+        if (typeof liff !== 'undefined' && liff.isInClient()) {
+            try {
+                liff.openWindow({ url: lineOaUrl, external: false });
+            } catch (e) {
+                window.location.href = lineOaUrl;
+            }
         } else {
             window.location.href = lineOaUrl;
         }
