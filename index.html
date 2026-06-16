@@ -435,11 +435,10 @@
       </div>
 
       <form onsubmit="event.preventDefault(); window.submitBooking();" class="flex gap-1.5 w-full mt-2 shrink-0">
-                    <div class="relative flex-[1.2] min-w-[100px]">
+          <div class="relative flex-[1.2] min-w-[100px]">
               <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-400"><i class="fas fa-phone-alt text-[13px]"></i></div>
               <input type="tel" id="userPhone" name="tel" autocomplete="tel" onkeydown="return false;" oninput="window.saveDevicePhone(this.value)" placeholder="แตะเลือกเบอร์อัตโนมัติ" class="w-full py-3 pl-8 pr-2 bg-gray-50 dark:bg-[#2a2f5c] border border-gray-200 dark:border-[#383d6a] focus:border-[#fae100] focus:bg-white dark:focus:bg-[#1e234e] text-gray-800 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 rounded-full text-[13px] font-normal outline-none transition-colors h-full caret-transparent cursor-pointer">
           </div>
-
 
           <button type="button" id="btnUsePromo" onclick="window.openPromoModal()" class="shrink-0 px-3 bg-gray-50 dark:bg-[#2a2f5c] border border-gray-200 dark:border-[#383d6a] text-[#eab308] dark:text-[#fae100] rounded-full text-[13px] font-normal hover:bg-gray-100 dark:hover:bg-[#383d6a] transition flex items-center justify-center gap-1.5 shadow-sm">
               <i class="fas fa-ticket-alt"></i> โค้ด
@@ -510,7 +509,7 @@
           <h2 id="profileNameLarge" class="text-xl font-bold text-gray-800 dark:text-white mb-1">...</h2>
           
           <p id="profileIdLarge" class="text-[10px] font-mono bg-gray-200/60 dark:bg-gray-800 text-gray-500 dark:text-gray-400 px-3 py-1 rounded-full select-all mb-4 border border-transparent dark:border-gray-700/30">ID: -</p>
-                  <div class="flex items-center gap-2 mb-6">
+        <div class="flex items-center gap-2 mb-6">
               <span id="profilePhoneLarge" class="text-[13px] text-gray-500 dark:text-gray-400 font-normal">เบอร์โทร: -</span>
               
               <div class="relative overflow-hidden inline-block ml-1">
@@ -777,15 +776,16 @@
   </div>
 
   <script>
-    <script>
     // ==========================================
     // 🌟 ระบบป้องกันการซูมหน้าจอ (Anti-Zoom)
     // ==========================================
+    // 1. ป้องกันการใช้นิ้วถ่างเพื่อซูม (Pinch-to-zoom)
     document.addEventListener('gesturestart', function (e) { e.preventDefault(); });
     document.addEventListener('gesturechange', function (e) { e.preventDefault(); });
     document.addEventListener('gestureend', function (e) { e.preventDefault(); });
     
     document.addEventListener('touchmove', function(event) {
+        // ถ้านิ้วมากกว่า 1 นิ้ว (ถ่างซูม) ให้หยุดการทำงาน
         if (event.touches.length > 1) { 
             event.preventDefault(); 
         }
@@ -795,6 +795,7 @@
     document.addEventListener('touchend', function(event) {
         let now = (new Date()).getTime();
         if (now - lastTouchEnd <= 300) { 
+            // ป้องกันการดับเบิ้ลคลิกซูม ยกเว้นในฟิลด์กรอกข้อมูล
             if(event.target.tagName !== 'INPUT' && event.target.tagName !== 'TEXTAREA') {
                 event.preventDefault(); 
             }
@@ -802,6 +803,7 @@
         lastTouchEnd = now;
     }, { passive: false });
     
+    // ส่วนต้นของ JS ยังเหมือนเดิมทั้งหมด
     const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwwdopAPESHRrHEYTSa-CzFMbh0JX9WHUa37PMEJmxDkah7ui67cVtOn68cnM-2DtmR/exec"; 
     const MY_LIFF_ID = "2010188449-b9Yq1R2L";
     
@@ -832,7 +834,7 @@
     let focusedWaypointIndex = -1; 
 
     let lineUserId = "", lineName = "";
-    let linePictureUrl = ""; 
+    let linePictureUrl = ""; // 🌟 เพิ่มตัวแปรเก็บรูปลูกค้าตรงนี้
     let driverData = { lat: 19.910479, lng: 99.840576, status: "ออฟไลน์" };
     let bookData = { pLat:0, pLng:0, pName:"", dLat:0, dLng:0, dName:"", originalPrice:0, price:0, priceEstimate:"", distance:0, duration:0, status:"", promoCode: "", discount: 0, waypoints: [], serviceType: 'car' };
     let currentStep = 1;
@@ -853,6 +855,7 @@
     window.activeGlobalChatListenerRef = null;
     let currentSelectedRatingScore = 0;
 
+    // ระบบสีแผนที่ (ใช้ Dark / Standard ตามโหมด)
     const detailedDarkMapStyle = [
       { elementType: "geometry", stylers: [{ color: "#1e234e" }] },
       { elementType: "labels.text.stroke", stylers: [{ color: "#1e234e" }] },
@@ -906,11 +909,14 @@
         if(!btnMainRide) return;
 
         let hasActiveJob = bookData && bookData.status && bookData.status !== "เสร็จสิ้น" && !bookData.status.includes("ยกเลิก");
+
         let circleDiv = btnMainRide.querySelector('div');
 
         if (hasActiveJob) {
             btnMainRide.disabled = false;
             btnMainRide.className = "flex flex-col items-center justify-start gap-1.5 transition active:scale-95 bg-transparent outline-none mt-1 group";
+            
+            // 🌟 เปลี่ยนมาใช้คลาส animate-fast-alert ที่เราสร้างใหม่
             if(circleDiv) {
                 circleDiv.className = "w-12 h-12 rounded-full flex items-center justify-center transition border border-[#fae100] bg-yellow-50 dark:bg-[#fae100]/20 animate-fast-alert";
             }
@@ -923,6 +929,7 @@
         } else {
             btnMainRide.disabled = false;
             btnMainRide.className = "flex flex-col items-center justify-start gap-1.5 transition active:scale-95 bg-transparent outline-none mt-1 group";
+            
             if(circleDiv) {
                 circleDiv.className = "w-12 h-12 rounded-full bg-white dark:bg-[#2a2f5c] border border-gray-200 dark:border-[#383d6a] flex items-center justify-center group-hover:bg-gray-100 dark:group-hover:bg-[#383d6a] transition shadow-sm";
             }
@@ -976,7 +983,10 @@
         document.getElementById('newsModal').classList.remove('hidden'); 
         renderNewsAndPromotions();
     }
-    window.closeNewsModal = function() { document.getElementById('newsModal').classList.add('hidden'); }
+
+    window.closeNewsModal = function() { 
+        document.getElementById('newsModal').classList.add('hidden'); 
+    }
 
     function renderNewsAndPromotions(snapshot = null) {
         let container = document.getElementById('newsListContainer');
@@ -1001,6 +1011,7 @@
                 let iconColor = item.isPromo ? "text-[#eab308] dark:text-[#fae100]" : "text-gray-500 dark:text-gray-300";
                 
                 let newDot = isNew ? `<div id="dot-${item.id}" class="w-2.5 h-2.5 bg-red-500 rounded-full absolute top-0 right-0 border-2 border-white dark:border-[#1e234e] shadow-sm animate-pulse"></div>` : '';
+                
                 let textTitleColor = isNew ? 'text-gray-900 dark:text-white' : 'text-gray-500 dark:text-gray-400';
                 let textTimeColor = isNew ? 'text-gray-800 dark:text-white' : 'text-gray-400 dark:text-gray-500';
 
@@ -1021,6 +1032,7 @@
             });
             container.innerHTML = html;
         };
+
         if (snapshot) processSnap(snapshot);
         else db.ref('news_promotions').once('value', snap => processSnap(snap));
     }
@@ -1069,8 +1081,11 @@
 
         document.getElementById('newsDetailModal').classList.remove('hidden');
     }
-    window.closeNewsDetailModal = function() { document.getElementById('newsDetailModal').classList.add('hidden'); }
 
+    window.closeNewsDetailModal = function() {
+        document.getElementById('newsDetailModal').classList.add('hidden');
+    }
+    
     function updateMapPadding() {
         if(!map) return;
         let pTop = (currentStep === 2 || currentStep === 3) ? 140 : 70;
@@ -1190,15 +1205,16 @@
     });
 
     // ==========================================
-    // 🌟 ระบบ Popup โฆษณาอัจฉริยะ 
+    // 🌟 ระบบ Popup โฆษณาอัจฉริยะ (แยกส่วนเวลาปิด กับ เช็คบ็อกซ์ซ่อนโฆษณา)
     // ==========================================
     window.popupAdCountdownTimer = null;
     window.currentActiveAdId = null; 
-    window.currentActiveAdSnoozeDays = 0;
+    window.currentActiveAdSnoozeDays = 0; // ค่าเริ่มต้น (0 = ไม่แสดงปุ่มติ๊ก)
     window.seenAds = window.seenAds || {}; 
 
     let popupAdList = [];
 
+    // 1. ดึงข้อมูลโฆษณา
     db.ref('config/popup_ad').on('value', snap => {
         popupAdList = [];
         if(snap.exists()) {
@@ -1207,6 +1223,7 @@
         }
     });
 
+    // 2. ฟังก์ชันตรวจสอบเงื่อนไข
     window.checkAndShowPopupAd = function(page) {
         if (popupAdList.length === 0) return;
         
@@ -1225,7 +1242,10 @@
             let targetPages = ad.targetPages || ['home'];
 
             if (isStarted && !isEnded && targetPages.includes(mappedPageName)) {
+                // ดึงวันที่ซ่อนจาก LocalStorage
                 let hideUntil = localStorage.getItem('hide_ad_' + ad.id);
+                
+                // ถ้ายกเลิกโชว์ไปแล้ว และเวลายังไม่หมด ให้ข้ามอันนี้ไป
                 if (!hideUntil || now > parseInt(hideUntil)) {
                     if(!window.seenAds) window.seenAds = {};
                     if (!window.seenAds[ad.id]) {
@@ -1236,6 +1256,7 @@
             }
         }
 
+        // 3. แสดงผลหน้าจอ
         if (activeAd) {
             let modal = document.getElementById('popupAdModal');
             let imgEl = document.getElementById('popupAdImage');
@@ -1248,14 +1269,18 @@
 
             window.currentActiveAdId = activeAd.id; 
             window.seenAds[activeAd.id] = true; 
+            
+            // 🌟 ตรวจสอบว่าแอดมินตั้งค่าวันซ่อน (Snooze Days) มาหรือไม่?
             window.currentActiveAdSnoozeDays = activeAd.snoozeDays ? parseInt(activeAd.snoozeDays) : 0;
             
-            if (checkbox) checkbox.checked = false; 
+            if (checkbox) checkbox.checked = false; // รีเซ็ตติ๊กถูก
             
             if (window.currentActiveAdSnoozeDays > 0) {
+                // ถ้ามีตั้งวัน ให้แสดงกล่อง Checkbox
                 if(checkboxContainer) checkboxContainer.classList.remove('hidden');
                 if(snoozeTextEl) snoozeTextEl.innerText = `ไม่แสดงโฆษณานี้อีก ${window.currentActiveAdSnoozeDays} วัน`;
             } else {
+                // ถ้าไม่ได้ตั้ง (หรือเป็น 0 หรือปล่อยว่าง) ให้ซ่อนกล่อง Checkbox ทิ้งไปเลย
                 if(checkboxContainer) checkboxContainer.classList.add('hidden');
             }
 
@@ -1274,17 +1299,20 @@
                 if(content) content.classList.remove('scale-95');
             }, 10);
 
+            // 🌟 ตั้งค่าตัวนับถอยหลังบนปุ่ม ปิด
             let duration = activeAd.duration ? parseInt(activeAd.duration) : 0;
 
             if (duration > 0) {
                 if(closeTextEl) closeTextEl.innerText = `ปิด (${duration})`;
+                
                 let currentCount = duration;
                 window.popupAdCountdownTimer = setInterval(() => {
                     currentCount--;
                     if (closeTextEl) closeTextEl.innerText = `ปิด (${currentCount})`;
+                    
                     if (currentCount <= 0) {
                         clearInterval(window.popupAdCountdownTimer);
-                        window.closePopupAd();
+                        window.closePopupAd(); // ครบเวลาก็แค่กดปิด
                     }
                 }, 1000);
             } else {
@@ -1293,10 +1321,12 @@
         }
     }
 
+    // 4. ฟังก์ชันปิดหน้าต่าง + เซฟวันซ่อน (ถ้าติ๊กถูก)
     window.closePopupAd = function() {
         let modal = document.getElementById('popupAdModal');
         let checkbox = document.getElementById('popupAdNoShowCheckbox');
         
+        // 🌟 เช็คว่าถ้ากล่อง Checkbox โชว์อยู่ และลูกค้า "ติ๊กถูก" ค่อยบันทึกการซ่อนโฆษณา
         if (checkbox && checkbox.checked && window.currentActiveAdId && window.currentActiveAdSnoozeDays > 0) {
             let hideUntilTime = Date.now() + (window.currentActiveAdSnoozeDays * 24 * 60 * 60 * 1000);
             localStorage.setItem('hide_ad_' + window.currentActiveAdId, hideUntilTime);
@@ -1309,39 +1339,15 @@
         if(content) content.classList.add('scale-95');
         setTimeout(() => { modal.classList.add('hidden'); }, 300);
     }
-
-    // ==========================================
-    // 🌟 ระบบเซฟเบอร์จาก AutoFill
-    // ==========================================
-    window.saveDevicePhone = function(val) {
-        if(!val) return;
-        let cleanVal = val.replace(/\D/g, '');
-        if(cleanVal.startsWith('66')) { cleanVal = '0' + cleanVal.substring(2); }
-        if(cleanVal.length >= 9) {
-            localStorage.setItem('passengerPhone', cleanVal);
-            
-            let pInp = document.getElementById('userPhone');
-            if(pInp) pInp.value = cleanVal;
-            
-            let pPhoneL = document.getElementById('profilePhoneLarge');
-            if(pPhoneL) pPhoneL.innerText = 'เบอร์โทร: ' + cleanVal;
-            
-            let hiddenInp = document.getElementById('hiddenProfilePhoneInput');
-            if(hiddenInp) hiddenInp.value = '';
-            
-            showAlert('อัปเดตสำเร็จ', 'ดึงเบอร์โทรศัพท์จากมือถือของคุณเรียบร้อยแล้ว!', 'success');
-        }
-    }
-
     function resetTrackingFlags() {
         window.hasSpokenAccept = false; window.hasSpokenArrivePick = false; window.hasSpokenAtPickup = false;
         window.hasSpokenDepart = false; window.hasSpokenArriveDrop = false; window.hasSpokenFinish = false;
         window.hasSpokenCancel = false; window.hasShownFinish = false; window.hasShownCancel = false;
         window.hasNotifiedLinePick = false; window.hasNotifiedLineDrop = false; window.isShowingRouteChange = false;
         lastNotifiedStatus = "";
-        window.clearAndCloseChat(); 
+        
+        window.clearAndCloseChat(); // 🌟 เรียกใช้ฟังก์ชันกวาดแชท
     }
-    
     async function requestWakeLock() { if ('wakeLock' in navigator) { try { wakeLock = await navigator.wakeLock.request('screen'); } catch (err) {} } }
     document.addEventListener('visibilitychange', () => { if (wakeLock !== null && document.visibilityState === 'visible') requestWakeLock(); });
 
@@ -1424,6 +1430,7 @@
         let pPhoneL = document.getElementById('profilePhoneLarge');
         if(pPhoneL) pPhoneL.innerText = savedPhone ? 'เบอร์โทร: ' + savedPhone : 'เบอร์โทร: ยังไม่ระบุ';
 
+        // 🌟 ตรวจสอบเปิด-ปิดสวิตช์ตามจริงในคลังความจำ
         let autoToggle = document.getElementById('theme-auto-toggle');
         if(autoToggle) {
             autoToggle.checked = (localStorage.getItem('theme') === 'auto');
@@ -1446,6 +1453,7 @@
         }
     }
 
+    // 🌟 สลับโหมดสีเอง (ปิดป๊อปอัปแจ้งเตือน 100% + เด้งสวิตช์ออโต้ปิดเอง)
     window.toggleTheme = function() {
         const htmlEl = document.documentElement;
         let autoToggle = document.getElementById('theme-auto-toggle');
@@ -1458,6 +1466,7 @@
             localStorage.setItem('theme', 'dark');
         }
         
+        // 🌟 บังคับเด้งปิดสวิตช์อัตโนมัติทันที
         if (autoToggle) autoToggle.checked = false;
         
         if(typeof window.updateMapThemeForAuto === 'function') {
@@ -1465,11 +1474,13 @@
         }
     }
 
+    // 🌟 ฟังก์ชันคุมสวิตช์เลื่อนเปิด-ปิด ออโต้ (ไม่มีป๊อปอัป)
     window.handleAutoThemeChange = function(toggleEl) {
         if (toggleEl.checked) {
             localStorage.setItem('theme', 'auto');
             window.applySystemTheme();
         } else {
+            // ถ้าเลื่อนปิดออโต้ ให้ล็อกสีหน้าจอปัจจุบันค้างไว้เลย
             let currentTheme = document.documentElement.classList.contains('dark') ? 'dark' : 'light';
             localStorage.setItem('theme', currentTheme);
         }
@@ -1480,14 +1491,49 @@
         let isDark = document.documentElement.classList.contains('dark');
         let mapStyle = isDark ? detailedDarkMapStyle : []; 
 
-        if (map && !isSatelliteMode) { map.setOptions({ styles: mapStyle }); }
+        // 1. อัปเดตสีแผนที่หลัก
+        if (map && !isSatelliteMode) {
+            map.setOptions({ styles: mapStyle });
+        }
 
+        // 2. 🌟 อัปเดตสีแผนที่ในหน้าประวัติด้วย (ถ้ามี)
         if (typeof historyMapInstance !== 'undefined' && historyMapInstance) {
             historyMapInstance.setOptions({ styles: mapStyle });
         }
     }
 
     window.closeProfileModal = function() { document.getElementById('profileModal').classList.add('hidden'); }
+    
+    // 🌟 ระบบจับค่าจาก AutoFill และเซฟลงเครื่องอัตโนมัติ
+    window.saveDevicePhone = function(val) {
+        if(!val) return;
+        
+        // กรองเอาเฉพาะตัวเลข (เผื่อบางเครื่อง AutoFill ติดขีดหรือเว้นวรรคมาด้วย)
+        let cleanVal = val.replace(/\D/g, '');
+        
+        // ถ้าเบอร์มือถือเซฟมาเป็นรหัสประเทศ +66 ให้แปลงกลับเป็น 0
+        if(cleanVal.startsWith('66')) {
+            cleanVal = '0' + cleanVal.substring(2);
+        }
+        
+        // ถ้าเบอร์ที่ดึงมามี 9 หลักขึ้นไป ถือว่าถูกต้อง ให้บันทึกเลย
+        if(cleanVal.length >= 9) {
+            localStorage.setItem('passengerPhone', cleanVal);
+            
+            // สั่งอัปเดตตัวเลขแสดงผลบนหน้าจอทุกจุด
+            let pInp = document.getElementById('userPhone');
+            if(pInp) pInp.value = cleanVal;
+            
+            let pPhoneL = document.getElementById('profilePhoneLarge');
+            if(pPhoneL) pPhoneL.innerText = 'เบอร์โทร: ' + cleanVal;
+            
+            // ล้างค่าในช่องซ่อนของโปรไฟล์ เพื่อให้กดอัปเดตซ้ำได้ถล้าต้องการเปลี่ยนเบอร์
+            let hiddenInp = document.getElementById('hiddenProfilePhoneInput');
+            if(hiddenInp) hiddenInp.value = '';
+            
+            showAlert('อัปเดตสำเร็จ', 'ดึงเบอร์โทรศัพท์จากมือถือของคุณเรียบร้อยแล้ว!', 'success');
+        }
+    }
 
     window.confirmCancelBooking = function() {
         document.getElementById('cancelModal').classList.add('hidden'); 
@@ -1496,8 +1542,10 @@
         db.ref('bookings/' + lineUserId).remove().then(() => {
             if(APPS_SCRIPT_URL) fetch(`${APPS_SCRIPT_URL}?action=notify&type=cancel&name=${lineName}`, {mode:'no-cors'});
             
+            // 🌟 ล้างความจำงานเก่าทิ้งให้หมด
             bookData = { pLat:0, pLng:0, pName:"", dLat:0, dLng:0, dName:"", originalPrice:0, price:0, priceEstimate:"", distance:0, duration:0, status:"", promoCode: "", discount: 0, waypoints: [], serviceType: 'car' };
             
+            // 🌟 ล้างจุดที่เลือกบนแผนที่ทิ้งทั้งหมด
             localWaypoints.forEach(w => { if(w.marker) w.marker.setMap(null); });
             localWaypoints = [];
             
@@ -1507,7 +1555,7 @@
             showAlert('ยกเลิกสำเร็จ', 'ระบบได้ทำการยกเลิกการเรียกรถเรียบร้อยแล้ว', 'success', () => { 
                 resetTrackingFlags(); 
                 window.isCompleting = false; 
-                window.showPage(1); 
+                window.showPage(1); // พากลับหน้าแรก
             });
         });
     }
@@ -1646,10 +1694,59 @@
         }
     }
 
+    // 🌟 สลับโหมดสีเอง (ปิดป๊อปอัปแจ้งเตือน 100% + เด้งสวิตช์ออโต้ปิดเอง)
+    window.toggleTheme = function() {
+        const htmlEl = document.documentElement;
+        let autoToggle = document.getElementById('theme-auto-toggle');
+        
+        if (htmlEl.classList.contains('dark')) {
+            htmlEl.classList.remove('dark');
+            localStorage.setItem('theme', 'light');
+        } else {
+            htmlEl.classList.add('dark');
+            localStorage.setItem('theme', 'dark');
+        }
+        
+        // 🌟 บังคับเด้งปิดสวิตช์อัตโนมัติทันที
+        if (autoToggle) autoToggle.checked = false;
+        
+        if(typeof window.updateMapThemeForAuto === 'function') {
+            window.updateMapThemeForAuto();
+        }
+    }
+
+    // 🌟 เปิดใช้งานโหมดออโต้ตามมือถือ
+    window.setAutoTheme = function() {
+        localStorage.setItem('theme', 'auto');
+        const htmlEl = document.documentElement;
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            htmlEl.classList.add('dark');
+        } else {
+            htmlEl.classList.remove('dark');
+        }
+        showAlert('เปลี่ยนโหมดอัตโนมัติ', 'เปิดใช้งานโหมดออโต้ แอปจะปรับสีตามระบบเครื่องครับ', 'success');
+        updateMapThemeForAuto();
+    }
+
+    function updateMapThemeForAuto() {
+        if (map && !isSatelliteMode) {
+            let mapStyle = document.documentElement.classList.contains('dark') ? detailedDarkMapStyle : []; 
+            map.setOptions({ styles: mapStyle });
+        }
+    }
+
+    // ทำให้แผนที่เปลี่ยนสีตามทันทีถ้าเครื่องลูกค้าสลับโหมดตอนเปิดแอปอยู่
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+        if(localStorage.getItem('theme') === 'auto') { 
+            updateMapThemeForAuto(); 
+        }
+    });
+
     function updateMapControlsPosition(page) {
         const controls = document.getElementById('mapControls'); if (!controls) return;
         controls.classList.remove('top-[76px]', 'top-[170px]', 'top-[140px]');
         
+        // 🌟 แก้ไข: หน้า Tracking ให้ดันปุ่มขึ้นไปชิดด้านบน (76px) เหมือนหน้าแรก
         if (page === 2 || page === 3) {
             controls.classList.add('top-[140px]'); 
         } else {
@@ -1735,7 +1832,7 @@
         gestureHandling: 'greedy', 
         zoomControl: false,
         clickableIcons: false,
-        keyboardShortcuts: false
+        keyboardShortcuts: false // 🌟 เพิ่มคำสั่งนี้เพื่อซ่อน "แป้นพิมพ์ลัด" ด้วยเช่นกัน
       });
       
       let btnMapStyle = document.getElementById('btnMapStyle');
@@ -1818,7 +1915,7 @@
               if(p.pictureUrl) { 
                   let pic = document.getElementById('userPic'); if(pic) pic.src = p.pictureUrl; 
                   let picSm = document.getElementById('userPicSmall'); if(picSm) picSm.src = p.pictureUrl; 
-                  linePictureUrl = p.pictureUrl;
+                  linePictureUrl = p.pictureUrl; // 🌟 สั่งให้ระบบจำลิงก์รูปโปรไฟล์ LINE เอาไว้
               }
               initApp();
             }).catch(err => { mockLoginForBrowser(); });
@@ -1859,11 +1956,13 @@
         } 
         else if (currentStep === 'Tracking' && !window.isCompleting) {
             window.isCompleting = true;
-          window.clearAndCloseChat(); 
+          window.clearAndCloseChat(); // 🌟 บังคับเด้งแชทออกและล้างข้อความ
             
+            // 🌟 ล้างจุดบนแผนที่
             localWaypoints.forEach(w => { if(w.marker) w.marker.setMap(null); });
-            if(typeof window.closeInAppChatModal === 'function') window.closeInAppChatModal(); 
+            if(typeof window.closeInAppChatModal === 'function') window.closeInAppChatModal(); // 🌟 บังคับเด้งแชทออก
             
+            // 🌟 ล้างจุดบนแผนที่
             localWaypoints.forEach(w => { if(w.marker) w.marker.setMap(null); });
             localWaypoints = [];
             renderWaypointsUI();  
@@ -1880,6 +1979,7 @@
                 if (isCompleted || (bookData && (bookData.status.includes("ถึงที่หมาย") || bookData.status.includes("เสร็จสิ้น")))) {
                     let finalMessage = `จุดรับ: ${bookData.pName}\nจุดส่ง: ${bookData.dName}\nราคา: ${bookData.price} บาท\n\nขอบคุณที่ใช้บริการ F1 Driver ครับ!`;
                     
+                    // 🌟 ล้างความจำเมื่อจบงาน
                     bookData = { pLat:0, pLng:0, pName:"", dLat:0, dLng:0, dName:"", originalPrice:0, price:0, priceEstimate:"", distance:0, duration:0, status:"", promoCode: "", discount: 0, waypoints: [], serviceType: 'car' };
                     updateRideButtonState();
 
@@ -1887,6 +1987,7 @@
                         document.getElementById('driverRatingModal').classList.remove('hidden');
                     });
                 } else {
+                    // 🌟 ล้างความจำเมื่อโดนยกเลิก
                     bookData = { pLat:0, pLng:0, pName:"", dLat:0, dLng:0, dName:"", originalPrice:0, price:0, priceEstimate:"", distance:0, duration:0, status:"", promoCode: "", discount: 0, waypoints: [], serviceType: 'car' };
                     updateRideButtonState();
 
@@ -2029,7 +2130,7 @@
             
             let colorClass = isPickup ? 'bg-[#4ade80] text-white dark:text-[#1e234e]' : 'bg-[#ef4444] text-white';
             let colorHex = isPickup ? '#4ade80' : '#ef4444';
-            let textColorMap = isPickup ? '#ffffff' : '#ffffff'; 
+            let textColorMap = isPickup ? '#ffffff' : '#ffffff'; // สีในแผนที่ใช้ขาวเพื่อให้เห็นชัด
 
             let textItem = isFocused ? 'text-gray-900 dark:text-white font-medium' : 'text-gray-700 dark:text-gray-100 font-light';
             let bgItem = isFocused ? 'bg-gray-100 dark:bg-[#383d6a] border-gray-300 dark:border-transparent' : 'bg-white dark:bg-[#2a2f5c] border-gray-200 dark:border-[#383d6a]';
@@ -2125,9 +2226,11 @@
             updateMapPadding(); 
             if (typeof google !== 'undefined') {
                 google.maps.event.trigger(map, 'resize');
+                // 🌟 บังคับให้แผนที่ขยับตัว 1 ที เพื่อแก้บั๊กภาพโหลดไม่เต็มจอ
                 setTimeout(() => { map.setCenter(map.getCenter()); }, 50); 
             }
         }
+      // 🌟 ตรงนี้แหละครับที่วงเล็บและคำสั่งปิดหน้าต่างหายไปรอบที่แล้ว
       } else {
           if(navBar) navBar.classList.add('hidden'); if(mapControls) mapControls.classList.add('hidden'); if(mapEl) mapEl.classList.add('hidden');
       }
@@ -2498,18 +2601,20 @@
       });
     }
 
+    // 🌟 ระบบจำตำแหน่งเดิม (Global Variable)
     window.cameFromProfile = false;
 
     window.openPassengerHistory = function(fromProfile = false) {
-        window.cameFromProfile = fromProfile; 
+        window.cameFromProfile = fromProfile; // จดไว้ว่าเปิดมาจากหน้าโปรไฟล์ไหม
         document.getElementById('historyModal').classList.remove('hidden');
         renderPassengerHistory();
     }
     window.closePassengerHistory = function() { 
         document.getElementById('historyModal').classList.add('hidden'); 
+        // ถ้าเปิดมาจากโปรไฟล์ ให้เด้งกลับไปที่โปรไฟล์
         if (window.cameFromProfile) {
             window.openProfileModal();
-            window.cameFromProfile = false; 
+            window.cameFromProfile = false; // รีเซ็ตสถานะ
         }
     }
 
@@ -2517,6 +2622,7 @@
         let container = document.getElementById('historyListContainer');
         container.innerHTML = '<div class="flex justify-center py-10"><i class="fas fa-spinner fa-spin text-3xl text-blue-500"></i></div>';
         
+        // 🌟 กำหนดเวลาย้อนหลัง 90 วัน (นับเป็นมิลลิวินาที)
         let ninetyDaysAgo = Date.now() - (90 * 24 * 60 * 60 * 1000);
         
         db.ref('completed_jobs').orderByChild('userId').equalTo(lineUserId).once('value', snap => {
@@ -2525,6 +2631,7 @@
                 let jobData = child.val();
                 let jobTime = jobData.completedAt || jobData.timestamp || 0;
                 
+                // 🌟 กรองเอาเฉพาะงานที่เกิดขึ้นในช่วง 90 วันที่ผ่านมา
                 if (jobTime >= ninetyDaysAgo) {
                     jobs.push({id: child.key, ...jobData}); 
                 }
@@ -2562,7 +2669,6 @@
             container.innerHTML = html;
         });
     }
-    
     let historyMapInstance = null; let historyDirectionsService = null; let historyDirectionsRenderer = null;
     window.historyMapMarkers = []; window.historyMapBounds = null; window.historyFocusedIndex = -1; 
 
@@ -2669,6 +2775,7 @@
         selectedHistoryJobId = null; 
     }
 
+    // 🌟 ฟังก์ชัน: เดินทางอีกครั้ง (ก๊อปปี้หมุดเดิมแล้วไปหน้าสรุปเลย)
     window.rideAgainFromHistory = function() {
         if (!selectedHistoryJobId || !loadedHistoryJobs[selectedHistoryJobId]) return;
         let job = loadedHistoryJobs[selectedHistoryJobId];
@@ -2678,41 +2785,66 @@
             return;
         }
 
+        // 1. ปิดหน้าต่างประวัติทั้งหมด
         window.closeHistoryDetail();
         window.closePassengerHistory();
 
+        // 2. ล้างหมุดเดิมบนแผนที่
         localWaypoints.forEach(w => { if(w.marker) w.marker.setMap(null); });
         localWaypoints = [];
 
+        // 3. ก๊อปปี้หมุดจากประวัติมาใส่แทนที่
         job.waypoints.forEach(wp => {
             localWaypoints.push({
-                lat: wp.lat, lng: wp.lng, name: wp.name, type: wp.type, iconType: wp.iconType || null, passed: false, marker: null 
+                lat: wp.lat,
+                lng: wp.lng,
+                name: wp.name,
+                type: wp.type,
+                iconType: wp.iconType || null,
+                passed: false,
+                marker: null // ระบบจะสร้าง Marker ใหม่อัตโนมัติใน renderWaypointsUI
             });
         });
 
+        // 4. ตั้งค่าจุดเริ่มต้น และจุดปลายทางให้ระบบ
         let firstWp = localWaypoints[0];
         let lastWp = localWaypoints[localWaypoints.length - 1];
 
-        bookData.pLat = firstWp.lat; bookData.pLng = firstWp.lng; bookData.pName = firstWp.name;
-        bookData.dLat = lastWp.lat; bookData.dLng = lastWp.lng; bookData.dName = lastWp.name;
+        bookData.pLat = firstWp.lat;
+        bookData.pLng = firstWp.lng;
+        bookData.pName = firstWp.name;
+        bookData.dLat = lastWp.lat;
+        bookData.dLng = lastWp.lng;
+        bookData.dName = lastWp.name;
         
+        // 5. จำประเภทรถที่เคยเรียกไว้ด้วย
         window.currentServiceType = job.serviceType || 'car';
+
+        // 6. กระโดดข้ามไป Step 3 (หน้ายืนยันการเรียกรถ) ทันที
         window.showPage(4);
     };
 
     function drawHistoryMap(waypoints) {
         if (typeof google === 'undefined' || !waypoints || waypoints.length < 2) return;
 
+        // 🌟 ดึงค่าสีปัจจุบันของแอปล่าสุด
         const isDark = document.documentElement.classList.contains('dark');
         const currentStyle = isDark ? detailedDarkMapStyle : [];
 
         if (!historyMapInstance) {
             historyMapInstance = new google.maps.Map(document.getElementById('historyMap'), {
-                zoom: 13, mapTypeId: 'roadmap', styles: currentStyle, disableDefaultUI: true, gestureHandling: 'greedy', clickableIcons: false, keyboardShortcuts: false
+                zoom: 13, 
+                mapTypeId: 'roadmap', 
+                styles: currentStyle, // ใช้สีล่าสุด
+                disableDefaultUI: true, 
+                gestureHandling: 'greedy',
+                clickableIcons: false, 
+                keyboardShortcuts: false
             });
             historyDirectionsService = new google.maps.DirectionsService();
             historyDirectionsRenderer = new google.maps.DirectionsRenderer({ map: historyMapInstance, suppressMarkers: true, preserveViewport: false });
         } else {
+            // 🌟 ถ้าเคยโหลดแผนที่ไปแล้ว ให้บังคับเปลี่ยนสีก่อนวาดเส้นทางใหม่
             historyMapInstance.setOptions({ styles: currentStyle });
         }
 
@@ -2764,16 +2896,18 @@
         }, "block");
     }
 
+    // --- ส่วนของจัดการคนขับที่บล็อก ---
     window.openBlockedDrivers = function(fromProfile = false) {
-        window.cameFromProfile = fromProfile; 
+        window.cameFromProfile = fromProfile; // จดไว้ว่าเปิดมาจากหน้าโปรไฟล์ไหม
         document.getElementById('blockedDriversModal').classList.remove('hidden');
         renderBlockedDrivers();
     }
     window.closeBlockedDrivers = function() { 
         document.getElementById('blockedDriversModal').classList.add('hidden'); 
+        // ถ้าเปิดมาจากโปรไฟล์ ให้เด้งกลับไปที่โปรไฟล์
         if (window.cameFromProfile) {
             window.openProfileModal();
-            window.cameFromProfile = false; 
+            window.cameFromProfile = false; // รีเซ็ตสถานะ
         }
     }
     
@@ -2866,11 +3000,12 @@
         enableSmoothSwipeToClose('newsDetailModal', window.closeNewsDetailModal);
     }, 1000);
 
-    window.currentDriverGender = 'male'; 
+    window.currentDriverGender = 'male'; // ค่าเริ่มต้น
 
     function handleTracking() {
         if (!bookData) return;
 
+        // 🌟 ปลั๊กอินต่อสายแชทอัตโนมัติเมื่อมีงานใหม่ (และจะไม่ต่อถ้ายกเลิก/จบงานแล้ว)
         if (!window.inAppChatRef && !bookData.status.includes("ยกเลิก") && bookData.status !== "เสร็จสิ้น") {
             if(typeof window.listenToInAppChat === 'function') window.listenToInAppChat();
         }
@@ -2885,6 +3020,9 @@
         if(statusText) statusText.innerText = bookData.status;
         if(priceText) { priceText.innerText = bookData.priceEstimate ? bookData.priceEstimate : ('~฿' + (bookData.price || 0)); }
 
+        // ==========================================
+        // 🌟 1. ระบบเสียงพูด (ใช้โครงสร้างเดิมของคุณ 100% และเอาติ๊งน่องออก)
+        // ==========================================
         if (lastNotifiedStatus !== bookData.status) {
             if ((bookData.status.includes("กำลังเดินทางไปหา") || bookData.status.includes("รับงานแล้ว")) && !window.hasSpokenAccept) { 
                 speakText("คนขับตอบรับแล้ว ราคาค่าโดยสารได้ถูกกำหนดแล้ว"); 
@@ -2909,19 +3047,23 @@
             lastNotifiedStatus = bookData.status;
         }
 
+        // ==========================================
+        // 🌟 2. การอัปเดตหน้าจอ UI
+        // ==========================================
         if (bookData.status.includes("ยกเลิก")) {
-            window.clearAndCloseChat(); 
+            window.clearAndCloseChat(); // 🌟 บังคับเด้งออกและล้างแชท
             if(driverBox) driverBox.classList.add('hidden'); if(actionBtns) actionBtns.classList.add('hidden'); if(btnEmer) btnEmer.classList.add('hidden');
             window.lastKnownStatus = bookData.status;
             
             if (!window.hasAutoRebooked) {
                 window.hasAutoRebooked = true;
                 showAlert('กำลังหาคนขับใหม่', 'คนขับก่อนหน้ายกเลิกงาน ระบบกำลังค้นหาคนขับใหม่ให้คุณอัตโนมัติครับ', 'info');
+                // 🌟 สั่งเคลียร์ chats ในฐานข้อมูลด้วย (chats: null)
                 db.ref('bookings/' + lineUserId).update({ status: "รอผู้ขับขี่ตอบรับ", driverPin: null, driverName: null, driverCar: null, driverPlate: null, driverPhone: null, chats: null }).then(() => { setTimeout(() => { window.hasAutoRebooked = false; }, 3000); });
             }
         } 
         else if (bookData.status === "เสร็จสิ้น" || bookData.status.includes("ถึงที่หมาย")) {
-            window.clearAndCloseChat(); 
+            window.clearAndCloseChat(); // 🌟 บังคับเด้งออกและล้างแชท
             if(driverBox) driverBox.classList.add('hidden'); if(actionBtns) actionBtns.classList.add('hidden'); if(btnEmer) btnEmer.classList.add('hidden');
             window.lastKnownStatus = bookData.status;
 
@@ -2952,6 +3094,7 @@
             if (isPassengerInCar) {
                 if(actionBtns) actionBtns.classList.add('hidden');
                 
+                // 🌟 ระบบกล้องตามรถอัตโนมัติ
                 if (isTrackingMode && map && markerDriver && markerDriver.getMap()) { 
                     updateMapPadding(); 
                     map.panTo(markerDriver.getPosition()); 
@@ -2983,11 +3126,13 @@
         
         let isPassengerInCar = bookData && bookData.status && (bookData.status.includes("ออกเดินทาง") || bookData.status.includes("ไปส่ง") || bookData.status.includes("ไปยัง") || bookData.status.includes("ขึ้นรถ"));
         
+        // 🌟 1. ถ้านั่งอยู่บนรถแล้ว (และไม่ได้เอานิ้วเลื่อนแผนที่เล่น) ให้กล้องล็อคเป้าซูมตามรถยนต์
         if (isPassengerInCar && isTrackingMode && markerDriver && markerDriver.getPosition()) {
             updateMapPadding();
             map.panTo(markerDriver.getPosition());
             map.setZoom(17);
         } 
+        // 🌟 2. แต่ถ้ากำลังรอคนขับมารับ ให้ซูมออกเพื่อให้เห็นภาพรวมของเส้นทาง
         else {
             let pb = getDynamicBottomPadding();
             map.fitBounds(currentRouteBounds, { top: 120, right: 50, bottom: pb, left: 50 });
@@ -3011,11 +3156,15 @@
     window.submitDriverRatingScore = function() {
         document.getElementById('driverRatingModal').classList.add('hidden');
         
+        // 🌟 สั่งให้เซิร์ฟเวอร์บวกสถิติการเดินทางเพิ่ม 1 รอบ (+1) อัตโนมัติ
         db.ref('passenger_stats/' + lineUserId + '/totalRides').set(firebase.database.ServerValue.increment(1));
 
         showAlert('ขอบคุณครับ', 'ระบบได้ส่งคะแนนประเมินให้คนขับเรียบร้อยแล้ว', 'success', () => { window.showPage(1); });
     }
 
+    // ==========================================
+    // 🌟 ระบบแชทส่วนตัว (ผู้โดยสาร - คนขับ)
+    // ==========================================
     let inAppChatRef = null;
     window.unreadInAppCount = 0;
 
@@ -3049,6 +3198,7 @@
         db.ref('bookings/' + lineUserId + '/chats').push(msgData).then(() => {
             inputEl.value = '';
             
+            // 🌟 แอบส่งสำเนาแชทไปเก็บบนคลังแอดมิน (ไม่มีวันถูกลบ)
             db.ref('admin_chat_logs').push({
                 jobId: lineUserId,
                 passengerName: lineName || 'ไม่ทราบชื่อ',
@@ -3075,6 +3225,7 @@
         if(window.inAppChatRef) { window.inAppChatRef.off(); }
         document.getElementById('inAppChatMessages').innerHTML = '';
         
+        // 🌟 ดึงข้อมูลจากโฟลเดอร์งานปัจจุบัน
         window.inAppChatRef = db.ref('bookings/' + lineUserId + '/chats');
         window.inAppChatRef.on('child_added', snap => {
             let msg = snap.val();
@@ -3107,6 +3258,7 @@
             const chatBox = document.getElementById('inAppChatBox');
             if(chatBox) setTimeout(() => { chatBox.scrollTop = chatBox.scrollHeight; }, 100);
 
+            // 🌟 เพิ่มเสียงแจ้งเตือนเมื่อมีข้อความจาก "คนขับ"
             if (!isSenderPassenger) {
                 if (window.chatAlertSound) {
                     window.chatAlertSound.currentTime = 0; 
@@ -3121,15 +3273,6 @@
             }
         });
     }
-    
-    window.clearAndCloseChat = function() {
-        if(window.inAppChatRef) window.inAppChatRef.off();
-        window.unreadInAppCount = 0;
-        updateInAppChatBadge();
-        document.getElementById('inAppChatMessages').innerHTML = '';
-        if(typeof window.closeInAppChatModal === 'function') window.closeInAppChatModal();
-    }
-
     window.confirmReportTrip = function() {
         if (!selectedHistoryJobId || !loadedHistoryJobs[selectedHistoryJobId]) return;
         window.openConfirmActionModal("รายงานปัญหา?", "คุณต้องการรายงานปัญหาการเดินทางในรอบนี้ ใช่หรือไม่?", () => { window.reportCurrentTrip(); }, 'yellow');
@@ -3150,7 +3293,9 @@
         let lineUrl = `https://line.me/R/oaMessage/${lineOaId}/?${encodedMessage}`;
         window.open(lineUrl, '_blank');
     }
-    
+    // ==========================================
+    // 🌟 1. ฟังก์ชันเสียงพูด (TTS) ออริจินัล 100%
+    // ==========================================
     function speakText(text) {
         if ('speechSynthesis' in window) {
             window.speechSynthesis.cancel();
@@ -3160,13 +3305,17 @@
         }
     }
 
+    // 🌟 สร้างตัวแปรเสียงแชทเตรียมไว้เลย
     window.chatAlertSound = new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3');
 
+    // แอบปลดล็อกเสียงบนมือถือ เมื่อลูกค้าเอานิ้วแตะจอครั้งแรก
     document.body.addEventListener('touchstart', function() {
+        // 1. ปลดล็อกเสียงพูดสิริ
         if ('speechSynthesis' in window) {
             let msg = new SpeechSynthesisUtterance('');
             window.speechSynthesis.speak(msg);
         }
+        // 2. แอบปลดล็อกเสียงไฟล์ MP3 (ติ๊งน่อง)
         if(window.chatAlertSound) {
             window.chatAlertSound.muted = true;
             window.chatAlertSound.play().then(() => {
@@ -3191,7 +3340,10 @@
             }).catch(e=>{});
         }
     }, { once: true });
-    
+   
+    // ==========================================
+    // 🌟 กู้คืนฟังก์ชันที่หายไป (ปุ่มต่างๆ บนหน้าจอ)
+    // ==========================================
     window.openCommunityModal = function() {
         document.getElementById('communityModal').classList.remove('hidden');
         window.unreadChatMessages.clear(); 
@@ -3200,12 +3352,10 @@
         const chatBox = document.getElementById('globalChatBox');
         if (chatBox) { setTimeout(() => { chatBox.scrollTop = chatBox.scrollHeight; }, 100); }
     };
-    
     window.closeCommunityModal = function() { 
         document.getElementById('communityModal').classList.add('hidden'); 
         localStorage.setItem('lastSeenChatTime', Date.now());
     };
-    
     window.sendGlobalChat = function() {
         let inputEl = document.getElementById('globalChatInput');
         let textVal = inputEl.value.trim();
@@ -3215,7 +3365,6 @@
             text: textVal, timestamp: firebase.database.ServerValue.TIMESTAMP
         }).then(() => { inputEl.value = ''; });
     };
-    
     window.filterCommunityChat = function() {
         let keyword = document.getElementById('chatSearchInput').value.toLowerCase();
         let messages = document.querySelectorAll('.chat-msg-item');
@@ -3229,20 +3378,25 @@
     window.openEmergencyModal = function() { document.getElementById('emergencyModal').classList.remove('hidden'); };
     window.closeEmergencyModal = function() { document.getElementById('emergencyModal').classList.add('hidden'); };
     
+    // 🌟 ระบบกดชื่อสถานที่แล้วให้แผนที่เลื่อนไปโฟกัส (กดซ้ำเพื่อซูมออก)
     window.focusLocationToggle = function(lat, lng, index) {
         if (!map) return;
         
         if (focusedWaypointIndex === index) {
+            // ถ้ายกเลิกการโฟกัส (กดซ้ำ) ให้ซูมออกให้เห็นทุกหมุด
             focusedWaypointIndex = -1;
             window.fitAllWaypoints();
         } else {
+            // ถ้ากดครั้งแรก ให้ซูมเข้าไปที่หมุดนั้น
             focusedWaypointIndex = index;
             map.panTo({lat: lat, lng: lng});
             map.setZoom(17);
-            renderWaypointsUI(); 
+            renderWaypointsUI(); // รีเฟรชสีตัวหนังสือ
         }
     };
-    
+    // ==========================================
+    // 🌟 กู้คืนตัวแปรและฟังก์ชันของระบบคอมมูนิตี้แชท
+    // ==========================================
     window.unreadChatMessages = new Set();
     
     function updateChatBadge() {
@@ -3257,7 +3411,7 @@
             }
         }
     }
-    
+      // 🌟 ระบบแชร์พิกัดลูกค้าให้แอดมินแบบเรียลไทม์ (เมื่อเปิดแอป)
     function startSharingPassengerLocation() {
         if (navigator.geolocation && lineUserId) {
             let passengerRef = db.ref('active_passengers/' + lineUserId);
@@ -3268,7 +3422,7 @@
                     name: lineName || 'ไม่ทราบชื่อ',
                     lat: position.coords.latitude,
                     lng: position.coords.longitude,
-                    pictureUrl: linePictureUrl || null, 
+                    pictureUrl: linePictureUrl || null, // 🌟 ส่งลิงก์รูปโปรไฟล์แนบไปกับ GPS ด้วย!
                     timestamp: firebase.database.ServerValue.TIMESTAMP
                 });
             }, error => {
