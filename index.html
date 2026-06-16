@@ -656,7 +656,8 @@
                           <p class="text-[16px] font-normal text-[#4ade80] leading-none" id="histDetPrice">฿0</p>
                       </div>
                   </div>
-                  <div class="relative mt-0.5 px-0.5">
+                  <!-- 🌟 จำกัดความสูงให้แสดงประมาณ 3 จุด และเลื่อนดูได้ -->
+                  <div class="relative mt-0.5 px-0.5 max-h-[135px] overflow-y-auto slim-scroll pr-1">
                       <div class="absolute left-[0.4rem] top-3 bottom-3 w-0.5 border-l-[1.5px] border-dashed border-gray-300 dark:border-[#4b507d]"></div>
                       <div id="historyDetailWaypointsContainer" class="flex flex-col relative z-10 gap-3"></div>
                   </div>
@@ -2417,13 +2418,10 @@
               }
 
               vehicleTypesFromDB = vehicleTypes;
-
-              let listHtml = '';
-              let firstAvailable = null;
               let prevSelected = window.currentServiceType || 'car';
-              let foundPrevSelected = false;
 
-              vehicleTypes.forEach(v => {
+              // 🌟 1. คำนวณราคาและสถานะ Online ของรถทุกคันเตรียมไว้ก่อน
+              let processedVehicles = vehicleTypes.map(v => {
                   let baseFare = v.base; let kmRate = v.km; let pickRate = v.pick;
                   let baseRidePrice = baseFare + (distRideKm * kmRate);
                   
@@ -2446,9 +2444,6 @@
                       displaySub = `<i class="fas fa-bolt text-[#eab308] dark:text-[#fae100] mr-1"></i> มีรถว่างใกล้คุณ`;
                       cardClass = "border-gray-300 dark:border-[#383d6a] cursor-pointer";
                       iconClass = v.color;
-                      
-                      if(!firstAvailable) firstAvailable = { id: v.id, price: minPrice, priceEstimate: displayPrice, isOnline: true };
-                      if(v.id === prevSelected) foundPrevSelected = { id: v.id, price: minPrice, priceEstimate: displayPrice, isOnline: true };
                   } else {
                       let offlinePrice = baseRidePrice + (baseRidePrice * 0.10);
                       minPrice = Math.ceil(offlinePrice / 10) * 10;
@@ -2456,24 +2451,37 @@
                       displaySub = `(ไม่มีรถว่าง)`;
                       cardClass = "border-gray-200 dark:border-[#2a2f5c] text-gray-400 dark:text-gray-500 opacity-60 cursor-pointer hover:opacity-80";
                       iconClass = "text-gray-400 dark:text-gray-500";
-                      
-                      if(v.id === prevSelected) foundPrevSelected = { id: v.id, price: minPrice, priceEstimate: displayPrice, isOnline: false };
                   }
                   
+                  return { ...v, isOnline, minPrice, displayPrice, displaySub, cardClass, iconClass };
+              });
+
+              // 🌟 2. จัดเรียง (Sort) ดันคันที่ว่าง (Online) ขึ้นข้างบนสุด
+              processedVehicles.sort((a, b) => (b.isOnline === true ? 1 : 0) - (a.isOnline === true ? 1 : 0));
+
+              // 🌟 3. นำรถที่จัดเรียงแล้ว มาสร้างเป็นปุ่มบนหน้าจอ
+              let listHtml = '';
+              let firstAvailable = null;
+              let foundPrevSelected = null;
+
+              processedVehicles.forEach(v => {
+                  if(v.isOnline && !firstAvailable) firstAvailable = { id: v.id, price: v.minPrice, priceEstimate: v.displayPrice, isOnline: true };
+                  if(v.id === prevSelected) foundPrevSelected = { id: v.id, price: v.minPrice, priceEstimate: v.displayPrice, isOnline: v.isOnline };
+                  
                   listHtml += `
-                  <div id="vcard-${v.id}" onclick="window.selectVehicleInSummary('${v.id}', ${minPrice}, '${displayPrice}', ${isOnline})" class="flex justify-between items-center py-2 px-3 rounded-full border transition ${cardClass}">
+                  <div id="vcard-${v.id}" onclick="window.selectVehicleInSummary('${v.id}', ${v.minPrice}, '${v.displayPrice}', ${v.isOnline})" class="flex justify-between items-center py-2 px-3 rounded-full border transition ${v.cardClass}">
                       <div class="flex items-center gap-3">
                           <div class="w-10 h-10 rounded-full bg-gray-100 dark:bg-[#1e234e] flex items-center justify-center border border-gray-200 dark:border-[#383d6a] shadow-inner shrink-0">
-                              <i class="fas ${v.icon} text-lg ${iconClass}"></i>
+                              <i class="fas ${v.icon} text-lg ${v.iconClass}"></i>
                           </div>
                           <div class="flex flex-col">
-                              <p class="v-name text-[13px] font-normal leading-tight ${isOnline ? 'text-gray-800 dark:text-gray-200' : 'text-gray-400'}">${v.name}</p>
-                              <p class="text-[11px] mt-0.5 ${isOnline ? 'text-gray-600 dark:text-white' : 'text-gray-400 dark:text-gray-500'}">${displaySub}</p>
+                              <p class="v-name text-[13px] font-normal leading-tight ${v.isOnline ? 'text-gray-800 dark:text-gray-200' : 'text-gray-400'}">${v.name}</p>
+                              <p class="text-[11px] mt-0.5 ${v.isOnline ? 'text-gray-600 dark:text-white' : 'text-gray-400 dark:text-gray-500'}">${v.displaySub}</p>
                           </div>
                       </div>
                       <div class="text-right flex flex-col items-end">
-                          <p class="font-medium text-[13px] leading-tight ${isOnline ? 'text-[#4ade80]' : 'text-gray-400 dark:text-gray-500'}">${displayPrice}</p>
-                          ${!isOnline ? `<p class="text-[9px] text-gray-400 dark:text-gray-500 mt-0.5">(ราคาประมาณ)</p>` : ''}
+                          <p class="font-medium text-[13px] leading-tight ${v.isOnline ? 'text-[#4ade80]' : 'text-gray-400 dark:text-gray-500'}">${v.displayPrice}</p>
+                          ${!v.isOnline ? `<p class="text-[9px] text-gray-400 dark:text-gray-500 mt-0.5">(ราคาประมาณ)</p>` : ''}
                       </div>
                   </div>`;
               });
@@ -2481,12 +2489,13 @@
               let listContainer = document.getElementById('vehicleSelectionList');
               if(listContainer) listContainer.innerHTML = listHtml;
               
+              // เลือกรถอัตโนมัติให้ผู้โดยสาร
               if (foundPrevSelected) {
                   window.selectVehicleInSummary(foundPrevSelected.id, foundPrevSelected.price, foundPrevSelected.priceEstimate, foundPrevSelected.isOnline);
               } else if (firstAvailable) {
                   window.selectVehicleInSummary(firstAvailable.id, firstAvailable.price, firstAvailable.priceEstimate, firstAvailable.isOnline);
               } else {
-                  window.selectVehicleInSummary(vehicleTypes[0].id, 0, '~฿0', false);
+                  window.selectVehicleInSummary(processedVehicles[0].id, processedVehicles[0].minPrice, processedVehicles[0].displayPrice, false);
               }
 
               setTimeout(() => { if(map) { let pb = getDynamicBottomPadding(); map.fitBounds(currentRouteBounds, { top: 120, right: 50, bottom: pb, left: 50 }); } }, 200);
