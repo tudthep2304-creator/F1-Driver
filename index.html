@@ -2341,17 +2341,18 @@
               let processedVehicles = vehicleTypes.map(v => {
                   let baseFare = v.base; let kmRate = v.km; let pickRate = v.pick;
                   let adminMockDist = v.mockDistance ? parseFloat(v.mockDistance) : 2; 
-                  
-                  let algoType = v.algoType || 'radius_cap';
-                  let algoParam = v.algoParam ? parseFloat(v.algoParam) : 12;
-
                   let baseRidePrice = baseFare + (distRideKm * kmRate);
                   
+                  // 🌟 รองรับระบบ ID แบบใหม่ (DRV-XXXXXX) หรือแบบเก่า (pin)
                   let activeTypeDrivers = window.onlineDrivers.filter(d => {
-                      let profile = window.allDriverProfiles[d.pin || d.driverPin];
+                      let driverKey = d.driverId || d.pin || d.driverPin; // หา Key ตัวใดตัวหนึ่งที่มีอยู่
+                      let profile = window.allDriverProfiles[driverKey];
+                      
                       if (profile && profile.vehicles) {
                           return Object.values(profile.vehicles).some(veh => veh.serviceType === v.id && veh.isOnline === true);
-                      } else { return ((profile && profile.serviceType) || d.serviceType || 'car') === v.id; }
+                      } else { 
+                          return ((profile && profile.serviceType) || d.serviceType || 'car') === v.id; 
+                      }
                   });
 
                   let adminForcedOnline = v.forceOnline === true;
@@ -2384,10 +2385,14 @@
                       cardClass = "border-gray-300 dark:border-[#383d6a] cursor-pointer";
                       iconClass = v.color;
                   } else {
-                      minPrice = 0; 
-                      displayPrice = ``; 
+                      // 🌟 รถออฟไลน์: คำนวณราคากลางจำลองให้ลูกค้าดูเป็นวิทยาทาน
+                      minPrice = Math.round(baseRidePrice + (adminMockDist * pickRate));
+                      let maxPrice = Math.round(minPrice * 1.10);
+                      if(minPrice < baseFare) minPrice = baseFare;
+
+                      displayPrice = `~฿${minPrice} - ${maxPrice}`; // โชว์ราคากลับมาแล้ว!
                       displaySub = `(ไม่มีรถว่างในขณะนี้)`; 
-                      cardClass = "border-gray-200 dark:border-[#2a2f5c] text-gray-400 dark:text-gray-500 opacity-50 cursor-not-allowed"; 
+                      cardClass = "border-gray-200 dark:border-[#2a2f5c] text-gray-400 dark:text-gray-500 opacity-60 cursor-not-allowed"; 
                       iconClass = "text-gray-400 dark:text-gray-500";
                   }
                   
@@ -2417,7 +2422,7 @@
                       </div>
                       <div class="text-right flex flex-col items-end">
                           <p class="font-medium text-[13px] leading-tight ${v.isOnline ? 'text-[#4ade80]' : 'text-gray-400 dark:text-gray-500'}">${v.displayPrice}</p>
-                          ${!v.isOnline ? `<p class="text-[9px] text-gray-400 dark:text-gray-500 mt-0.5">(ราคาประมาณ)</p>` : ''}
+                          ${!v.isOnline ? `<p class="text-[9px] text-gray-400 dark:text-gray-500 mt-0.5">(ราคาประเมิน)</p>` : ''}
                       </div>
                   </div>`;
               });
@@ -2425,6 +2430,7 @@
               let listContainer = document.getElementById('vehicleSelectionList');
               if(listContainer) listContainer.innerHTML = listHtml;
               
+              // เลือกรถอัตโนมัติ
               if (foundPrevSelected) {
                   window.selectVehicleInSummary(foundPrevSelected.id, foundPrevSelected.price, foundPrevSelected.priceEstimate, foundPrevSelected.isOnline);
               } else if (firstAvailable) {
@@ -2438,7 +2444,6 @@
         }
       });
     }
-
     window.selectVehicleInSummary = function(id, price, priceEst, isOnline) {
         window.currentServiceType = id;
         bookData.originalPrice = price; bookData.price = price; bookData.priceEstimate = priceEst;
